@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+   <extension
+         id="ExampleViewComponent"
+         point="org.protege.editor.core.application.ViewComponent">
+      <label
+            value="Matthias, you can find here some info">
+      </label>
+      <class
+            value="org.protege.editor.owl.examples.tab.ExampleViewComponent">
+      </class>
+      <category
+            value="@org.protege.ontologycategory">
+      </category>
+   </extension>
+   <extension
+         id="ExampleWorkspaceTab"
+         point="org.protege.editor.core.application.WorkspaceTab">
+      <label
+            value="Ontology To Rules">
+      </label>
+      <class
+            value="org.protege.editor.owl.examples.tab.ExampleWorkspaceTab">
+      </class>
+      <index
+            value="X">
+      </index>
+      <editorKitId
+            value="OWLEditorKit">
+      </editorKitId>
+      <defaultViewConfigFileName
+            value="viewconfig-ontologyToRule.xml">
+      </defaultViewConfigFileName>
+   </extension>
+
+
+</plugin>

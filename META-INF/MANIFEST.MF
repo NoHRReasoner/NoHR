@@ -1,0 +1,36 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ontology to Rules Plugin
+Bundle-SymbolicName: org.protege.editor.owl.examples.tab;singleton:=true
+Bundle-Category: protege
+Bundle-ContactAddress: ivanovvvadim@gmail.com
+Bundle-DocURL: http://protege.stanford.edu
+Bundle-Description: A sample tab for learning how to write a plugin
+Bundle-Vendor: Vadim Ivanov 
+Bundle-ClassPath: .,lib/examplelib.jar, lib/interprolog.jar
+Import-Package: org.osgi.framework,
+ org.apache.log4j,
+ javax.swing,
+ javax.swing.border,
+ javax.swing.colorchooser,
+ javax.swing.event,
+ javax.swing.filechooser,
+ javax.swing.plaf,
+ javax.swing.plaf.basic,
+ javax.swing.plaf.metal,
+ javax.swing.plaf.multi,
+ javax.swing.plaf.synth,
+ javax.swing.table,
+ javax.swing.text,
+ javax.swing.text.html,
+ javax.swing.text.html.parser,
+ javax.swing.text.rtf,
+ javax.swing.tree,
+ javax.swing.undo,
+ javax.xml.parsers
+Bundle-Version: 4.0.9
+Require-Bundle: org.eclipse.equinox.registry,
+ org.eclipse.equinox.common,
+ org.protege.editor.core.application;bundle-version="4.1.0",
+ org.protege.editor.owl;bundle-version="4.1.0",
+ org.semanticweb.owl.owlapi;bundle-version="3.0.0"

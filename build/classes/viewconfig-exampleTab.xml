@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <VSNode splits="0.15 0.15">
+        <CNode>
+            <Component label="Asserted class hierarchy">
+                <Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
+            </Component>
+            <Component label="Inferred class hierarchy">
+                <Property id="pluginId" value="org.protege.editor.owl.InferredOWLClassHierarchy"/>
+            </Component>
+        </CNode>
+        <CNode>
+            <Component label="Example View Component">
+                <Property id="pluginId" value="org.protege.editor.owl.examples.tab.ExampleViewComponent"/>
+            </Component>
+        </CNode>
+    </VSNode>
+</layout>
