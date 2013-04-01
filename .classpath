@@ -9,5 +9,9 @@
 	<classpathentry kind="lib" path="/Applications/Protege_4.1/plugins/org.protege.editor.owl.jar"/>
 	<classpathentry kind="lib" path="lib/examplelib.jar"/>
 	<classpathentry kind="lib" path="lib/interprolog.jar"/>
+	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/elk-owlapi-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/elk-owlapi.jar"/>
+	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/owlapi-bin.jar"/>
+	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/owlapi-src.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

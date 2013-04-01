@@ -36,7 +36,11 @@ public class InterPrologInteraction implements PrologOutputListener{
 		if(_xsbBin!=null){
 			_xsbBin+="/xsb";
 			isXSBbin = true;
-		}
+		}else
+			_textArea.append("Please, set up your XSB_BIN_DIRECTORY\n For mac os consider the example: launchctl setenv XSB_BIN_DIRECTORY /Full/Path/To/XSB/bin");
+		if(!startEngine()){
+	    	_textArea.append("Query Engine was not started\n");
+	    }
 	}
 	
 	public boolean startEngine() {

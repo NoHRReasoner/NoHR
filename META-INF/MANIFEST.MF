@@ -7,7 +7,8 @@ Bundle-ContactAddress: ivanovvvadim@gmail.com
 Bundle-DocURL: http://protege.stanford.edu
 Bundle-Description: A sample tab for learning how to write a plugin
 Bundle-Vendor: Vadim Ivanov 
-Bundle-ClassPath: .,lib/examplelib.jar, lib/interprolog.jar
+Update-Url: http://co-ode-owl-plugins.googlecode.com/svn/trunk/org.coode.annotate/update.properties
+Bundle-ClassPath: .,lib/examplelib.jar, lib/interprolog.jar, lib/owlapi-bin.jar, lib/owlapi-src.jar, lib/elk-owlapi-sources.jar, lib/elk-owlapi.jar
 Import-Package: org.osgi.framework,
  org.apache.log4j,
  javax.swing,
