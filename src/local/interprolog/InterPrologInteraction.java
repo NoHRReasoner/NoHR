@@ -33,6 +33,7 @@ public class InterPrologInteraction implements PrologOutputListener{
 		_textArea=textArea;
 		_textField=textField;
 		_xsbBin = System.getenv("XSB_BIN_DIRECTORY");
+		
 		if(_xsbBin!=null){
 			_xsbBin+="/xsb";
 			isXSBbin = true;
@@ -50,13 +51,14 @@ public class InterPrologInteraction implements PrologOutputListener{
 			_xsbSubprocessEngine.addPrologOutputListener(this);
 		}catch(Exception e){
 			engineStarted=false;
-			_textArea.append(e+nl);
+			_textArea.append(e.toString()+nl);
 		}
 		return engineStarted;
 	}
 	
 	public boolean setConsultAbsolute(File file) {
-		if(_xsbSubprocessEngine.consultAbsolute(file))
+		if(_xsbSubprocessEngine.load_dynAbsolute(file))
+//		if(_xsbSubprocessEngine.consultAbsolute(file))
 //		if(_nativeEngine.consultAbsolute(file))
 			_isQueryable=true;
 		return _isQueryable;

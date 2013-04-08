@@ -103,15 +103,19 @@ public class ExampleViewComponent extends AbstractOWLViewComponent {
 				} catch (OWLOntologyCreationException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
+					_textArea.append(e2.toString()+"\n");
 				} catch (OWLOntologyStorageException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
+					_textArea.append(e2.toString()+"\n");
 				} catch (IOException e2) {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
+					_textArea.append(e2.toString()+"\n");
 				} catch (ParserException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					_textArea.append(e1.toString()+"\n");
 				}
 			}
 		});
@@ -125,7 +129,7 @@ public class ExampleViewComponent extends AbstractOWLViewComponent {
 	    _addRules.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int val = _fileChooser.showDialog(null, "Choose ontology");
+				int val = _fileChooser.showDialog(null, "Open");
 				if(val==JFileChooser.APPROVE_OPTION){
 					_rules = new ArrayList<String>();
 					_rulesTextArea.setText("");
@@ -146,11 +150,13 @@ public class ExampleViewComponent extends AbstractOWLViewComponent {
 					} catch (FileNotFoundException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
+						_textArea.append(e1.toString()+"\n");
 					}
 					// Get the object of DataInputStream
 					catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
+						_textArea.append(e1.toString()+"\n");
 					}
 				    
 				}
@@ -172,15 +178,19 @@ public class ExampleViewComponent extends AbstractOWLViewComponent {
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					_textArea.append(e1.toString()+"\n");
 				} catch (ParserException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					_textArea.append(e1.toString()+"\n");
 				} catch (OWLOntologyCreationException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					_textArea.append(e1.toString()+"\n");
 				} catch (OWLOntologyStorageException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					_textArea.append(e1.toString()+"\n");
 				}
 			}
 		});
@@ -200,6 +210,7 @@ public class ExampleViewComponent extends AbstractOWLViewComponent {
 				private void updateText(KeyEvent e) {
 		            if( e.getKeyCode() == KeyEvent.VK_ENTER && _textField.getText().length()>0 )  {
 		            	_prologInteraction.makeQuery(_textField.getText());
+		            	_textField.setText("");
 		            }
 				}
 				@Override
@@ -221,7 +232,7 @@ public class ExampleViewComponent extends AbstractOWLViewComponent {
 	private JScrollPane createTextArea(JTextArea textArea, int h){
 		DefaultCaret caret = (DefaultCaret)textArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-//        textArea.setEditable(false);
+        textArea.setEditable(false);
         textArea.setMaximumSize(new Dimension(_width, h));
 //        textArea.setRows(10);
 		JScrollPane scrollPane = new JScrollPane(textArea);

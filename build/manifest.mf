@@ -13,8 +13,7 @@ Bundle-Vendor: Vadim Ivanov
 Update-Url: http://co-ode-owl-plugins.googlecode.com/svn/trunk/org.coo
  de.annotate/update.properties
 Bundle-ClassPath: .,lib/examplelib.jar, lib/interprolog.jar, lib/owlap
- i-bin.jar, lib/owlapi-src.jar, lib/elk-owlapi-sources.jar, lib/elk-ow
- lapi.jar
+ i-bin.jar, lib/elk-owlapi.jar
 Import-Package: org.osgi.framework,org.apache.log4j,javax.swing,javax.
  swing.border,javax.swing.colorchooser,javax.swing.event,javax.swing.f
  ilechooser,javax.swing.plaf,javax.swing.plaf.basic,javax.swing.plaf.m
@@ -28,5 +27,5 @@ Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  ege.editor.owl;bundle-version="4.1.0",org.semanticweb.owl.owlapi;bund
  le-version="3.0.0"
 Built-By: vadimivanov
-Build-Date: 04/01/2013 09:46 AM
+Build-Date: 04/08/2013 04:24 PM
 

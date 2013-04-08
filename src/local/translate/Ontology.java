@@ -73,13 +73,17 @@ public class Ontology {
 
 
 	/** The _outfile. */
-	private FileWriter _outfile;
-    private FileWriter _outTopfile;
+//	private FileWriter _outfile;
+//    private FileWriter _outTopfile;
 	
 	/** The _outer. */
-	private static PrintWriter _outer;
-    private static PrintWriter _outerTop;
+//	private static PrintWriter _outer;
+//    private static PrintWriter _outerTop;
 	
+    private List<String> tabledOntologies = new ArrayList<String>();
+    private List<String> translatedOntologies = new ArrayList<String>();
+    private List<String> appendedRules = new ArrayList<String>();
+    
 	private String _delimeter="#";
 	private String _altDelimeter=":";
     private String _negation="tnot";
@@ -94,9 +98,10 @@ public class Ontology {
 
     private List<String> _prohibitedNames = Arrays.asList("table","attribute");
     
-    
+    private String tempDirProp = "java.io.tmpdir";
+    private String _tempDir="";
     private String _proresult = "ontologies_to_rules_proresult.p";
-    private String _result = "ontologies_to_rules_result.p";
+    private String _result = "ontologies_to_rules_result.p";//"r.p";//"ontologies_to_rules_result.p";
     private String _mergedOntologies = "ontologies_to_rules_merged.owl";
     
     private boolean _isLog = true;
@@ -116,7 +121,7 @@ public class Ontology {
         Date date1=new Date();
         _ontologyManager=OWLManager.createOWLOntologyManager();
 		_fileaddress=filePath;
-		startOuters(false);
+		//startOuters(false);
 //        writeLineToFile(":- auto_table.");
         writeLineToTopFile(":- set_prolog_flag(unknown,fail).");
 		_ontologyFile=new File(_fileaddress);
@@ -136,34 +141,37 @@ public class Ontology {
         _existsOntology = new ArrayList<String>();
     }
 	private void startOuters(boolean isAppend) throws IOException{
-		if(_outfile!=null)
+		/*if(_outfile!=null)
 			_outfile.close();
-		_outfile = new FileWriter(_proresult);
+		_outfile = new FileWriter(_tempDir+_proresult, isAppend);
 		if(_outer!=null)
 			_outer.close();
 		_outer = new PrintWriter(_outfile);
 		if(_outTopfile!=null)
 			_outTopfile.close();
+		_outTopfile=new FileWriter(_tempDir+_result, isAppend);
+		printLog(_tempDir+_result);
 		if(_outerTop!=null)
-			_outTopfile=new FileWriter(_result);
 			_outerTop.close();
-		_outerTop=new PrintWriter(_outTopfile);
+		_outerTop=new PrintWriter(_outTopfile);*/
 	}
     public Ontology(OWLModelManager owlModelManager, JTextArea textArea, boolean isLog) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException {
 		_ontologyManager = owlModelManager.getOWLOntologyManager();
 		_ontology = owlModelManager.getActiveOntology();
-		startOuters(false);
+        _tempDir = System.getProperty(tempDirProp);
+        //_textArea.append("OS current temporary directory is " + tempDir);
         _isLog = isLog;
         _textArea = textArea;
-        writeLineToTopFile(":- set_prolog_flag(unknown,fail).");
         _existsRules = new ArrayList<String>();
         _existsOntology = new ArrayList<String>();
 	}
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
-		initELK();
+    	//startOuters(false);
+    	writeLineToTopFile(":- set_prolog_flag(unknown,fail).");
+    	initELK();
         mergeOntologies();
         getOWL();
-        isTranslated=true;
+//        isTranslated=true;
         return true;
     }
 	/**
@@ -193,7 +201,7 @@ public class Ontology {
      * @throws IOException
      */
 	public void appendRules(String filePath) throws IOException{
-		writeLineToFile("%Inserting rules");
+		writeLineToAppendedRules("%Inserting rules");
 		File rules=new File(filePath);
 		if(rules!=null){
 			FileInputStream fstream = new FileInputStream(rules);
@@ -210,7 +218,7 @@ public class Ontology {
 		}
 	}
 	public void appendRules(List<String> _rules) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, ParserException {
-		startOuters(true);
+		//startOuters(true);
 		if(!isTranslated){
 			PrepareForTranslating();
 			proceed();
@@ -250,7 +258,7 @@ public class Ontology {
                     result+=_rule+", ";
             }
             result=result.substring(0,result.length()-2)+".";
-            writeLineToFile(result);
+            writeLineToAppendedRules(result);
 
             result= getSubRule(leftSideRule)+getEqForRule();
             for(String _rule : arrayRule){
@@ -260,10 +268,10 @@ public class Ontology {
                     result+=getSubRule(_rule)+", ";
             }
             result+= isExistOntology(getNameFromRule(rule)) ? getNegRule(leftSideRule) : leftSideRule;
-            writeLineToFile(result + ".");
+            writeLineToAppendedRules(result + ".");
 
         }else if(rule.contains(_eq)){
-            writeLineToFile(rule + ".");
+        	writeLineToAppendedRules(rule + ".");
             arrayRule=rule.split(_eq);
             leftSideRule=arrayRule[0].trim();
             rightSideRule=arrayRule[1].trim();
@@ -273,12 +281,13 @@ public class Ontology {
                 result+=getSubRule(_rule)+", ";
             }
             result+= isExistOntology(getNameFromRule(rule)) ? getNegRule(leftSideRule) : leftSideRule;
-            writeLineToFile(result + ".");
+            writeLineToAppendedRules(result + ".");
 
         }else{
-            writeLineToFile(rule + ".");
-            result= isExistOntology(getNameFromRule(rule)) ? getEqForRule() + getNegRule(rule): "";
-            writeLineToFile(getSubRule(rule) + result + ".");
+        	writeLineToAppendedRules(rule + ".");
+            if(isExistOntology(getNameFromRule(rule))){
+            	writeLineToAppendedRules(getSubRule(rule) + getEqForRule() + getNegRule(rule) + ".");
+            }
         }
     }
     protected String getEqForRule(){
@@ -294,26 +303,40 @@ public class Ontology {
         String[] _rule=rule.split("\\(");
         return _rule[0];
     }
-    private void checkPrintWriter(){
-    	
-    }
-    
 	public File Finish() throws IOException {
         Date date1 = new Date();
-		_outer.close();
-        BufferedReader in = new BufferedReader(new FileReader(_proresult));
+//		_outer.close();
+        /*BufferedReader in = new BufferedReader(new FileReader(_tempDir+_proresult));
         String str;
         while ((str = in.readLine()) != null) {
             writeLineToTopFile(str);
         }
-        in.close();
-        _outerTop.close();
-        _outer.close();
+        in.close();*/
+//        _outerTop.close();
+//        _outer.close();
 //        _outfile.close();
 //        _outTopfile.close();
-        getDiffTime(date1,"Finishing, it took:");
+        
 //        _outTopfile.
-        return new File(_result);
+        
+        
+        FileWriter writer = new FileWriter(_tempDir+_result, isTranslated);
+        if(!isTranslated){
+	        for(String str: tabledOntologies) {
+	        	writer.write(str+"\n");
+	        }
+	        for(String str: translatedOntologies) {
+	        	writer.write(str+"\n");
+		    }
+	        isTranslated = true;
+        }
+        for(String str: appendedRules) {
+        	writer.write(str+"\n");
+        }
+        writer.close();
+        
+        getDiffTime(date1,"Finishing, it took:");
+        return new File(_tempDir+_result);
 	}
 	protected void getOWL() throws OWLOntologyCreationException{
 		_owlClasses=_ontology.getClassesInSignature();
@@ -382,7 +405,7 @@ public class Ontology {
 		OWLOntologyMerger ontologyMerger= new OWLOntologyMerger(_ontologyManager);
 		File mergedOntologyFile = null;
 		
-		mergedOntologyFile = new File(_mergedOntologies);
+		mergedOntologyFile = new File(_tempDir+_mergedOntologies);
 		if(!mergedOntologyFile.exists())
 			mergedOntologyFile.createNewFile();
 		//if(!mergedOntologyFile.createNewFile() || !mergedOntologyFile.canWrite())
@@ -394,12 +417,20 @@ public class Ontology {
 	private void writeLineToFile(String string){
         //if(!string.startsWith("thing"))
         string += debug ? _currentRule : "";
-		_outer.println(string);
+//		_outer.println(string);
+        translatedOntologies.add(string);
         //return;
 	}
     private void writeLineToTopFile(String string){
         string += debug ? _currentRule : "";
-        _outerTop.println(string);
+//        _outerTop.println(string);
+        tabledOntologies.add(string);
+        //return;
+    }
+    private void writeLineToAppendedRules(String string){
+        string += debug ? _currentRule : "";
+//        _outerTop.println(string);
+        appendedRules.add(string);
         //return;
     }
 	private String getRuleFromString(String rule, int numInList){
