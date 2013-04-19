@@ -29,11 +29,17 @@ public class InterPrologInteraction implements PrologOutputListener{
 	private final JTextArea _textArea;
 	private final JTextField _textField;
 	private String nl = System.getProperty("line.separator");
-	public InterPrologInteraction(final JTextArea textArea, JTextField textField) {
+	private boolean debug = false;
+	private String tempDirProp = "java.io.tmpdir";
+	private String _tempDir = System.getProperty(tempDirProp);
+	public InterPrologInteraction(final JTextArea textArea, JTextField textField, boolean isDebug) {
 		_textArea=textArea;
 		_textField=textField;
+		debug = isDebug;
 		_xsbBin = System.getenv("XSB_BIN_DIRECTORY");
-		
+		if(debug)
+			_textArea.append("Starting engine\n");
+		_textArea.append(_tempDir+nl);
 		if(_xsbBin!=null){
 			_xsbBin+="/xsb";
 			isXSBbin = true;
@@ -49,6 +55,8 @@ public class InterPrologInteraction implements PrologOutputListener{
 		try{
 			_xsbSubprocessEngine = new XSBSubprocessEngine(_xsbBin);
 			_xsbSubprocessEngine.addPrologOutputListener(this);
+			if(debug)
+				_textArea.append("Engine started"+nl);
 		}catch(Exception e){
 			engineStarted=false;
 			_textArea.append(e.toString()+nl);
@@ -78,7 +86,8 @@ public class InterPrologInteraction implements PrologOutputListener{
 
 	@Override
 	public void print(String s) {
-		_textArea.append(s+nl);
+		_textArea.append(s.replace(_tempDir, "")+nl);
+//		_textArea.append(s+nl);
 	}
 }
 

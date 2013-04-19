@@ -6,8 +6,9 @@
          id="ExampleViewComponent"
          point="org.protege.editor.core.application.ViewComponent">
       <label
-            value="Matthias, you can find here some info">
+            value="Querying">
       </label>
+      <headerColor value="@org.protege.classcolor"/>
       <class
             value="org.protege.editor.owl.examples.tab.ExampleViewComponent">
       </class>
@@ -21,6 +22,7 @@
       <label
             value="Ontology To Rules">
       </label>
+      <headerColor value="@org.protege.classcolor"/>
       <class
             value="org.protege.editor.owl.examples.tab.ExampleWorkspaceTab">
       </class>

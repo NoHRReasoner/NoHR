@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="lib/interprolog.jar"/>
 	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/elk-owlapi.jar"/>
 	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/owlapi-bin.jar"/>
+	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/RelativeLayout-v1.0.jar"/>
+	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/miglayout-4.0-swing.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
