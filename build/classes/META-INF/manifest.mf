@@ -27,5 +27,5 @@ Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  ege.editor.owl;bundle-version="4.1.0",org.semanticweb.owl.owlapi;bund
  le-version="3.0.0"
 Built-By: vadimivanov
-Build-Date: 04/19/2013 03:08 PM
+Build-Date: 04/22/2013 03:21 PM
 

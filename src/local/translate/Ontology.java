@@ -38,7 +38,10 @@ import org.semanticweb.owlapi.util.InferredAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredEquivalentClassAxiomGenerator;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
 
 import javax.swing.*;
 
@@ -47,48 +50,54 @@ import javax.swing.*;
  * The Class Ontology.
  */
 public class Ontology {
-	
-	/** The _fileaddress. */
-	private String _fileaddress;
 
-	private File _ontologyFile;
+    /** The _fileaddress. */
+    private String _fileaddress;
 
-	/** The _ontology manager. */
-	private OWLOntologyManager _ontologyManager;
-	
-	/** The _ontology. */
-	private static OWLOntology _ontology;
+    private File _ontologyFile;
+
+    /** The _ontology manager. */
+    private OWLOntologyManager _ontologyManager;
+
+    /** The _ontology. */
+    private static OWLOntology _ontology;
+
+    private OWLDataFactory _ontologyDataFactory;
+
+    private OWLAnnotationProperty _ontologyLabel;
+
+
 //	OWLReasonerFactory reasonerFactory;
-	/** The _reasoner. */
+    /** The _reasoner. */
 //	private static OWLReasoner _reasoner;
 //	ShortFormProvider shortFormProvider;
 //	static BidirectionalShortFormProvider mapper;
-	/** The _owl classes. */
-	private static Set<OWLClass> _owlClasses;
-	
-	/** The _object properties. */
-	private static Set<OWLObjectProperty> _objectProperties;
+    /** The _owl classes. */
+    private static Set<OWLClass> _owlClasses;
+
+    /** The _object properties. */
+    private static Set<OWLObjectProperty> _objectProperties;
 
 //    private OWLDataFactory _owlDataFactory;
 
 
-	/** The _outfile. */
+    /** The _outfile. */
 //	private FileWriter _outfile;
 //    private FileWriter _outTopfile;
-	
-	/** The _outer. */
+
+    /** The _outer. */
 //	private static PrintWriter _outer;
 //    private static PrintWriter _outerTop;
-	
+
 //    private List<String> tabledOntologies = new ArrayList<String>(500000);
     private HashSet<String> tabledOntologies = new HashSet<String>();
-//    private List<String> translatedOntologies = new ArrayList<String>(10000000);
+    //    private List<String> translatedOntologies = new ArrayList<String>(10000000);
     private HashSet<String> translatedOntologies = new HashSet<String>();
-//    private List<String> appendedRules = new ArrayList<String>(1000000);
+    //    private List<String> appendedRules = new ArrayList<String>(1000000);
     private HashSet<String> appendedRules = new HashSet<String>();
-    
-	private String _delimeter="#";
-	private String _altDelimeter=":";
+
+    private String _delimeter="#";
+    private String _altDelimeter=":";
     private String _negation="tnot";
     private String _searchNegation="not";
     private String _eq=":-";
@@ -101,50 +110,50 @@ public class Ontology {
     private String _currentRule;
 
     private List<String> _prohibitedNames = Arrays.asList("table","attribute");
-    
+
     private List<String> prologCommands = Arrays.asList(":- abolish_all_tables.",":- set_prolog_flag(unknown,fail).");
-    
+
     private String tempDirProp = "java.io.tmpdir";
     private String _tempDir="";
     private String _proresult = "ontologies_to_rules_proresult.p";
     private String _result = "result.p";//"ontologies_to_rules_result.p";
     private String _mergedOntologies = "ontologies_to_rules_merged.owl";
-    
+
     private boolean _isLog = true;
     private JTextArea _textArea = null;
     private boolean isTranslated = false;
-	
+
     public boolean isOntologyChanged = true;
-	/**
-	 * Instantiates a new ontology.
-	 *
-	 * @param filePath the file path
-	 * @throws OWLOntologyCreationException the oWL ontology creation exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws OWLOntologyStorageException 
-	 */
-	public Ontology(String filePath) throws OWLOntologyCreationException, IOException, OWLOntologyStorageException {
-		/** Initializing a OntologyManager */
+    /**
+     * Instantiates a new ontology.
+     *
+     * @param filePath the file path
+     * @throws OWLOntologyCreationException the oWL ontology creation exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws OWLOntologyStorageException
+     */
+    public Ontology(String filePath) throws OWLOntologyCreationException, IOException, OWLOntologyStorageException {
+        /** Initializing a OntologyManager */
         Date date1=new Date();
         _ontologyManager=OWLManager.createOWLOntologyManager();
-		_fileaddress=filePath;
-		_ontologyFile=new File(_fileaddress);
-		if(_ontologyFile.exists())
-			_ontologyFile.createNewFile();
-		_ontology=_ontologyManager.loadOntologyFromOntologyDocument(_ontologyFile);
+        _fileaddress=filePath;
+        _ontologyFile=new File(_fileaddress);
+        if(_ontologyFile.exists())
+            _ontologyFile.createNewFile();
+        _ontology=_ontologyManager.loadOntologyFromOntologyDocument(_ontologyFile);
 //        _owlDataFactory = OWLManager.getOWLDataFactory();
         getDiffTime(date1, "Initializing is done, it took:");
-		date1=new Date();
-		initELK();
-		getDiffTime(date1, "ELK reasoner finished it's work, it took:");
-		date1=new Date();
-		mergeOntologies();
-		getDiffTime(date1, "Merger finished it's work, it took:");
-		getOWL();
+        date1=new Date();
+        initELK();
+        getDiffTime(date1, "ELK reasoner finished it's work, it took:");
+        date1=new Date();
+        mergeOntologies();
+        getDiffTime(date1, "Merger finished it's work, it took:");
+        getOWL();
         _existsRules = new ArrayList<String>(5000000);
         _existsOntology = new ArrayList<String>(5000000);
     }
-	private void startOuters(boolean isAppend) throws IOException{
+    private void startOuters(boolean isAppend) throws IOException{
 		/*if(_outfile!=null)
 			_outfile.close();
 		_outfile = new FileWriter(_tempDir+_proresult, isAppend);
@@ -158,33 +167,33 @@ public class Ontology {
 		if(_outerTop!=null)
 			_outerTop.close();
 		_outerTop=new PrintWriter(_outTopfile);*/
-	}
+    }
     public Ontology(OWLModelManager owlModelManager, JTextArea textArea, boolean isLog) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException {
-		_ontologyManager = owlModelManager.getOWLOntologyManager();
-		_ontology = owlModelManager.getActiveOntology();
+        _ontologyManager = owlModelManager.getOWLOntologyManager();
+        _ontology = owlModelManager.getActiveOntology();
         _tempDir = System.getProperty(tempDirProp);
         //_textArea.append("OS current temporary directory is " + tempDir);
         _isLog = isLog;
         _textArea = textArea;
         _existsRules = new ArrayList<String>(5000000);
         _existsOntology = new ArrayList<String>(5000000);
-	}
+    }      
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
-    	//startOuters(false);
-    	tabledOntologies = new HashSet<String>();// new ArrayList<String>(500000);
+        //startOuters(false);
+        tabledOntologies = new HashSet<String>();// new ArrayList<String>(500000);
         translatedOntologies = new HashSet<String>();//new ArrayList<String>(10000000);
-    	initELK();
+        initELK();
         mergeOntologies();
         getOWL();
 //        isTranslated=true;
         return true;
     }
-	/**
+    /**
      * Main function
      * @throws ParserException
      */
-	public void proceed() throws ParserException{
-		Date date1=new Date();
+    public void proceed() throws ParserException{
+        Date date1=new Date();
         fillExistsOntologiesAndRules();
         getDiffTime(date1, "PreProcessing and finish All I rules finished it's work, it took:");
         date1=new Date();
@@ -196,51 +205,51 @@ public class Ontology {
         date1=new Date();
         loopThrowAllProperties();
         getDiffTime(date1, "Rules R1, R2 and A2 are finished it's work, it took:");
-	}
-	
+    }
+
     /**
      * Read a rules from file and proceed them
      * @param filePath path of rule's file
      * @throws IOException
      */
-	public void appendRules(String filePath) throws IOException{
-		writeLineToAppendedRules("%Inserting rules");
-		File rules=new File(filePath);
-		if(rules!=null){
-			FileInputStream fstream = new FileInputStream(rules);
-			// Get the object of DataInputStream
-		    DataInputStream in = new DataInputStream(fstream);
-		    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String strLine;
-			//Read File Line By Line
-			while ((strLine = br.readLine()) != null)   {
+    public void appendRules(String filePath) throws IOException{
+        writeLineToAppendedRules("%Inserting rules");
+        File rules=new File(filePath);
+        if(rules!=null){
+            FileInputStream fstream = new FileInputStream(rules);
+            // Get the object of DataInputStream
+            DataInputStream in = new DataInputStream(fstream);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String strLine;
+            //Read File Line By Line
+            while ((strLine = br.readLine()) != null)   {
                 if(strLine.length()>0)
-				    proceedRule(strLine);
-			}
-			in.close();
-		}
-	}
-	public void appendRules(List<String> _rules) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, ParserException {
-		//startOuters(true);
-		appendedRules = new HashSet<String>();//new ArrayList<String>(1000000);
+                    proceedRule(strLine);
+            }
+            in.close();
+        }
+    }
+    public void appendRules(List<String> _rules) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, ParserException {
+        //startOuters(true);
+        appendedRules = new HashSet<String>();//new ArrayList<String>(1000000);
 		/*if(!isTranslated){
 			PrepareForTranslating();
 			proceed();
 		}*/
-		for(String rule : _rules){
-			proceedRule(rule);
-		}
-		
-	}
-	protected void printLog(String message){
-		if(_isLog){
-			if(_textArea !=null){
-				_textArea.append(message+"\n");
-			}else{
-				System.out.println(message);
-			}
-		}
-	}
+        for(String rule : _rules){
+            proceedRule(rule);
+        }
+
+    }
+    protected void printLog(String message){
+        if(_isLog){
+            if(_textArea !=null){
+                _textArea.append(message+"\n");
+            }else{
+                System.out.println(message);
+            }
+        }
+    }
     protected void proceedRule(String rule){
         if(rule.startsWith(_eq))
             return;
@@ -250,90 +259,90 @@ public class Ontology {
         String leftSideRule = arrayRule[0].trim();
         String rightSideRule = null;
         if(arrayRule.length>1 && arrayRule[1]!=null)
-        	rightSideRule = arrayRule[1].trim();
+            rightSideRule = arrayRule[1].trim();
         writeArule(leftSideRule, rightSideRule);
         tablePredicateFromRule(leftSideRule);
         if(isAnyDisjointStatement)
-        	writeBrule(leftSideRule, rightSideRule);
+            writeBrule(leftSideRule, rightSideRule);
     }
     protected void writeArule(String leftSide, String rightSide){
-    	if(rightSide==null){
-    		writeLineToAppendedRules(leftSide + ".");
-    	}else{
-    		String result = leftSide+getEqForRule();
-    		for (String rule : rightSide.split("\\)\\s*,")) {
-    			rule = rule.trim();
-    			if(rule.contains("(") && !rule.contains(")"))
-    					rule+=")";
-    			if(rule.startsWith(_searchNegation)){
-    				rule = rule.replaceFirst(_searchNegation, _negation);
-    			}
-				if(rule.startsWith(_negation)){
-					result+=getSubRule(rule)+", ";
-				}else{
-					result+=rule+", ";
-				}
-			}
-    		result=result.substring(0,result.length()-2);
-    		writeLineToAppendedRules(result + ".");
-    	}
+        if(rightSide==null){
+            writeLineToAppendedRules(leftSide + ".");
+        }else{
+            String result = leftSide+getEqForRule();
+            for (String rule : rightSide.split("\\)\\s*,")) {
+                rule = rule.trim();
+                if(rule.contains("(") && !rule.contains(")"))
+                    rule+=")";
+                if(rule.startsWith(_searchNegation)){
+                    rule = rule.replaceFirst(_searchNegation, _negation);
+                }
+                if(rule.startsWith(_negation)){
+                    result+=getSubRule(rule)+", ";
+                }else{
+                    result+=rule+", ";
+                }
+            }
+            result=result.substring(0,result.length()-2);
+            writeLineToAppendedRules(result + ".");
+        }
     }
     protected void writeBrule(String leftSide, String rightSide){
-    	if(rightSide==null){
-    		writeLineToAppendedRules(getSubRule(leftSide) + getEqForRule() + getNegRule(leftSide) + ".");
-    	}else{
-    		String result = getSubRule(leftSide)+getEqForRule();
-    		for (String rule : rightSide.split("\\)\\s*,")) {
-    			rule = rule.trim();
-    			if(rule.contains("(") && !rule.contains(")"))
-    					rule+=")";
-    			if(rule.startsWith(_searchNegation)){
-    				rule = rule.replaceFirst(_searchNegation, _negation);
-    			}
-    			if(rule.startsWith(_negation)){
-					result+=rule+", ";
-				}else{
-					result+=getSubRule(rule)+", ";
-				}
-			}
-    		//String predicate = leftSide.split("\\(")[0];
-    		if(isAnyDisjointStatement)//if(isExistRule(predicate) || isExistOntology(predicate))
-    			result += getNegRule(leftSide)+", ";
-    		result=result.substring(0,result.length()-2);
-    		writeLineToAppendedRules(result + ".");
-    	}
+        if(rightSide==null){
+            writeLineToAppendedRules(getSubRule(leftSide) + getEqForRule() + getNegRule(leftSide) + ".");
+        }else{
+            String result = getSubRule(leftSide)+getEqForRule();
+            for (String rule : rightSide.split("\\)\\s*,")) {
+                rule = rule.trim();
+                if(rule.contains("(") && !rule.contains(")"))
+                    rule+=")";
+                if(rule.startsWith(_searchNegation)){
+                    rule = rule.replaceFirst(_searchNegation, _negation);
+                }
+                if(rule.startsWith(_negation)){
+                    result+=rule+", ";
+                }else{
+                    result+=getSubRule(rule)+", ";
+                }
+            }
+            //String predicate = leftSide.split("\\(")[0];
+            if(isAnyDisjointStatement)//if(isExistRule(predicate) || isExistOntology(predicate))
+                result += getNegRule(leftSide)+", ";
+            result=result.substring(0,result.length()-2);
+            writeLineToAppendedRules(result + ".");
+        }
     }
     protected void tablePredicateFromRule(String rule){
-    	rule = rule.trim();
-    	if(rule.startsWith(_searchNegation))
-    		rule = rule.replaceFirst(_searchNegation, _negation);
-    	if(rule.startsWith(_negation))
-    		rule = rule.replaceFirst(_negation+" ", "");
-    	String[] _ = rule.split("\\(");
-    	String predicate = _[0];
-    	//if(isAnyDisjointStatement){//if(!(isExistOntology(predicate) || isExistRule(predicate))){
-    		int len = 0;
-    		if(_.length>1 && _[1]!=null){
-    			_ = _[1].split("\\)");
-        		_ = _[0].split(",");
-        		len = _.length;
-    		}
-    		writeLineToTopFile(":- table "+predicate+"/"+len+".");
-    		if(isAnyDisjointStatement)
-    			writeLineToTopFile(":- table "+predicate+"_d/"+len+".");
+        rule = rule.trim();
+        if(rule.startsWith(_searchNegation))
+            rule = rule.replaceFirst(_searchNegation, _negation);
+        if(rule.startsWith(_negation))
+            rule = rule.replaceFirst(_negation+" ", "");
+        String[] _ = rule.split("\\(");
+        String predicate = _[0];
+        //if(isAnyDisjointStatement){//if(!(isExistOntology(predicate) || isExistRule(predicate))){
+        int len = 0;
+        if(_.length>1 && _[1]!=null){
+            _ = _[1].split("\\)");
+            _ = _[0].split(",");
+            len = _.length;
+        }
+        writeLineToTopFile(":- table "+predicate+"/"+len+".");
+        if(isAnyDisjointStatement)
+            writeLineToTopFile(":- table "+predicate+"_d/"+len+".");
 //    	}
     }
     protected String getEqForRule(){
         return " "+_eq+" ";
     }
     protected String getSubRule(String rule){
-    	rule = rule.trim();
-    	if(rule.contains("("))
-    		rule= rule.replaceFirst("\\(","_d(");
-    	else
-    		rule= rule+"_d";
-    	printLog(rule);
-    	return rule;
+        rule = rule.trim();
+        if(rule.contains("("))
+            rule= rule.replaceFirst("\\(","_d(");
+        else
+            rule= rule+"_d";
+        printLog(rule);
+        return rule;
     }
     protected String getNegRule(String rule){
         return _negation+" n_"+rule.trim();
@@ -342,38 +351,41 @@ public class Ontology {
         String[] _rule=rule.split("\\(");
         return _rule[0];
     }
-	public File Finish() throws IOException {
+    public File Finish() throws IOException {
         Date date1 = new Date();
         FileWriter writer = new FileWriter(_tempDir+_result/*, isTranslated*/);
         for(String str: prologCommands){
-        	writer.write(str+"\n");
+            writer.write(str+"\n");
         }
 //        if(!isTranslated){
-	        for(String str: tabledOntologies) {
-	        	writer.write(str+"\n");
-	        }
-	        for(String str: translatedOntologies) {
-	        	writer.write(str+"\n");
-		    }
+        for(String str: tabledOntologies) {
+            writer.write(str+"\n");
+        }
+        for(String str: translatedOntologies) {
+            writer.write(str+"\n");
+        }
 //	        isTranslated = true;
 //        }
         for(String str: appendedRules) {
-        	writer.write(str+"\n");
+            writer.write(str+"\n");
         }
         writer.close();
-        
+
         getDiffTime(date1,"Finishing, it took:");
         return new File(_tempDir+_result);
-	}
-	protected void getOWL() throws OWLOntologyCreationException{
-		_owlClasses=_ontology.getClassesInSignature();
-		_objectProperties=_ontology.getObjectPropertiesInSignature();
-	}
-	protected void getDiffTime(Date startDate, String message){
-		Date stoped=new Date();
-		long diff=stoped.getTime() - startDate.getTime();
-		printLog(message+" "+diff+" milisec");
-	}
+    }
+    protected void getOWL() throws OWLOntologyCreationException{
+        _owlClasses=_ontology.getClassesInSignature();
+        _objectProperties=_ontology.getObjectPropertiesInSignature();
+        _ontologyDataFactory = _ontologyManager.getOWLDataFactory();
+        _ontologyLabel = _ontologyDataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+    }
+    protected void getDiffTime(Date startDate, String message){
+        Date stoped=new Date();
+        long diff=stoped.getTime() - startDate.getTime();
+//		if(debug)
+        printLog(message+" "+diff+" milisec");
+    }
     /**
      * During preprocessing append to array ontologies
      * @param ontology
@@ -406,48 +418,50 @@ public class Ontology {
     protected boolean isExistRule(String rule){
         return _existsRules.contains(rule);
     }
-	protected void initELK() throws OWLOntologyCreationException{
-		Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
+    protected void initELK() throws OWLOntologyCreationException{
+        Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
 //		Logger logger = Logger.getRootLogger();
-		OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
-		OWLReasoner reasoner = reasonerFactory.createReasoner(_ontology);
-		printLog("Reasoner created");
-		/** Classify the ontology. */
-		reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
-		printLog("Precomputed inference");
-		/**To generate an inferred ontology we use implementations of
-        inferred axiom generators */
-		ArrayList<InferredAxiomGenerator<? extends OWLAxiom>> gens = new ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>();
-		gens.add(new InferredSubClassAxiomGenerator());
-		gens.add(new InferredEquivalentClassAxiomGenerator());
-		
-		/** Put the inferred axioms into a fresh empty ontology. */
-		OWLOntology infOnt=_ontologyManager.createOntology();
-		InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
-		iog.fillOntology(_ontologyManager,infOnt);
-		printLog("Reasoner finished work");
-	}
-	protected void mergeOntologies() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
-		printLog("start merging");
-		OWLOntologyMerger ontologyMerger= new OWLOntologyMerger(_ontologyManager);
-		File mergedOntologyFile = null;
-		
-		mergedOntologyFile = new File(_tempDir+_mergedOntologies);
-		if(!mergedOntologyFile.exists())
-			mergedOntologyFile.createNewFile();
-		//if(!mergedOntologyFile.createNewFile() || !mergedOntologyFile.canWrite())
-		//	printLog("couldn't create owl file for merged ontologies");
-		OWLOntology mergedOntology = ontologyMerger.createMergedOntology(_ontologyManager, IRI.create(mergedOntologyFile));
-		//_ontologyManager.saveOntology(mergedOntology,IRI.create(mergedOntologyFile));
-		_ontology=mergedOntology;
-	}
-	private void writeLineToFile(String string){
+        Date date1 = new Date();
+        OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
+        OWLReasoner reasoner = reasonerFactory.createReasoner(_ontology);
+        printLog("Reasoner created");
+        /** Classify the ontology. */
+        reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+        printLog("Precomputed inference");
+        /**To generate an inferred ontology we use implementations of
+         inferred axiom generators */
+        ArrayList<InferredAxiomGenerator<? extends OWLAxiom>> gens = new ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>();
+        gens.add(new InferredSubClassAxiomGenerator());
+        gens.add(new InferredEquivalentClassAxiomGenerator());
+
+        /** Put the inferred axioms into a fresh empty ontology. */
+        OWLOntology infOnt=_ontologyManager.createOntology();
+        InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
+        iog.fillOntology(_ontologyManager,infOnt);
+//		printLog("Reasoner finished work");
+        getDiffTime(date1,"Reasoner finished work:");
+    }
+    protected void mergeOntologies() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
+        printLog("start merging");
+        OWLOntologyMerger ontologyMerger= new OWLOntologyMerger(_ontologyManager);
+        File mergedOntologyFile = null;
+
+        mergedOntologyFile = new File(_tempDir+_mergedOntologies);
+        if(!mergedOntologyFile.exists())
+            mergedOntologyFile.createNewFile();
+        //if(!mergedOntologyFile.createNewFile() || !mergedOntologyFile.canWrite())
+        //	printLog("couldn't create owl file for merged ontologies");
+        OWLOntology mergedOntology = ontologyMerger.createMergedOntology(_ontologyManager, IRI.create(mergedOntologyFile));
+        //_ontologyManager.saveOntology(mergedOntology,IRI.create(mergedOntologyFile));
+        _ontology=mergedOntology;
+    }
+    private void writeLineToFile(String string){
         //if(!string.startsWith("thing"))
         string += debug ? _currentRule : "";
 //		_outer.println(string);
         translatedOntologies.add(string);
         //return;
-	}
+    }
     private void writeLineToTopFile(String string){
         string += debug ? _currentRule : "";
 //        _outerTop.println(string);
@@ -461,27 +475,73 @@ public class Ontology {
         //return;
     }
 
-    
+
     private String getRuleFromString(String rule, int numInList){
-		String result="";
-		if(rule.contains(_delimeter))
-			result=(rule.split(_delimeter)[numInList]).split(">")[0];
-		else if (rule.contains(_altDelimeter)) {
-			result=(rule.split(_altDelimeter)[numInList]).split(">")[0];
-		}
-		else
-			result="";
-        result=result.trim().replace("-","").toLowerCase();
+        String result="";
+        if(rule.contains(_delimeter))
+            result=(rule.split(_delimeter)[numInList]).split(">")[0];
+        else if (rule.contains(_altDelimeter)) {
+            result=(rule.split(_altDelimeter)[numInList]).split(">")[0];
+        }
+        else
+            result="";
+        result=result.trim().replace("-","").replace("'","").replace("\"","'").toLowerCase();
         if(_prohibitedNames.contains(result))
             result+="_";
-		return result;
-	}
+        if(result.contains("/")){
+            String[] _ = result.split("/");
+            result = _[_.length-1];
+        }
+        return result;
+    }
+    private String getRuleFromString(OWLObjectPropertyExpression property, int numInList) {
+        return getRuleFromString(property.asOWLObjectProperty(), numInList);
+    }
+    private String getRuleFromString(OWLObjectProperty objectProperty, int numInList) {
+        return getRuleFromString(objectProperty.getAnnotations(_ontology, _ontologyLabel), objectProperty.toString(), numInList);
+    }
+    private String getRuleFromString(OWLIndividual member, int numInList) {
+//        return getRuleFromString(member.get  getAnnotations(_ontologyLabel), entity.toString(), numInList);
+        return getRuleFromString(((OWLClass)member), numInList);
+    }
+    private String getRuleFromString(OWLAxiom entity, int numInList) {
+    	List<OWLObjectPropertyExpression> properties = ((OWLSubPropertyChainAxiomImpl) entity).getPropertyChain();
+        if(properties!=null){
+            if(properties.size()>=numInList)
+                return getRuleFromString(properties.get(numInList-1),numInList);
+            else
+                return getRuleFromString(((OWLSubPropertyChainAxiomImpl) entity).getSuperProperty(),numInList);
+        }
+        return getRuleFromString(entity.toString(),numInList);
+        //return getRuleFromString(entity.getAnnotations(_ontologyLabel), entity.toString(), numInList);
+    }
+    private String getRuleFromString(OWLClass owlClass, int numInList) {
+        return getRuleFromString(owlClass.getAnnotations(_ontology, _ontologyLabel), owlClass.toString(), numInList);
+    }
+    private String getRuleFromString(OWLClassExpression owlClass, int numInList) {
+        return getRuleFromString(owlClass.asOWLClass(), numInList);
+    }
+    private String getRuleFromString(Set<OWLAnnotation> annotations, String label, int numInList) {
+        String message="";
+        if(annotations!=null && annotations.size()>0)   {
+            for (OWLAnnotation annotation : annotations) {
+                message += annotation.getValue();
+                        /*if (annotation.getValue() instanceof OWLLiteral) {
+                            OWLLiteral val = (OWLLiteral) annotation.getValue();
+                            message += val.getLiteral();
+                        }*/
+            }
+        }
+        if(message.length()>0)
+            return message.replace("'","").replace("\"","'");
+        return getRuleFromString(label, numInList);
+    }
     /**
      * (a1). for each C(a) ∈ A: C(a) ← and Cd(a) ← notNC(a).
      * @param member
      * @param entity
      */
-	private void writeRuleA1(String member, String entity){
+    private void writeRuleA1(OWLIndividual member, OWLClass entity){
         _currentRule = "%A1";
         String a = getRuleFromString(member, 1);
         String C = getRuleFromString(entity, 1);
@@ -491,122 +551,124 @@ public class Ontology {
             writeLineToFile(C + "_d(" + a + ")" + rule + ".");
         }
     }
+
     /**
      * (a2). for each R(a, b) ∈ A: R(a, b) ← and Rd(a, b) ← not NR(a, b).
      * @param entity
      */
-    private void writeRuleA2(String entity){
+    private void writeRuleA2(OWLAxiom entity){
         _currentRule = "%A2";
-		String R= getRuleFromString(entity, 1),
-				a= getRuleFromString(entity, 2),
-				b= getRuleFromString(entity, 3);
-		writeLineToFile(R + "(" + a + "," + b + ").");
+        String R= getRuleFromString(entity, 1),
+                a= getRuleFromString(entity, 2),
+                b= getRuleFromString(entity, 3);
+        writeLineToFile(R + "(" + a + "," + b + ").");
         if(isAnyDisjointStatement){//if(isExistRule(R)){
             String rule =  getEqForRule()+_negation + " n_" + R + "(" + a + "," + b + ")";
             writeLineToFile(R + "_d(" + a + "," + b + ")" + rule + ".");
         }
-	}
+    }
+
     /**
      * (i2). for each C1 ⊓ C2 ⊑⊥∈ T : NC2(x) ← C1(x) and NC1(x) ← C2(x).
      * @param expression
      */
-	private void writeRuleI2(String expression){
+    private void writeRuleI2(OWLClassExpression expression){
         _currentRule = "%I2";
-		String C2= getRuleFromString(expression, 1);
-		String C1= getRuleFromString(expression, 2);
+        String C2= getRuleFromString(expression, 1);
+        String C1= getRuleFromString(expression, 2);
         //if(!C1.equals(C2)){
 //        insertIntoExistOntology(C2);
 //        insertIntoExistOntology(C1);
         writeLineToFile("n_" + C2 + "(X) :- " + C1 + "(X).");
         writeLineToFile("n_" + C1 + "(X) :- " + C2 + "(X).");
         //}
-	}
+    }
     /**
      * (c2). foreach C1 ⊓ C2 ⊑ D ∈ T : D(x) ← C1(x) , C2(x) and Dd(x) ← C1d(x), C2d(x), not ND(x).
      * @param expression
      * @param superclass
      */
-	private void writeRuleC2(String expression, String superclass){
+	/*private void writeRuleC2(String expression, String superclass){
         _currentRule = "%C2";
 		String C2= getRuleFromString(expression, 2);
 		String C1= getRuleFromString(expression, 1);
 		String D= getRuleFromString(superclass, 1);
 		writeLineToFile(D + "(X)" + getEqForRule() + C1 + "(X), " + C2 + "(X).");
-        String rule = /*isExistOntology(D)*/isAnyDisjointStatement ? ", " + _negation + " n_" + D + "(X)" : "";
+        String rule = /*isExistOntology(D)*//*isAnyDisjointStatement ? ", " + _negation + " n_" + D + "(X)" : "";
 		writeLineToFile(D + "_d(X)" + getEqForRule() + C1 + "_d(X), " + C2 + "_d(X)" + rule + ".");
-	}
+	}*/
     /**
      * (i3). for each ∃R.C ⊑⊥∈ T : NC(y) ← R(x,y) and NR(x,y) ← C(y) .
      * @param expression
      */
-	private void writeRuleI3(String expression){
+    private void writeRuleI3(OWLClassExpression expression){
         _currentRule = "%I3";
-		String C= getRuleFromString(expression, 2);
-		String R= getRuleFromString(expression, 1);
-		writeLineToFile("n_" + C + "(Y) :- " + R + "(X,Y).");
-		writeLineToFile("n_" + R + "(X,Y) :- " + C + "(Y).");
+        String C= getRuleFromString(expression, 2);
+        String R= getRuleFromString(expression, 1);
+        writeLineToFile("n_" + C + "(Y) :- " + R + "(X,Y).");
+        writeLineToFile("n_" + R + "(X,Y) :- " + C + "(Y).");
         //insertIntoExistRules(R);
         //insertIntoExistOntology(C);
-	}
+    }
     /**
      * (c3). for each ∃R.C ⊑ D ∈ T : D(x) ← R(x,y),C(y) and Dd(x) ← Rd(x, y), Cd(y), not ND(x).
      * @param expression                                                                                ≤
      * @param superclass
      */
-	private void writeRuleC3(String expression, String superclass){
+	/*private void writeRuleC3(String expression, String superclass){
         _currentRule = "%C3";
 		String C= getRuleFromString(expression, 2);
 		String R= getRuleFromString(expression, 1);
 		String D= getRuleFromString(superclass, 1);
 		writeLineToFile(D + "(X)" + getEqForRule() + R + "(X,Y), " + C + "(Y).");
-        String rule = /*isExistOntology(D)*/isAnyDisjointStatement ? ", " + _negation + " n_" + D + "(X)" : "";
+        String rule = /*isExistOntology(D)*//*isAnyDisjointStatement ? ", " + _negation + " n_" + D + "(X)" : "";
 		writeLineToFile(D + "_d(X)" + getEqForRule() + R + "_d(X,Y), " + C + "_d(Y)" + rule + ".");
-	}
+	}*/
     /**
      * (i1). for each C ⊑⊥∈ T : NC(x) ←.
      * @param expression
      */
-	private void writeRuleI1(String expression){
+    private void writeRuleI1(OWLClassExpression expression){
         _currentRule = "%I1";
         String C= getRuleFromString(expression, 1);
-		writeLineToFile("n_" + C + "(X).");
+        writeLineToFile("n_" + C + "(X).");
 //        insertIntoExistOntology(C);
-	}
+    }
     /**
      * (c1). foreach GCI C ⊑ D ∈ T: D(x)←C(x) and Dd(x) ← Cd(x), not ND(x).
      * @param expression
      * @param superclass
      */
-	private void writeRuleC1(String expression, String superclass, boolean lastIndex){
+    private void writeRuleC1(OWLClassExpression expression, OWLClass superclass, boolean lastIndex){
         _currentRule = "%C1";
-		String D= getRuleFromString(superclass, 1);
-		String C= getRuleFromString(expression, lastIndex ? -1 : 1);
+        String D= getRuleFromString(superclass, 1);
+        String C= getRuleFromString(expression, lastIndex ? -1 : 1);
         if(!C.equals(D))
-		    writeLineToFile(D + "(X)" + getEqForRule() + C + "(X).");
+            writeLineToFile(D + "(X)" + getEqForRule() + C + "(X).");
         String rule = /*isExistOntology(D)*/isAnyDisjointStatement ? ", " + _negation + " n_" + D + "(X)" : "";
         if(!(C.equals(D) && rule.length()==0) && isAnyDisjointStatement/*isExistOntology(D)*/)
-		    writeLineToFile(D + "_d(X)" + getEqForRule() + C + "_d(X)" + rule + ".");
-	}
+            writeLineToFile(D + "_d(X)" + getEqForRule() + C + "_d(X)" + rule + ".");
+    }
     /**
      * (r1). foreach RI R⊑S ∈ T: S(x,y)←R(x,y) and Sd(x, y) ← Rd(x, y), not NS(x, y).
      * @param expression
      * @param superclass
      */
-	private void writeRuleR1(String expression, String superclass){
+    private void writeRuleR1(OWLObjectPropertyExpression expression, OWLObjectProperty superclass){
         _currentRule = "%R1";
-		String S= getRuleFromString(superclass, 1);
-		String R= getRuleFromString(expression, 1);
+        String S= getRuleFromString(superclass, 1);
+        String R= getRuleFromString(expression, 1);
         if(!R.equals(S))
-		    writeLineToFile(S + "(X,Y)" + getEqForRule() + R + "(X,Y).");
+            writeLineToFile(S + "(X,Y)" + getEqForRule() + R + "(X,Y).");
         String rule = isAnyDisjointStatement/*isExistOntology(S)*/ ? ", " + _negation + " n_" + S + "(X,Y)":"";
         if(!(R.equals(S) && rule.length()==0) && isAnyDisjointStatement/*isExistRule(R)*/)
-		    writeLineToFile(S + "_d(X,Y)" + getEqForRule() + R + "_d(X,Y)" + rule + ".");
-	}
+            writeLineToFile(S + "_d(X,Y)" + getEqForRule() + R + "_d(X,Y)" + rule + ".");
+    }
     /**
      * (r2). foreach R◦S ⊑ T ∈ T: T(x,z)←R(x,y),S(y,z) and Td(x,z) ← Rd(x,y),Sd(y,z),notNT(x,z).
      * @param axiom
      */
-	private void writeRuleR2(String axiom){
+    private void writeRuleR2(OWLAxiom axiom){
         _currentRule = "%R2";
         String S= getRuleFromString(axiom, 2);
         String R= getRuleFromString(axiom, 1);
@@ -616,9 +678,9 @@ public class Ontology {
             String rule = isAnyDisjointStatement/*isExistOntology(T)*/ ? ", " + _negation + " n_" + T + "(X,Z)":"";
             writeLineToFile(T + "_d(X,Z)" + getEqForRule() + R + "_d(X,Y), " + S + "_d(Y,Z)" + rule + ".");
         }
-	}
+    }
 
-    private void writeEquivalentRule(String owlClass, OWLClassExpression rightPartOfRule){
+    private void writeEquivalentRule(OWLClass owlClass, OWLClassExpression rightPartOfRule){
         _currentRule="%EquivalentRule";
         EquivalentClass rightSideOfRule = getRuleFromEquivalentClasses(rightPartOfRule, 1, 1);
         String rule= getRuleFromString(owlClass,1)+"(X1) "+_eq+" "+rightSideOfRule.getFinalRule();
@@ -629,7 +691,7 @@ public class Ontology {
         _currentRule="%NegEquivalentRule";
         EquivalentClass rules= getRuleFromEquivalentClasses(classExpression, 1, 1);
         if(!(owlClass.isOWLThing() || owlClass.isOWLNothing()))
-            rules.addRule(getRuleFromString(owlClass.toString(),1),1,1, EquivalentClass.OntologyType.ONTOLOGY);
+            rules.addRule(getRuleFromString(owlClass,1),1,1, EquivalentClass.OntologyType.ONTOLOGY);
         for(String rule : rules.getNegRules()){
             writeLineToFile(rule);
         }
@@ -643,10 +705,11 @@ public class Ontology {
         */
     }
 
+
     private void writeDoubledRules(OWLClassExpression classExpression, OWLClassExpression owlClass){
         _currentRule="%DoubledRule";
         EquivalentClass rules = getRuleFromEquivalentClasses(classExpression, 1, 1);
-        String _owlClass=getRuleFromString(owlClass.toString(), 1);
+        String _owlClass=getRuleFromString(owlClass, 1);
         writeLineToFile(_owlClass+"(X1)"+ getEqForRule()+rules.getFinalRule());
         if(isAnyDisjointStatement){//if(isExistOntology(_owlClass)){
             String rule=_owlClass+"_d(X1)"+getEqForRule()+rules.getDoubledRules()+", " + _negation + " n_" + _owlClass + "(X1).";
@@ -656,16 +719,28 @@ public class Ontology {
 
     private void autoTable(){
         String name;
+
         for(OWLClass owlClass : _owlClasses){
             if(!(owlClass.isOWLThing() || owlClass.isOWLNothing())){
-                name=getRuleFromString(owlClass.toString(),1);
+                name=getRuleFromString(owlClass,1);
+//                printLog(owlClass.get +owlClass.getIRI().toString());
+                //String message = ((OWLAnnotation)owlClass.getAnnotations(_ontology, label)[0]).getValue().toString();//"";
+
+//                for (OWLAnnotation annotation : owlClass.getAnnotations(_ontology, label)) {
+//                	message += annotation.getValue();
+                    /*if (annotation.getValue() instanceof OWLLiteral) {
+                        OWLLiteral val = (OWLLiteral) annotation.getValue();
+                        message += val.getLiteral();
+                    }*/
+//                }
+//                printLog(message);
                 writeLineToTopFile(":- table " + name + "/1.");
                 if(isAnyDisjointStatement)//if(isExistOntology(name))
                     writeLineToTopFile(":- table "+name+"_d/1.");
             }
         }
         for(OWLObjectProperty objectProperty : _objectProperties){
-            name=getRuleFromString(objectProperty.toString(),1);
+            name=getRuleFromString(objectProperty,1);
             writeLineToTopFile(":- table " + name + "/2.");
             if(isAnyDisjointStatement)//if(isExistRule(name))
                 writeLineToTopFile(":- table "+name+"_d/2.");
@@ -673,30 +748,32 @@ public class Ontology {
     }
 
 
+
     /**
      * Going throw all ontologies and preprocess them.
      */
     private void fillExistsOntologiesAndRules(){
-        String _owlExpression;
+//        String _owlExpression;
         boolean isTopClass;
         ClassExpressionType expressionType;
-
+//        _ontology.getDisjointClassesAxioms(arg0)
         //Init loop throw all ontologies
         for(OWLClass owlClass : _owlClasses){
             //Going into loop throw all Disjoint classes
             for(OWLClassExpression owlClassExpression : owlClass.getDisjointClasses(_ontology)){
-            	isAnyDisjointStatement = true;
+                isAnyDisjointStatement = true;
 //                OWLClassExpression hasPartSomeNose = _owlDataFactory.getOWLObjectSomeValuesFrom(_owlDataFactory.getOWLObjectProperty(owlClassExpression.), owlClass);
                 isTopClass=owlClass.isOWLThing() || owlClass.isOWLNothing();
                 expressionType=owlClassExpression.getClassExpressionType();
-                _owlExpression=owlClassExpression.toString();
+//                _owlExpression=owlClassExpression.toString();
+
                 if(expressionType==ClassExpressionType.OBJECT_SOME_VALUES_FROM && isTopClass){
-                    writeRuleI3(_owlExpression);
+                    writeRuleI3(owlClassExpression);
                 }else if(expressionType==ClassExpressionType.OBJECT_INTERSECTION_OF && isTopClass){
-                    writeRuleI2(_owlExpression);
+                    writeRuleI2(owlClassExpression);
                 }else{// if(isTopClass){
                     if(expressionType==ClassExpressionType.OWL_CLASS && isTopClass)
-                        writeRuleI1(_owlExpression);
+                        writeRuleI1(owlClassExpression);
                     else
                         writeNegEquivalentRules(owlClassExpression, owlClass);
                 }
@@ -707,20 +784,20 @@ public class Ontology {
      * Going into loop of all classes
      */
     private void loopThrowAllClasses(){
-        String _owlClass;
-        String _owlExpression;
+//        String _owlClass;
+//        String _owlExpression;
         boolean isTopClass;
-        ClassExpressionType expressionType;
-        OWLClassExpression leftPartOfRule;
+//        ClassExpressionType expressionType;
+//        OWLClassExpression leftPartOfRule;
         OWLClassExpression rightPartOfRule;
-        String leftPartOfRuleString;
-        String rightPartOfRuleString;
+//        String leftPartOfRuleString;
+//        String rightPartOfRuleString;
         List<OWLClassExpression> equivalentClasses;
         for(OWLClass owlClass : _owlClasses){
             equivalentClasses = new ArrayList<OWLClassExpression>();
-            _owlClass=owlClass.toString();
+//            _owlClass=owlClass.toString();
             for(OWLIndividual individual : owlClass.getIndividuals(_ontology)){
-                writeRuleA1(individual.toString(), _owlClass);
+                writeRuleA1(individual, owlClass);
             }
 
             for(OWLClassExpression owlClassExpression : owlClass.getSubClasses(_ontology)){
@@ -739,11 +816,11 @@ public class Ontology {
                 equivalentClasses = removeDuplicates(equivalentClasses);
                 for(int i=0; i<equivalentClasses.size(); i++){
                     rightPartOfRule=equivalentClasses.get(i);
-                    rightPartOfRuleString=rightPartOfRule.toString();
+                    //rightPartOfRuleString=rightPartOfRule.toString();
                     if(rightPartOfRule.getClassExpressionType()==ClassExpressionType.OWL_CLASS){
-                        writeRuleC1(rightPartOfRuleString, _owlClass, false);
+                        writeRuleC1(rightPartOfRule, owlClass, false);
                     }else{
-                        writeEquivalentRule(_owlClass, rightPartOfRule);
+                        writeEquivalentRule(owlClass, rightPartOfRule);
                     }
                 }
             }
@@ -753,15 +830,15 @@ public class Ontology {
         for(OWLObjectProperty objectProperty : _objectProperties){
             for(OWLAxiom axiom : objectProperty.getReferencingAxioms(_ontology)){
                 if(axiom.getAxiomType()==AxiomType.OBJECT_PROPERTY_ASSERTION){
-                    writeRuleA2(axiom.toString());
+                    writeRuleA2(axiom);
                 }
             }
             for(OWLObjectPropertyExpression objectPropertyExpression : objectProperty.getSubProperties(_ontology)){
-                writeRuleR1(objectPropertyExpression.toString(), objectProperty.toString());
+                writeRuleR1(objectPropertyExpression, objectProperty);
             }
         }
         for(OWLAxiom axiom : _ontology.getAxioms(AxiomType.SUB_PROPERTY_CHAIN_OF)){
-            writeRuleR2(axiom.toString());
+            writeRuleR2(axiom);
         }
     }
 
@@ -778,10 +855,11 @@ public class Ontology {
 
     private EquivalentClass getRuleFromEquivalentClasses(OWLClassExpression owlClassExpression, int localIterator, int iterator){
         EquivalentClass equivalentClass = new EquivalentClass(iterator);
+        //OWLLabelAnnotation a = (OWLLabelAnnotation)owlClassExpression;
         switch (owlClassExpression.getClassExpressionType()){
             case OWL_CLASS:{
                 equivalentClass.addRule(
-                        getRuleFromString(owlClassExpression.toString(),1),
+                        getRuleFromString(owlClassExpression,1),
                         localIterator,
                         iterator,
                         EquivalentClass.OntologyType.ONTOLOGY
@@ -799,7 +877,7 @@ public class Ontology {
                 OWLClassExpression classExpression = ((OWLObjectSomeValuesFromImpl) owlClassExpression).getFiller();
                 OWLObjectPropertyExpression property = ((OWLObjectSomeValuesFromImpl) owlClassExpression).getProperty();
 
-                equivalentClass.addRule(getRuleFromString(property.toString(),1), localIterator, equivalentClass.incrementIterator(), EquivalentClass.OntologyType.RULE);
+                equivalentClass.addRule(getRuleFromString(property,1), localIterator, equivalentClass.incrementIterator(), EquivalentClass.OntologyType.RULE);
                 equivalentClass.updateClass(getRuleFromEquivalentClasses(classExpression, ++localIterator, equivalentClass.getVariableIterator()));
                 break;
             }
@@ -808,36 +886,38 @@ public class Ontology {
         return equivalentClass;
     }
 
-	/**
-	 * @param args
-	 * @throws OWLOntologyCreationException
-	 * @throws IOException
-	 * @throws ParserException 
-	 * @throws OWLOntologyStorageException 
-	 */
-	public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParserException, OWLOntologyStorageException{
-		
-		String currentDir=new java.io.File(".").getCanonicalPath();
-		JFileChooser file = new JFileChooser(currentDir);
-		file.showDialog(null, "Choose ontology");
-		Date date1=new Date();
-		Ontology ontology = new Ontology(file.getSelectedFile().getAbsolutePath());
-//        Ontology ontology = new Ontology("/Users/vadimivanov/Desktop/equival1.owl");
-		ontology.proceed();
-		Date date2=new Date();
-		long diff=date2.getTime() - date1.getTime();
-		int val = file.showDialog(null, "Choose rules");
+
+    /**
+     * @param args
+     * @throws OWLOntologyCreationException
+     * @throws IOException
+     * @throws ParserException
+     * @throws OWLOntologyStorageException
+     */
+    public static void main(String[] args) throws OWLOntologyCreationException, IOException, ParserException, OWLOntologyStorageException{
+
+        String currentDir=new java.io.File(".").getCanonicalPath();
+//        JFileChooser file = new JFileChooser(currentDir);
+//        file.showDialog(null, "Choose ontology");
+        Date date1=new Date();
+//        Ontology ontology = new Ontology(file.getSelectedFile().getAbsolutePath());
+        Ontology ontology = new Ontology("/Users/vadimivanov/Documents/University/Ontologies/really_short_SnomedFunctSyn.owl");
+        ontology.proceed();
+        Date date2=new Date();
+        long diff=date2.getTime() - date1.getTime();
         date1=new Date();
-        if(val==JFileChooser.APPROVE_OPTION){
-            ontology.appendRules(file.getSelectedFile().getAbsolutePath());
-        }
+//        int val = file.showDialog(null, "Choose rules");
+//        if(val==JFileChooser.APPROVE_OPTION){
+//            ontology.appendRules(file.getSelectedFile().getAbsolutePath());
+//        }
+        ontology.appendRules("/Users/vadimivanov/Downloads/rules.p");
+
 
         ontology.Finish();
-		date2=new Date();
-		diff+=date2.getTime() - date1.getTime();
-		System.out.println("I'm done. it took "+diff+" milisec");
-	}
+        date2=new Date();
+        diff+=date2.getTime() - date1.getTime();
+        System.out.println("I'm done. it took "+diff+" milisec");
+    }
 
-	
+
 }
-
