@@ -20,11 +20,11 @@ Import-Package: org.osgi.framework,org.apache.log4j,javax.swing,javax.
  javax.swing.text,javax.swing.text.html,javax.swing.text.html.parser,j
  avax.swing.text.rtf,javax.swing.tree,javax.swing.undo,javax.xml.parse
  rs
-Bundle-Version: 0.9.0
+Bundle-Version: 0.9.1
 Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  n,org.protege.editor.core.application;bundle-version="4.1.0",org.prot
  ege.editor.owl;bundle-version="4.1.0",org.semanticweb.owl.owlapi;bund
  le-version="3.0.0"
 Built-By: vadimivanov
-Build-Date: 04/29/2013 11:06 AM
+Build-Date: 04/29/2013 10:15 PM
 
