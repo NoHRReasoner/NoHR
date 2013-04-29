@@ -229,7 +229,7 @@ public class Ontology {
             in.close();
         }
     }
-    public void appendRules(List<String> _rules) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, ParserException {
+    public void appendRules(HashSet<String> _rules) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, ParserException {
         //startOuters(true);
         appendedRules = new HashSet<String>();//new ArrayList<String>(1000000);
 		/*if(!isTranslated){
@@ -341,7 +341,7 @@ public class Ontology {
             rule= rule.replaceFirst("\\(","_d(");
         else
             rule= rule+"_d";
-        printLog(rule);
+//        printLog(rule);
         return rule;
     }
     protected String getNegRule(String rule){
@@ -383,8 +383,7 @@ public class Ontology {
     protected void getDiffTime(Date startDate, String message){
         Date stoped=new Date();
         long diff=stoped.getTime() - startDate.getTime();
-//		if(debug)
-        printLog(message+" "+diff+" milisec");
+		printLog(message+" "+diff+" milisec");
     }
     /**
      * During preprocessing append to array ontologies

@@ -1,17 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
     <VSNode splits="0.3 0.7">
-        <CNode>
-            <Component label="Asserted class hierarchy">
+       <!--  <CNode>
+            <Component label="Asserted2 class hierarchy">
                 <Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
             </Component>
-            <Component label="Inferred class hierarchy">
+            <Component label="Inferred2 class hierarchy">
                 <Property id="pluginId" value="org.protege.editor.owl.InferredOWLClassHierarchy"/>
             </Component>
-        </CNode>
+        </CNode> -->
+        <HSNode splits="0.6 0.4">
+            <CNode>
+                <Component label="Class hierarchy">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
+                </Component>
+                <Component label="Class hierarchy (inferred)">
+                    <Property id="pluginId" value="org.protege.editor.owl.InferredOWLClassHierarchy"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="Object property hierarchy">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLObjectPropertyTree"/>
+                </Component>
+                <Component label="Data property hierarchy">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLDataPropertyTree"/>
+                </Component>
+                <Component label="Individuals by type">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLIndividualsByType"/>
+                </Component>
+                <Component label="Annotation property hierarchy">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLAnnotationPropertyTree"/>
+                </Component>
+                <Component label="Datatypes">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLDatatypeList"/>
+                </Component>
+            </CNode>
+        </HSNode>
         <CNode>
             <Component label="Ontology to Rules View Component">
-                <Property id="pluginId" value="org.protege.editor.owl.examples.tab.ExampleViewComponent"/>
+                <Property id="pluginId" value="protege.editor.views.ViewComponent"/>
             </Component>
         </CNode>
     </VSNode>

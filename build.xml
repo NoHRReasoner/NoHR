@@ -30,7 +30,7 @@
         This may be the only setting that the developer needs to
         change.
      -->
-   <property name = "plugin"          value = "ontologyToRules"/>
+   <property name = "plugin"          value = "hybrid.query.plugin"/>
 
    
    <!-- 

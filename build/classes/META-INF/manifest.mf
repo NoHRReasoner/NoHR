@@ -1,17 +1,16 @@
 Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
-Created-By: 1.6.0_43-b01-447-11M4203 (Apple Inc.)
+Created-By: 1.6.0_45-b06-451-11M4406 (Apple Inc.)
 Bundle-ManifestVersion: 2
-Bundle-Name: Ontology to Rules Plugin
-Bundle-SymbolicName: org.protege.editor.owl.examples.tab;singleton:=tr
- ue
+Bundle-Name: Hybrid Query plugin
+Bundle-SymbolicName: hybrid.query.views;singleton:=true
 Bundle-Category: protege
 Bundle-ContactAddress: ivanovvvadim@gmail.com
 Bundle-DocURL: http://protege.stanford.edu
 Bundle-Description: A sample tab for learning how to write a plugin
 Bundle-Vendor: Vadim Ivanov 
-Update-Url: http://co-ode-owl-plugins.googlecode.com/svn/trunk/org.coo
- de.annotate/update.properties
+Update-Url: https://raw.github.com/fustic/protegeplugin/master/update.
+ properties
 Bundle-ClassPath: .,lib/examplelib.jar, lib/interprolog.jar, lib/owlap
  i-bin.jar, lib/elk-owlapi.jar, lib/miglayout-4.0-swing.jar
 Import-Package: org.osgi.framework,org.apache.log4j,javax.swing,javax.
@@ -21,11 +20,11 @@ Import-Package: org.osgi.framework,org.apache.log4j,javax.swing,javax.
  javax.swing.text,javax.swing.text.html,javax.swing.text.html.parser,j
  avax.swing.text.rtf,javax.swing.tree,javax.swing.undo,javax.xml.parse
  rs
-Bundle-Version: 4.0.9
+Bundle-Version: 0.9.0
 Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  n,org.protege.editor.core.application;bundle-version="4.1.0",org.prot
  ege.editor.owl;bundle-version="4.1.0",org.semanticweb.owl.owlapi;bund
  le-version="3.0.0"
 Built-By: vadimivanov
-Build-Date: 04/22/2013 03:21 PM
+Build-Date: 04/29/2013 11:00 AM
 

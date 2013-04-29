@@ -2,40 +2,39 @@
 <?eclipse version="3.0"?>
 
 <plugin>
-   <extension
-         id="ExampleViewComponent"
-         point="org.protege.editor.core.application.ViewComponent">
-      <label
-            value="Querying">
-      </label>
+   <extension id="ViewComponent" point="org.protege.editor.core.application.ViewComponent">
+      <label value="Hybrid Query"></label>
       <headerColor value="@org.protege.classcolor"/>
-      <class
-            value="org.protege.editor.owl.examples.tab.ExampleViewComponent">
-      </class>
-      <category
-            value="@org.protege.ontologycategory">
-      </category>
+      <class value="hybrid.query.views.ViewComponent"></class>
+      <category value="@org.protege.ontologycategory"></category>
    </extension>
-   <extension
-         id="ExampleWorkspaceTab"
-         point="org.protege.editor.core.application.WorkspaceTab">
-      <label
-            value="Ontology To Rules">
-      </label>
+   <extension id="RulesViewComponent" point="org.protege.editor.core.application.ViewComponent">
+      <label value="Hybrid Query Rules"></label>
       <headerColor value="@org.protege.classcolor"/>
-      <class
-            value="org.protege.editor.owl.examples.tab.ExampleWorkspaceTab">
-      </class>
-      <index
-            value="X">
-      </index>
-      <editorKitId
-            value="OWLEditorKit">
-      </editorKitId>
-      <defaultViewConfigFileName
-            value="viewconfig-ontologyToRule.xml">
-      </defaultViewConfigFileName>
+      <class value="hybrid.query.views.RulesViewComponent"></class>
+      <category value="@org.protege.ontologycategory"></category>
    </extension>
-
-
+   <extension id="RulesManagerViewComponent" point="org.protege.editor.core.application.ViewComponent">
+      <label value="Rules Editor"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="hybrid.query.views.RulesManagerViewComponent"></class>
+      <category value="@org.protege.ontologycategory"></category>
+   </extension>
+   <extension id="WorkspaceTab" point="org.protege.editor.core.application.WorkspaceTab">
+      <label value="Hybrid Query"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="hybrid.query.views.WorkspaceTabQuery"></class>
+      <index value="Y"></index>
+      <editorKitId value="OWLEditorKit"></editorKitId>
+      <defaultViewConfigFileName value="viewconfig-querytab.xml"></defaultViewConfigFileName>
+   </extension>
+   <extension id="RulesManagerTab" point="org.protege.editor.core.application.WorkspaceTab">
+      <label value="H. Rules"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="hybrid.query.views.RulesManagerTab"></class>
+      <index value="X"></index>
+      <editorKitId value="OWLEditorKit"></editorKitId>
+      <defaultViewConfigFileName value="viewconfig-rulesmanagertab.xml"></defaultViewConfigFileName>
+   </extension>
+   
 </plugin>
