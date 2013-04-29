@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <VSNode splits="0.3 0.7">
+        <HSNode splits="0.6 0.4">
+            <CNode>
+                <Component label="Class hierarchy">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
+                </Component>
+                <Component label="Class hierarchy (inferred)">
+                    <Property id="pluginId" value="org.protege.editor.owl.InferredOWLClassHierarchy"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="Hybrid query rules">
+                    <Property id="pluginId" value="hybrid.query.views.RulesViewComponent"/>
+                </Component>
+            </CNode>
+        </HSNode>
+        <CNode>
+            <Component label="Ontology to Rules View Component">
+                <Property id="pluginId" value="hybrid.query.views.ViewComponent"/>
+            </Component>
+        </CNode>
+    </VSNode>
+</layout>
