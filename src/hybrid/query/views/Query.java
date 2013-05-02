@@ -24,8 +24,8 @@ import com.declarativa.interprolog.XSBSubprocessEngine;
 
 public class Query implements PrologOutputListener{
 	private JTextArea _outPutLog;
-	private OWLModelManager _owlModelManager;
-	private boolean isOntologyChanged;
+	private static OWLModelManager _owlModelManager;
+	private static boolean isOntologyChanged;
 	private boolean isCompiled;
 	private boolean isEngineStarted;
 	private XSBSubprocessEngine _engine;
@@ -46,6 +46,12 @@ public class Query implements PrologOutputListener{
 	    
 	}
 	
+	public static void dispose(){
+		_owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
+		_owlModelManager.removeListener(modelManagerListener);
+		Rules.dispose();
+	}
+	
 	public void printLog(String text) {
 		if(Config.isDebug){
 			printInfo(text);
@@ -59,12 +65,12 @@ public class Query implements PrologOutputListener{
 	}
 	
 	// Fired when axioms are added and removed
-	private OWLOntologyChangeListener ontologyChangeListener = new OWLOntologyChangeListener() {
+	private static OWLOntologyChangeListener ontologyChangeListener = new OWLOntologyChangeListener() {
 		public void ontologiesChanged(List<? extends OWLOntologyChange> changes) {
 			isOntologyChanged = true;
 		}
 	};
-	private OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
+	private static OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
 		
 		@Override
 		public void handleChange(OWLModelManagerChangeEvent arg0) {
@@ -147,6 +153,8 @@ public class Query implements PrologOutputListener{
 		
 		if(isQueriable()){
 			printInfo(command+Config.nl);
+			command = _ontology.ruleToLowerCase(command);
+			command = _ontology.replaceSymbolsInWholeRule(command);
 			((SubprocessEngine)_engine).sendAndFlushLn(command);
 		}
 		

@@ -80,6 +80,27 @@ public class EquivalentClass {
         }
         return result;
     }
+    public List<String> getNegRulesHeadForTabling(){
+    	List<String> result = new ArrayList<String>();
+        String _rule="";
+        EquivalentRules r;
+        for(int i=0; i<rulesList.size();i++){
+            r=rulesList.get(i);
+            _rule="n_"+r.name+"/";
+            switch (r.ontologyType){
+                case ONTOLOGY:{
+                    _rule+="1";
+                    break;
+                }
+                case RULE:{
+                	_rule+="2";
+                    break;
+                }
+            }
+            result.add(_rule);
+        }
+        return result;
+    }
     public List<EquivalentRules> getListOfRules(){
         return rulesList;
     }

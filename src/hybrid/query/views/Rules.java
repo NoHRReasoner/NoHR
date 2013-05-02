@@ -10,11 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JTextArea;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 public class Rules {
-	private static HashSet<String> _rules = new HashSet<String>();
+//	private static HashSet<String> _rules = new HashSet<String>();
+	private static ArrayList<String> _rules = new ArrayList<String>();
 	private static HashSet<JTextArea> _listners = new HashSet<JTextArea>();
 	public static boolean isRulesChanged;
 	public static boolean isRulesOntologyChanged;
@@ -48,7 +47,7 @@ public class Rules {
 	}
 	
 	public static void deleteAllRules(){
-		_rules = new HashSet<String>();
+		resetRules();
 		for (JTextArea textArea : _listners) {
 			textArea.setText("");
 		}
@@ -71,12 +70,12 @@ public class Rules {
 			StringReader sr = new StringReader(_currentTextArea.getText()); 
 			BufferedReader br = new BufferedReader(sr); 
 			String nextLine = ""; 
-			_rules = new HashSet<String>();
+			resetRules();
 			try {
 				while ((nextLine = br.readLine()) != null){
 					nextLine=nextLine.trim();
 					if(nextLine.length()>0){
-						//_currentTextArea.append(nextLine+" !!!\n");
+//						_currentTextArea.append(nextLine+" !!!\n");
 						_rules.add(nextLine);
 					}
 				}
@@ -128,16 +127,32 @@ public class Rules {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 //				textarea.append("Key Pressed "+ arg0.getKeyCode()+Config.nl);
+				
 				isRulesChanged=true;
+				isRulesOntologyChanged = true;
 				_currentTextArea = textarea;
 			}
 		});
 	}
+	
+	public static void dispose() {
+		for (JTextArea textArea : _listners) {
+			textArea.setText("");
+		}
+		resetRules();
+	}
 	public static void setCurrentTextArea(JTextArea textarea) {
 		_currentTextArea=textarea;
 	}
-	public static HashSet<String> getRules() {
+	/*public static HashSet<String> getRules() {
 		return _rules;
+	}*/
+	public static ArrayList<String> getRules() {
+		recollectRules(false);
+		return _rules;
+	}
+	private static void resetRules(){
+		_rules = new ArrayList<String>();
 	}
 	
 }

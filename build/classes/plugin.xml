@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?eclipse version="3.0"?>
+<?xml version="1.0" ?>
 
-<plugin>
+<plugin id="hybrid.query.view" version="0.9.2.HybridQueryTab">
    <extension id="ViewComponent" point="org.protege.editor.core.application.ViewComponent">
       <label value="Hybrid Query"></label>
       <headerColor value="@org.protege.classcolor"/>
@@ -15,12 +14,12 @@
       <category value="@org.protege.ontologycategory"></category>
    </extension>
    <extension id="RulesManagerViewComponent" point="org.protege.editor.core.application.ViewComponent">
-      <label value="Rules Editor"></label>
+      <label value="Rule Editor"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.RulesManagerViewComponent"></class>
       <category value="@org.protege.ontologycategory"></category>
    </extension>
-   <extension id="WorkspaceTab" point="org.protege.editor.core.application.WorkspaceTab">
+   <extension id="WorkspaceTab" point="org.protege.editor.core.application.WorkspaceTab" version="0.9.2">
       <label value="Hybrid Query"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.WorkspaceTabQuery"></class>

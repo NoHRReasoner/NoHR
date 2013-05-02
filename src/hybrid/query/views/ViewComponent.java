@@ -1,56 +1,18 @@
 package hybrid.query.views;
-import local.translate.Ontology;
-
-import java.util.*;
-
-import javax.print.attribute.standard.MediaSize.Other;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 
 import org.apache.log4j.Logger;
-import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
-import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.protege.editor.owl.model.hierarchy.AssertedClassHierarchyProvider;
-import org.protege.editor.owl.ui.tree.OWLModelManagerTree;
-import org.protege.editor.owl.ui.tree.OWLObjectTree;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.protege.owl.example.Metrics;
-import org.protege.editor.core.ui.util.*;
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.expression.ParserException;
-import org.semanticweb.owlapi.model.*;
-//import org.semanticweb.owlapi.model.OWLClass;
-
-import com.declarativa.interprolog.gui.XSBSubprocessEngineWindow;
 
 
 public class ViewComponent extends AbstractOWLViewComponent {
@@ -136,10 +98,11 @@ public class ViewComponent extends AbstractOWLViewComponent {
         subC.gridwidth=1;
         subC.gridheight=1;
         subC.gridy = 0;
-        subC.weightx = 0.8;
+        subC.weightx = 0.95;
         resultPanel.add(tabPanel, subC);
+        subC.anchor = GridBagConstraints.NORTHWEST;
         subC.gridx = 1;
-        subC.weightx = 0.2;
+        subC.weightx = 0.05;
         resultPanel.add(addSettingsPanel(), subC);
         
         panel.add(resultPanel, c);
@@ -156,6 +119,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
 	@Override
 	protected void disposeOWLView() {
 		metricsComponent.dispose();
+//		_query.dispose();
 	}
 	
 	protected JButton addProcessButton(){
@@ -164,8 +128,10 @@ public class ViewComponent extends AbstractOWLViewComponent {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_query.query(_textField.getText());
-            	_textField.setText("");
+				if(_textField.getText().length()>0){
+					_query.query(_textField.getText());
+	            	_textField.setText("");
+				}
 			}
 		});
 		
@@ -197,13 +163,53 @@ public class ViewComponent extends AbstractOWLViewComponent {
 	}
 	protected JPanel addSettingsPanel() {
 		JPanel settingsPanel = new JPanel(new GridBagLayout());
-        settingsPanel.setBorder(BorderFactory.createTitledBorder("settings"));
+        settingsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
+//        settingsPanel.set
         
-        JLabel label = new JLabel("Setting 1");
-        JCheckBox checkBox = new JCheckBox("checkbox 1");
+        JPanel panelTop = new JPanel(new GridBagLayout());
+        JPanel panelBottom = new JPanel(new GridBagLayout());
+        JPanel panelTopBottom = new JPanel(new GridBagLayout());
         
-        settingsPanel.add(label);
-        settingsPanel.add(checkBox);
+//        panelTop.setBorder(BorderFactory.createTitledBorder("1"));
+//        panelBottom.setBorder(BorderFactory.createTitledBorder("2"));
+        GridBagConstraints c = new GridBagConstraints();
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth=1;
+        c.gridheight = 1;
+        c.weightx = 1;
+        
+        JCheckBox oneChB = new JCheckBox("one");
+        JCheckBox allChB = new JCheckBox("all");
+        JCheckBox trueChB = new JCheckBox("true");
+        JCheckBox undefinedChB = new JCheckBox("undefined");
+        JCheckBox inconsistentChB = new JCheckBox("inconsistent");
+        
+        panelTop.add(oneChB,c);
+        c.gridy=2;
+        panelTop.add(allChB,c);
+        
+        c.gridy=1;
+        panelBottom.add(trueChB,c);
+        c.gridy=2;
+        panelBottom.add(undefinedChB,c);
+        c.gridy=3;
+        panelBottom.add(inconsistentChB,c);
+        
+        c.weighty = 0.1;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.BOTH;
+        c.ipady = 0;
+        c.gridy=1;
+        settingsPanel.add(panelTop, c);
+        c.gridy=2;
+        c.ipady = 10;
+        settingsPanel.add(panelBottom, c);
+        c.weighty = 0.8;
+        c.gridy=3;
+        settingsPanel.add(panelTopBottom, c);
+        
         return settingsPanel;
 	}
 	

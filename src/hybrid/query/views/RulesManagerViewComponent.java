@@ -1,56 +1,25 @@
 package hybrid.query.views;
-import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.DefaultCaret;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 
 import org.apache.log4j.Logger;
-import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
-import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.protege.editor.owl.model.hierarchy.AssertedClassHierarchyProvider;
-import org.protege.editor.owl.ui.tree.OWLModelManagerTree;
-import org.protege.editor.owl.ui.tree.OWLObjectTree;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.protege.owl.example.Metrics;
-import org.protege.editor.core.ui.util.*;
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.expression.ParserException;
-import org.semanticweb.owlapi.model.*;
-//import org.semanticweb.owlapi.model.OWLClass;
-
-import com.declarativa.interprolog.gui.XSBSubprocessEngineWindow;
-
 
 public class RulesManagerViewComponent extends AbstractOWLViewComponent {
     private static final long serialVersionUID = -4515710047558710080L;
@@ -111,6 +80,7 @@ public class RulesManagerViewComponent extends AbstractOWLViewComponent {
 	@Override
 	protected void disposeOWLView() {
 		metricsComponent.dispose();
+		Rules.dispose();
 	}
 
 	protected JButton addLoadRulesButton(){
