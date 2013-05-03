@@ -41,6 +41,7 @@ import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredEquivalentClassAxiomGenerator;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyAssertionAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
 
@@ -113,7 +114,7 @@ public class Ontology {
     private boolean isAnyDisjointStatement = false;
     private String _currentRule;
 
-    public List<String> _prohibitedNames = Arrays.asList("table","attribute");
+    public List<String> _prohibitedNames = Arrays.asList("table","attribute","true","false");
 
     private List<String> prologCommands = Arrays.asList(":- abolish_all_tables.",":- set_prolog_flag(unknown,fail).");
 
@@ -262,10 +263,10 @@ public class Ontology {
         rule = rule.replace(".", "");
         rule = ruleToLowerCase(rule);//processRule(rule);
         String[] arrayRule = rule.split(_eq);
-        String leftSideRule = arrayRule[0].trim();
+        String leftSideRule = replaceSymbolsInRule(arrayRule[0].trim());
         String rightSideRule = null;
         if(arrayRule.length>1 && arrayRule[1]!=null)
-            rightSideRule = arrayRule[1].trim();
+            rightSideRule = replaceSymbolsInWholeRule(arrayRule[1].trim());
         writeArule(leftSideRule, rightSideRule);
         tablePredicateFromRule(leftSideRule);
         if(isAnyDisjointStatement)
@@ -508,15 +509,37 @@ public class Ontology {
     }
     private String getRuleFromString(OWLIndividual member, int numInList) {
 //        return getRuleFromString(member.get  getAnnotations(_ontologyLabel), entity.toString(), numInList);
+        if(member instanceof OWLNamedIndividual)                      {
+            for(OWLEntity entity: member.getSignature()){
+                return getRuleFromString(entity, 1);
+            }
+        }
         return getRuleFromString(((OWLClass)member), numInList);
     }
+
+    private String getRuleFromString(OWLEntity entity, int numInList) {
+        return getRuleFromString(entity.getAnnotations(_ontology, _ontologyLabel), entity.toString(), numInList);
+    }
+
+
     private String getRuleFromString(OWLAxiom entity, int numInList) {
-    	List<OWLObjectPropertyExpression> properties = ((OWLSubPropertyChainAxiomImpl) entity).getPropertyChain();
-        if(properties!=null){
-            if(properties.size()>=numInList)
-                return getRuleFromString(properties.get(numInList-1),numInList);
-            else
-                return getRuleFromString(((OWLSubPropertyChainAxiomImpl) entity).getSuperProperty(),numInList);
+        if(entity instanceof OWLSubPropertyChainAxiomImpl){
+            List<OWLObjectPropertyExpression> properties = ((OWLSubPropertyChainAxiomImpl) entity).getPropertyChain();
+            if(properties!=null){
+                if(properties.size()>=numInList)
+                    return getRuleFromString(properties.get(numInList-1),numInList);
+                else
+                    return getRuleFromString(((OWLSubPropertyChainAxiomImpl) entity).getSuperProperty(),numInList);
+            }
+        }else if(entity instanceof OWLObjectPropertyAssertionAxiomImpl){
+            switch (numInList){
+                case 1:
+                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getProperty(), numInList);
+                case 2:
+                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getSubject(),numInList);
+                case 3:
+                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getObject(),numInList);
+            }
         }
         return getRuleFromString(entity.toString(),numInList);
         //return getRuleFromString(entity.getAnnotations(_ontologyLabel), entity.toString(), numInList);
@@ -1009,10 +1032,13 @@ public class Ontology {
 	}
     public String replaceSymbolsInWholeRule(String rule) {
     	rule = rule.trim().replaceAll("'","").replaceAll("\"","'").replaceAll("-", "");
-    	
-    	for (String name : _prohibitedNames) {
-			rule.replaceAll(name,name+"_");
-		}
+    	if(_prohibitedNames.contains(rule)){
+    		rule+="_";
+    	}else{
+	    	for (String name : _prohibitedNames) {
+				rule.replaceAll(name,name+"_");
+			}
+    	}
     	/*
     	if(rule.contains("/")){
             String[] _ = rule.split("/");

@@ -153,9 +153,12 @@ public class Query implements PrologOutputListener{
 		
 		if(isQueriable()){
 			printInfo(command+Config.nl);
+			if(command.endsWith(".")){
+				command = command.substring(0, command.length()-1);
+			}
 			command = _ontology.ruleToLowerCase(command);
 			command = _ontology.replaceSymbolsInWholeRule(command);
-			((SubprocessEngine)_engine).sendAndFlushLn(command);
+			((SubprocessEngine)_engine).sendAndFlushLn(command+".");
 		}
 		
 		
