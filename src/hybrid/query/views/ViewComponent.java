@@ -183,7 +183,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
         c.weightx = 1;
         
         JRadioButton oneChB = new JRadioButton("one");
-        JRadioButton allChB = new JRadioButton("all");
+        JRadioButton allChB = new JRadioButton("all",true);
         ButtonGroup group = new ButtonGroup();
         group.add(oneChB);
         group.add(allChB);
