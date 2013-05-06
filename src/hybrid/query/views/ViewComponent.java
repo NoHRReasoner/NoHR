@@ -182,14 +182,14 @@ public class ViewComponent extends AbstractOWLViewComponent {
         c.gridheight = 1;
         c.weightx = 1;
         
-        JRadioButton oneChB = new JRadioButton("one");
+        JRadioButton oneChB = new JRadioButton("one", true);
         JRadioButton allChB = new JRadioButton("all",true);
         ButtonGroup group = new ButtonGroup();
         group.add(oneChB);
         group.add(allChB);
-        JCheckBox trueChB = new JCheckBox("true");
-        JCheckBox undefinedChB = new JCheckBox("undefined");
-        JCheckBox inconsistentChB = new JCheckBox("inconsistent");
+        JCheckBox trueChB = new JCheckBox("true", true);
+        JCheckBox undefinedChB = new JCheckBox("undefined", true);
+        JCheckBox inconsistentChB = new JCheckBox("inconsistent", true);
         
         panelTop.add(oneChB,c);
         c.gridy=2;
