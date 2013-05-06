@@ -1,8 +1,10 @@
 package hybrid.query.views;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -88,10 +90,13 @@ public class ViewComponent extends AbstractOWLViewComponent {
         scrollPane = new JScrollPane(_textArea);
         outputPanel.add(scrollPane, subC);
         
-        JTable table = new JTable();
-        tabbedPane.addTab("Result", table);
+        DefaultTableModel tableModel = new DefaultTableModel();
+        JTable table = new JTable(tableModel);
+        table.setRowHeight(30);
+//        table.setBackground(Color.gray);
+//        table.set
+        tabbedPane.addTab("Result", new JScrollPane(table));
         tabbedPane.addTab("Log", outputPanel);
-        
         tabPanel.add(tabbedPane, subC);
 //        subC.fill = GridBagConstraints.BOTH;
         subC.gridx = 0;
@@ -109,10 +114,10 @@ public class ViewComponent extends AbstractOWLViewComponent {
         
         add(panel, BorderLayout.CENTER);
 
-        _query = new Query(getOWLModelManager(), _textArea);
+        _query = new Query(getOWLModelManager(), _textArea, tableModel);
         
         
-        log.info("Example View Component initialized");
+//        log.info("Example View Component initialized");
     }
 
 	
@@ -163,15 +168,12 @@ public class ViewComponent extends AbstractOWLViewComponent {
 	}
 	protected JPanel addSettingsPanel() {
 		JPanel settingsPanel = new JPanel(new GridBagLayout());
-        settingsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
-//        settingsPanel.set
+        settingsPanel.setBorder(BorderFactory.createTitledBorder("Solutions"));
         
         JPanel panelTop = new JPanel(new GridBagLayout());
         JPanel panelBottom = new JPanel(new GridBagLayout());
         JPanel panelTopBottom = new JPanel(new GridBagLayout());
         
-//        panelTop.setBorder(BorderFactory.createTitledBorder("1"));
-//        panelBottom.setBorder(BorderFactory.createTitledBorder("2"));
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.NORTHWEST;
         c.gridx = 1;
@@ -180,8 +182,11 @@ public class ViewComponent extends AbstractOWLViewComponent {
         c.gridheight = 1;
         c.weightx = 1;
         
-        JCheckBox oneChB = new JCheckBox("one");
-        JCheckBox allChB = new JCheckBox("all");
+        JRadioButton oneChB = new JRadioButton("one");
+        JRadioButton allChB = new JRadioButton("all");
+        ButtonGroup group = new ButtonGroup();
+        group.add(oneChB);
+        group.add(allChB);
         JCheckBox trueChB = new JCheckBox("true");
         JCheckBox undefinedChB = new JCheckBox("undefined");
         JCheckBox inconsistentChB = new JCheckBox("inconsistent");

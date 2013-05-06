@@ -114,7 +114,7 @@ public class Ontology {
     private boolean isAnyDisjointStatement = false;
     private String _currentRule;
 
-    public List<String> _prohibitedNames = Arrays.asList("table","attribute","true","false");
+    public List<String> _prohibitedNames = Arrays.asList("table","attribute","true","false","halt");
 
     private List<String> prologCommands = Arrays.asList(":- abolish_all_tables.",":- set_prolog_flag(unknown,fail).");
 
@@ -686,7 +686,7 @@ public class Ontology {
             addPredicateToTableIt(D+"/1");
         }
         String rule = /*isExistOntology(D)*/isAnyDisjointStatement ? ", " + _negation + " n_" + D + "(X)" : "";
-        if(!(C.equals(D) && rule.length()==0) && isAnyDisjointStatement/*isExistOntology(D)*/){
+        if(isAnyDisjointStatement && !(C.equals(D) && rule.length()==0) /*isExistOntology(D)*/){
             writeLineToFile(D + "_d(X)" + getEqForRule() + C + "_d(X)" + rule + ".");
             addPredicateToTableIt(D+"_d/1");
         }
@@ -705,7 +705,7 @@ public class Ontology {
             addPredicateToTableIt(S+"/2");
         }
         String rule = isAnyDisjointStatement/*isExistOntology(S)*/ ? ", " + _negation + " n_" + S + "(X,Y)":"";
-        if(!(R.equals(S) && rule.length()==0) && isAnyDisjointStatement/*isExistRule(R)*/){
+        if(isAnyDisjointStatement && !(R.equals(S) && rule.length()==0)/*isExistRule(R)*/){
             writeLineToFile(S + "_d(X,Y)" + getEqForRule() + R + "_d(X,Y)" + rule + ".");
             addPredicateToTableIt(S+"_d/2");
         }
@@ -739,7 +739,7 @@ public class Ontology {
 
     private void writeNegEquivalentRules(OWLClassExpression classExpression, OWLClassExpression owlClass){
         _currentRule="%NegEquivalentRule";
-        if(!(classExpression.isOWLThing() || classExpression.isOWLNothing())){
+//        if(!(classExpression.isOWLThing() || classExpression.isOWLNothing())){
 	        EquivalentClass rules= getRuleFromEquivalentClasses(classExpression, 1, 1);
 	        if(!(owlClass.isOWLThing() || owlClass.isOWLNothing()))
 	            rules.addRule(getRuleFromString(owlClass,1),1,1, EquivalentClass.OntologyType.ONTOLOGY);
@@ -749,7 +749,7 @@ public class Ontology {
 	        for (String rule : rules.getNegRulesHeadForTabling()) {
 	        	addPredicateToTableIt(rule);
 			}
-        }
+//        }
         /*
         for (String className : rules.listClassNames){
             insertIntoExistOntology(className);
@@ -846,38 +846,44 @@ public class Ontology {
         OWLClassExpression rightPartOfRule;
         ClassExpressionType expressionType;
         List<OWLClassExpression> equivalentClasses;
+        OWLClassExpression equivalentClass;
         for(OWLClass owlClass : _owlClasses){
         	isTopClass=owlClass.isOWLThing() || owlClass.isOWLNothing();
         	for(OWLClassExpression owlClassExpression : owlClass.getDisjointClasses(_ontology)){
         		expressionType = owlClassExpression.getClassExpressionType();
-                
+                if(expressionType==ClassExpressionType.OWL_CLASS && (owlClassExpression.isOWLThing() || owlClassExpression.isOWLNothing()))
+                	break;
 				if(expressionType==ClassExpressionType.OBJECT_SOME_VALUES_FROM && isTopClass){
                     writeRuleI3(owlClassExpression);
                 }else if(expressionType==ClassExpressionType.OBJECT_INTERSECTION_OF && isTopClass){
                     writeRuleI2(owlClassExpression);
-                }else if(expressionType==ClassExpressionType.OWL_CLASS && isTopClass){
-                    writeRuleI1(owlClassExpression);
-                }else if(!isTopClass){
-                    writeNegEquivalentRules(owlClassExpression, owlClass);
+                }else{
+                	if(expressionType==ClassExpressionType.OWL_CLASS && isTopClass){
+	                    writeRuleI1(owlClassExpression);
+	                }else if (!isTopClass){
+	                    writeNegEquivalentRules(owlClassExpression, owlClass);
+	                }
                 }
             }
-        	if(isTopClass)
-        		break;
+//        	if(isTopClass)
+//        		break;
         	
             equivalentClasses = new ArrayList<OWLClassExpression>();
             for(OWLIndividual individual : owlClass.getIndividuals(_ontology)){
                 writeRuleA1(individual, owlClass);
             }
+            if(!isTopClass)
+	            for(OWLClassExpression owlClassExpression : owlClass.getSubClasses(_ontology)){
+	                writeDoubledRules(owlClassExpression, owlClass);
+	            }
 
-            for(OWLClassExpression owlClassExpression : owlClass.getSubClasses(_ontology)){
-                if(!isTopClass)
-                    writeDoubledRules(owlClassExpression, owlClass);
-            }
-
+            
             for(OWLEquivalentClassesAxiom equivalentClassesAxiom : _ontology.getEquivalentClassesAxioms(owlClass)){
                 List<OWLClassExpression> list = equivalentClassesAxiom.getClassExpressionsAsList();
                 for(int i=0; i<list.size(); i++){
-                    equivalentClasses.add(list.get(i));
+                	equivalentClass = list.get(i);
+                	if(!(equivalentClass.getClassExpressionType()==ClassExpressionType.OWL_CLASS && (equivalentClass.isOWLThing() || equivalentClass.isOWLNothing())))
+                		equivalentClasses.add(equivalentClass);
                 }
             }
             if(equivalentClasses.size()>0){
@@ -885,10 +891,12 @@ public class Ontology {
                 for(int i=0; i<equivalentClasses.size(); i++){
                     rightPartOfRule=equivalentClasses.get(i);
                     //rightPartOfRuleString=rightPartOfRule.toString();
-                    if(rightPartOfRule.getClassExpressionType()==ClassExpressionType.OWL_CLASS){
-                        writeRuleC1(rightPartOfRule, owlClass, false);
-                    }else{
-                        writeEquivalentRule(owlClass, rightPartOfRule);
+                    if(!isTopClass){
+	                    if(rightPartOfRule.getClassExpressionType()==ClassExpressionType.OWL_CLASS){
+	                        writeRuleC1(rightPartOfRule, owlClass, false);
+	                    }else{
+	                        writeEquivalentRule(owlClass, rightPartOfRule);
+	                    }
                     }
                 }
             }
