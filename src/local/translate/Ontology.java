@@ -273,7 +273,10 @@ public class Ontology {
         	writeArule(leftSideRule, rightSideRule);
             writeBrule(leftSideRule, rightSideRule);	
         }else{
-        	writeLineToAppendedRules(leftSideRule + getEqForRule()+ rightSideRule.replace(_searchNegation+" ", _negation+" "));
+        	if(rightSideRule!=null)
+        		writeLineToAppendedRules(leftSideRule + getEqForRule()+ rightSideRule.replace(_searchNegation+" ", _negation+" ")+".");
+        	else
+        		writeLineToAppendedRules(leftSideRule+".");
         }
         
     }

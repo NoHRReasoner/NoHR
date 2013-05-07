@@ -4,7 +4,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+//import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.protege.owl.example.Metrics;
 
@@ -20,7 +20,7 @@ import org.protege.owl.example.Metrics;
 public class ViewComponent extends AbstractOWLViewComponent {
     private static final long serialVersionUID = -4515710047558710080L;
     
-    private static final Logger log = Logger.getLogger(ViewComponent.class);
+//    private static final Logger log = Logger.getLogger(ViewComponent.class);
     
     private Metrics metricsComponent;
     private Query _query;

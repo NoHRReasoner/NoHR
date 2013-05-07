@@ -27,6 +27,8 @@ public class Rules {
 		}
 	}
 	public static void addRule(String rule) {
+		isRulesChanged = true;
+		isRulesOntologyChanged = true;
 		_rules.add(rule);
 		for (JTextArea textArea : _listners) {
 			textArea.append(rule+Config.nl);

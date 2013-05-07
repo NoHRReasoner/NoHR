@@ -65,12 +65,8 @@ public class Query implements PrologOutputListener{
 		_owlModelManager = owlModelManager;
 		_outPutLog = textArea;
 		_outTableModel = tableModel;
-//		_outTable = table;
 		Init();
 		headerRenderer.setBackground(new Color(239, 198, 46));
-//		clearTable();
-		
-//		_outTable.addColumn("1");
 	}
 	
 	private void Init() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
@@ -80,6 +76,15 @@ public class Query implements PrologOutputListener{
 		InitInterPrologInteraction();
 	    _ontology = new Ontology(_owlModelManager, _outPutLog, Config.isDebug);
 	    
+//	    
+//	    Rules.addRule("p(a) :- not p(a).");
+//	    Rules.addRule("p(b).");
+//	    Rules.addRule("p(c) :- p(c).");
+//	    Rules.addRule("seasideCity(X) :- portCity(X), not nonSeasideCity(X).");
+//	    Rules.addRule("interestingCity(X) :- recreationalCity(X), not rainyCity(X).");
+//		Rules.addRule("HasOnSea(X) :- onSea(X,Y).");
+//		Rules.addRule("false :- seasideCity(X), not HasOnSea(X).");
+//		Rules.addRule("summerDestination(X,Y) :- interestingCity(X), onSea(X,Y).");
 	}
 	
 	public static void dispose(){
@@ -329,19 +334,7 @@ public class Query implements PrologOutputListener{
 		}
 		_outTableModel.addRow(row.toArray());
 	}
-	private boolean containsVariable(String s){
-		for (String variable : _variables) {
-			if (s.contains(variable+" = "))
-				return true;
-		}
-		return false;
-	}
-	private void printTable(){
-//		for (String s : _answers) {
-//			_outTableModel.addRow(new Object[]{s});
-//		}
-//		_answers = new ArrayList<String>();
-	}
+	
 }
 
 
