@@ -151,9 +151,9 @@ public class Ontology {
         date1=new Date();
         initELK();
         getDiffTime(date1, "ELK reasoner finished it's work, it took:");
-        date1=new Date();
-        mergeOntologies();
-        getDiffTime(date1, "Merger finished it's work, it took:");
+//        date1=new Date();
+//        mergeOntologies();
+//        getDiffTime(date1, "Merger finished it's work, it took:");
         getOWL();
         _existsProperties = new HashSet<String>();
         _existsClasses = new HashSet<String>();
@@ -189,7 +189,7 @@ public class Ontology {
         translatedOntologies = new HashSet<String>();//new ArrayList<String>(10000000);
         tablePredicates = new HashSet<String>();
         initELK();
-        mergeOntologies();
+//        mergeOntologies();
         getOWL();
 //        isTranslated=true;
         return true;
@@ -458,9 +458,9 @@ public class Ontology {
         gens.add(new InferredEquivalentClassAxiomGenerator());
 
         /** Put the inferred axioms into a fresh empty ontology. */
-        OWLOntology infOnt=_ontologyManager.createOntology();
+//        OWLOntology infOnt=_ontologyManager.createOntology();
         InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
-        iog.fillOntology(_ontologyManager,infOnt);
+        iog.fillOntology(_ontologyManager,_ontology);
 //		printLog("Reasoner finished work");
         getDiffTime(date1,"Reasoner finished work:");
     }

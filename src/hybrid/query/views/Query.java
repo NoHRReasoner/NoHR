@@ -75,16 +75,6 @@ public class Query implements PrologOutputListener{
 		_owlModelManager.addListener(modelManagerListener);
 		InitInterPrologInteraction();
 	    _ontology = new Ontology(_owlModelManager, _outPutLog, Config.isDebug);
-	    
-//	    
-//	    Rules.addRule("p(a) :- not p(a).");
-//	    Rules.addRule("p(b).");
-//	    Rules.addRule("p(c) :- p(c).");
-//	    Rules.addRule("seasideCity(X) :- portCity(X), not nonSeasideCity(X).");
-//	    Rules.addRule("interestingCity(X) :- recreationalCity(X), not rainyCity(X).");
-//		Rules.addRule("HasOnSea(X) :- onSea(X,Y).");
-//		Rules.addRule("false :- seasideCity(X), not HasOnSea(X).");
-//		Rules.addRule("summerDestination(X,Y) :- interestingCity(X), onSea(X,Y).");
 	}
 	
 	public static void dispose(){
