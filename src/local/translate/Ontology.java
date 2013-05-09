@@ -259,11 +259,13 @@ public class Ontology {
     protected void proceedRule(String rule){
         if(rule.startsWith(_eq))
             return;
-        rule=rule.substring(0, rule.length()-1);
+//        System.out.println(rule);
+//        rule = rule.substring(0, rule.length()-1);
         rule = rule.replace(".", "");
         rule = ruleToLowerCase(rule);//processRule(rule);
+//        System.out.println(rule);
         String[] arrayRule = rule.split(_eq);
-        String leftSideRule = replaceSymbolsInRule(arrayRule[0].trim());
+        String leftSideRule = replaceSymbolsInWholeRule(arrayRule[0].trim());
         String rightSideRule = null;
         if(arrayRule.length>1 && arrayRule[1]!=null)
             rightSideRule = replaceSymbolsInWholeRule(arrayRule[1].trim());
@@ -334,10 +336,18 @@ public class Ontology {
             rule = rule.replaceFirst(_searchNegation, _negation);
         if(rule.startsWith(_negation))
             rule = rule.replaceFirst(_negation+" ", "");
-        String[] _ = rule.split("\\(");
-        String predicate = _[0];
-        //if(isAnyDisjointStatement){//if(!(isExistOntology(predicate) || isExistRule(predicate))){
         int len = 0;
+        String predicate="";
+        String[] _;
+        if(rule.startsWith("'")){
+        	int index = rule.lastIndexOf("'");
+        	predicate = rule.substring(0, index)+"'";
+        	_ = rule.substring(index+1, rule.length()).split("\\(");
+        }else{
+	        _ = rule.split("\\(");
+	        predicate = _[0];
+	        
+        }
         if(_.length>1 && _[1]!=null){
             _ = _[1].split("\\)");
             _ = _[0].split(",");
@@ -874,14 +884,15 @@ public class Ontology {
 //        		break;
         	
             equivalentClasses = new ArrayList<OWLClassExpression>();
-            for(OWLIndividual individual : owlClass.getIndividuals(_ontology)){
-                writeRuleA1(individual, owlClass);
-            }
-            if(!isTopClass)
+            if(!isTopClass){
+                for(OWLIndividual individual : owlClass.getIndividuals(_ontology)){
+                    writeRuleA1(individual, owlClass);
+                }
+
 	            for(OWLClassExpression owlClassExpression : owlClass.getSubClasses(_ontology)){
 	                writeDoubledRules(owlClassExpression, owlClass);
 	            }
-
+            }
             
             for(OWLEquivalentClassesAxiom equivalentClassesAxiom : _ontology.getEquivalentClassesAxioms(owlClass)){
                 List<OWLClassExpression> list = equivalentClassesAxiom.getClassExpressionsAsList();
@@ -1017,13 +1028,31 @@ public class Ontology {
 
     
     public String ruleToLowerCase(String rule) {
-//    	System.out.println(rule);
+//    	System.out.println("ruleToLowerCase: "+rule);
     	try {
+    		//(?!\s)'(?:''|[^'])*'|(?!\s)[^',]+
+    		//(?!\s)'(?:''|[^'])*'|(?!\s)[^',\s]+(\(|\.)(?![,|\)])
+    		//(?!\s)['|"](?:''|[^'])*['|"]|(?!\s)[^',\s]+(\(|\.)(?![,|\)])
 //    		Matcher m = Pattern.compile("\\w*\\(").matcher(rule);
-    		Matcher m = Pattern.compile("\\w*\\b\\(?(?![,|\\)])").matcher(rule);
-            StringBuffer sb = new StringBuffer();
+//    		Matcher m = Pattern.compile("\\w*\\b\\(?(?![,|\\)])").matcher(rule);
+    		Matcher m = Pattern.compile("(?!\\s)['|\"](?:''|[^'])*['|\"]|(?!\\s)[^',\\s]+(\\(|\\.)(?![,|\\)])").matcher(rule);
+    		StringBuffer sb = new StringBuffer();
+            String _;
+            boolean addbracket;
             while (m.find()) {
-                m.appendReplacement(sb, m.group().toLowerCase());
+            	_ = m.group().toLowerCase();
+            	if(_.contains(" ")){
+	        		addbracket = _.endsWith("\\(");
+	        		if(addbracket)
+	        			_ = _.substring(0, _.length()-1);
+	        		if(!_.startsWith("\""))
+	        			_ = "\""+_+"\"";
+//	        		_.replaceAll("(", "[").replaceAll(")", "]");
+	        		if(addbracket)
+	        			_+="(";
+            	}
+//            	System.out.println(rule);
+                m.appendReplacement(sb, _);
             }
             m.appendTail(sb);
             rule = sb.toString();
@@ -1047,6 +1076,7 @@ public class Ontology {
 		return rule;
 	}
     public String replaceSymbolsInWholeRule(String rule) {
+    	
     	rule = rule.trim().replaceAll("'","").replaceAll("\"","'").replaceAll("-", "");
     	if(_prohibitedNames.contains(rule)){
     		rule+="_";

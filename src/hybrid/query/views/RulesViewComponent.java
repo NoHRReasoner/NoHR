@@ -20,6 +20,7 @@ public class RulesViewComponent extends AbstractOWLViewComponent {
         
         _textArea = new JTextArea();
         JScrollPane jScrollPane = new JScrollPane(_textArea);
+        
         Rules.addListener(_textArea);
         add(jScrollPane, BorderLayout.CENTER);
     }

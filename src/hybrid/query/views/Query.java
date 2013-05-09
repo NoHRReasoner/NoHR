@@ -224,12 +224,13 @@ public class Query implements PrologOutputListener{
 //			System.out.println(s);
 			
 //			System.out.println(":"+s+": matches?:"+m.find());
-			if(waitingForVariables){
+//			if(waitingForVariables){
 				Matcher m = p.matcher(s);
 				if(m.find())
-					fillVariables(s);
-			}else if(waitingForAnswer)
-				getAnswer(s);
+					sendSemiColomn();
+//					fillVariables(s);
+//			}else if(waitingForAnswer)
+//				getAnswer(s);
 		}
 	}
 	

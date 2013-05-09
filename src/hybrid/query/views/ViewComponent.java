@@ -44,11 +44,11 @@ public class ViewComponent extends AbstractOWLViewComponent {
         c.weightx = 1;
         
         subC.fill = GridBagConstraints.HORIZONTAL;
-        subC.gridx = 3;
+        subC.gridx = 0;
         subC.gridy = 0;
         subC.gridwidth=1;
         subC.gridheight=1;
-        subC.weightx = 0.05;
+        subC.weightx = 1;
         subC.ipady = 0;
         JScrollPane scrollPane;
         
@@ -56,14 +56,18 @@ public class ViewComponent extends AbstractOWLViewComponent {
         queryPanel.setBorder(BorderFactory.createTitledBorder("Query"));
         c.gridy = 1;
         c.weighty = 0.3;
-        queryPanel.add(addProcessButton(),subC);
+        subC.ipady=10;
+        queryPanel.add(addQueryField(),subC);
         c.gridy = 2;
         c.weighty = 0.3;
-        subC.gridx = 0;
-        subC.gridwidth=3;
-        subC.ipady=10;
-        subC.weightx=0.95;
-        queryPanel.add(addQueryField(), subC);
+//        subC.gridx = 0;
+        subC.fill = GridBagConstraints.NONE;
+//        subC.gridwidth=3;
+        subC.gridy = 1;
+        subC.ipady=0;
+        subC.anchor = GridBagConstraints.WEST;
+//        subC.weightx=0.95;
+        queryPanel.add(addProcessButton(), subC);
         panel.add(queryPanel, c);
         subC.ipady=0;
         subC.fill = GridBagConstraints.BOTH;
@@ -168,10 +172,12 @@ public class ViewComponent extends AbstractOWLViewComponent {
 	}
 	protected JPanel addSettingsPanel() {
 		JPanel settingsPanel = new JPanel(new GridBagLayout());
-        settingsPanel.setBorder(BorderFactory.createTitledBorder("Solutions"));
+        settingsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
         
         JPanel panelTop = new JPanel(new GridBagLayout());
+        panelTop.setBorder(BorderFactory.createTitledBorder("Solutions"));
         JPanel panelBottom = new JPanel(new GridBagLayout());
+        panelBottom.setBorder(BorderFactory.createTitledBorder("Valuation"));
         JPanel panelTopBottom = new JPanel(new GridBagLayout());
         
         GridBagConstraints c = new GridBagConstraints();

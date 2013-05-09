@@ -129,12 +129,17 @@ public class RulesManagerViewComponent extends AbstractOWLViewComponent {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(_ruleFile==null)
-					_ruleFile = new File("rules.p");
+				if(_ruleFile==null){
+					if(Rules.rulesFilePath!=null && Rules.rulesFilePath.length()>0)
+						_ruleFile = new File(Rules.rulesFilePath);
+					else	
+						_ruleFile = new File("rules.p");
+				}
 				_fileChooser.setSelectedFile(_ruleFile);
 				int val = _fileChooser.showSaveDialog(_fileChooser.getParent());
 				if(val == JFileChooser.APPROVE_OPTION){
 					_ruleFile = _fileChooser.getSelectedFile();
+					Rules.rulesFilePath = _ruleFile.getAbsolutePath();
 					try {
 						BufferedWriter bw = new BufferedWriter(new FileWriter(_ruleFile));
 						bw.write(_rulesTextArea.getText());

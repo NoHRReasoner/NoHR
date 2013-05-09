@@ -8,13 +8,13 @@
       <category value="@org.protege.ontologycategory"></category>
    </extension>
    <extension id="RulesViewComponent" point="org.protege.editor.core.application.ViewComponent">
-      <label value="Hybrid Query Rules"></label>
+      <label value="NM Rules"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.RulesViewComponent"></class>
       <category value="@org.protege.ontologycategory"></category>
    </extension>
    <extension id="RulesManagerViewComponent" point="org.protege.editor.core.application.ViewComponent">
-      <label value="Rule Editor"></label>
+      <label value="NM Rule Editor"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.RulesManagerViewComponent"></class>
       <category value="@org.protege.ontologycategory"></category>
@@ -28,7 +28,7 @@
       <defaultViewConfigFileName value="viewconfig-querytab.xml"></defaultViewConfigFileName>
    </extension>
    <extension id="RulesManagerTab" point="org.protege.editor.core.application.WorkspaceTab">
-      <label value="H. Rules"></label>
+      <label value="NM Rules"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.RulesManagerTab"></class>
       <index value="X"></index>
