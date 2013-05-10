@@ -1,5 +1,7 @@
 package hybrid.query.views;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.BorderLayout;
 //import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
@@ -20,7 +22,7 @@ public class RulesViewComponent extends AbstractOWLViewComponent {
         
         _textArea = new JTextArea();
         JScrollPane jScrollPane = new JScrollPane(_textArea);
-        
+        setBorder(new EmptyBorder(10, 10, 10, 10) );
         Rules.addListener(_textArea);
         add(jScrollPane, BorderLayout.CENTER);
     }

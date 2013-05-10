@@ -11,13 +11,13 @@
                 </Component>
             </CNode>
             <CNode>
-                <Component label="Hybrid query rules">
+                <Component label="NM query rules">
                     <Property id="pluginId" value="hybrid.query.views.RulesViewComponent"/>
                 </Component>
             </CNode>
         </HSNode>
         <CNode>
-            <Component label="Ontology to Rules View Component">
+            <Component label="NM query view">
                 <Property id="pluginId" value="hybrid.query.views.ViewComponent"/>
             </Component>
         </CNode>

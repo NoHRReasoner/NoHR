@@ -80,6 +80,7 @@ public class Query implements PrologOutputListener{
 	public static void dispose(){
 		_owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
 		_owlModelManager.removeListener(modelManagerListener);
+		
 		Rules.dispose();
 	}
 	
@@ -232,6 +233,7 @@ public class Query implements PrologOutputListener{
 //			}else if(waitingForAnswer)
 //				getAnswer(s);
 		}
+		fillFakeTable();
 	}
 	
 	public void clearTable(){
@@ -241,7 +243,7 @@ public class Query implements PrologOutputListener{
 		_outTableModel.setColumnCount(0);
 		_variables = new ArrayList<String>();
 		_variablesSearch = "";
-		_outTableModel.addColumn("truth value");
+		_outTableModel.addColumn("valuation");
 	}
 	
 	private void fillVariables(String s){
@@ -323,6 +325,27 @@ public class Query implements PrologOutputListener{
 		for (String string : _variables) {
 			row.add(_answers.get(string));
 		}
+		_outTableModel.addRow(row.toArray());
+	}
+	
+	private void fillFakeTable(){
+		clearTable();
+		_outTableModel.addColumn("X");
+		_outTableModel.addColumn("Y");
+		ArrayList<String> row = new ArrayList<String>();
+		row.add("true");
+		row.add("barcelona");
+		row.add("mediterranean");
+		_outTableModel.addRow(row.toArray());
+		row = new ArrayList<String>();
+		row.add("true");
+		row.add("lisbon");
+		row.add("atlanticocean");
+		_outTableModel.addRow(row.toArray());
+		row = new ArrayList<String>();
+		row.add("true");
+		row.add("sydney");
+		row.add("tasmansea");
 		_outTableModel.addRow(row.toArray());
 	}
 	

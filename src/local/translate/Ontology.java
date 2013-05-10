@@ -63,9 +63,11 @@ public class Ontology {
 
     /** The _ontology. */
     private static OWLOntology _ontology;
-
-    private OWLDataFactory _ontologyDataFactory;
-
+    /** The _ontology ID. */
+    private static String _ontologyID;
+    
+    private OWLDataFactory _ontologyDataFactory;    
+    
     private OWLAnnotationProperty _ontologyLabel;
 
 
@@ -114,7 +116,7 @@ public class Ontology {
     private boolean isAnyDisjointStatement = false;
     private String _currentRule;
 
-    public List<String> _prohibitedNames = Arrays.asList("table","attribute","true","false","halt");
+    public List<String> _prohibitedNames = Arrays.asList("table","attribute","true","false","halt", "sleep", "tab");
 
     private List<String> prologCommands = Arrays.asList(":- abolish_all_tables.",":- set_prolog_flag(unknown,fail).");
 
@@ -150,7 +152,7 @@ public class Ontology {
         getDiffTime(date1, "Initializing is done, it took:");
         date1=new Date();
         initELK();
-        getDiffTime(date1, "ELK reasoner finished it's work, it took:");
+        getDiffTime(date1, "ELK reasoner finished its work, it took:");
 //        date1=new Date();
 //        mergeOntologies();
 //        getDiffTime(date1, "Merger finished it's work, it took:");
@@ -194,6 +196,16 @@ public class Ontology {
 //        isTranslated=true;
         return true;
     }
+    
+    public void clear(){
+        _owlClasses = new HashSet<OWLClass>();
+         _objectProperties = new HashSet<OWLObjectProperty>();
+        translatedOntologies = new HashSet<String>();
+        appendedRules = new HashSet<String>();
+        tablePredicates = new HashSet<String>();
+        _existsClasses = new HashSet<String>();
+        _existsProperties = new HashSet<String>();
+    }
     /**
      * Main function
      * @throws ParserException
@@ -201,16 +213,16 @@ public class Ontology {
     public void proceed() throws ParserException{
         Date date1=new Date();
         fillExistsOntologiesAndRules();
-        getDiffTime(date1, "PreProcessing and finish All I rules finished it's work, it took:");
+        getDiffTime(date1, "PreProcessing and finish All I rules finished its work, it took:");
         date1=new Date();
 //        autoTable();
 //        getDiffTime(date1, "AutoTabling finished it's work, it took:");
         date1=new Date();
         loopThrowAllClasses();
-        getDiffTime(date1, "Rules C1, C2, C3 and A1 are finished it's work, it took:");
+        getDiffTime(date1, "Rules C1, C2, C3 and A1 are finished its work, it took:");
         date1=new Date();
         loopThrowAllProperties();
-        getDiffTime(date1, "Rules R1, R2 and A2 are finished it's work, it took:");
+        getDiffTime(date1, "Rules R1, R2 and A2 are finished its work, it took:");
     }
 
     /**
@@ -410,6 +422,8 @@ public class Ontology {
         _objectProperties=_ontology.getObjectPropertiesInSignature();
         _ontologyDataFactory = _ontologyManager.getOWLDataFactory();
         _ontologyLabel = _ontologyDataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+        String _ = _ontology.getOntologyID().getOntologyIRI().toString();
+        _ontologyID = _.contains("/") ? _.substring(0, _.lastIndexOf("/")) + "/" : "";
     }
     protected void getDiffTime(Date startDate, String message){
         Date stoped=new Date();
@@ -510,18 +524,28 @@ public class Ontology {
 
 
     private String getRuleFromString(String rule, int numInList){
-        String result="";
-        if(rule.contains(_delimeter))
-            result=(rule.split(_delimeter)[numInList]).split(">")[0];
-        else if (rule.contains(_altDelimeter)) {
-            result=(rule.split(_altDelimeter)[numInList]).split(">")[0];
+    	if(_ontologyID.length()>0)
+            rule = rule.replace(_ontologyID,"");
+        try{
+            String result;
+            if(rule.contains(_delimeter))
+                result=(rule.split(_delimeter)[numInList]).split(">")[0];
+            else if (rule.contains(_altDelimeter))
+                result=(rule.split(_altDelimeter)[numInList]).split(">")[0];
+            else if(rule.startsWith("<"))
+                result = rule.replaceFirst("<","").replace(">","");
+            else
+                result="";
+
+            return replaceSymbolsInRule(result);
+        }catch (Exception e){
+            printLog("------------------------------------------------------------------------");
+            printLog(rule);
+            printLog(Integer.toString(numInList));
+            printLog("------------------------------------------------------------------------");
+            printLog(e.toString());
         }
-        else
-            result="";
-        
-        return replaceSymbolsInRule(result);
-        
-        //return result;
+        return rule;
     }
     private String getRuleFromString(OWLObjectPropertyExpression property, int numInList) {
         return getRuleFromString(property.asOWLObjectProperty(), numInList);
@@ -549,18 +573,18 @@ public class Ontology {
             List<OWLObjectPropertyExpression> properties = ((OWLSubPropertyChainAxiomImpl) entity).getPropertyChain();
             if(properties!=null){
                 if(properties.size()>=numInList)
-                    return getRuleFromString(properties.get(numInList-1),numInList);
+                    return getRuleFromString(properties.get(numInList-1),1);
                 else
-                    return getRuleFromString(((OWLSubPropertyChainAxiomImpl) entity).getSuperProperty(),numInList);
+                    return getRuleFromString(((OWLSubPropertyChainAxiomImpl) entity).getSuperProperty(),1);
             }
         }else if(entity instanceof OWLObjectPropertyAssertionAxiomImpl){
             switch (numInList){
                 case 1:
-                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getProperty(), numInList);
+                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getProperty(), 1);
                 case 2:
-                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getSubject(),numInList);
+                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getSubject(),1);
                 case 3:
-                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getObject(),numInList);
+                    return getRuleFromString(((OWLObjectPropertyAssertionAxiomImpl) entity).getObject(),1);
             }
         }
         return getRuleFromString(entity.toString(),numInList);
@@ -584,7 +608,7 @@ public class Ontology {
             }
         }
         if(message.length()>0)
-            return replaceSymbolsInRule(message);//  message.replaceAll("'","").replaceAll("\"","'");
+        	return replaceSymbolsInRule(message.replace("^^xsd:string",""));//  message.replaceAll("'","").replaceAll("\"","'");
         return getRuleFromString(label, numInList);
     }
     /**
