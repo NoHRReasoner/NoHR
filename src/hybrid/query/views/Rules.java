@@ -92,30 +92,7 @@ public class Rules {
 	}
 	
 	private static void addEventsForTextArea(final JTextArea textarea){
-		/*textarea.getDocument().addDocumentListener(new DocumentListener() {
-
-	        @Override
-	        public void removeUpdate(DocumentEvent e) {
-	        	isRulesChanged = true;
-	        	_currentTextArea=textarea;
-//	        	textarea.append("removed"+Config.nl);
-	        }
-
-	        @Override
-	        public void insertUpdate(DocumentEvent e) {
-//	        	e.
-	        	isRulesChanged = true;
-	        	_currentTextArea=textarea;
-//	        	textarea.append("inserted"+Config.nl);
-	        }
-
-	        @Override
-	        public void changedUpdate(DocumentEvent arg0) {
-	        	isRulesChanged = true;
-	        	_currentTextArea=textarea;
-//	        	textarea.append("changed"+Config.nl);
-	        }
-	    });*/
+		
 		textarea.addKeyListener(new KeyListener() {
 			
 			@Override

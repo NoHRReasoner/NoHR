@@ -1,20 +1,30 @@
 package hybrid.query.views;
+
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 //import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Label;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
+
 
 //import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.protege.owl.example.Metrics;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 
 public class ViewComponent extends AbstractOWLViewComponent {
@@ -26,6 +36,9 @@ public class ViewComponent extends AbstractOWLViewComponent {
     private Query _query;
     private JTextArea _textArea;
     private JTextField _textField;
+//    private JProgressBar progressBar;
+    private JFrame progressFrame;
+    private JLabel progressLabel;
 	
     @Override
     protected void initialiseOWLView() throws Exception {
@@ -94,7 +107,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
         scrollPane = new JScrollPane(_textArea);
         outputPanel.add(scrollPane, subC);
         
-        DefaultTableModel tableModel = new DefaultTableModel();
+        final DefaultTableModel tableModel = new DefaultTableModel();
         JTable table = new JTable(tableModel);
         table.setRowHeight(30);
 //        table.setBackground(Color.gray);
@@ -117,9 +130,15 @@ public class ViewComponent extends AbstractOWLViewComponent {
         panel.add(resultPanel, c);
         
         add(panel, BorderLayout.CENTER);
-
         _query = new Query(getOWLModelManager(), _textArea, tableModel);
-        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	addProgressFrame();
+            	//Query.progressFrame.setVisible(true);
+            }
+        });
+        _textField.requestFocus();
+        _textField.requestFocusInWindow();
         
 //        log.info("Example View Component initialized");
     }
@@ -127,8 +146,8 @@ public class ViewComponent extends AbstractOWLViewComponent {
 	
 	@Override
 	protected void disposeOWLView() {
-		metricsComponent.dispose();
-//		_query.dispose();
+//		metricsComponent.dispose();
+		_query.disposeQuery();
 	}
 	
 	protected JButton addProcessButton(){
@@ -138,7 +157,12 @@ public class ViewComponent extends AbstractOWLViewComponent {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(_textField.getText().length()>0){
-					_query.query(_textField.getText());
+					try {
+						_query.query(_textField.getText());
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 	            	_textField.setText("");
 				}
 			}
@@ -147,7 +171,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
 		return button;
 	}
 	protected JTextField addQueryField(){
-		_textField = new JTextField();
+		_textField = new JTextField("has(M,N),p(X)");
 		_textField.addKeyListener(new KeyListener() {
 				@Override
 				public void keyPressed(KeyEvent e) {
@@ -155,7 +179,12 @@ public class ViewComponent extends AbstractOWLViewComponent {
 				}
 				private void updateText(KeyEvent e) {
 		            if( e.getKeyCode() == KeyEvent.VK_ENTER && _textField.getText().length()>0 )  {
-		            	_query.query(_textField.getText());
+		            	try {
+							_query.query(_textField.getText());
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 		            	_textField.setText("");
 		            }
 				}
@@ -168,7 +197,8 @@ public class ViewComponent extends AbstractOWLViewComponent {
 					
 				}
 			});
-		 return _textField;
+		
+		return _textField;
 	}
 	protected JPanel addSettingsPanel() {
 		JPanel settingsPanel = new JPanel(new GridBagLayout());
@@ -222,6 +252,49 @@ public class ViewComponent extends AbstractOWLViewComponent {
         settingsPanel.add(panelTopBottom, c);
         
         return settingsPanel;
+	}
+	
+	private void addProgressFrame(){
+		
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        progressBar.setIndeterminate(true);
+//        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
+        progressBar.setString("Half way there!");
+        
+        JPanel progressPanel = new JPanel(new BorderLayout());
+        progressPanel.setBorder(new EmptyBorder(0, 10, 0, 10) );
+        progressPanel.add(new JLabel("Rule translation process",SwingConstants.CENTER),BorderLayout.BEFORE_FIRST_LINE);
+        
+        
+        GridBagConstraints c = new GridBagConstraints();
+//        c.anchor = GridBagConstraints.NORTHWEST;
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridwidth=1;
+        c.gridheight = 1;
+        c.weightx = 1;
+        c.fill = GridBagConstraints.BOTH;
+        
+        JPanel panel = new JPanel(new GridBagLayout());
+        Query.progressLabel = new JLabel("Rule translating");
+//        progressLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+//        progressLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        Query.progressLabel.setFont(new Font(Query.progressLabel.getFont().getFontName(),Font.PLAIN, Query.progressLabel.getFont().getSize()+4));
+        panel.add(Query.progressLabel, c);
+        c.gridy=1;
+        panel.add(progressBar, c);
+        progressPanel.add(panel, BorderLayout.CENTER);
+        
+        Query.progressFrame = new JFrame("Rule translation process");
+//        progressFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Query.progressFrame.setSize(300, 100);
+        Query.progressFrame.setLocationByPlatform(true);
+        Query.progressFrame.setUndecorated(true);
+        Query.progressFrame.setContentPane(progressPanel);
+//        frame.pack();
+        Query.progressFrame.setLocationRelativeTo(ViewComponent.this);
+//        progressFrame.setVisible(true);
 	}
 	
 }

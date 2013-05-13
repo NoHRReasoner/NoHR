@@ -29,7 +29,7 @@ public class RulesViewComponent extends AbstractOWLViewComponent {
 	@Override
 	protected void disposeOWLView() {
 		// TODO Auto-generated method stub
-		
+		Query.dispose();
 	}
 	
 }

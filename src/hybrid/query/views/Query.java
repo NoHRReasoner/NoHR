@@ -1,25 +1,24 @@
 package hybrid.query.views;
 
+
 import java.awt.Color;
-import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -34,8 +33,10 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
+import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.PrologOutputListener;
 import com.declarativa.interprolog.SubprocessEngine;
+import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 
 public class Query implements PrologOutputListener{
@@ -43,24 +44,20 @@ public class Query implements PrologOutputListener{
 	private DefaultTableModel _outTableModel;
 //	private JTable _outTable;
 	private DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer();
-	
+	public static JLabel progressLabel;
+	public static JFrame progressFrame;
 	private static OWLModelManager _owlModelManager;
 	private static boolean isOntologyChanged;
 	private boolean isCompiled;
 	private boolean isEngineStarted;
 	private XSBSubprocessEngine _engine;
 	private Ontology _ontology;
-	private ArrayList<String> _variables = new ArrayList<String>();
+	private HashSet<String> _variables = new HashSet<String>();
+	private ArrayList<String> _variablesList = new ArrayList<String>();
 	private Dictionary<String, String> _answers = new Hashtable<String, String>();
-	private String _variablesSearch;
-	private Pattern p;
 	private Pattern headerPattern = Pattern.compile("\\((.*?)\\)");
-	private String _answer;
-	
-	private boolean waitingForVariables = false;
-	private boolean waitingForAnswer = false;
-	
-	private int j=0;
+	private String queryString;
+	private QueryXSB queryXSB;
 	public Query(OWLModelManager owlModelManager, JTextArea textArea, DefaultTableModel tableModel) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
 		_owlModelManager = owlModelManager;
 		_outPutLog = textArea;
@@ -74,13 +71,20 @@ public class Query implements PrologOutputListener{
 		_owlModelManager.addOntologyChangeListener(ontologyChangeListener);
 		_owlModelManager.addListener(modelManagerListener);
 		InitInterPrologInteraction();
-	    _ontology = new Ontology(_owlModelManager, _outPutLog, Config.isDebug);
+	    _ontology = new Ontology(_owlModelManager, _outPutLog, progressLabel, Config.isDebug);
 	}
 	
 	public static void dispose(){
 		_owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
 		_owlModelManager.removeListener(modelManagerListener);
 		
+		Rules.dispose();
+	}
+	public void disposeQuery(){
+		_owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
+		_owlModelManager.removeListener(modelManagerListener);
+		_ontology.clear();
+		_engine.shutdown();
 		Rules.dispose();
 	}
 	
@@ -118,7 +122,18 @@ public class Query implements PrologOutputListener{
 		if(xsbBin!=null){
 			xsbBin+="/xsb";
 		}else{
-			print("Please, set up your XSB_BIN_DIRECTORY"+Config.nl+" For mac os consider the example: launchctl setenv XSB_BIN_DIRECTORY /Full/Path/To/XSB/bin"+Config.nl);
+//			print("Please, set up your XSB_BIN_DIRECTORY"+Config.nl+" For mac os consider the example: launchctl setenv XSB_BIN_DIRECTORY /Full/Path/To/XSB/bin"+Config.nl);
+			printInfo("Please, set up your XSB_BIN_DIRECTORY");
+			printInfo("Up until Mountain Lion (10.8) you can set them in");
+			printInfo("~/.MacOSX/environment.plist"+Config.nl);
+			printInfo("See:"+Config.nl);
+			printInfo("http://developer.apple.com/library/mac/#qa/qa1067/_index.html");
+			printInfo("http://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPRuntimeConfig/Articles/EnvironmentVars.html");
+			printInfo("For PATH in the Terminal, you should be able to set in .bash_profile or .profile (you'll probably have to create it though)");
+			printInfo("For mountain lion and beyond you need to use launchd and launchctl (http://david-martinez.tumblr.com/post/28083831730/environment-variables-and-mountain-lion)");
+			printInfo("consider the example: setenv XSB_BIN_DIRECTORY /Full/Path/To/XSB/config/bin");
+			
+			
 		}
 		startEngine(xsbBin);
 		
@@ -128,6 +143,7 @@ public class Query implements PrologOutputListener{
 		isEngineStarted=true;
 		try{
 			_engine = new XSBSubprocessEngine(xsbBin);
+//			_prologEngine = new XSBSubprocessEngine(xsbBin);
 			_engine.addPrologOutputListener(this);
 			printLog("Engine started"+Config.nl);
 		}catch(Exception e){
@@ -137,16 +153,20 @@ public class Query implements PrologOutputListener{
 		}
 	}
 
-	public void query(String command) {
-		
+	public void queryXSB()  throws Exception{
+		String command = queryString;
 		if(!isCompiled){
 			try {
+				progressFrame.setVisible(true);
+//				Thread.sleep(1500);
+				progressLabel.setText("aaa");
 				_ontology.PrepareForTranslating();
 				_ontology.proceed();
 				_ontology.appendRules(Rules.getRules());
 				compileFile(_ontology.Finish());
 				isOntologyChanged=false;
 				Rules.isRulesOntologyChanged = false;
+				progressFrame.setVisible(false);
 			} catch (OWLOntologyCreationException e) {
 				e.printStackTrace();
 			} catch (OWLOntologyStorageException e) {
@@ -155,6 +175,11 @@ public class Query implements PrologOutputListener{
 				e.printStackTrace();
 			} catch (ParserException e) {
 				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				progressFrame.setVisible(false);
 			}
 			
 		}else if(isChanged()){
@@ -162,9 +187,12 @@ public class Query implements PrologOutputListener{
 			if(dialogResult == JOptionPane.YES_OPTION){
 				try {
 					if(isOntologyChanged){
+						progressFrame.setVisible(true);
+//						Thread.sleep(1500);
 						_ontology.PrepareForTranslating();
 						_ontology.proceed();
 						isOntologyChanged = false;
+						progressFrame.setVisible(false);
 					}
 					if(Rules.isRulesOntologyChanged){
 						_ontology.appendRules(Rules.getRules());
@@ -179,6 +207,11 @@ public class Query implements PrologOutputListener{
 					e.printStackTrace();
 				} catch (ParserException e) {
 					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}finally{
+					progressFrame.setVisible(false);
 				}
 			}
 		}
@@ -191,13 +224,36 @@ public class Query implements PrologOutputListener{
 			}
 			command = _ontology.ruleToLowerCase(command);
 			command = _ontology.replaceSymbolsInWholeRule(command);
+			
 			fillTableHeader(command);
+			String detGoal = "findall( myTuple("+_variables.toString().replace("[", "").replace("]", "")+"), ("+command+"), List) , buildTermModel(List,TM)";
+//			System.out.println(detGoal);
+			Object[] bindings = _engine.deterministicGoal(detGoal,"[TM]");
+			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
+			TermModel[] flattted = list.flatList();
+			ArrayList<String> row;
+			for(int i=0;i< flattted.length;i++){
+				row = new ArrayList<String>();
+				row.add("_");
+				for(int j=0; j<_variables.size();j++){
+					row.add(_variablesList.get(j)+":"+ flattted[i].getChild(j));
+				}
+				_outTableModel.addRow(row.toArray());
+			}
 			((SubprocessEngine)_engine).sendAndFlushLn(command+".");
+			
 		}
-		
-		
-		
 	}
+	public void query(String command) throws Exception {
+		queryString = command;
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	queryXSB = new QueryXSB();
+                queryXSB.execute();
+            }
+        });
+	}
+	
 	private void sendSemiColomn(){
 		((SubprocessEngine)_engine).sendAndFlushLn(";");
 	}
@@ -222,18 +278,20 @@ public class Query implements PrologOutputListener{
 		printInfo(s);
 //		s = s.replace(Config.nl, "");
 		if(!s.contains("++Error[XSB/Runtime/P]")){
-//			System.out.println(s);
+			System.out.println(s+"===============");
 			
 //			System.out.println(":"+s+": matches?:"+m.find());
 //			if(waitingForVariables){
-				Matcher m = p.matcher(s);
-				if(m.find())
-					sendSemiColomn();
-//					fillVariables(s);
+//				Matcher m = p.matcher(s);
+//				if(m.find())
+			if(s.contains(" = "))//{
+				sendSemiColomn();
+//				fillVariables(s);
 //			}else if(waitingForAnswer)
 //				getAnswer(s);
+			
 		}
-		fillFakeTable();
+//		fillFakeTable();
 	}
 	
 	public void clearTable(){
@@ -241,14 +299,11 @@ public class Query implements PrologOutputListener{
 			_outTableModel.removeRow(i);
 		}
 		_outTableModel.setColumnCount(0);
-		_variables = new ArrayList<String>();
-		_variablesSearch = "";
+		_variables = new HashSet<String>();
 		_outTableModel.addColumn("valuation");
 	}
 	
 	private void fillVariables(String s){
-		waitingForVariables=false;
-//		j++;
 		StringReader sr = new StringReader(s); 
 		BufferedReader br = new BufferedReader(sr); 
 		String nextLine = ""; 
@@ -258,7 +313,7 @@ public class Query implements PrologOutputListener{
 				nextLine=nextLine.trim();
 				if(nextLine.contains("=")){
 					_=nextLine.split("=");
-					_answers.put(_[0].trim(), _[1].trim());
+					_answers.put(_[0].trim(), _[1] != null ? _[1].trim():"");
 				}
 			}
 			br.close();
@@ -266,7 +321,6 @@ public class Query implements PrologOutputListener{
 			e.printStackTrace();
 		} 
 		sr.close();
-		waitingForAnswer = true;
 		sendSemiColomn();
 	}
 	
@@ -279,12 +333,11 @@ public class Query implements PrologOutputListener{
 			while ((nextLine = br.readLine()) != null){
 				nextLine=nextLine.trim();
 				if(!nextLine.contains("| ?-")){
-					_answer = nextLine;
+//					_answer = nextLine;
 				}
 			}
 			br.close();
 			
-			waitingForAnswer = false;
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -306,48 +359,70 @@ public class Query implements PrologOutputListener{
                 for (String s : rule.split(",")) {
     				s = s.trim();
     				_variables.add(s);
-    				if(_variablesSearch.length()!=0)
-    					_variablesSearch+="|";
-    				_variablesSearch += "(.*)"+s+" =";
     				_outTableModel.addColumn(s);
     			}
             }
             sb.setLength(0);
-            p = Pattern.compile(_variablesSearch);
-            waitingForVariables = true;
+            _variablesList = new ArrayList<String>(_variables);
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
 	}
 	private void fillTable(){
 		ArrayList<String> row = new ArrayList<String>();
-		row.add( _answer);
+		row.add("_");
 		for (String string : _variables) {
 			row.add(_answers.get(string));
 		}
 		_outTableModel.addRow(row.toArray());
 	}
 	
-	private void fillFakeTable(){
-		clearTable();
-		_outTableModel.addColumn("X");
-		_outTableModel.addColumn("Y");
-		ArrayList<String> row = new ArrayList<String>();
-		row.add("true");
-		row.add("barcelona");
-		row.add("mediterranean");
-		_outTableModel.addRow(row.toArray());
-		row = new ArrayList<String>();
-		row.add("true");
-		row.add("lisbon");
-		row.add("atlanticocean");
-		_outTableModel.addRow(row.toArray());
-		row = new ArrayList<String>();
-		row.add("true");
-		row.add("sydney");
-		row.add("tasmansea");
-		_outTableModel.addRow(row.toArray());
+	public void showProgressFrame() {
+//		SwingUtilities.invokeLater(new Runnable() {
+//		    public void run() {
+		    	progressFrame.setVisible(true);
+		    	progressFrame.validate();
+		    	// for JFrame/JDialog/JWindow and upto Java7 is there only validate();
+		    	progressFrame.repaint();
+//		    }
+//		});
 	}
+	public void hideProgressFrame() {
+//		SwingUtilities.invokeLater(new Runnable() {
+//		    public void run() {
+		    	progressFrame.setVisible(false);
+//		    }
+//		});
+	}
+	
+	class QueryXSB extends SwingWorker<Void, Void> {
+        /*
+         * Main task. Executed in background thread.
+         */
+        @Override
+        public Void doInBackground() {
+            try {
+				queryXSB();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            return null;
+        }
+ 
+        /*
+         * Executed in event dispatching thread
+         */
+        @Override
+        public void done() {
+        	progressFrame.setVisible(false);
+//            Toolkit.getDefaultToolkit().beep();
+//            startButton.setEnabled(true);
+//            setCursor(null); //turn off the wait cursor
+//            taskOutput.append("Done!\n");
+        }
+    }
+ 
 	
 }
 

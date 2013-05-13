@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.6.0_45-b06-451-11M4406 (Apple Inc.)
 Bundle-ManifestVersion: 2
-Bundle-Name: Hybrid Query plugin
+Bundle-Name: NM Query plugin
 Bundle-SymbolicName: hybrid.query.views;singleton:=true
 Bundle-Category: protege
 Bundle-ContactAddress: ivanovvvadim@gmail.com
@@ -26,5 +26,5 @@ Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  ege.editor.owl;bundle-version="4.1.0",org.semanticweb.owl.owlapi;bund
  le-version="3.0.0"
 Built-By: vadimivanov
-Build-Date: 05/10/2013 11:00 PM
+Build-Date: 05/13/2013 10:33 PM
 

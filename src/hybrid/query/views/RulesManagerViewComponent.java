@@ -74,12 +74,10 @@ public class RulesManagerViewComponent extends AbstractOWLViewComponent {
         add(rulesPanel, BorderLayout.CENTER);
         Rules.addListener(_rulesTextArea);
         _fileChooser = new JFileChooser();
-        log.info("Example View Component initialized");
     }
 
 	@Override
 	protected void disposeOWLView() {
-		metricsComponent.dispose();
 		Rules.dispose();
 	}
 
@@ -88,12 +86,18 @@ public class RulesManagerViewComponent extends AbstractOWLViewComponent {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(Rules.rulesFilePath!=null && Rules.rulesFilePath.length()>0){
+					_ruleFile = new File(Rules.rulesFilePath);
+					_fileChooser.setSelectedFile(_ruleFile);
+				}
+				System.out.println(Rules.rulesFilePath);
 				int val = _fileChooser.showDialog(null, "Open");
 				if(val==JFileChooser.APPROVE_OPTION){
 //					_rules = new ArrayList<String>();
 					_rulesTextArea.setText("");
 					try {
 						_ruleFile = _fileChooser.getSelectedFile();
+						Rules.rulesFilePath = _ruleFile.getAbsolutePath();
 						FileInputStream fstream = new FileInputStream(_ruleFile);
 						DataInputStream in = new DataInputStream(fstream);
 					    BufferedReader br = new BufferedReader(new InputStreamReader(in));

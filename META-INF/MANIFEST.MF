@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Hybrid Query plugin
+Bundle-Name: NM Query plugin
 Bundle-SymbolicName: hybrid.query.views;singleton:=true
 Bundle-Category: protege
 Bundle-ContactAddress: ivanovvvadim@gmail.com
