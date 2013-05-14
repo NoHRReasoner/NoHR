@@ -106,7 +106,8 @@ public class Ontology {
     private HashSet<String> appendedRules = new HashSet<String>();
     /**Set of the predicates to table them in the end 
      * */
-    private HashSet<String> tablePredicates = new HashSet<String>();
+    private HashSet<String> tablePredicatesOntology = new HashSet<String>();
+    private HashSet<String> tablePredicatesRules = new HashSet<String>();
 
     private String _delimeter="#";
     private String _altDelimeter=":";
@@ -198,7 +199,7 @@ public class Ontology {
         //startOuters(false);
 //        tabledOntologies = new HashSet<String>();// new ArrayList<String>(500000);
         translatedOntologies = new HashSet<String>();//new ArrayList<String>(10000000);
-        tablePredicates = new HashSet<String>();
+        tablePredicatesOntology = new HashSet<String>();
         setProgressLabelText("ELK reasoner");
         initELK();
 //        mergeOntologies();
@@ -212,7 +213,8 @@ public class Ontology {
          _objectProperties = new HashSet<OWLObjectProperty>();
         translatedOntologies = new HashSet<String>();
         appendedRules = new HashSet<String>();
-        tablePredicates = new HashSet<String>();
+        tablePredicatesOntology = new HashSet<String>();
+        tablePredicatesRules = new HashSet<String>();
         _existsClasses = new HashSet<String>();
         _existsProperties = new HashSet<String>();
     }
@@ -244,6 +246,8 @@ public class Ontology {
      */
     public void appendRules(String filePath) throws Exception {
         writeLineToAppendedRules("%Inserting rules");
+        appendedRules = new HashSet<String>();//new ArrayList<String>(1000000);
+        tablePredicatesRules = new HashSet<String>();
         File rules=new File(filePath);
         if(rules!=null){
             FileInputStream fstream = new FileInputStream(rules);
@@ -262,6 +266,7 @@ public class Ontology {
     public void appendRules(ArrayList<String> _rules) throws Exception {
         //startOuters(true);
         appendedRules = new HashSet<String>();//new ArrayList<String>(1000000);
+        tablePredicatesRules = new HashSet<String>();
 		/*if(!isTranslated){
 			PrepareForTranslating();
 			proceed();
@@ -407,10 +412,10 @@ public class Ontology {
         if(predicate.equals("'"))
             System.out.println(originalRule);
 //        writeLineToTopFile(":- table "+predicate+"/"+len+".");
-        addPredicateToTableIt(predicate+"/"+len);
+        addPredicateToTableItRule(predicate+"/"+len);
         if(isAnyDisjointStatement)
 //            writeLineToTopFile(":- table "+predicate+"_d/"+len+".");
-            addPredicateToTableIt(predicate+"_d/"+len);
+            addPredicateToTableItRule(predicate+"_d/"+len);
 //    	}
     }
     protected String getEqForRule(){
@@ -442,7 +447,10 @@ public class Ontology {
 //        for(String str: tabledOntologies) {
 //            writer.write(str+"\n");
 //        }
-        for(String str: tablePredicates){
+        for(String str: tablePredicatesOntology){
+            writer.write(":- table "+str+".\n");
+        }
+        for(String str: tablePredicatesRules){
             writer.write(":- table "+str+".\n");
         }
         for(String str: translatedOntologies) {
@@ -866,8 +874,12 @@ public class Ontology {
         }
     }
     private void addPredicateToTableIt(String title){
-        tablePredicates.add(title);
+    	tablePredicatesOntology.add(title);
     }
+    private void addPredicateToTableItRule(String title){
+    	tablePredicatesRules.add(title);
+    }
+    
     /*private void autoTable(){
         String name;
 

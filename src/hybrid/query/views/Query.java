@@ -234,20 +234,37 @@ public class Query implements PrologOutputListener{
 			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
 			TermModel[] flattted = list.flatList();
 			ArrayList<String> row;
+			String value;
 			for(int i=0;i< flattted.length;i++){
+				value = flattted[i].getChild(0).toString();
 				row = new ArrayList<String>();
-				row.add(flattted[i].getChild(0).toString());
+				row.add(value);
 				for(int j=1; j<=_variables.size();j++){
 					row.add(/*_variablesList.get(j-1)+":"+ */flattted[i].getChild(j).toString());
 				}
-//				_outTableModel.addRow(row.toArray());
 				_answers.add(row);
+				/*if(!_ontology.isAnyDisjointWithStatement())
+					_answers.add(row);
+				else{
+//					row.set(0, "");
+					if(value.equals("true") || value.equals("undefined")){
+						
+					}
+				}*/
+				
 			}
 			fillTable(0);
 			((SubprocessEngine)_engine).sendAndFlushLn(command+".");
 			
 		}
 	}
+	
+	private String makeSubQuery(){
+		String result = "";
+		
+		return result;
+	}
+	
 	public void query(String command) throws Exception {
 		queryString = command;
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -313,10 +330,12 @@ public class Query implements PrologOutputListener{
                 for (String s : rule.split(",")) {
     				s = s.trim();
     				_variables.add(s);
-    				_outTableModel.addColumn(s);
     			}
             }
             sb.setLength(0);
+            for(String s: _variables){
+        		_outTableModel.addColumn(s);
+            }
             _variablesList = new ArrayList<String>(_variables);
 		} catch (Exception e) {
 			System.out.println(e.toString());
