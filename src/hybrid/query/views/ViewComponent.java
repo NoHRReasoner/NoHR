@@ -1,13 +1,20 @@
 package hybrid.query.views;
 
 
+import hybrid.query.views.TableFilterDemo.MyTableModel;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.Dimension;
 //import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,6 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 //import org.apache.log4j.Logger;
@@ -39,7 +48,10 @@ public class ViewComponent extends AbstractOWLViewComponent {
 //    private JProgressBar progressBar;
     private JFrame progressFrame;
     private JLabel progressLabel;
-	
+    private TableRowSorter<DefaultTableModel> sorter;
+    private JPanel settingsPanel;
+    private List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
+    
     @Override
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(12,12));
@@ -107,11 +119,19 @@ public class ViewComponent extends AbstractOWLViewComponent {
         scrollPane = new JScrollPane(_textArea);
         outputPanel.add(scrollPane, subC);
         
+        
         final DefaultTableModel tableModel = new DefaultTableModel();
+        sorter = new TableRowSorter<DefaultTableModel>(tableModel);
         JTable table = new JTable(tableModel);
         table.setRowHeight(30);
-//        table.setBackground(Color.gray);
-//        table.set
+        table.setRowSorter(sorter);
+        table.setFillsViewportHeight(true);
+        //For the purposes of this example, better to have a single
+        //selection.
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        
+        
         tabbedPane.addTab("Result", new JScrollPane(table));
         tabbedPane.addTab("Log", outputPanel);
         tabPanel.add(tabbedPane, subC);
@@ -125,7 +145,9 @@ public class ViewComponent extends AbstractOWLViewComponent {
         subC.anchor = GridBagConstraints.NORTHWEST;
         subC.gridx = 1;
         subC.weightx = 0.05;
-        resultPanel.add(addSettingsPanel(), subC);
+        
+        settingsPanel = addSettingsPanel();
+        resultPanel.add(settingsPanel, subC);
         
         panel.add(resultPanel, c);
         
@@ -143,7 +165,32 @@ public class ViewComponent extends AbstractOWLViewComponent {
 //        log.info("Example View Component initialized");
     }
 
-	
+    /** 
+     * Update the row filter regular expression from the expression in
+     * the text box.
+     */
+    private void tableFilterAnswer() {
+        RowFilter<DefaultTableModel, Object> rf = null;
+        //If current expression doesn't parse, don't update.
+        try {
+        	String filter = "";
+        	for(JCheckBox chb: checkBoxs){
+        		if(chb.isSelected()){
+        			filter+=chb.getText()+"|";
+        		}
+        	}
+        	if(filter.length()>2){
+        		filter = filter.substring(0, filter.length()-1);
+        	}else{
+        		filter = "_";
+        	}
+            rf = RowFilter.regexFilter(filter, 0);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
+        }
+        sorter.setRowFilter(rf);
+    }
+    
 	@Override
 	protected void disposeOWLView() {
 //		metricsComponent.dispose();
@@ -171,7 +218,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
 		return button;
 	}
 	protected JTextField addQueryField(){
-		_textField = new JTextField("has(M,N),p(X)");
+		_textField = new JTextField();
 		_textField.addKeyListener(new KeyListener() {
 				@Override
 				public void keyPressed(KeyEvent e) {
@@ -202,6 +249,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
 	}
 	protected JPanel addSettingsPanel() {
 		JPanel settingsPanel = new JPanel(new GridBagLayout());
+		
         settingsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
         
         JPanel panelTop = new JPanel(new GridBagLayout());
@@ -219,13 +267,29 @@ public class ViewComponent extends AbstractOWLViewComponent {
         c.weightx = 1;
         
         JRadioButton oneChB = new JRadioButton("one", false);
+        oneChB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+            	_query.fillTable(1);
+            }
+        });
+        
         JRadioButton allChB = new JRadioButton("all",true);
+        allChB.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+            	_query.fillTable(0);
+            }
+        });
         ButtonGroup group = new ButtonGroup();
         group.add(oneChB);
         group.add(allChB);
         JCheckBox trueChB = new JCheckBox("true", true);
+        addChbListners(trueChB);
         JCheckBox undefinedChB = new JCheckBox("undefined", true);
+        addChbListners(undefinedChB);
         JCheckBox inconsistentChB = new JCheckBox("inconsistent", true);
+        addChbListners(inconsistentChB);
         
         panelTop.add(oneChB,c);
         c.gridy=2;
@@ -295,6 +359,17 @@ public class ViewComponent extends AbstractOWLViewComponent {
 //        frame.pack();
         Query.progressFrame.setLocationRelativeTo(ViewComponent.this);
 //        progressFrame.setVisible(true);
+	}
+	
+	private void addChbListners(JCheckBox button){
+		checkBoxs.add(button);
+		button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+				tableFilterAnswer();
+            }
+        });
+		
 	}
 	
 }

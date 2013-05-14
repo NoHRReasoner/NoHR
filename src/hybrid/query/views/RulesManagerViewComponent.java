@@ -17,16 +17,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-import org.protege.owl.example.Metrics;
+//import org.protege.owl.example.Metrics;
 
 public class RulesManagerViewComponent extends AbstractOWLViewComponent {
     private static final long serialVersionUID = -4515710047558710080L;
     
-    private static final Logger log = Logger.getLogger(RulesManagerViewComponent.class);
+//    private static final Logger log = Logger.getLogger(RulesManagerViewComponent.class);
     
-    private Metrics metricsComponent;
+//    private Metrics metricsComponent;
     private JTextArea _textArea;
     private JTextArea _rulesTextArea;
     private JFileChooser _fileChooser;

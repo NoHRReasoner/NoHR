@@ -54,16 +54,18 @@ public class Query implements PrologOutputListener{
 	private Ontology _ontology;
 	private HashSet<String> _variables = new HashSet<String>();
 	private ArrayList<String> _variablesList = new ArrayList<String>();
-	private Dictionary<String, String> _answers = new Hashtable<String, String>();
+	private ArrayList<ArrayList<String>> _answers = new ArrayList<ArrayList<String>>();
 	private Pattern headerPattern = Pattern.compile("\\((.*?)\\)");
 	private String queryString;
 	private QueryXSB queryXSB;
+	
 	public Query(OWLModelManager owlModelManager, JTextArea textArea, DefaultTableModel tableModel) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
 		_owlModelManager = owlModelManager;
 		_outPutLog = textArea;
 		_outTableModel = tableModel;
 		Init();
 		headerRenderer.setBackground(new Color(239, 198, 46));
+		
 	}
 	
 	private void Init() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
@@ -159,7 +161,7 @@ public class Query implements PrologOutputListener{
 			try {
 				progressFrame.setVisible(true);
 //				Thread.sleep(1500);
-				progressLabel.setText("aaa");
+//				progressLabel.setText("aaa");
 				_ontology.PrepareForTranslating();
 				_ontology.proceed();
 				_ontology.appendRules(Rules.getRules());
@@ -226,7 +228,7 @@ public class Query implements PrologOutputListener{
 			command = _ontology.replaceSymbolsInWholeRule(command);
 			
 			fillTableHeader(command);
-			String detGoal = "findall( myTuple("+_variables.toString().replace("[", "").replace("]", "")+"), ("+command+"), List) , buildTermModel(List,TM)";
+			String detGoal = "findall( myTuple(TV, "+_variables.toString().replace("[", "").replace("]", "")+"), call_tv(("+command+"), TV), List) , buildTermModel(List,TM)";
 //			System.out.println(detGoal);
 			Object[] bindings = _engine.deterministicGoal(detGoal,"[TM]");
 			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
@@ -234,12 +236,14 @@ public class Query implements PrologOutputListener{
 			ArrayList<String> row;
 			for(int i=0;i< flattted.length;i++){
 				row = new ArrayList<String>();
-				row.add("_");
-				for(int j=0; j<_variables.size();j++){
-					row.add(_variablesList.get(j)+":"+ flattted[i].getChild(j));
+				row.add(flattted[i].getChild(0).toString());
+				for(int j=1; j<=_variables.size();j++){
+					row.add(/*_variablesList.get(j-1)+":"+ */flattted[i].getChild(j).toString());
 				}
-				_outTableModel.addRow(row.toArray());
+//				_outTableModel.addRow(row.toArray());
+				_answers.add(row);
 			}
+			fillTable(0);
 			((SubprocessEngine)_engine).sendAndFlushLn(command+".");
 			
 		}
@@ -276,74 +280,24 @@ public class Query implements PrologOutputListener{
 		if(s.length()==0)
 			return;
 		printInfo(s);
-//		s = s.replace(Config.nl, "");
 		if(!s.contains("++Error[XSB/Runtime/P]")){
-			System.out.println(s+"===============");
-			
-//			System.out.println(":"+s+": matches?:"+m.find());
-//			if(waitingForVariables){
-//				Matcher m = p.matcher(s);
-//				if(m.find())
+//			System.out.println(s+"===============");
 			if(s.contains(" = "))//{
 				sendSemiColomn();
-//				fillVariables(s);
-//			}else if(waitingForAnswer)
-//				getAnswer(s);
-			
 		}
-//		fillFakeTable();
 	}
 	
 	public void clearTable(){
-		for(int i=_outTableModel.getRowCount()-1;i>=0;i--){
-			_outTableModel.removeRow(i);
-		}
+		clearTableBody();
 		_outTableModel.setColumnCount(0);
 		_variables = new HashSet<String>();
 		_outTableModel.addColumn("valuation");
+		_answers = new ArrayList<ArrayList<String>>();
 	}
-	
-	private void fillVariables(String s){
-		StringReader sr = new StringReader(s); 
-		BufferedReader br = new BufferedReader(sr); 
-		String nextLine = ""; 
-		String[] _;
-		try {
-			while ((nextLine = br.readLine()) != null){
-				nextLine=nextLine.trim();
-				if(nextLine.contains("=")){
-					_=nextLine.split("=");
-					_answers.put(_[0].trim(), _[1] != null ? _[1].trim():"");
-				}
-			}
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		sr.close();
-		sendSemiColomn();
-	}
-	
-	private void getAnswer(String s){
-		
-		StringReader sr = new StringReader(s); 
-		BufferedReader br = new BufferedReader(sr); 
-		String nextLine = ""; 
-		try {
-			while ((nextLine = br.readLine()) != null){
-				nextLine=nextLine.trim();
-				if(!nextLine.contains("| ?-")){
-//					_answer = nextLine;
-				}
-			}
-			br.close();
-			
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		sr.close();
-		fillTable();
+	private void clearTableBody(){
+		for(int i=_outTableModel.getRowCount()-1;i>=0;i--){
+			_outTableModel.removeRow(i);
+		}
 	}
 	
 	private void fillTableHeader(String command){
@@ -368,15 +322,15 @@ public class Query implements PrologOutputListener{
 			System.out.println(e.toString());
 		}
 	}
-	private void fillTable(){
-		ArrayList<String> row = new ArrayList<String>();
-		row.add("_");
-		for (String string : _variables) {
-			row.add(_answers.get(string));
+	public void fillTable(int rowCount){
+		clearTableBody();
+		for(ArrayList<String> row :_answers){
+			_outTableModel.addRow(row.toArray());
+			if(rowCount==1)
+				break;
 		}
-		_outTableModel.addRow(row.toArray());
+		
 	}
-	
 	public void showProgressFrame() {
 //		SwingUtilities.invokeLater(new Runnable() {
 //		    public void run() {
