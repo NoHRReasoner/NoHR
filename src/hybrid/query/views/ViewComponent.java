@@ -1,30 +1,24 @@
 package hybrid.query.views;
 
 
-import hybrid.query.views.TableFilterDemo.MyTableModel;
+
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.Dimension;
 //import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Label;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +26,8 @@ import java.util.List;
 //import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.protege.owl.example.Metrics;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+//import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+//import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 
 public class ViewComponent extends AbstractOWLViewComponent {
