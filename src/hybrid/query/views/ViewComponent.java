@@ -25,7 +25,7 @@ import java.util.List;
 
 //import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-import org.protege.owl.example.Metrics;
+//import org.protege.owl.example.Metrics;
 //import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 //import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
@@ -35,7 +35,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
     
 //    private static final Logger log = Logger.getLogger(ViewComponent.class);
     
-    private Metrics metricsComponent;
+//    private Metrics metricsComponent;
     private Query _query;
     private JTextArea _textArea;
     private JTextField _textField;
@@ -146,7 +146,10 @@ public class ViewComponent extends AbstractOWLViewComponent {
         panel.add(resultPanel, c);
         
         add(panel, BorderLayout.CENTER);
+        
         _query = new Query(getOWLModelManager(), _textArea, tableModel);
+//        getOWL
+//        getOWLDataFactory();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	addProgressFrame();

@@ -3,15 +3,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/Applications/Protege_4.1/bundles/org.protege.editor.core.application.jar"/>
-	<classpathentry kind="lib" path="/Applications/Protege_4.1/bundles/org.protege.common.jar"/>
-	<classpathentry kind="lib" path="/Applications/Protege_4.1/bin/ProtegeLauncher.jar"/>
-	<classpathentry kind="lib" path="/Applications/Protege_4.1/plugins/org.protege.editor.owl.jar"/>
-	<classpathentry kind="lib" path="lib/examplelib.jar"/>
-	<classpathentry kind="lib" path="lib/interprolog.jar"/>
-	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/elk-owlapi.jar"/>
-	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/owlapi-bin.jar"/>
-	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/RelativeLayout-v1.0.jar"/>
-	<classpathentry kind="lib" path="/Users/vadimivanov/Documents/workspace/EmptyPlugin/lib/miglayout-4.0-swing.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Applications/Protege_4.1/bundles/org.protege.editor.core.application.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Applications/Protege_4.1/bundles/org.protege.common.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Applications/Protege_4.1/plugins/org.protege.editor.owl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/interprolog.jar"/>
+	<classpathentry kind="lib" path="lib/elk-owlapi.jar"/>
+	<classpathentry kind="lib" path="/Applications/Protege_4.1/plugins/org.semanticweb.owl.owlapi.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

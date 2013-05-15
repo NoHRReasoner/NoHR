@@ -1,15 +1,10 @@
 package local.translate;
 
-//import hybrid.query.views.Query.Task;
 
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
 import java.io.*;
-//import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-//import javax.print.attribute.DateTimeSyntax;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -17,27 +12,12 @@ import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.*;
-//import org.semanticweb.owlapi.model.AxiomType;
-//import org.semanticweb.owlapi.model.OWLAxiom;
-//import org.semanticweb.owlapi.model.OWLClass;
-//import org.semanticweb.owlapi.model.OWLClassExpression;
-//import org.semanticweb.owlapi.model.OWLIndividual;
-//import org.semanticweb.owlapi.model.OWLObjectProperty;
-//import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-//import org.semanticweb.owlapi.model.OWLOntology;
-//import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-//import org.semanticweb.owlapi.model.OWLOntologyManager;
-//import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-//import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-//import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
-//import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
-//import org.semanticweb.owlapi.util.ShortFormProvider;
-//import org.semanticweb.owlapi.util.SimpleShortFormProvider;
 
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
+
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.util.InferredAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredOntologyGenerator;
@@ -184,7 +164,9 @@ public class Ontology {
 		_outerTop=new PrintWriter(_outTopfile);*/
 //    }
     public Ontology(OWLModelManager owlModelManager, JTextArea textArea, JLabel label, boolean isLog) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException {
+    	System.out.println("I'm starting to create OWL manager");
         _ontologyManager = owlModelManager.getOWLOntologyManager();
+        System.out.println("I'm starting to create OWL ");
         _ontology = owlModelManager.getActiveOntology();
         _tempDir = System.getProperty(tempDirProp);
         //_textArea.append("OS current temporary directory is " + tempDir);

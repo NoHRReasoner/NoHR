@@ -228,7 +228,7 @@ public class Query implements PrologOutputListener{
 			command = _ontology.replaceSymbolsInWholeRule(command);
 			
 			fillTableHeader(command);
-			String detGoal = "findall( myTuple(TV, "+_variables.toString().replace("[", "").replace("]", "")+"), call_tv(("+command+"), TV), List) , buildTermModel(List,TM)";
+			String detGoal = "findall( myTuple(TV, "+_variablesList.toString().replace("[", "").replace("]", "")+"), call_tv(("+command+"), TV), List) , buildTermModel(List,TM)";
 //			System.out.println(detGoal);
 			Object[] bindings = _engine.deterministicGoal(detGoal,"[TM]");
 			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
@@ -239,7 +239,7 @@ public class Query implements PrologOutputListener{
 				value = flattted[i].getChild(0).toString();
 				row = new ArrayList<String>();
 				row.add(value);
-				for(int j=1; j<=_variables.size();j++){
+				for(int j=1; j<=_variablesList.size();j++){
 					row.add(/*_variablesList.get(j-1)+":"+ */flattted[i].getChild(j).toString());
 				}
 				_answers.add(row);
@@ -308,6 +308,7 @@ public class Query implements PrologOutputListener{
 		clearTableBody();
 		_outTableModel.setColumnCount(0);
 		_variables = new HashSet<String>();
+		_variablesList = new ArrayList<String>();
 		_outTableModel.addColumn("valuation");
 		_answers = new ArrayList<ArrayList<String>>();
 	}
@@ -329,14 +330,16 @@ public class Query implements PrologOutputListener{
                 rule = rule.substring(1, rule.length()-1);
                 for (String s : rule.split(",")) {
     				s = s.trim();
-    				_variables.add(s);
+//    				_variables.add(s);
+    				if(!_variablesList.contains(s))
+    					_variablesList.add(s);
     			}
             }
             sb.setLength(0);
-            for(String s: _variables){
+            for(String s: _variablesList){
         		_outTableModel.addColumn(s);
             }
-            _variablesList = new ArrayList<String>(_variables);
+//            _variablesList = new ArrayList<String>(_variables);
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
