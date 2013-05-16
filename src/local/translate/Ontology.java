@@ -140,7 +140,7 @@ public class Ontology {
         getDiffTime(date1, "Initializing is done, it took:");
         date1=new Date();
         initELK();
-        getDiffTime(date1, "ELK reasoner finished it's work, it took:");
+        getDiffTime(date1, "ELK reasoner finished, it took:");
 //        date1=new Date();
 //        mergeOntologies();
 //        getDiffTime(date1, "Merger finished it's work, it took:");
@@ -164,9 +164,7 @@ public class Ontology {
 		_outerTop=new PrintWriter(_outTopfile);*/
 //    }
     public Ontology(OWLModelManager owlModelManager, JTextArea textArea, JLabel label, boolean isLog) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException {
-    	System.out.println("I'm starting to create OWL manager");
         _ontologyManager = owlModelManager.getOWLOntologyManager();
-        System.out.println("I'm starting to create OWL ");
         _ontology = owlModelManager.getActiveOntology();
         _tempDir = System.getProperty(tempDirProp);
         //_textArea.append("OS current temporary directory is " + tempDir);
@@ -208,16 +206,16 @@ public class Ontology {
         Date date1=new Date();
         setProgressLabelText("Rule translation");
         fillExistsOntologiesAndRules();
-        getDiffTime(date1, "PreProcessing and finish All I rules finished it's work, it took:");
+        getDiffTime(date1, "PreProcessing and finish All I rules finished, it took:");
         date1=new Date();
 //        autoTable();
 //        getDiffTime(date1, "AutoTabling finished it's work, it took:");
         date1=new Date();
         loopThrowAllClasses();
-        getDiffTime(date1, "Rules C1, C2, C3 and A1 are finished it's work, it took:");
+        getDiffTime(date1, "Rules C1, C2, C3 and A1 are finished, it took:");
         date1=new Date();
         loopThrowAllProperties();
-        getDiffTime(date1, "Rules R1, R2 and A2 are finished it's work, it took:");
+        getDiffTime(date1, "Rules R1, R2 and A2 are finished, it took:");
     }
 
 
@@ -227,7 +225,6 @@ public class Ontology {
      * @throws IOException
      */
     public void appendRules(String filePath) throws Exception {
-        writeLineToAppendedRules("%Inserting rules");
         appendedRules = new HashSet<String>();//new ArrayList<String>(1000000);
         tablePredicatesRules = new HashSet<String>();
         File rules=new File(filePath);
@@ -1067,28 +1064,67 @@ public class Ontology {
      */
     public static void main(String[] args) throws Exception {
 
-//        String currentDir=new java.io.File(".").getCanonicalPath();
-//        JFileChooser file = new JFileChooser(currentDir);
-//        file.showDialog(null, "Choose ontology");
-        Date date1=new Date();
-//        Ontology ontology = new Ontology(file.getSelectedFile().getAbsolutePath());
-//        Ontology ontology = new Ontology("/Users/vadimivanov/Documents/University/tests/ontologies/anatomy2012EL-obfuscated.owl");
-        Ontology ontology = new Ontology("/Users/vadimivanov/Documents/University/tests/ontologies/chebi.owl");
-        ontology.proceed();
-        Date date2=new Date();
-        long diff=date2.getTime() - date1.getTime();
-        date1=new Date();
-//        int val = file.showDialog(null, "Choose rules");
-//        if(val==JFileChooser.APPROVE_OPTION){
-//            ontology.appendRules(file.getSelectedFile().getAbsolutePath());
-//        }
-        ontology.appendRules("/Users/vadimivanov/Documents/University/tests/rules/2.p");
+//      String currentDir=new java.io.File(".").getCanonicalPath();
+//      JFileChooser file = new JFileChooser(currentDir);
+//      file.showDialog(null, "Choose ontology");
+
+      Date timeStart;
+      Date timeEnd;
+      Date timeProceedStart;
+      Date timeProceedEnd;
+
+      timeStart = new Date();
+
+//      Date date1=new Date();
+//      Ontology ontology = new Ontology(file.getSelectedFile().getAbsolutePath());
+//      Ontology ontology = new Ontology("/Users/vadimivanov/Documents/University/tests/ontologies/anatomy2012EL-obfuscated.owl");
+      if(args.length==0){
+          System.out.println("Please specify arguments, at least ontology file path");
+          System.exit(0);
+      }
+
+      String ontologyPath = args[0];
+      File file = new File(ontologyPath);
+      if(!file.exists()){
+          System.out.println("Please specify correct path for ontology file");
+          System.exit(0);
+      }
+      System.out.println("Initialization started");
+      Ontology ontology = new Ontology(ontologyPath);
 
 
-        ontology.Finish();
-        date2=new Date();
-        diff+=date2.getTime() - date1.getTime();
-        System.out.println("I'm done. it took "+diff+" milisec");
+      timeProceedStart = new Date();
+      ontology.proceed();
+//      Date date2=new Date();
+      //long diff=date2.getTime() - date1.getTime();
+      //date1=new Date();
+
+      if(args.length>1 && args[1]!=null){
+          String rulePath = args[1];
+          file = new File(rulePath);
+          if(file.exists()){
+              ontology.appendRules(rulePath);
+          }
+          file =null;
+      }
+      timeProceedEnd = new Date();
+      System.out.println("====================================================================================");
+      System.out.println("our procedure time is "+(timeProceedEnd.getTime()-timeProceedStart.getTime())+" milisec");
+      System.out.println("====================================================================================");
+//      int val = file.showDialog(null, "Choose rules");
+//      if(val==JFileChooser.APPROVE_OPTION){
+//          ontology.appendRules(file.getSelectedFile().getAbsolutePath());
+//      }
+//      ontology.appendRules("/Users/vadimivanov/Documents/University/tests/rules/2.p");
+
+
+      ontology.Finish();
+      ontology.clear();
+      ontology = null;
+      timeEnd = new Date();
+      System.out.println("Total time is "+(timeEnd.getTime()-timeStart.getTime())+" milisec");
+      System.out.println("====================================================================================");
+      System.exit(0);
     }
 
 
@@ -1096,14 +1132,25 @@ public class Ontology {
 //    	System.out.println("ruleToLowerCase: "+rule);
         try {
             rule = rule.replace("'","").replace("\"","'");
+            StringBuffer sb = new StringBuffer();
+            String _;
             //(?!\s)'(?:''|[^'])*'|(?!\s)[^',]+
             //(?!\s)'(?:''|[^'])*'|(?!\s)[^',\s]+(\(|\.)(?![,|\)])
             //(?!\s)['|"](?:''|[^'])*['|"]|(?!\s)[^',\s]+(\(|\.)(?![,|\)])
 //    		Matcher m = Pattern.compile("\\w*\\(").matcher(rule);
 //    		Matcher m = Pattern.compile("\\w*\\b\\(?(?![,|\\)])").matcher(rule);
-            Matcher m = Pattern.compile("(?!\\s)['|\"](?:''|[^'])*['|\"]|(?!\\s)[^',\\s]+(\\(|\\.)(?![,|\\)])").matcher(rule);
-            StringBuffer sb = new StringBuffer();
-            String _;
+            
+            Matcher m = Pattern.compile("'([^']*)'").matcher(rule);
+            while (m.find()) {
+                _ = m.group().replace(",", "");
+                m.appendReplacement(sb, _);
+            }
+            m.appendTail(sb);
+            rule = sb.toString();
+            sb.setLength(0);
+            
+            m = Pattern.compile("(?!\\s)['|\"](?:''|[^'])*['|\"]|(?!\\s)[^',\\s]+(\\(|\\.)(?![,|\\)])").matcher(rule);
+            
             boolean addbracket;
             while (m.find()) {
                 _ = m.group().toLowerCase();
@@ -1132,6 +1179,21 @@ public class Ontology {
         }
         return rule;
 
+    }
+    
+    public String _dAllrule(String rule){
+    	String[] _ = rule.split("\\)\\s*,");
+    	String result="";
+//    	int index;
+    	if(_.length==1)
+    		result = getSubRule(rule);
+    	else{
+	    	for(String s:_){
+	    		result += getSubRule(s)+"), ";
+	    	}
+	    	result = result.substring(0, result.length()-3);
+    	}
+    	return result;
     }
 
     private String replaceSymbolsInRule(String rule) {

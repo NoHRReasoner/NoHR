@@ -12,6 +12,8 @@ Bundle-Vendor: Vadim Ivanov
 Update-Url: https://raw.github.com/fustic/protegeplugin/master/update.
  properties
 Bundle-ClassPath: .,lib/interprolog.jar, lib/elk-owlapi.jar
+Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivato
+ r
 Import-Package: org.apache.log4j, javax.swing,javax.swing.border,javax
  .swing.colorchooser,javax.swing.event,javax.swing.filechooser,javax.s
  wing.plaf,javax.swing.plaf.basic,javax.swing.plaf.metal,javax.swing.p
@@ -20,10 +22,8 @@ Import-Package: org.apache.log4j, javax.swing,javax.swing.border,javax
  f,javax.swing.tree,javax.swing.undo,javax.xml.parsers
 Bundle-Version: 0.9.2
 Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
- n,org.protege.editor.core.application;bundle-version="4.1.0";resoluti
- on:=optional,org.protege.editor.owl;bundle-version="4.1.0";resolution
- :=optional,org.semanticweb.owl.owlapi;bundle-version="3.0.0";resoluti
- on:=optional
+ n,org.protege.editor.core.application,org.protege.editor.owl,org.sema
+ nticweb.owl.owlapi
 Built-By: vadimivanov
-Build-Date: 05/15/2013 01:24 PM
+Build-Date: 05/16/2013 06:34 PM
 

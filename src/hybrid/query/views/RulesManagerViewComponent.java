@@ -90,7 +90,7 @@ public class RulesManagerViewComponent extends AbstractOWLViewComponent {
 					_ruleFile = new File(Rules.rulesFilePath);
 					_fileChooser.setSelectedFile(_ruleFile);
 				}
-				System.out.println(Rules.rulesFilePath);
+//				System.out.println(Rules.rulesFilePath);
 				int val = _fileChooser.showDialog(null, "Open");
 				if(val==JFileChooser.APPROVE_OPTION){
 //					_rules = new ArrayList<String>();

@@ -11,37 +11,22 @@ import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-//import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
-
-
-//import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
-//import org.protege.owl.example.Metrics;
-//import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-//import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-
 
 public class ViewComponent extends AbstractOWLViewComponent {
     private static final long serialVersionUID = -4515710047558710080L;
     
-//    private static final Logger log = Logger.getLogger(ViewComponent.class);
-    
-//    private Metrics metricsComponent;
     private Query _query;
     private JTextArea _textArea;
     private JTextField _textField;
-//    private JProgressBar progressBar;
-    private JFrame progressFrame;
-    private JLabel progressLabel;
     private TableRowSorter<DefaultTableModel> sorter;
     private JPanel settingsPanel;
     private List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
@@ -49,9 +34,6 @@ public class ViewComponent extends AbstractOWLViewComponent {
     @Override
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(12,12));
-        //metricsComponent = new Metrics(getOWLModelManager());
-        //add(metricsComponent, BorderLayout.BEFORE_FIRST_LINE);
-        
         JPanel panel = new JPanel(new GridBagLayout());
         
         GridBagConstraints c = new GridBagConstraints();
@@ -123,8 +105,6 @@ public class ViewComponent extends AbstractOWLViewComponent {
         //For the purposes of this example, better to have a single
         //selection.
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        
         
         tabbedPane.addTab("Result", new JScrollPane(table));
         tabbedPane.addTab("Log", outputPanel);
@@ -148,12 +128,10 @@ public class ViewComponent extends AbstractOWLViewComponent {
         add(panel, BorderLayout.CENTER);
         
         _query = new Query(getOWLModelManager(), _textArea, tableModel);
-//        getOWL
-//        getOWLDataFactory();
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	addProgressFrame();
-            	//Query.progressFrame.setVisible(true);
             }
         });
         _textField.requestFocus();
@@ -170,16 +148,11 @@ public class ViewComponent extends AbstractOWLViewComponent {
         RowFilter<DefaultTableModel, Object> rf = null;
         //If current expression doesn't parse, don't update.
         try {
-        	String filter = "";
+        	String filter = "yes|no";
         	for(JCheckBox chb: checkBoxs){
         		if(chb.isSelected()){
-        			filter+=chb.getText()+"|";
+        			filter+="|"+chb.getText();
         		}
-        	}
-        	if(filter.length()>2){
-        		filter = filter.substring(0, filter.length()-1);
-        	}else{
-        		filter = "_";
         	}
             rf = RowFilter.regexFilter(filter, 0);
         } catch (java.util.regex.PatternSyntaxException e) {
@@ -203,11 +176,13 @@ public class ViewComponent extends AbstractOWLViewComponent {
 				if(_textField.getText().length()>0){
 					try {
 						_query.query(_textField.getText());
+						tableFilterAnswer();
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-	            	_textField.setText("");
+					_textField.selectAll();
+	            	_textField.requestFocus();
 				}
 			}
 		});
@@ -225,11 +200,13 @@ public class ViewComponent extends AbstractOWLViewComponent {
 		            if( e.getKeyCode() == KeyEvent.VK_ENTER && _textField.getText().length()>0 )  {
 		            	try {
 							_query.query(_textField.getText());
+							tableFilterAnswer();
 						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-		            	_textField.setText("");
+		            	_textField.selectAll();
+		            	_textField.requestFocus();
 		            }
 				}
 				@Override

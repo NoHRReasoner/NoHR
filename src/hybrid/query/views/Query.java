@@ -2,14 +2,10 @@ package hybrid.query.views;
 
 
 import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +29,6 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.PrologOutputListener;
 import com.declarativa.interprolog.SubprocessEngine;
 import com.declarativa.interprolog.TermModel;
@@ -52,7 +47,7 @@ public class Query implements PrologOutputListener{
 	private boolean isEngineStarted;
 	private XSBSubprocessEngine _engine;
 	private Ontology _ontology;
-	private HashSet<String> _variables = new HashSet<String>();
+//	private HashSet<String> _variables = new HashSet<String>();
 	private ArrayList<String> _variablesList = new ArrayList<String>();
 	private ArrayList<ArrayList<String>> _answers = new ArrayList<ArrayList<String>>();
 	private Pattern headerPattern = Pattern.compile("\\((.*?)\\)");
@@ -126,14 +121,14 @@ public class Query implements PrologOutputListener{
 		}else{
 //			print("Please, set up your XSB_BIN_DIRECTORY"+Config.nl+" For mac os consider the example: launchctl setenv XSB_BIN_DIRECTORY /Full/Path/To/XSB/bin"+Config.nl);
 			printInfo("Please, set up your XSB_BIN_DIRECTORY");
-			printInfo("Up until Mountain Lion (10.8) you can set them in");
-			printInfo("~/.MacOSX/environment.plist"+Config.nl);
-			printInfo("See:"+Config.nl);
-			printInfo("http://developer.apple.com/library/mac/#qa/qa1067/_index.html");
-			printInfo("http://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPRuntimeConfig/Articles/EnvironmentVars.html");
-			printInfo("For PATH in the Terminal, you should be able to set in .bash_profile or .profile (you'll probably have to create it though)");
-			printInfo("For mountain lion and beyond you need to use launchd and launchctl (http://david-martinez.tumblr.com/post/28083831730/environment-variables-and-mountain-lion)");
-			printInfo("consider the example: setenv XSB_BIN_DIRECTORY /Full/Path/To/XSB/config/bin");
+//			printInfo("Up until Mountain Lion (10.8) you can set them in");
+//			printInfo("~/.MacOSX/environment.plist"+Config.nl);
+//			printInfo("See:"+Config.nl);
+//			printInfo("http://developer.apple.com/library/mac/#qa/qa1067/_index.html");
+//			printInfo("http://developer.apple.com/library/mac/#documentation/MacOSX/Conceptual/BPRuntimeConfig/Articles/EnvironmentVars.html");
+//			printInfo("For PATH in the Terminal, you should be able to set in .bash_profile or .profile (you'll probably have to create it though)");
+//			printInfo("For mountain lion and beyond you need to use launchd and launchctl (http://david-martinez.tumblr.com/post/28083831730/environment-variables-and-mountain-lion)");
+//			printInfo("consider the example: setenv XSB_BIN_DIRECTORY /Full/Path/To/XSB/config/bin");
 			
 			
 		}
@@ -228,11 +223,14 @@ public class Query implements PrologOutputListener{
 			command = _ontology.replaceSymbolsInWholeRule(command);
 			
 			fillTableHeader(command);
-			String detGoal = "findall( myTuple(TV, "+_variablesList.toString().replace("[", "").replace("]", "")+"), call_tv(("+command+"), TV), List) , buildTermModel(List,TM)";
-//			System.out.println(detGoal);
+			String detGoal = generateDetermenisticGoal(command);
+			System.out.println("detGoal: "+detGoal);
+			System.out.println("subGoal: "+_ontology._dAllrule(command));
+			
 			Object[] bindings = _engine.deterministicGoal(detGoal,"[TM]");
 			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
 			TermModel[] flattted = list.flatList();
+			
 			ArrayList<String> row;
 			String value;
 			for(int i=0;i< flattted.length;i++){
@@ -243,20 +241,42 @@ public class Query implements PrologOutputListener{
 					row.add(/*_variablesList.get(j-1)+":"+ */flattted[i].getChild(j).toString());
 				}
 				_answers.add(row);
-				/*if(!_ontology.isAnyDisjointWithStatement())
+				if(!_ontology.isAnyDisjointWithStatement())
 					_answers.add(row);
 				else{
 //					row.set(0, "");
 					if(value.equals("true") || value.equals("undefined")){
 						
-					}
-				}*/
+					}else
+						_answers.add(row);
+				}
 				
+			}
+			if(flattted.length==0){
+				row = new ArrayList<String>();
+				if(_engine.deterministicGoal(command))
+					row.add("yes");
+				else
+					row.add("no");
+				for(int j=1; j<=_variablesList.size();j++){
+					row.add("");
+				}
+				_answers.add(row);
 			}
 			fillTable(0);
 			((SubprocessEngine)_engine).sendAndFlushLn(command+".");
 			
 		}
+	}
+	private String generateDetermenisticGoal(String command){
+		String detGoal = "findall( myTuple(TV";
+		if(_variablesList.size()>0){
+			detGoal+=", ";
+			detGoal+=_variablesList.toString().replace("[", "").replace("]", "");
+		}
+		detGoal+="), call_tv(("+command+"), TV), List) , buildTermModel(List,TM)";
+		
+		return detGoal;
 	}
 	
 	private String makeSubQuery(){
@@ -307,7 +327,7 @@ public class Query implements PrologOutputListener{
 	public void clearTable(){
 		clearTableBody();
 		_outTableModel.setColumnCount(0);
-		_variables = new HashSet<String>();
+//		_variables = new HashSet<String>();
 		_variablesList = new ArrayList<String>();
 		_outTableModel.addColumn("valuation");
 		_answers = new ArrayList<ArrayList<String>>();
@@ -331,7 +351,7 @@ public class Query implements PrologOutputListener{
                 for (String s : rule.split(",")) {
     				s = s.trim();
 //    				_variables.add(s);
-    				if(!_variablesList.contains(s))
+    				if(Character.isUpperCase(s.charAt(0)) && !_variablesList.contains(s))
     					_variablesList.add(s);
     			}
             }
@@ -341,7 +361,7 @@ public class Query implements PrologOutputListener{
             }
 //            _variablesList = new ArrayList<String>(_variables);
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			System.out.println("fillTableHeader: "+e.toString());
 		}
 	}
 	public void fillTable(int rowCount){

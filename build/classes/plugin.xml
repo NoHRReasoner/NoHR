@@ -20,7 +20,7 @@
       <class value="hybrid.query.views.RulesManagerViewComponent"></class>
       <category value="@org.protege.ontologycategory"></category>
    </extension>
-   <extension id="WorkspaceTab" point="org.protege.editor.core.application.WorkspaceTab" version="0.9.2">
+   <extension id="WorkspaceTab" point="org.protege.editor.core.application.WorkspaceTab">
       <label value="NM Query"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.WorkspaceTabQuery"></class>
