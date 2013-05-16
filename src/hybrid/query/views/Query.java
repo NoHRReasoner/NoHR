@@ -243,10 +243,10 @@ public class Query implements PrologOutputListener{
 				_answers.add(row);
 				if(!_ontology.isAnyDisjointWithStatement())
 					_answers.add(row);
-				else{
+				else{					
 //					row.set(0, "");
 					if(value.equals("true") || value.equals("undefined")){
-						
+						System.out.println(makeSubQuery(command, flattted[i]));
 					}else
 						_answers.add(row);
 				}
@@ -279,11 +279,21 @@ public class Query implements PrologOutputListener{
 		return detGoal;
 	}
 	
-	private String makeSubQuery(){
+	private String makeSubQuery(String command, TermModel model){
 		String result = "";
-		
-		return result;
+		if(_variablesList.size()>0){
+			for(String s: command.split("\\)\\s*,")){
+				for(int j=1; j<=_variablesList.size();j++){
+					s = s.replace(_variablesList.get(j-1), model.getChild(j).toString());
+				}
+				result += s+"), ";
+			}
+			result = result.substring(0, result.length()-3);
+			return result;
+		}
+		return command;
 	}
+	
 	
 	public void query(String command) throws Exception {
 		queryString = command;
