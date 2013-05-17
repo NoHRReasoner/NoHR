@@ -191,6 +191,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
 	}
 	protected JTextField addQueryField(){
 		_textField = new JTextField();
+//		_textField.setText("has(M,N), p(X)");
 		_textField.addKeyListener(new KeyListener() {
 				@Override
 				public void keyPressed(KeyEvent e) {

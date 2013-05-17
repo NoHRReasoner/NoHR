@@ -88,12 +88,7 @@ public class Ontology {
      * */
     private HashSet<String> tablePredicatesOntology = new HashSet<String>();
     private HashSet<String> tablePredicatesRules = new HashSet<String>();
-
-    private String _delimeter="#";
-    private String _altDelimeter=":";
-    private String _negation="tnot";
-    private String _searchNegation="not";
-    private String _eq=":-";
+    private HashSet<String> setPrediactesAppearedUnderNunderscore = new HashSet<String>();
 
     private HashSet<String> _existsClasses = new HashSet<String>();
     private HashSet<String> _existsProperties = new HashSet<String>();
@@ -111,7 +106,8 @@ public class Ontology {
     //    private String _proresult = "ontologies_to_rules_proresult.p";
     private String _result = "result.p";//"ontologies_to_rules_result.p";
     private String _mergedOntologies = "ontologies_to_rules_merged.owl";
-
+    private ParsedRule parsedRule;
+    
     private boolean _isLog = true;
     private JTextArea _textArea = null;
     private JLabel progressLabel;
@@ -180,6 +176,7 @@ public class Ontology {
 //        tabledOntologies = new HashSet<String>();// new ArrayList<String>(500000);
         translatedOntologies = new HashSet<String>();//new ArrayList<String>(10000000);
         tablePredicatesOntology = new HashSet<String>();
+        setPrediactesAppearedUnderNunderscore = new HashSet<String>();
         setProgressLabelText("ELK reasoner");
         initELK();
 //        mergeOntologies();
@@ -194,6 +191,7 @@ public class Ontology {
         translatedOntologies = new HashSet<String>();
         appendedRules = new HashSet<String>();
         tablePredicatesOntology = new HashSet<String>();
+        setPrediactesAppearedUnderNunderscore = new HashSet<String>();
         tablePredicatesRules = new HashSet<String>();
         _existsClasses = new HashSet<String>();
         _existsProperties = new HashSet<String>();
@@ -212,7 +210,7 @@ public class Ontology {
 //        getDiffTime(date1, "AutoTabling finished it's work, it took:");
         date1=new Date();
         loopThrowAllClasses();
-        getDiffTime(date1, "Processing cLasses finished: ");
+        getDiffTime(date1, "Processing classes finished: ");
         date1=new Date();
         loopThrowAllProperties();
         getDiffTime(date1, "Processing properties finished: ");
@@ -265,20 +263,20 @@ public class Ontology {
         }
     }
     protected void proceedRule(String rule) throws Exception {
-        if(rule.startsWith(_eq))
+        if(rule.startsWith(Config.eq))
             return;
 //        System.out.println(rule);
 //        rule = rule.substring(0, rule.length()-1);
         rule = rule.replace(".", "");
         rule = ruleToLowerCase(rule);//processRule(rule);
 //        System.out.println(rule);
-        String[] arrayRule = rule.split(_eq);
+        String[] arrayRule = rule.split(Config.eq);
         String leftSideRule = replaceSymbolsInWholeRule(arrayRule[0].trim());
         String rightSideRule = null;
         if(arrayRule.length>1 && arrayRule[1]!=null)
             rightSideRule = replaceSymbolsInWholeRule(arrayRule[1].trim());
 
-        tablePredicateFromRule(leftSideRule);
+        tablePredicateFromRule(leftSideRule, false);
         if(isAnyDisjointStatement){
             writeArule(leftSideRule, rightSideRule);
             writeBrule(leftSideRule, rightSideRule);
@@ -303,10 +301,11 @@ public class Ontology {
                 rule = rule.trim();
                 if(rule.contains("(") && !rule.endsWith(")"))
                     rule+=")";
-                if(rule.startsWith(_searchNegation)){
-                    rule = rule.replaceFirst(_searchNegation, _negation);
-                    tableRule = rule.replaceFirst(_negation,"").trim();
-                    tablePredicateFromRule(tableRule);
+                if(rule.startsWith(Config.searchNegation)){
+                    rule = rule.replaceFirst(Config.searchNegation, Config.negation);
+                    tableRule = rule.replaceFirst(Config.negation,"").trim();
+                    tablePredicateFromRule(tableRule, true);
+                    
                 }
                 result+=rule+", ";
 
@@ -324,10 +323,10 @@ public class Ontology {
                 rule = rule.trim();
                 if(rule.contains("(") && !rule.endsWith(")"))
                     rule+=")";
-                if(rule.startsWith(_searchNegation)){
-                    rule = rule.replaceFirst(_searchNegation, _negation);
+                if(rule.startsWith(Config.searchNegation)){
+                    rule = rule.replaceFirst(Config.searchNegation, Config.negation);
                 }
-                if(rule.startsWith(_negation)){
+                if(rule.startsWith(Config.negation)){
                     result+=getSubRule(rule)+", ";
                 }else{
                     result+=rule+", ";
@@ -339,17 +338,20 @@ public class Ontology {
     }
     protected void writeBrule(String leftSide, String rightSide){
         if(rightSide==null){
+        	parsedRule = new ParsedRule(leftSide);
             writeLineToAppendedRules(getSubRule(leftSide) + getEqForRule() + getNegRule(leftSide) + ".");
+            writeRuleForPredicateUnderTnot(parsedRule.getTabledNegRule());
+            addPredicateToTableItRule(parsedRule.getTabledNegRule());
         }else{
             String result = getSubRule(leftSide)+getEqForRule();
             for (String rule : rightSide.split("\\)\\s*,")) {
                 rule = rule.trim();
                 if(rule.contains("(") && !rule.endsWith(")"))
                     rule+=")";
-                if(rule.startsWith(_searchNegation)){
-                    rule = rule.replaceFirst(_searchNegation, _negation);
+                if(rule.startsWith(Config.searchNegation)){
+                    rule = rule.replaceFirst(Config.searchNegation, Config.negation);
                 }
-                if(rule.startsWith(_negation)){
+                if(rule.startsWith(Config.negation)){
                     result+=rule+", ";
                 }else{
                     result+=getSubRule(rule)+", ";
@@ -357,48 +359,32 @@ public class Ontology {
             }
             //String predicate = leftSide.split("\\(")[0];
 //            if(isAnyDisjointStatement)//if(isExistRule(predicate) || isExistOntology(predicate))
-            if(isRuleHeadAppears(leftSide))
+            if(isRuleHeadAppears(leftSide)){
                 result += getNegRule(leftSide)+", ";
+                parsedRule = new ParsedRule(leftSide);
+                writeRuleForPredicateUnderTnot(parsedRule.getTabledNegRule());
+                addPredicateToTableItRule(parsedRule.getTabledNegRule());
+            }
             result=result.substring(0,result.length()-2);
             writeLineToAppendedRules(result + ".");
         }
     }
-    protected void tablePredicateFromRule(String rule){
-        rule = rule.trim();
-        if(rule.startsWith(_searchNegation))
-            rule = rule.replaceFirst(_searchNegation, _negation);
-        if(rule.startsWith(_negation))
-            rule = rule.replaceFirst(_negation+" ", "");
-        int len = 0;
-        String predicate="";
-        String[] _;
-        String originalRule = rule;
-        if(rule.startsWith("'")){
-            int index = rule.lastIndexOf("'");
-            predicate = rule.substring(0, index)+"'";
-            _ = rule.substring(index+1, rule.length()).split("\\(");
-        }else{
-            _ = rule.split("\\(");
-            predicate = _[0];
-
-        }
-        if(_.length>1 && _[1]!=null){
-            _ = _[1].split("\\)");
-            _ = _[0].split(",");
-            len = _.length;
-        }
-
-        if(predicate.equals("'"))
-            System.out.println(originalRule);
+    
+    protected void tablePredicateFromRule(String rule, boolean isAddToPredicateSet){
+        parsedRule = new ParsedRule(rule);
+        if(parsedRule.getPredicate().equals("'"))
+            System.out.println(rule);
 //        writeLineToTopFile(":- table "+predicate+"/"+len+".");
-        addPredicateToTableItRule(predicate+"/"+len);
-        if(isAnyDisjointStatement)
+        addPredicateToTableItRule(parsedRule.getTabledRule());
+        if(isAnyDisjointStatement){
 //            writeLineToTopFile(":- table "+predicate+"_d/"+len+".");
-            addPredicateToTableItRule(predicate+"_d/"+len);
-//    	}
+            addPredicateToTableItRule(parsedRule.getTabledDoubledRule());
+	        if(isAddToPredicateSet)
+	        	writeRuleForPredicateUnderTnot(parsedRule.getTabledDoubledRule());
+    	}
     }
     protected String getEqForRule(){
-        return " "+_eq+" ";
+        return " "+Config.eq+" ";
     }
     protected String getSubRule(String rule){
         rule = rule.trim();
@@ -410,7 +396,7 @@ public class Ontology {
         return rule;
     }
     protected String getNegRule(String rule){
-        return _negation+" n_"+rule.trim();
+        return Config.negation+" n_"+rule.trim();
     }
     protected String getNameFromRule(String rule){
         String[] _rule=rule.split("\\(");
@@ -432,6 +418,7 @@ public class Ontology {
         for(String str: tablePredicatesRules){
             writer.write(":- table "+str+".\n");
         }
+        
         for(String str: translatedOntologies) {
             writer.write(str+"\n");
         }
@@ -442,7 +429,7 @@ public class Ontology {
         }
         writer.close();
 
-        getDiffTime(date1,"Writing XSB fwile: ");
+        getDiffTime(date1,"Writing XSB file: ");
         return new File(_tempDir+_result);
     }
     protected void getOWL() throws OWLOntologyCreationException{
@@ -560,10 +547,10 @@ public class Ontology {
             rule = rule.replace(_ontologyID,"");
         try{
             String result;
-            if(rule.contains(_delimeter))
-                result=(rule.split(_delimeter)[numInList]).split(">")[0];
-            else if (rule.contains(_altDelimeter))
-                result=(rule.split(_altDelimeter)[numInList]).split(">")[0];
+            if(rule.contains(Config.delimeter))
+                result=(rule.split(Config.delimeter)[numInList]).split(">")[0];
+            else if (rule.contains(Config.altDelimeter))
+                result=(rule.split(Config.altDelimeter)[numInList]).split(">")[0];
             else if(rule.startsWith("<"))
                 result = rule.replaceFirst("<","").replace(">","");
             else
@@ -656,9 +643,10 @@ public class Ontology {
         writeLineToFile(C + "(" + a + ").");
         addPredicateToTableIt(C+"/1");
         if(isAnyDisjointStatement){//if(isExistOntology(C)){
-            String rule = getEqForRule() + _negation + " n_" + C + "(" + a + ")";
+            String rule = getEqForRule() + Config.negation + " n_" + C + "(" + a + ")";
             addPredicateToTableIt(C+"_d/1");
             addPredicateToTableIt("n_"+C+"/1");
+            writeRuleForPredicateUnderTnot("n_"+C+"/1");
             writeLineToFile(C + "_d(" + a + ")" + rule + ".");
         }
     }
@@ -675,9 +663,10 @@ public class Ontology {
         writeLineToFile(R + "(" + a + "," + b + ").");
         addPredicateToTableIt(R+"/2");
         if(isAnyDisjointStatement){//if(isExistRule(R)){
-            String rule =  getEqForRule()+_negation + " n_" + R + "(" + a + "," + b + ")";
+            String rule =  getEqForRule()+Config.negation + " n_" + R + "(" + a + "," + b + ")";
             addPredicateToTableIt(R+"_d/2");
             addPredicateToTableIt("n_"+R+"/2");
+            writeRuleForPredicateUnderTnot("n_"+R+"/2");
             writeLineToFile(R + "_d(" + a + "," + b + ")" + rule + ".");
         }
     }
@@ -695,8 +684,10 @@ public class Ontology {
         insertIntoExistClasses(C1);
         writeLineToFile("n_" + C2 + "(X) :- " + C1 + "(X).");
         addPredicateToTableIt("n_"+C2+"/1");
+        addPredicateToSetPredicatesAppearedUnderNunderscore("n_"+C2+"/1");
         writeLineToFile("n_" + C1 + "(X) :- " + C2 + "(X).");
         addPredicateToTableIt("n_"+C1+"/1");
+        addPredicateToSetPredicatesAppearedUnderNunderscore("n_"+C1+"/1");
         //}
     }
     /**
@@ -723,6 +714,7 @@ public class Ontology {
         String R= getRuleFromString(expression, 1);
         writeLineToFile("n_" + C + "(Y) :- " + R + "(X,Y).");
         addPredicateToTableIt("n_"+C+"/1");
+        addPredicateToSetPredicatesAppearedUnderNunderscore("n_"+C+"/1");
         writeLineToFile("n_" + R + "(X,Y) :- " + C + "(Y).");
         addPredicateToTableIt("n_"+R+"/2");
         insertIntoExistProperties(R);
@@ -751,6 +743,7 @@ public class Ontology {
         String C= getRuleFromString(expression, 1);
         writeLineToFile("n_" + C + "(X).");
         addPredicateToTableIt("n_"+C+"/1");
+        addPredicateToSetPredicatesAppearedUnderNunderscore("n_"+C+"/1");
         insertIntoExistClasses(C);
     }
     /**
@@ -766,11 +759,12 @@ public class Ontology {
             writeLineToFile(D + "(X)" + getEqForRule() + C + "(X).");
             addPredicateToTableIt(D+"/1");
         }
-        String rule = /*isExistOntology(D)*/isAnyDisjointStatement ? ", " + _negation + " n_" + D + "(X)" : "";
+        String rule = /*isExistOntology(D)*/isAnyDisjointStatement ? ", " + Config.negation + " n_" + D + "(X)" : "";
         if(isAnyDisjointStatement && !(C.equals(D) && rule.length()==0) /*isExistOntology(D)*/){
             writeLineToFile(D + "_d(X)" + getEqForRule() + C + "_d(X)" + rule + ".");
             addPredicateToTableIt(D+"_d/1");
             addPredicateToTableIt("n_"+D+"/1");
+            writeRuleForPredicateUnderTnot("n_"+D+"/1");
         }
     }
     /**
@@ -786,11 +780,12 @@ public class Ontology {
             writeLineToFile(S + "(X,Y)" + getEqForRule() + R + "(X,Y).");
             addPredicateToTableIt(S+"/2");
         }
-        String rule = isAnyDisjointStatement/*isExistOntology(S)*/ ? ", " + _negation + " n_" + S + "(X,Y)":"";
+        String rule = isAnyDisjointStatement/*isExistOntology(S)*/ ? ", " + Config.negation + " n_" + S + "(X,Y)":"";
         if(isAnyDisjointStatement && !(R.equals(S) && rule.length()==0)/*isExistRule(R)*/){
             writeLineToFile(S + "_d(X,Y)" + getEqForRule() + R + "_d(X,Y)" + rule + ".");
             addPredicateToTableIt(S+"_d/2");
             addPredicateToTableIt("n_"+S+"/2");
+            writeRuleForPredicateUnderTnot("n_"+S+"/2");
         }
     }
     /**
@@ -805,10 +800,11 @@ public class Ontology {
         writeLineToFile(T + "(X,Z)" + getEqForRule() + R + "(X,Y), " + S + "(Y,Z).");
         addPredicateToTableIt(T+"/2");
         if(isAnyDisjointStatement){//if(isExistRule(T)){
-            String rule = isAnyDisjointStatement/*isExistOntology(T)*/ ? ", " + _negation + " n_" + T + "(X,Z)":"";
+            String rule = isAnyDisjointStatement/*isExistOntology(T)*/ ? ", " + Config.negation + " n_" + T + "(X,Z)":"";
             writeLineToFile(T + "_d(X,Z)" + getEqForRule() + R + "_d(X,Y), " + S + "_d(Y,Z)" + rule + ".");
             addPredicateToTableIt(T+"_d/2");
             addPredicateToTableIt("n_"+T+"/2");
+            writeRuleForPredicateUnderTnot("n_"+T+"/1");
         }
     }
 
@@ -816,7 +812,7 @@ public class Ontology {
         _currentRule="%EquivalentRule";
         EquivalentClass rightSideOfRule = getRuleFromEquivalentClasses(rightPartOfRule, 1, 1);
         String ruleHead = getRuleFromString(owlClass,1);
-        String rule= ruleHead+"(X1) "+_eq+" "+rightSideOfRule.getFinalRule();
+        String rule= ruleHead+"(X1) "+Config.eq+" "+rightSideOfRule.getFinalRule();
         writeLineToFile(rule);
         addPredicateToTableIt(ruleHead+"/1");
     }
@@ -832,6 +828,7 @@ public class Ontology {
         }
         for (String rule : rules.getNegRulesHeadForTabling()) {
             addPredicateToTableIt(rule);
+            addPredicateToSetPredicatesAppearedUnderNunderscore(rule);
         }
 //        }
 
@@ -852,10 +849,11 @@ public class Ontology {
         writeLineToFile(_owlClass+"(X1)"+ getEqForRule()+rules.getFinalRule());
         addPredicateToTableIt(_owlClass+"/1");
         if(isAnyDisjointStatement){//if(isExistOntology(_owlClass)){
-            String rule=_owlClass+"_d(X1)"+getEqForRule()+rules.getDoubledRules()+", " + _negation + " n_" + _owlClass + "(X1).";
+            String rule=_owlClass+"_d(X1)"+getEqForRule()+rules.getDoubledRules()+", " + Config.negation + " n_" + _owlClass + "(X1).";
             writeLineToFile(rule);
             addPredicateToTableIt(_owlClass+"_d/1");
             addPredicateToTableIt("n_"+_owlClass+"/1");
+            writeRuleForPredicateUnderTnot("n_"+_owlClass+"/1");
         }
     }
     private void addPredicateToTableIt(String title){
@@ -863,6 +861,34 @@ public class Ontology {
     }
     private void addPredicateToTableItRule(String title){
     	tablePredicatesRules.add(title);
+    }
+    
+    private void addPredicateToSetPredicatesAppearedUnderNunderscore(String s){
+    	setPrediactesAppearedUnderNunderscore.add(s);
+    }
+    private boolean isPredicateAppearedInHeadUnderNunderscore(String predicate){
+    	return setPrediactesAppearedUnderNunderscore.contains(predicate);
+    }
+    private void writeRuleForPredicateUnderTnot(String predicate){
+//    	System.out.println("-----writeRuleForPredicateUnderTnot-------");
+//    	System.out.println(predicate);
+    	if(!isPredicateAppearedInHeadUnderNunderscore(predicate)){
+    		int index = predicate.lastIndexOf("/");
+    		String rule = predicate.substring(0, index);// +"(";
+//    		System.out.println("rule:"+rule);
+    		int limit = Integer.parseInt(predicate.substring(index+1,predicate.length()));
+//    		System.out.println("limitRule:"+predicate.substring(index+1,predicate.length()));
+    		if(limit>=1){
+    			rule += "(";
+	    		for(int i=1; i<=limit; i++){
+	    			rule += "_,";
+	    		}
+	    		rule = rule.substring(0, rule.length()-1)+")";
+    		}
+    		rule+=" :- fail.";
+    		writeLineToFile(rule);
+    	}
+//    	System.out.println("------------------------------------");
     }
     
     /*private void autoTable(){
@@ -1074,17 +1100,22 @@ public class Ontology {
 //      String currentDir=new java.io.File(".").getCanonicalPath();
 //      JFileChooser file = new JFileChooser(currentDir);
 //      file.showDialog(null, "Choose ontology");
-
+//      Ontology ontology = new Ontology(file.getSelectedFile().getAbsolutePath());
       Date timeStart;
       Date timeEnd;
       Date timeProceedStart;
       Date timeProceedEnd;
 
       timeStart = new Date();
-
-//      Date date1=new Date();
-//      Ontology ontology = new Ontology(file.getSelectedFile().getAbsolutePath());
-//      Ontology ontology = new Ontology("/Users/vadimivanov/Documents/University/tests/ontologies/anatomy2012EL-obfuscated.owl");
+/*
+      Ontology ontology = new Ontology("/Users/vadimivanov/Downloads/mkn@fct.unl.pt - cities example/city.owl");
+      ontology.proceed();
+      ontology.appendRules("/Users/vadimivanov/Downloads/mkn@fct.unl.pt - cities example/city.p");
+      
+      ontology.Finish();
+      ontology.clear();
+      System.exit(0);
+      */
       if(args.length==0){
           System.out.println("Please specify arguments, at least ontology file path");
           System.exit(0);
@@ -1132,6 +1163,7 @@ public class Ontology {
       System.out.println("Total time is "+(timeEnd.getTime()-timeStart.getTime())+" milisec");
       System.out.println("====================================================================================");
       System.exit(0);
+      
     }
 
 

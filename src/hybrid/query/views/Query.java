@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -173,7 +172,6 @@ public class Query implements PrologOutputListener{
 			} catch (ParserException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}finally{
 				progressFrame.setVisible(false);
@@ -205,7 +203,6 @@ public class Query implements PrologOutputListener{
 				} catch (ParserException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}finally{
 					progressFrame.setVisible(false);
@@ -239,21 +236,23 @@ public class Query implements PrologOutputListener{
 				for(int j=1; j<=_variablesList.size();j++){
 					row.add(/*_variablesList.get(j-1)+":"+ */flattted[i].getChild(j).toString());
 				}
-				_answers.add(row);
+//				_answers.add(row);
 				if(!_ontology.isAnyDisjointWithStatement())
 					_answers.add(row);
 				else{					
-//					row.set(0, "");
 					if(value.equals("true") || value.equals("undefined")){
-						System.out.println(generateSubQuery(_ontology._dAllrule(command), flattted[i]));
-						/*if(_engine.deterministicGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i]))){
-							row.set(0, value+" + yes");
-							System.out.println("yes");
+						Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])),"[TM]");
+						TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
+						TermModel[] subFlattted = subList.flatList();
+						String subAnswer = subFlattted[0].getChild(0).toString();
+						if(subAnswer.equals("no")){
+							if(value.equals("true")){
+								row.set(0, "inconsistent");
+								_answers.add(row);
+							}
+						}else{
+							_answers.add(row);
 						}
-						else{
-							row.set(0, value+" + no");
-							System.out.println("no");
-						}*/
 					}else
 						_answers.add(row);
 				}
