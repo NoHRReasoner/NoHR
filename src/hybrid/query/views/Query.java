@@ -225,7 +225,6 @@ public class Query implements PrologOutputListener{
 			fillTableHeader(command);
 			String detGoal = generateDetermenisticGoal(command);
 			System.out.println("detGoal: "+detGoal);
-			System.out.println("subGoal: "+_ontology._dAllrule(command));
 			
 			Object[] bindings = _engine.deterministicGoal(detGoal,"[TM]");
 			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
@@ -247,14 +246,14 @@ public class Query implements PrologOutputListener{
 //					row.set(0, "");
 					if(value.equals("true") || value.equals("undefined")){
 						System.out.println(generateSubQuery(_ontology._dAllrule(command), flattted[i]));
-						if(_engine.deterministicGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i]))){
+						/*if(_engine.deterministicGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i]))){
 							row.set(0, value+" + yes");
 							System.out.println("yes");
 						}
 						else{
 							row.set(0, value+" + no");
 							System.out.println("no");
-						}
+						}*/
 					}else
 						_answers.add(row);
 				}

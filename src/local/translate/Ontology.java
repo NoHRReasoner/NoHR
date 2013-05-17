@@ -204,18 +204,18 @@ public class Ontology {
      */
     public void proceed() throws ParserException{
         Date date1=new Date();
-        setProgressLabelText("Rule translation");
+//        setProgressLabelText("Rule translation");
         fillExistsOntologiesAndRules();
-        getDiffTime(date1, "PreProcessing and finish All I rules finished, it took:");
+        getDiffTime(date1, "PreProcessing and axioms containing DisjointWith finished: ");
         date1=new Date();
 //        autoTable();
 //        getDiffTime(date1, "AutoTabling finished it's work, it took:");
         date1=new Date();
         loopThrowAllClasses();
-        getDiffTime(date1, "Rules C1, C2, C3 and A1 are finished, it took:");
+        getDiffTime(date1, "Processing cLasses finished: ");
         date1=new Date();
         loopThrowAllProperties();
-        getDiffTime(date1, "Rules R1, R2 and A2 are finished, it took:");
+        getDiffTime(date1, "Processing properties finished: ");
     }
 
 
@@ -442,7 +442,7 @@ public class Ontology {
         }
         writer.close();
 
-        getDiffTime(date1,"Finishing, it took:");
+        getDiffTime(date1,"Writing XSB fwile: ");
         return new File(_tempDir+_result);
     }
     protected void getOWL() throws OWLOntologyCreationException{
@@ -515,7 +515,7 @@ public class Ontology {
         InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
         iog.fillOntology(_ontologyManager,_ontology);
 //		printLog("Reasoner finished work");
-        getDiffTime(date1,"Reasoner finished work:");
+        getDiffTime(date1,"Reasoner finished: ");
     }
     protected void mergeOntologies() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
         printLog("start merging");
@@ -656,8 +656,9 @@ public class Ontology {
         writeLineToFile(C + "(" + a + ").");
         addPredicateToTableIt(C+"/1");
         if(isAnyDisjointStatement){//if(isExistOntology(C)){
-            String rule = getEqForRule() +_negation + " n_" + C + "(" + a + ")";
+            String rule = getEqForRule() + _negation + " n_" + C + "(" + a + ")";
             addPredicateToTableIt(C+"_d/1");
+            addPredicateToTableIt("n_"+C+"/1");
             writeLineToFile(C + "_d(" + a + ")" + rule + ".");
         }
     }
@@ -676,6 +677,7 @@ public class Ontology {
         if(isAnyDisjointStatement){//if(isExistRule(R)){
             String rule =  getEqForRule()+_negation + " n_" + R + "(" + a + "," + b + ")";
             addPredicateToTableIt(R+"_d/2");
+            addPredicateToTableIt("n_"+R+"/2");
             writeLineToFile(R + "_d(" + a + "," + b + ")" + rule + ".");
         }
     }
@@ -768,6 +770,7 @@ public class Ontology {
         if(isAnyDisjointStatement && !(C.equals(D) && rule.length()==0) /*isExistOntology(D)*/){
             writeLineToFile(D + "_d(X)" + getEqForRule() + C + "_d(X)" + rule + ".");
             addPredicateToTableIt(D+"_d/1");
+            addPredicateToTableIt("n_"+D+"/1");
         }
     }
     /**
@@ -787,6 +790,7 @@ public class Ontology {
         if(isAnyDisjointStatement && !(R.equals(S) && rule.length()==0)/*isExistRule(R)*/){
             writeLineToFile(S + "_d(X,Y)" + getEqForRule() + R + "_d(X,Y)" + rule + ".");
             addPredicateToTableIt(S+"_d/2");
+            addPredicateToTableIt("n_"+S+"/2");
         }
     }
     /**
@@ -804,6 +808,7 @@ public class Ontology {
             String rule = isAnyDisjointStatement/*isExistOntology(T)*/ ? ", " + _negation + " n_" + T + "(X,Z)":"";
             writeLineToFile(T + "_d(X,Z)" + getEqForRule() + R + "_d(X,Y), " + S + "_d(Y,Z)" + rule + ".");
             addPredicateToTableIt(T+"_d/2");
+            addPredicateToTableIt("n_"+T+"/2");
         }
     }
 
@@ -850,6 +855,7 @@ public class Ontology {
             String rule=_owlClass+"_d(X1)"+getEqForRule()+rules.getDoubledRules()+", " + _negation + " n_" + _owlClass + "(X1).";
             writeLineToFile(rule);
             addPredicateToTableIt(_owlClass+"_d/1");
+            addPredicateToTableIt("n_"+_owlClass+"/1");
         }
     }
     private void addPredicateToTableIt(String title){
@@ -898,7 +904,8 @@ public class Ontology {
         boolean isTopClass;
         ClassExpressionType expressionType;
         for(OWLClass owlClass : _owlClasses){
-            isTopClass=owlClass.isOWLThing() || owlClass.isOWLNothing();
+        	
+            isTopClass = owlClass.isOWLThing() || owlClass.isOWLNothing();
 
             //Going into loop throw all Disjoint classes
             for(OWLClassExpression owlClassExpression : owlClass.getDisjointClasses(_ontology)){
