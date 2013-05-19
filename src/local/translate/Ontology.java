@@ -416,7 +416,8 @@ public class Ontology {
             writer.write(":- table "+str+".\n");
         }
         for(String str: tablePredicatesRules){
-            writer.write(":- table "+str+".\n");
+        	if(!tablePredicatesOntology.contains(str))
+        		writer.write(":- table "+str+".\n");
         }
         
         for(String str: translatedOntologies) {
