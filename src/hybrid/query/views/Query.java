@@ -244,7 +244,7 @@ public class Query implements PrologOutputListener{
 						Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])),"[TM]");
 						TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
 						TermModel[] subFlattted = subList.flatList();
-						//System.out.println(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])));
+						System.out.println(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])));
 						//System.out.println("subFlattted:"+subFlattted.length);
 						if(subFlattted.length>0){
 							String subAnswer = subFlattted[0].getChild(0).toString();
@@ -257,8 +257,10 @@ public class Query implements PrologOutputListener{
 								_answers.add(row);
 							}
 						}else{
-							row.set(0, "no");
-							_answers.add(row);
+							if(value.equals("true")){
+								row.set(0, "inconsistent");
+								_answers.add(row);
+							}
 						}
 					}else
 						_answers.add(row);
