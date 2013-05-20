@@ -227,43 +227,47 @@ public class Query implements PrologOutputListener{
 			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
 			TermModel[] flattted = list.flatList();
 			
-			ArrayList<String> row;
+			ArrayList<String> row = new ArrayList<String>();
 			String value;
+			System.out.println("flatted len:" +flattted.length);
 			for(int i=0;i< flattted.length;i++){
+				
 				value = flattted[i].getChild(0).toString();
-				row = new ArrayList<String>();
-				row.add(value);
-				for(int j=1; j<=_variablesList.size();j++){
-					row.add(/*_variablesList.get(j-1)+":"+ */flattted[i].getChild(j).toString());
-				}
-//				_answers.add(row);
-				if(!_ontology.isAnyDisjointWithStatement())
-					_answers.add(row);
-				else{					
-					if(value.equals("true") || value.equals("undefined")){
-						Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])),"[TM]");
-						TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
-						TermModel[] subFlattted = subList.flatList();
-						System.out.println(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])));
-						//System.out.println("subFlattted:"+subFlattted.length);
-						if(subFlattted.length>0){
-							String subAnswer = subFlattted[0].getChild(0).toString();
-							if(subAnswer.equals("no")){
+				if(value.length()>0){
+					row = new ArrayList<String>();
+					row.add(value);
+					for(int j=1; j<=_variablesList.size();j++){
+						row.add(/*_variablesList.get(j-1)+":"+ */flattted[i].getChild(j).toString());
+					}
+	//				_answers.add(row);
+					if(!_ontology.isAnyDisjointWithStatement())
+						_answers.add(row);
+					else{					
+						if(value.equals("true") || value.equals("undefined")){
+							Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])),"[TM]");
+							TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
+							TermModel[] subFlattted = subList.flatList();
+							System.out.println(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])));
+							//System.out.println("subFlattted:"+subFlattted.length);
+							if(subFlattted.length>0){
+								String subAnswer = subFlattted[0].getChild(0).toString();
+								if(subAnswer.equals("no")){
+									if(value.equals("true")){
+										row.set(0, "inconsistent");
+										_answers.add(row);
+									}
+								}else{
+									_answers.add(row);
+								}
+							}else{
 								if(value.equals("true")){
 									row.set(0, "inconsistent");
 									_answers.add(row);
 								}
-							}else{
-								_answers.add(row);
 							}
-						}else{
-							if(value.equals("true")){
-								row.set(0, "inconsistent");
-								_answers.add(row);
-							}
-						}
-					}else
-						_answers.add(row);
+						}else
+							_answers.add(row);
+					}
 				}
 				
 			}
@@ -277,6 +281,12 @@ public class Query implements PrologOutputListener{
 //				for(int j=1; j<=_variablesList.size();j++){
 //					row.add("");
 //				}
+				_answers.add(row);
+			}
+			if(_answers.size()==0){
+				clearTable();
+				row = new ArrayList<String>();
+				row.add("no");
 				_answers.add(row);
 			}
 			fillTable(0);
