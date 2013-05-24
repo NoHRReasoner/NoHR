@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import local.translate.Ontology;
+import local.translate.Utils;
 
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
@@ -216,12 +217,11 @@ public class Query implements PrologOutputListener{
 			if(command.endsWith(".")){
 				command = command.substring(0, command.length()-1);
 			}
-			command = _ontology.ruleToLowerCase(command);
-			command = _ontology.replaceSymbolsInWholeRule(command);
-			
+			command = _ontology.prepareQuery(command);
+			printLog("prepared query: "+command);
 			fillTableHeader(command);
 			String detGoal = generateDetermenisticGoal(command);
-			System.out.println("detGoal: "+detGoal);
+			printLog("detGoal: "+detGoal);
 			
 			Object[] bindings = _engine.deterministicGoal(detGoal,"[TM]");
 			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
@@ -229,7 +229,6 @@ public class Query implements PrologOutputListener{
 			
 			ArrayList<String> row = new ArrayList<String>();
 			String value;
-			System.out.println("flatted len:" +flattted.length);
 			for(int i=0;i< flattted.length;i++){
 				
 				value = flattted[i].getChild(0).toString();
@@ -237,18 +236,18 @@ public class Query implements PrologOutputListener{
 					row = new ArrayList<String>();
 					row.add(value);
 					for(int j=1; j<=_variablesList.size();j++){
-						row.add(/*_variablesList.get(j-1)+":"+ */flattted[i].getChild(j).toString());
+						row.add(_ontology.getLabelByHash(flattted[i].getChild(j).toString()));
 					}
-	//				_answers.add(row);
 					if(!_ontology.isAnyDisjointWithStatement())
 						_answers.add(row);
 					else{					
 						if(value.equals("true") || value.equals("undefined")){
-							Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])),"[TM]");
+							printLog("_dRule: "+Utils._dAllrule(command));
+							printLog("SubQuery is: "+generateSubQuery(Utils._dAllrule(command), flattted[i]));
+							printLog("SubDetGoal is: "+generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
+							Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])),"[TM]");
 							TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
 							TermModel[] subFlattted = subList.flatList();
-							System.out.println(generateDetermenisticGoal(generateSubQuery(_ontology._dAllrule(command), flattted[i])));
-							//System.out.println("subFlattted:"+subFlattted.length);
 							if(subFlattted.length>0){
 								String subAnswer = subFlattted[0].getChild(0).toString();
 								if(subAnswer.equals("no")){
@@ -278,9 +277,6 @@ public class Query implements PrologOutputListener{
 					row.add("yes");
 				else
 					row.add("no");
-//				for(int j=1; j<=_variablesList.size();j++){
-//					row.add("");
-//				}
 				_answers.add(row);
 			}
 			if(_answers.size()==0){
@@ -295,29 +291,63 @@ public class Query implements PrologOutputListener{
 		}
 	}
 	private String generateDetermenisticGoal(String command){
-		String detGoal = "findall( myTuple(TV";
+		String detGoal = "findall(myTuple(TV";
 		if(_variablesList.size()>0){
 			detGoal+=", ";
 			detGoal+=_variablesList.toString().replace("[", "").replace("]", "");
 		}
-		detGoal+="), call_tv(("+command+"), TV), List) , buildTermModel(List,TM)";
+		detGoal+="), call_tv(("+command+"), TV), List), buildTermModel(List,TM)";
 		
 		return detGoal;
 	}
 	
 	private String generateSubQuery(String command, TermModel model){
 		String result = "";
+		int index;
+		String vars = "";
 		if(_variablesList.size()>0){
 			for(String s: command.split("\\)\\s*,")){
-				for(int j=1; j<=_variablesList.size();j++){
-					s = s.replace(_variablesList.get(j-1), model.getChild(j).toString());
-				}
-				result += s+"), ";
+				index = s.lastIndexOf("(");
+				if(index>0){
+					result += s.substring(0, index);
+					vars = s.substring(index+1, s.length());
+					for(int j=1; j<=_variablesList.size();j++){
+						vars = vars.replace(_variablesList.get(j-1), model.getChild(j).toString());
+					}
+					result +="("+vars;
+					if(!result.endsWith(")"))
+						result+=")";
+					result+=", ";
+					
+				}else
+					result += s+", ";
 			}
-			result = result.substring(0, result.length()-3);
+			result = result.substring(0, result.length()-2);
 			return result;
 		}
 		return command;
+		/*
+		
+		
+		if(_variablesList.size()>0){
+			for(String s: command.split("\\)\\s*,")){
+				index = s.lastIndexOf("(");
+				if(index>0){
+					result += s.substring(0, index);
+					vars = s.substring(index+1, s.length());
+					for(int j=1; j<=_variablesList.size();j++){
+						vars = vars.replace(_variablesList.get(j-1), model.getChild(j).toString());
+					}
+					result +="("+vars+", ";
+				}else{
+					result += s+", ";
+				}
+				
+			}
+			result = result.substring(0, result.length()-2);
+			return result;
+		}
+		return command;*/
 	}
 	
 	

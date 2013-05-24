@@ -11,7 +11,8 @@ Bundle-Description: A sample tab for learning how to write a plugin
 Bundle-Vendor: Vadim Ivanov 
 Update-Url: https://raw.github.com/fustic/protegeplugin/master/update.
  properties
-Bundle-ClassPath: .,lib/interprolog.jar, lib/elk-owlapi.jar
+Bundle-ClassPath: .,lib/interprolog.jar, lib/elk-owlapi.jar, lib/commo
+ ns-codec-1.8.jar
 Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivato
  r
 Import-Package: org.apache.log4j, javax.swing,javax.swing.border,javax
@@ -25,5 +26,5 @@ Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  n,org.protege.editor.core.application,org.protege.editor.owl,org.sema
  nticweb.owl.owlapi
 Built-By: vadimivanov
-Build-Date: 05/20/2013 04:01 PM
+Build-Date: 05/24/2013 12:45 PM
 

@@ -8,7 +8,7 @@ Bundle-DocURL: http://protege.stanford.edu
 Bundle-Description: A sample tab for learning how to write a plugin
 Bundle-Vendor: Vadim Ivanov 
 Update-Url: https://raw.github.com/fustic/protegeplugin/master/update.properties
-Bundle-ClassPath: .,lib/interprolog.jar, lib/elk-owlapi.jar
+Bundle-ClassPath: .,lib/interprolog.jar, lib/elk-owlapi.jar, lib/commons-codec-1.8.jar
 Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivator
 Import-Package: org.apache.log4j, javax.swing,
  javax.swing.border,

@@ -1,15 +1,7 @@
 package local.translate;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: vadimivanov
- * Date: 12/27/12
- * Time: 8:02 PM
- * To change this template use File | Settings | File Templates.
- */
 public class EquivalentClass {
     protected int _iterator;
     protected String _rule;
@@ -45,7 +37,7 @@ public class EquivalentClass {
         _rule="";
         if(rulesList.size()>0){
             for(EquivalentRules rule : rulesList){
-                _rule+=rule.name+rule.getArguments()+", ";
+                _rule+="a"+rule.name+rule.getArguments()+", ";
             }
             _rule=_rule.substring(0,_rule.length()-2)+".";
         }
@@ -58,11 +50,11 @@ public class EquivalentClass {
         EquivalentRules r;
         for(int i=0; i<rulesList.size();i++){
             r=rulesList.get(i);
-            _rule="n_"+r.name+r.getArguments()+" :- ";
+            _rule="n"+r.name+r.getArguments()+" :- ";
             for(int j=0; j<rulesList.size();j++){
                 if(j!=i){
                     r=rulesList.get(j);
-                    _rule+=r.name+r.getArguments()+", ";
+                    _rule+="a"+r.name+r.getArguments()+", ";
                 }
             }
             switch (r.ontologyType){
@@ -81,19 +73,19 @@ public class EquivalentClass {
         return result;
     }
     public List<String> getNegRulesHeadForTabling(){
-    	List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<String>();
         String _rule="";
         EquivalentRules r;
         for(int i=0; i<rulesList.size();i++){
             r=rulesList.get(i);
-            _rule="n_"+r.name+"/";
+            _rule="n"+r.name+"/";
             switch (r.ontologyType){
                 case ONTOLOGY:{
                     _rule+="1";
                     break;
                 }
                 case RULE:{
-                	_rule+="2";
+                    _rule+="2";
                     break;
                 }
             }
@@ -109,7 +101,7 @@ public class EquivalentClass {
         _rule="";
         if(rulesList.size()>0){
             for(EquivalentRules rule : rulesList){
-                _rule+=rule.name+"_d"+rule.getArguments()+", ";
+                _rule+="d"+rule.name+rule.getArguments()+", ";
             }
             _rule=_rule.substring(0,_rule.length()-2);
         }
@@ -146,5 +138,4 @@ public class EquivalentClass {
         ONTOLOGY
     }
 }
-
 

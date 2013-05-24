@@ -6,4 +6,5 @@ public class Config {
 	public static String negation="tnot";
 	public static String searchNegation="not";
 	public static String eq=":-";
+	public static boolean ruleCreationDebug = false;
 }
