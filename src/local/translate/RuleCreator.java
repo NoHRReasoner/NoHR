@@ -1,4 +1,5 @@
 package local.translate;
+
 import org.semanticweb.owlapi.model.*;
 
 public class RuleCreator {
@@ -9,25 +10,26 @@ public class RuleCreator {
 
     public RuleCreator(CollectionsManager c, OntologyLabel ol) {
         cm = c;
+        cm.clearOntology();
         ontologyLabel = ol;
     }
 
     /**
-            * (a1). for each C(a) ∈ A: C(a) ← and Cd(a) ← notNC(a).
-            * @param member
-    * @param entity
-    */
+     * (a1). for each C(a) ∈ A: C(a) ← and Cd(a) ← notNC(a).
+     * @param member
+     * @param entity
+     */
     public void writeRuleA1(OWLIndividual member, OWLClass entity){
         currentRule = "%A1";
         String a = ontologyLabel.getLabel(member, 1);
         String C = ontologyLabel.getLabel(entity, 1);
-        writeLineToFile("a"+C + "(a" + a + ").");
+        writeLineToFile("a"+C + "(c" + a + ").");
         cm.addTabledPredicateOntology("a"+C + "/1");
         if(cm.isAnyDisjointStatement()){
-            String rule = "d"+C + "(a" + a + ")";
+            String rule = "d"+C + "(c" + a + ")";
             cm.addTabledPredicateOntology("d"+C + "/1");
             if(isPredicateAppearedInHeadUnderNunderscore("n"+C+"/1"))
-                rule += Utils.getEqForRule() + Config.negation + " n" + C + "(a" + a + ")";
+                rule += Utils.getEqForRule() + Config.negation + " n" + C + "(c" + a + ")";
             writeLineToFile(rule + ".");
         }
     }
@@ -41,13 +43,13 @@ public class RuleCreator {
         String R= ontologyLabel.getLabel(entity, 1),
                 a= ontologyLabel.getLabel(entity, 2),
                 b= ontologyLabel.getLabel(entity, 3);
-        writeLineToFile("a"+R + "(a" + a + ", a" + b + ").");
+        writeLineToFile("a"+R + "(c" + a + ", c" + b + ").");
         cm.addTabledPredicateOntology("a"+R + "/2");
         if(cm.isAnyDisjointStatement()){
-            String rule = "d"+R + "(a" + a + ", a" + b + ")";
+            String rule = "d"+R + "(c" + a + ", c" + b + ")";
             cm.addTabledPredicateOntology("d"+R + "/2");
             if(isPredicateAppearedInHeadUnderNunderscore("n"+R+"/2"))
-                rule += Utils.getEqForRule()+Config.negation + " n" + R + "(a" + a + ", a" + b + ")";
+                rule += Utils.getEqForRule()+Config.negation + " n" + R + "(c" + a + ", c" + b + ")";
             writeLineToFile(rule + ".");
         }
     }

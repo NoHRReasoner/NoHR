@@ -1,4 +1,5 @@
 package local.translate;
+
 import java.io.*;
 import java.util.*;
 
@@ -16,17 +17,14 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 
 import org.semanticweb.owlapi.reasoner.InferenceType;
-import org.semanticweb.owlapi.util.InferredAxiomGenerator;
-import org.semanticweb.owlapi.util.InferredOntologyGenerator;
-import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
-import org.semanticweb.owlapi.util.InferredEquivalentClassAxiomGenerator;
+import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import javax.swing.*;
 
 
 /**
- * The Class Ontology.
+ * The Class local.translate.Ontology.
  */
 public class Ontology {
 
@@ -95,7 +93,7 @@ public class Ontology {
         _isLog = isLog;
         _textArea = textArea;
         progressLabel = label;
-    }
+    }                       
 
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
         setProgressLabelText("ELK reasoner");
@@ -222,19 +220,33 @@ public class Ontology {
         /** Classify the ontology. */
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         printLog("Precomputed inference");
+        getDiffTime(date1, "Reasoner finished: ");
+        date1 = new Date();
         /**To generate an inferred ontology we use implementations of
          inferred axiom generators */
         ArrayList<InferredAxiomGenerator<? extends OWLAxiom>> gens = new ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>();
         gens.add(new InferredSubClassAxiomGenerator());
         gens.add(new InferredEquivalentClassAxiomGenerator());
+        gens.add(new InferredClassAssertionAxiomGenerator());
+        getDiffTime(date1,"Generated inferred ontology: ");
+        date1 = new Date();
 
-        /** Put the inferred axioms into a fresh empty ontology. */
-//        OWLOntology infOnt=ontologyManager.createOntology();
         InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
         iog.fillOntology(ontologyManager, ontology);
+
+        /** Put the inferred axioms into a fresh empty ontology. */
+        /*OWLOntology infOnt = ontologyManager.createOntology();
+
+        InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
+        iog.fillOntology(ontologyManager, infOnt);
+        try {
+            ontologyManager.saveOntology(infOnt, IRI.create(new File("createdOntology.owl")));
+        } catch (OWLOntologyStorageException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } */
         iog = null;
 //		printLog("Reasoner finished work");
-        getDiffTime(date1,"Reasoner finished: ");
+        getDiffTime(date1,"Merge ontology: ");
     }
 
 
@@ -366,92 +378,6 @@ public class Ontology {
         cm.printAllLabels();
     }
 
-    /**
-     * @param args
-     * @throws OWLOntologyCreationException
-     * @throws IOException
-     * @throws ParserException
-     * @throws OWLOntologyStorageException
-     */
-    public static void main(String[] args) throws Exception {
-
-//        String currentDir=new java.io.File(".").getCanonicalPath();
-//        JFileChooser fileChooser = new JFileChooser("/Users/vadimivanov/Documents/University/tests/ontologies");
-//        fileChooser.showDialog(null, "Choose ontology");
-//        Ontology _ontology = new Ontology(fileChooser.getSelectedFile().getAbsolutePath());
-//        Ontology _ontology = new Ontology("/Users/vadimivanov/Documents/University/tests/ontologies/short_fma.owl");
-        Ontology _ontology = new Ontology("/Users/vadimivanov/Downloads/mkn@fct.unl.pt - cities example/cities.owl");
-        _ontology.proceed();
-        _ontology.appendRules("/Users/vadimivanov/Documents/University/tests/rules/test.p");
-        _ontology.printAllLabels();
-        _ontology.Finish();
-
-//        System.exit(0);
-
-        Date timeStart;
-        Date timeEnd;
-        Date timeProceedStart;
-        Date timeProceedEnd;
-
-        timeStart = new Date();
-/*
-      Ontology ontology = new Ontology("/Users/vadimivanov/Downloads/mkn@fct.unl.pt - cities example/city.owl");
-      ontology.proceed();
-      ontology.appendRules("/Users/vadimivanov/Downloads/mkn@fct.unl.pt - cities example/city.p");
-
-      ontology.Finish();
-      ontology.clear();
-      System.exit(0);
-      */
-        if(args.length==0){
-            System.out.println("Please specify arguments, at least ontology file path");
-            System.exit(0);
-        }
-
-        String ontologyPath = args[0];
-        File file = new File(ontologyPath);
-        if(!file.exists()){
-            System.out.println("Please specify correct path for ontology file");
-            System.exit(0);
-        }
-        System.out.println("Initialization started");
-        Ontology ontology = new Ontology(ontologyPath);
-
-
-        timeProceedStart = new Date();
-        ontology.proceed();
-//      Date date2=new Date();
-        //long diff=date2.getTime() - date1.getTime();
-        //date1=new Date();
-
-        if(args.length>1 && args[1]!=null){
-            String rulePath = args[1];
-            file = new File(rulePath);
-            if(file.exists()){
-                ontology.appendRules(rulePath);
-            }
-            file =null;
-        }
-        timeProceedEnd = new Date();
-        System.out.println("====================================================================================");
-        System.out.println("our procedure time is "+(timeProceedEnd.getTime()-timeProceedStart.getTime())+" milisec");
-        System.out.println("====================================================================================");
-//      int val = file.showDialog(null, "Choose rules");
-//      if(val==JFileChooser.APPROVE_OPTION){
-//          ontology.appendRules(file.getSelectedFile().getAbsolutePath());
-//      }
-//      ontology.appendRules("/Users/vadimivanov/Documents/University/tests/rules/2.p");
-
-
-        ontology.Finish();
-        ontology.clear();
-        ontology = null;
-        timeEnd = new Date();
-        System.out.println("Total time is "+(timeEnd.getTime()-timeStart.getTime())+" milisec");
-        System.out.println("====================================================================================");
-        System.exit(0);
-
-    }
     public String prepareQuery(String q){
         return query.prepareQuery(q);
     }

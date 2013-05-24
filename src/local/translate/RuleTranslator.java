@@ -1,4 +1,5 @@
 package local.translate;
+
 public class RuleTranslator {
 
     private CollectionsManager cm;
@@ -7,6 +8,7 @@ public class RuleTranslator {
 
     public RuleTranslator(CollectionsManager c) {
         cm = c;
+        cm.clearRules();
     }
 
 

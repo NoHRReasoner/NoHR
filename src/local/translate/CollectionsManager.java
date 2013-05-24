@@ -111,7 +111,7 @@ public class CollectionsManager {
             while (it.hasNext()) {
                 Map.Entry pairs = (Map.Entry)it.next();
                 writer.write(pairs.getKey() + " = " + pairs.getValue()+"\n");
-                it.remove(); // avoids a ConcurrentModificationException
+                //it.remove(); // avoids a ConcurrentModificationException
             }
             writer.close();
 

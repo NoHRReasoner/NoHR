@@ -30,11 +30,14 @@ public class Utils {
         return _rule[0];
     }
     public static String getSubRule(String rule){
+    	rule = rule.trim();
+//    	System.out.println("rule of d.: "+rule+" and result is: "+"d"+rule.substring(1,rule.length()));
     	return "d"+rule.substring(1,rule.length());
         //ParsedRule parsedRule = new ParsedRule(rule);
         //return parsedRule.getPlainSubRule();
     }
     public static String _dAllrule(String rule){
+//    	System.out.println("Original rule for doub.: "+rule);
         String[] _ = rule.split("\\)\\s*,");
         String result="";
         if(_.length==1)
@@ -48,6 +51,7 @@ public class Utils {
             }
             result = result.substring(0, result.length()-2);
         }
+//        System.out.println("Final doub. rule: "+result);
         return result;
     }
 

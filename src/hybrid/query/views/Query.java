@@ -242,8 +242,8 @@ public class Query implements PrologOutputListener{
 						_answers.add(row);
 					else{					
 						if(value.equals("true") || value.equals("undefined")){
-							printLog("_dRule: "+Utils._dAllrule(command));
-							printLog("SubQuery is: "+generateSubQuery(Utils._dAllrule(command), flattted[i]));
+//							printLog("_dRule: "+Utils._dAllrule(command));
+//							printLog("SubQuery is: "+generateSubQuery(Utils._dAllrule(command), flattted[i]));
 							printLog("SubDetGoal is: "+generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
 							Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])),"[TM]");
 							TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
@@ -287,7 +287,7 @@ public class Query implements PrologOutputListener{
 			}
 			fillTable(0);
 			((SubprocessEngine)_engine).sendAndFlushLn(command+".");
-			
+			//_ontology.printAllLabels();
 		}
 	}
 	private String generateDetermenisticGoal(String command){
@@ -326,30 +326,7 @@ public class Query implements PrologOutputListener{
 			return result;
 		}
 		return command;
-		/*
-		
-		
-		if(_variablesList.size()>0){
-			for(String s: command.split("\\)\\s*,")){
-				index = s.lastIndexOf("(");
-				if(index>0){
-					result += s.substring(0, index);
-					vars = s.substring(index+1, s.length());
-					for(int j=1; j<=_variablesList.size();j++){
-						vars = vars.replace(_variablesList.get(j-1), model.getChild(j).toString());
-					}
-					result +="("+vars+", ";
-				}else{
-					result += s+", ";
-				}
-				
-			}
-			result = result.substring(0, result.length()-2);
-			return result;
-		}
-		return command;*/
 	}
-	
 	
 	public void query(String command) throws Exception {
 		queryString = command;
@@ -431,23 +408,25 @@ public class Query implements PrologOutputListener{
 		}
 	}
 	public void fillTable(int rowCount){
-		clearTableBody();
-		for(ArrayList<String> row :_answers){
+		try{
+			clearTableBody();
+			for(ArrayList<String> row :_answers){
+				_outTableModel.addRow(row.toArray());
+				if(rowCount==1)
+					break;
+			}
+		}catch(Exception e){
+			clearTable();
+			ArrayList<String> row = new ArrayList<String>();
+			row.add("no");
 			_outTableModel.addRow(row.toArray());
-			if(rowCount==1)
-				break;
 		}
 		
 	}
 	public void showProgressFrame() {
-//		SwingUtilities.invokeLater(new Runnable() {
-//		    public void run() {
-		    	progressFrame.setVisible(true);
-		    	progressFrame.validate();
-		    	// for JFrame/JDialog/JWindow and upto Java7 is there only validate();
-		    	progressFrame.repaint();
-//		    }
-//		});
+    	progressFrame.setVisible(true);
+    	progressFrame.validate();
+    	progressFrame.repaint();
 	}
 	public void hideProgressFrame() {
 //		SwingUtilities.invokeLater(new Runnable() {
@@ -478,10 +457,6 @@ public class Query implements PrologOutputListener{
         @Override
         public void done() {
         	progressFrame.setVisible(false);
-//            Toolkit.getDefaultToolkit().beep();
-//            startButton.setEnabled(true);
-//            setCursor(null); //turn off the wait cursor
-//            taskOutput.append("Done!\n");
         }
     }
  

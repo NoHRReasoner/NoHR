@@ -9,24 +9,22 @@ import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
 
 public class OntologyLabel{
 	/** The _ontology ID. */
-    private static String _ontologyID;
-    private OWLAnnotationProperty _ontologyLabel;
+    private static String ontologyID;
+    private OWLAnnotationProperty ontologyLabel;
     /** The _ontology. */
-    private static OWLOntology _ontology;
+    private static OWLOntology ontology;
 
     private CollectionsManager cm;
-	public OntologyLabel(OWLOntology ontology, OWLAnnotationProperty annotationProperty, CollectionsManager manager){
-		_ontology = ontology;
-		_ontologyLabel = annotationProperty;
+	public OntologyLabel(OWLOntology ont, OWLAnnotationProperty annotationProperty, CollectionsManager manager){
+		ontology = ont;
+		ontologyLabel = annotationProperty;
         cm = manager;
-		String _ = _ontology.getOntologyID().getOntologyIRI().toString();
-        _ontologyID = _.contains("/") ? _.substring(0, _.lastIndexOf("/")) + "/" : "";
-		
+		ontologyID = getOntologyID();
 	}
 	
 	public String getLabel(String rule, int numInList){
-        if(_ontologyID.length()>0)
-            rule = rule.replace(_ontologyID,"");
+        if(ontologyID.length()>0)
+            rule = rule.replace(ontologyID,"");
         try{
             String result;
             if(rule.contains(Config.delimeter))
@@ -53,7 +51,7 @@ public class OntologyLabel{
         return getLabel(property.asOWLObjectProperty(), numInList);
     }
 	public String getLabel(OWLObjectProperty objectProperty, int numInList) {
-        return getLabel(objectProperty.getAnnotations(_ontology, _ontologyLabel), objectProperty.toString(), numInList);
+        return getLabel(objectProperty.getAnnotations(ontology, ontologyLabel), objectProperty.toString(), numInList);
     }
 	public String getLabel(OWLIndividual member, int numInList) {
 //        return getLabel(member.get  getAnnotations(_ontologyLabel), entity.toString(), numInList);
@@ -65,7 +63,7 @@ public class OntologyLabel{
         return getLabel(((OWLClass) member), numInList);
     }
 	public String getLabel(OWLEntity entity, int numInList) {
-        return getLabel(entity.getAnnotations(_ontology, _ontologyLabel), entity.toString(), numInList);
+        return getLabel(entity.getAnnotations(ontology, ontologyLabel), entity.toString(), numInList);
     }
 	public String getLabel(OWLAxiom entity, int numInList) {
         if(entity instanceof OWLSubPropertyChainAxiomImpl){
@@ -90,7 +88,7 @@ public class OntologyLabel{
         //return getLabel(entity.getAnnotations(_ontologyLabel), entity.toString(), numInList);
     }
 	public String getLabel(OWLClass owlClass, int numInList) {
-        return getLabel(owlClass.getAnnotations(_ontology, _ontologyLabel), owlClass.toString(), numInList);
+        return getLabel(owlClass.getAnnotations(ontology, ontologyLabel), owlClass.toString(), numInList);
     }
 	public String getLabel(OWLClassExpression owlClass, int numInList) {
         return getLabel(owlClass.asOWLClass(), numInList);
@@ -153,7 +151,16 @@ public class OntologyLabel{
         return equivalentClass;
     }
 
-
+    private String getOntologyID(){
+    	try{
+    		String _ = ontology.getOntologyID().getOntologyIRI().toString();
+            return _.contains("/") ? _.substring(0, _.lastIndexOf("/")) + "/" : "";
+            
+    	}catch(NullPointerException e){
+    		return "";
+    	}
+    	
+    }
 	public void printLog(String log){
 		System.out.println(log);
 	}
