@@ -53,6 +53,7 @@ public class Query implements PrologOutputListener{
 	private Pattern headerPattern = Pattern.compile("\\((.*?)\\)");
 	private String queryString;
 	private QueryXSB queryXSB;
+	private String previousQuery = "";
 	
 	public Query(OWLModelManager owlModelManager, JTextArea textArea, DefaultTableModel tableModel) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
 		_owlModelManager = owlModelManager;
@@ -339,12 +340,15 @@ public class Query implements PrologOutputListener{
 	
 	public void query(String command) throws Exception {
 		queryString = command;
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-            	queryXSB = new QueryXSB();
-                queryXSB.execute();
-            }
-        });
+		if(!queryString.equals(previousQuery)){
+			previousQuery = queryString;
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+	            	queryXSB = new QueryXSB();
+	                queryXSB.execute();
+	            }
+	        });
+		}
 	}
 	
 	private void sendSemiColomn(){

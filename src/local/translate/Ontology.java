@@ -321,7 +321,7 @@ public class Ontology {
                     //rightPartOfRuleString=rightPartOfRule.toString();
                     if(!isTopClass){
                         if(rightPartOfRule.getClassExpressionType()==ClassExpressionType.OWL_CLASS){
-                            if(owlClass!=rightPartOfRule)
+                            if(!owlClass.equals(rightPartOfRule))
                                 ruleCreator.writeRuleC1(rightPartOfRule, owlClass, false);
                         }else{
                             ruleCreator.writeEquivalentRule(owlClass, rightPartOfRule);
