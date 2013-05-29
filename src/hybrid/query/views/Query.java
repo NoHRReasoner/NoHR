@@ -137,10 +137,14 @@ public class Query implements PrologOutputListener{
 	}
 	
 	private void startEngine(String xsbBin) {
+		if(_engine!=null){
+			
+			_engine.shutdown();
+			_engine = null;
+		}
 		isEngineStarted=true;
 		try{
 			_engine = new XSBSubprocessEngine(xsbBin);
-//			_prologEngine = new XSBSubprocessEngine(xsbBin);
 			_engine.addPrologOutputListener(this);
 			printLog("Engine started"+Config.nl);
 		}catch(Exception e){
@@ -164,6 +168,7 @@ public class Query implements PrologOutputListener{
 				isOntologyChanged=false;
 				Rules.isRulesOntologyChanged = false;
 				progressFrame.setVisible(false);
+				_ontology.printAllLabels();
 			} catch (OWLOntologyCreationException e) {
 				e.printStackTrace();
 			} catch (OWLOntologyStorageException e) {
@@ -195,6 +200,7 @@ public class Query implements PrologOutputListener{
 						Rules.isRulesOntologyChanged = false;
 					}
 					compileFile(_ontology.Finish());
+					_ontology.printAllLabels();
 				} catch (OWLOntologyCreationException e) {
 					e.printStackTrace();
 				} catch (OWLOntologyStorageException e) {
@@ -229,9 +235,11 @@ public class Query implements PrologOutputListener{
 			
 			ArrayList<String> row = new ArrayList<String>();
 			String value;
+			printLog("flattted.length: "+flattted.length);
 			for(int i=0;i< flattted.length;i++){
 				
 				value = flattted[i].getChild(0).toString();
+				printLog("value: "+value);	
 				if(value.length()>0){
 					row = new ArrayList<String>();
 					row.add(value);
@@ -289,6 +297,7 @@ public class Query implements PrologOutputListener{
 			((SubprocessEngine)_engine).sendAndFlushLn(command+".");
 			//_ontology.printAllLabels();
 		}
+		
 	}
 	private String generateDetermenisticGoal(String command){
 		String detGoal = "findall(myTuple(TV";
@@ -342,6 +351,8 @@ public class Query implements PrologOutputListener{
 		((SubprocessEngine)_engine).sendAndFlushLn(";");
 	}
 	public boolean compileFile(File file) {
+		
+		InitInterPrologInteraction();
 		isCompiled=false;
 		if(isEngineStarted && _engine.load_dynAbsolute(file))
 			isCompiled=true;
@@ -461,11 +472,4 @@ public class Query implements PrologOutputListener{
     }
  
 	
-}
-
-
-
-
-
-
-
+}	
