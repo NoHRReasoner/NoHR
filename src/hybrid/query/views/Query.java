@@ -225,78 +225,78 @@ public class Query implements PrologOutputListener{
 				command = command.substring(0, command.length()-1);
 			}
 			command = _ontology.prepareQuery(command);
-			printLog("prepared query: "+command);
-			fillTableHeader(command);
-			String detGoal = generateDetermenisticGoal(command);
-			printLog("detGoal: "+detGoal);
-			
-			Object[] bindings = _engine.deterministicGoal(detGoal,"[TM]");
-			TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
-			TermModel[] flattted = list.flatList();
-			
-			ArrayList<String> row = new ArrayList<String>();
-			String value;
-			printLog("flattted.length: "+flattted.length);
-			for(int i=0;i< flattted.length;i++){
+			if(!command.equals(previousQuery)){
+				previousQuery = command;
+				printLog("prepared query: "+command);
+				fillTableHeader(command);
+				String detGoal = generateDetermenisticGoal(command);
+				printLog("detGoal: "+detGoal);
 				
-				value = flattted[i].getChild(0).toString();
-				printLog("value: "+value);	
-				if(value.length()>0){
-					row = new ArrayList<String>();
-					row.add(value);
-					for(int j=1; j<=_variablesList.size();j++){
-						row.add(_ontology.getLabelByHash(flattted[i].getChild(j).toString()));
-					}
-					if(!_ontology.isAnyDisjointWithStatement())
-						_answers.add(row);
-					else{					
-						if(value.equals("true") || value.equals("undefined")){
-//							printLog("_dRule: "+Utils._dAllrule(command));
-//							printLog("SubQuery is: "+generateSubQuery(Utils._dAllrule(command), flattted[i]));
-							printLog("SubDetGoal is: "+generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
-							Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])),"[TM]");
-							TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
-							TermModel[] subFlattted = subList.flatList();
-							if(subFlattted.length>0){
-								String subAnswer = subFlattted[0].getChild(0).toString();
-								if(subAnswer.equals("no")){
+				Object[] bindings = _engine.deterministicGoal(detGoal,"[TM]");
+				TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
+				TermModel[] flattted = list.flatList();
+				
+				ArrayList<String> row = new ArrayList<String>();
+				String value;
+				for(int i=0;i< flattted.length;i++){
+					value = flattted[i].getChild(0).toString();	
+					if(value.length()>0){
+						row = new ArrayList<String>();
+						row.add(value);
+						for(int j=1; j<=_variablesList.size();j++){
+							row.add(_ontology.getLabelByHash(flattted[i].getChild(j).toString()));
+						}
+						if(!_ontology.isAnyDisjointWithStatement())
+							_answers.add(row);
+						else{					
+							if(value.equals("true") || value.equals("undefined")){
+	//							printLog("_dRule: "+Utils._dAllrule(command));
+	//							printLog("SubQuery is: "+generateSubQuery(Utils._dAllrule(command), flattted[i]));
+								printLog("SubDetGoal is: "+generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
+								Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])),"[TM]");
+								TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
+								TermModel[] subFlattted = subList.flatList();
+								if(subFlattted.length>0){
+									String subAnswer = subFlattted[0].getChild(0).toString();
+									if(subAnswer.equals("no")){
+										if(value.equals("true")){
+											row.set(0, "inconsistent");
+											_answers.add(row);
+										}
+									}else{
+										_answers.add(row);
+									}
+								}else{
 									if(value.equals("true")){
 										row.set(0, "inconsistent");
 										_answers.add(row);
 									}
-								}else{
-									_answers.add(row);
 								}
-							}else{
-								if(value.equals("true")){
-									row.set(0, "inconsistent");
-									_answers.add(row);
-								}
-							}
-						}else
-							_answers.add(row);
+							}else
+								_answers.add(row);
+						}
 					}
+					
 				}
-				
-			}
-			if(flattted.length==0){
-				clearTable();
-				row = new ArrayList<String>();
-				if(_engine.deterministicGoal(command))
-					row.add("yes");
-				else
+				if(flattted.length==0){
+					clearTable();
+					row = new ArrayList<String>();
+					if(_engine.deterministicGoal(command))
+						row.add("yes");
+					else
+						row.add("no");
+					_answers.add(row);
+				}
+				if(_answers.size()==0){
+					clearTable();
+					row = new ArrayList<String>();
 					row.add("no");
-				_answers.add(row);
+					_answers.add(row);
+				}
+				fillTable(0);
+				((SubprocessEngine)_engine).sendAndFlushLn(command+".");
+				//_ontology.printAllLabels();
 			}
-			if(_answers.size()==0){
-				clearTable();
-				row = new ArrayList<String>();
-				row.add("no");
-				_answers.add(row);
-			}
-			fillTable(0);
-			((SubprocessEngine)_engine).sendAndFlushLn(command+".");
-			//_ontology.printAllLabels();
 		}
 		
 	}
@@ -340,15 +340,14 @@ public class Query implements PrologOutputListener{
 	
 	public void query(String command) throws Exception {
 		queryString = command;
-		if(!queryString.equals(previousQuery)){
-			previousQuery = queryString;
-			javax.swing.SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	            	queryXSB = new QueryXSB();
-	                queryXSB.execute();
-	            }
-	        });
-		}
+		
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	queryXSB = new QueryXSB();
+                queryXSB.execute();
+            }
+        });
+	
 	}
 	
 	private void sendSemiColomn(){
@@ -435,6 +434,7 @@ public class Query implements PrologOutputListener{
 			ArrayList<String> row = new ArrayList<String>();
 			row.add("no");
 			_outTableModel.addRow(row.toArray());
+			System.out.println("FillTable: "+e.toString());
 		}
 		
 	}
