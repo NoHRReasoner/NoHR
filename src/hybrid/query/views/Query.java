@@ -294,7 +294,7 @@ public class Query implements PrologOutputListener{
 					_answers.add(row);
 				}
 				fillTable(0);
-				((SubprocessEngine)_engine).sendAndFlushLn(command+".");
+				//((SubprocessEngine)_engine).sendAndFlushLn(command+".");
 				//_ontology.printAllLabels();
 			}
 		}
