@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -427,16 +428,22 @@ public class Query implements PrologOutputListener{
 			log.error("fillTableHeader: "+e.toString());
 		}
 	}
-	public void fillTable(int rowCount){
+	public void fillTable(final int rowCount){
+		
 		try{
 			clearTableBody();
 //			log.info( "Column Count: "+_outTableModel.getColumnCount());
-			for(ArrayList<String> row :_answers){
-//				log.info("row to add: "+Arrays.deepToString(row.toArray()));
-				_outTableModel.addRow(row.toArray());
-				if(rowCount==1)
-					break;
-			}
+			
+			SwingUtilities.invokeLater(new Runnable() {
+		        public void run() {
+					for(ArrayList<String> row :_answers){
+		//				log.info("row to add: "+Arrays.deepToString(row.toArray()));
+						_outTableModel.addRow(row.toArray());
+						if(rowCount==1)
+							break;
+					}
+				}
+		    });
 		}catch(Exception e){
 			clearTable();
 			ArrayList<String> row = new ArrayList<String>();
