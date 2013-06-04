@@ -15,7 +15,7 @@ public class Utils {
             "|             # OR                                                   \n" +
             "\\s*,\\s*     # a ',' optionally surrounded by space-chars           \n"
     );*/
-    private static Pattern p = Pattern.compile("(\\w+\\s)?(\"[^\"]+\"|'[^']+'|\\w+)(\\(\\w\\d?(,\\w\\d?)*\\))?");
+    private static Pattern p = Pattern.compile("(\\w+\\s)?(\\\"[^\\\"]+\\\"|'[^']+'|\\w+)(\\(\\w+\\d?(,\\w+\\d?)*\\))?");
 
     public static String getEqForRule(){
         return " "+Config.eq+" ";

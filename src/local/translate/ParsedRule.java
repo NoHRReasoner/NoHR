@@ -1,5 +1,7 @@
 package local.translate;
 
+import org.apache.log4j.Logger;
+
 public class ParsedRule {
 	
 	private String rule;
@@ -8,9 +10,11 @@ public class ParsedRule {
     private String variables;
     private boolean isUnderTnot = false;
     private CollectionsManager cm = Ontology.collectionsManager;
+    private static final Logger log = Logger.getLogger(Ontology.class);
 	public ParsedRule(String r){
 		rule = r;
 		parse();
+		log.setLevel(Config.logLevel);
 	}
 	private void parse(){
 		rule = rule.trim();
@@ -38,8 +42,10 @@ public class ParsedRule {
 
         }
         if(_.length>1 && _[1]!=null){
+        	log.info("vars:"+_);
             _ = _[1].split("\\)");
             _ = _[0].split(",");
+            log.info("vars under ,:"+_);
             variables = "(";
             for(String argument : _){
             	if(Character.isLowerCase(argument.charAt(0)))
