@@ -32,7 +32,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
     private List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
     
     @Override
-    protected void initialiseOWLView() throws Exception {
+    protected void initialiseOWLView() {
         setLayout(new BorderLayout(12,12));
         JPanel panel = new JPanel(new GridBagLayout());
         
@@ -126,9 +126,11 @@ public class ViewComponent extends AbstractOWLViewComponent {
         panel.add(resultPanel, c);
         
         add(panel, BorderLayout.CENTER);
-        
+        try{
         _query = new Query(getOWLModelManager(), _textArea, tableModel);
-
+        }catch(Exception e){
+        	System.out.println("Query:" +e.toString());
+        }
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	addProgressFrame();
@@ -180,6 +182,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
+						System.out.println("precessButton");
 					}
 					_textField.selectAll();
 	            	_textField.requestFocus();
@@ -205,6 +208,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
 						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
+							System.out.println("add query");
 						}
 		            	_textField.selectAll();
 		            	_textField.requestFocus();

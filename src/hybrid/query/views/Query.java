@@ -155,7 +155,7 @@ public class Query implements PrologOutputListener{
 		}
 	}
 
-	public void queryXSB()  throws Exception{
+	public void queryXSB(){
 		String command = queryString;
 		if(!isCompiled){
 			try {
@@ -200,6 +200,7 @@ public class Query implements PrologOutputListener{
 						_ontology.appendRules(Rules.getRules());
 						Rules.isRulesOntologyChanged = false;
 					}
+					previousQuery="";
 					compileFile(_ontology.Finish());
 					_ontology.printAllLabels();
 				} catch (OWLOntologyCreationException e) {
@@ -214,10 +215,10 @@ public class Query implements PrologOutputListener{
 					e.printStackTrace();
 				}finally{
 					progressFrame.setVisible(false);
+					previousQuery="";
 				}
 			}
 		}
-		
 		if(isQueriable()){
 			
 			printInfo(command+Config.nl);
@@ -225,6 +226,7 @@ public class Query implements PrologOutputListener{
 				command = command.substring(0, command.length()-1);
 			}
 			command = _ontology.prepareQuery(command);
+			previousQuery="";
 			if(!command.equals(previousQuery)){
 				previousQuery = command;
 				printLog("prepared query: "+command);
@@ -423,7 +425,7 @@ public class Query implements PrologOutputListener{
 	}
 	public void fillTable(int rowCount){
 		try{
-			clearTableBody();
+			//clearTableBody();
 			for(ArrayList<String> row :_answers){
 				_outTableModel.addRow(row.toArray());
 				if(rowCount==1)
@@ -460,8 +462,7 @@ public class Query implements PrologOutputListener{
             try {
 				queryXSB();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Query: "+e.toString());
 			}
             return null;
         }
