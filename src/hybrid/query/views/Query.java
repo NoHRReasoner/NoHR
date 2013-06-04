@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import local.translate.Ontology;
 import local.translate.Utils;
 
+import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
@@ -54,22 +55,30 @@ public class Query implements PrologOutputListener{
 	private String queryString;
 	private QueryXSB queryXSB;
 	private String previousQuery = "";
+	private static final Logger log = Logger.getLogger(Query.class);
 	
-	public Query(OWLModelManager owlModelManager, JTextArea textArea, DefaultTableModel tableModel) throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
+	public Query(OWLModelManager owlModelManager, JTextArea textArea, DefaultTableModel tableModel){
 		_owlModelManager = owlModelManager;
 		_outPutLog = textArea;
 		_outTableModel = tableModel;
 		Init();
 		headerRenderer.setBackground(new Color(239, 198, 46));
-		
+		log.setLevel(Config.logLevel);
 	}
 	
-	private void Init() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
+	private void Init(){
 		
 		_owlModelManager.addOntologyChangeListener(ontologyChangeListener);
 		_owlModelManager.addListener(modelManagerListener);
 		InitInterPrologInteraction();
-	    _ontology = new Ontology(_owlModelManager, _outPutLog, progressLabel, Config.isDebug);
+		InitOntology();
+	}
+	private void InitOntology(){
+		try{
+			_ontology = new Ontology(_owlModelManager, _outPutLog, progressLabel, Config.isDebug);
+		}catch(Exception e){
+			log.error(e);
+		}
 	}
 	
 	public static void dispose(){
@@ -157,76 +166,14 @@ public class Query implements PrologOutputListener{
 
 	public void queryXSB(){
 		String command = queryString;
-		if(!isCompiled){
-			try {
-				progressFrame.setVisible(true);
-//				Thread.sleep(1500);
-//				progressLabel.setText("aaa");
-				_ontology.PrepareForTranslating();
-				_ontology.proceed();
-				_ontology.appendRules(Rules.getRules());
-				compileFile(_ontology.Finish());
-				isOntologyChanged=false;
-				Rules.isRulesOntologyChanged = false;
-				progressFrame.setVisible(false);
-				_ontology.printAllLabels();
-			} catch (OWLOntologyCreationException e) {
-				e.printStackTrace();
-			} catch (OWLOntologyStorageException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ParserException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}finally{
-				progressFrame.setVisible(false);
-			}
-			
-		}else if(isChanged()){
-			int dialogResult = JOptionPane.showConfirmDialog (null, "Some changes have been made, would you like to recompile?", "Warning", JOptionPane.YES_NO_OPTION);
-			if(dialogResult == JOptionPane.YES_OPTION){
-				try {
-					if(isOntologyChanged){
-						progressFrame.setVisible(true);
-//						Thread.sleep(1500);
-						_ontology.PrepareForTranslating();
-						_ontology.proceed();
-						isOntologyChanged = false;
-						progressFrame.setVisible(false);
-					}
-					if(Rules.isRulesOntologyChanged){
-						_ontology.appendRules(Rules.getRules());
-						Rules.isRulesOntologyChanged = false;
-					}
-					previousQuery="";
-					compileFile(_ontology.Finish());
-					_ontology.printAllLabels();
-				} catch (OWLOntologyCreationException e) {
-					e.printStackTrace();
-				} catch (OWLOntologyStorageException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (ParserException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}finally{
-					progressFrame.setVisible(false);
-					previousQuery="";
-				}
-			}
-		}
+		checkEngine();
 		if(isQueriable()){
-			
 			printInfo(command+Config.nl);
 			if(command.endsWith(".")){
 				command = command.substring(0, command.length()-1);
 			}
 			command = _ontology.prepareQuery(command);
-			previousQuery="";
+//			previousQuery="";
 			if(!command.equals(previousQuery)){
 				previousQuery = command;
 				printLog("prepared query: "+command);
@@ -252,8 +199,6 @@ public class Query implements PrologOutputListener{
 							_answers.add(row);
 						else{					
 							if(value.equals("true") || value.equals("undefined")){
-	//							printLog("_dRule: "+Utils._dAllrule(command));
-	//							printLog("SubQuery is: "+generateSubQuery(Utils._dAllrule(command), flattted[i]));
 								printLog("SubDetGoal is: "+generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
 								Object[] subBindings = _engine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])),"[TM]");
 								TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
@@ -296,12 +241,74 @@ public class Query implements PrologOutputListener{
 					_answers.add(row);
 				}
 				fillTable(0);
-				//((SubprocessEngine)_engine).sendAndFlushLn(command+".");
-				//_ontology.printAllLabels();
 			}
 		}
 		
 	}
+	private void checkEngine(){
+		if(!isCompiled){
+			try {
+				progressFrame.setVisible(true);
+				_ontology.proceed();
+				_ontology.appendRules(Rules.getRules());
+				compileFile(_ontology.Finish());
+				isOntologyChanged=false;
+				Rules.isRulesOntologyChanged = false;
+				progressFrame.setVisible(false);
+				_ontology.printAllLabels();
+			} catch (OWLOntologyCreationException e) {
+				e.printStackTrace();
+			} catch (OWLOntologyStorageException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParserException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				progressFrame.setVisible(false);
+			}
+			
+		}else if(isChanged()){
+			int dialogResult = JOptionPane.showConfirmDialog (null, "Some changes have been made, would you like to recompile?", "Warning", JOptionPane.YES_NO_OPTION);
+			if(dialogResult == JOptionPane.YES_OPTION){
+				try {
+					boolean disjointStatement = _ontology.isAnyDisjointWithStatement();
+					if(isOntologyChanged){
+						progressFrame.setVisible(true);
+						_ontology.PrepareForTranslating();
+						_ontology.proceed();
+						isOntologyChanged = false;
+						log.info("Ontology recompilation");
+						progressFrame.setVisible(false);
+					}
+					if(disjointStatement != _ontology.isAnyDisjointWithStatement() || Rules.isRulesOntologyChanged){
+						_ontology.appendRules(Rules.getRules());
+						log.info("Rule recompilation");
+						Rules.isRulesOntologyChanged = false;
+					}
+					previousQuery="";
+					compileFile(_ontology.Finish());
+					_ontology.printAllLabels();
+				} catch (OWLOntologyCreationException e) {
+					e.printStackTrace();
+				} catch (OWLOntologyStorageException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (ParserException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}finally{
+					progressFrame.setVisible(false);
+					previousQuery="";
+				}
+			}
+		}
+	}
+	
 	private String generateDetermenisticGoal(String command){
 		String detGoal = "findall(myTuple(TV";
 		if(_variablesList.size()>0){
@@ -340,9 +347,8 @@ public class Query implements PrologOutputListener{
 		return command;
 	}
 	
-	public void query(String command) throws Exception {
+	public void query(String command){
 		queryString = command;
-		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	queryXSB = new QueryXSB();
@@ -377,7 +383,6 @@ public class Query implements PrologOutputListener{
 			return;
 		printInfo(s);
 		if(!s.contains("++Error[XSB/Runtime/P]")){
-//			System.out.println(s+"===============");
 			if(s.contains(" = "))//{
 				sendSemiColomn();
 		}
@@ -386,7 +391,6 @@ public class Query implements PrologOutputListener{
 	public void clearTable(){
 		clearTableBody();
 		_outTableModel.setColumnCount(0);
-//		_variables = new HashSet<String>();
 		_variablesList = new ArrayList<String>();
 		_outTableModel.addColumn("valuation");
 		_answers = new ArrayList<ArrayList<String>>();
@@ -420,13 +424,15 @@ public class Query implements PrologOutputListener{
             }
 //            _variablesList = new ArrayList<String>(_variables);
 		} catch (Exception e) {
-			System.out.println("fillTableHeader: "+e.toString());
+			log.error("fillTableHeader: "+e.toString());
 		}
 	}
 	public void fillTable(int rowCount){
 		try{
-			//clearTableBody();
+			clearTableBody();
+//			log.info( "Column Count: "+_outTableModel.getColumnCount());
 			for(ArrayList<String> row :_answers){
+//				log.info("row to add: "+Arrays.deepToString(row.toArray()));
 				_outTableModel.addRow(row.toArray());
 				if(rowCount==1)
 					break;
@@ -436,7 +442,7 @@ public class Query implements PrologOutputListener{
 			ArrayList<String> row = new ArrayList<String>();
 			row.add("no");
 			_outTableModel.addRow(row.toArray());
-			System.out.println("FillTable: "+e.toString());
+			log.error( "FillTable: "+e.toString());
 		}
 		
 	}
@@ -462,7 +468,8 @@ public class Query implements PrologOutputListener{
             try {
 				queryXSB();
 			} catch (Exception e) {
-				System.out.println("Query: "+e.toString());
+				System.out.println("Query: ");
+				e.printStackTrace();
 			}
             return null;
         }

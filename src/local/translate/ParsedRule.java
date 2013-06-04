@@ -39,9 +39,16 @@ public class ParsedRule {
         }
         if(_.length>1 && _[1]!=null){
             _ = _[1].split("\\)");
-            variables = "("+_[0]+")";
             _ = _[0].split(",");
-
+            variables = "(";
+            for(String argument : _){
+            	if(Character.isLowerCase(argument.charAt(0)))
+            		variables+="c"+Utils.getHash(argument)+", ";
+            	else 
+            		variables+=argument+", ";
+            }
+            variables = variables.substring(0, variables.length()-2);
+            variables +=")";
             len = _.length;
         }
         predicate = Utils.getHash(Utils.replaceQuotes(predicate));

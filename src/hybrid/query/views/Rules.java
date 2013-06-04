@@ -1,7 +1,5 @@
 package hybrid.query.views;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -10,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class Rules {
 //	private static HashSet<String> _rules = new HashSet<String>();
@@ -92,26 +92,30 @@ public class Rules {
 	}
 	
 	private static void addEventsForTextArea(final JTextArea textarea){
-		
-		textarea.addKeyListener(new KeyListener() {
-			
+		textarea.getDocument().addDocumentListener(new DocumentListener() {
+
 			@Override
-			public void keyTyped(KeyEvent arg0) {
+			public void changedUpdate(DocumentEvent arg0) {
+//				System.out.println("changed");
+				warn();
 			}
-			
 			@Override
-			public void keyReleased(KeyEvent arg0) {
+			public void insertUpdate(DocumentEvent arg0) {
+//				System.out.println("inserted");
+				warn();
 			}
-			
 			@Override
-			public void keyPressed(KeyEvent arg0) {
-//				textarea.append("Key Pressed "+ arg0.getKeyCode()+Config.nl);
-				
+			public void removeUpdate(DocumentEvent arg0) {
+//				System.out.println("removed");
+				warn();
+			}
+			private void warn(){
 				isRulesChanged=true;
 				isRulesOntologyChanged = true;
 				_currentTextArea = textarea;
 			}
 		});
+		
 	}
 	
 	public static void dispose() {

@@ -126,11 +126,8 @@ public class ViewComponent extends AbstractOWLViewComponent {
         panel.add(resultPanel, c);
         
         add(panel, BorderLayout.CENTER);
-        try{
         _query = new Query(getOWLModelManager(), _textArea, tableModel);
-        }catch(Exception e){
-        	System.out.println("Query:" +e.toString());
-        }
+        
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	addProgressFrame();

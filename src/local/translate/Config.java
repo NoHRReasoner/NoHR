@@ -1,5 +1,7 @@
 package local.translate;
 
+import org.apache.log4j.Level;
+
 public class Config {
 	public static String delimeter="#";
 	public static String altDelimeter=":";
@@ -7,4 +9,5 @@ public class Config {
 	public static String searchNegation="not";
 	public static String eq=":-";
 	public static boolean ruleCreationDebug = false;
+	public static Level logLevel = Level.ERROR;
 }

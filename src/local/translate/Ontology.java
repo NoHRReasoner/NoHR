@@ -51,7 +51,7 @@ public class Ontology {
     private String tempDirProp = "java.io.tmpdir";
     private String tempDir ="";
     private String resultFileName = "result.p";
-    private ParsedRule parsedRule;
+//    private ParsedRule parsedRule;
     private OntologyLabel ontologyLabel;
     private RuleCreator ruleCreator;
     private RuleTranslator ruleTranslator;
@@ -61,7 +61,8 @@ public class Ontology {
     private boolean _isLog = true;
     private JTextArea _textArea = null;
     private JLabel progressLabel;
-
+    private static final Logger log = Logger.getLogger(Ontology.class);
+    
     public boolean isOntologyChanged = true;
     /**
      * Instantiates a new ontology.
@@ -84,6 +85,9 @@ public class Ontology {
         initELK();
         getDiffTime(date1, "ELK reasoner finished, it took:");
         getOWL();
+        initCollections();
+        //
+        log.setLevel(Config.logLevel);
     }
 
     public Ontology(OWLModelManager owlModelManager, JTextArea textArea, JLabel label, boolean isLog) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException {
@@ -93,26 +97,31 @@ public class Ontology {
         _isLog = isLog;
         _textArea = textArea;
         progressLabel = label;
+        initELK();
+        getOWL();
+        initCollections();
+        log.setLevel(Config.logLevel);
     }                       
 
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
         setProgressLabelText("ELK reasoner");
         initELK();
         getOWL();
-
+        cm.clearOntology();
         return true;
     }
     protected void getOWL() throws OWLOntologyCreationException{
         owlClasses = ontology.getClassesInSignature();
         objectProperties = ontology.getObjectPropertiesInSignature();
         ontologyDataFactory = ontologyManager.getOWLDataFactory();
-        _ontologyLabel = ontologyDataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
-        cm = new CollectionsManager();
+    }
+    private void initCollections(){
+    	_ontologyLabel = ontologyDataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+    	cm = new CollectionsManager();
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
-        query = new Query(cm, ontologyLabel);
+        query = new Query();
         ruleCreator = new RuleCreator(cm, ontologyLabel);
     }
-
     public void clear(){
         owlClasses = new HashSet<OWLClass>();
         objectProperties = new HashSet<OWLObjectProperty>();
@@ -180,7 +189,9 @@ public class Ontology {
         Date date1 = new Date();
         FileWriter writer = new FileWriter(tempDir + resultFileName/*, isTranslated*/);
         HashSet<String> tabled = new HashSet<String>();
+        log.info("tabled ontology count: "+cm.getAllTabledPredicateOntology().size());
         tabled.addAll(cm.getAllTabledPredicateOntology());
+        log.info("tabled rules count: "+cm.getAllTabledPredicateRule().size());
         tabled.addAll(cm.getAllTabledPredicateRule());
 
         for(String str: prologCommands){
@@ -189,10 +200,11 @@ public class Ontology {
         for(String str: tabled){
             writer.write(":- table "+str+".\n");
         }
-
+        log.info("ontology count: "+cm.getTranslatedOntologies().size());
         for(String str: cm.getTranslatedOntologies()) {
             writer.write(str+"\n");
         }
+        log.info("rule count: "+cm.getTranslatedRules().size());
         for(String str: cm.getTranslatedRules()) {
             writer.write(str+"\n");
         }
@@ -261,6 +273,7 @@ public class Ontology {
     private void fillExistsOntologiesAndRules(){
         boolean isTopClass;
         ClassExpressionType expressionType;
+        cm.setIsAnyDisjointStatement(false);
         for(OWLClass owlClass : owlClasses){
 
             isTopClass = owlClass.isOWLThing() || owlClass.isOWLNothing();

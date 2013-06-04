@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class CollectionsManager {
 
     private HashSet<String> tablePredicatesOntology = new HashSet<String>();
@@ -15,10 +17,11 @@ public class CollectionsManager {
     private HashSet<String> prediactesAppearedUnderNunderscore = new HashSet<String>();
     private HashMap<String, String> labels = new HashMap<String, String>();
     private HashMap<String, String> labelsValue = new HashMap<String, String>();
-
+    private static final Logger log = Logger.getLogger(Ontology.class);
     private boolean isAnyDisjointStatement;
     public CollectionsManager(){
         isAnyDisjointStatement = false;
+        log.setLevel(Config.logLevel);
     }
 
     public void clear(){
@@ -30,11 +33,13 @@ public class CollectionsManager {
     }
 
     public void clearRules(){
+    	log.info("Clearing rules set");
         tablePredicatesRules = new HashSet<String>();
         appendedRules = new HashSet<String>();
     }
 
     public void clearOntology(){
+    	log.info("Clearing ontology set");
         tablePredicatesOntology = new HashSet<String>();
         translatedOntologies = new HashSet<String>();
         prediactesAppearedUnderNunderscore = new HashSet<String>();

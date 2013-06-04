@@ -2,12 +2,9 @@ package local.translate;
 
 public class Query {
 
-    private CollectionsManager cm;
-    private OntologyLabel ontologyLabel;
     private ParsedRule parsedRule;
-    public Query(CollectionsManager c, OntologyLabel ol){
-        cm=c;
-        ontologyLabel = ol;
+    public Query(){
+        
     }
 
     public String prepareQuery(String q) {

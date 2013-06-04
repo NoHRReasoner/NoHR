@@ -41,7 +41,11 @@ public class ProgressMonitorDemo extends JPanel
                                  implements ActionListener,
                                             PropertyChangeListener {
 
-    private ProgressMonitor progressMonitor;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5716637897629350807L;
+	private ProgressMonitor progressMonitor;
     private JButton startButton;
     private JTextArea taskOutput;
     private Task task;
