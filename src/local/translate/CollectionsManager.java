@@ -100,7 +100,7 @@ public class CollectionsManager {
         if(labelsValue.containsKey(label)){
             return labelsValue.get(label);
         }else{
-            String hash =Utils.getHash(label);
+            String hash = Utils.getHash(label);
             labels.put(hash, label);
             labelsValue.put(label, hash);
             return hash;

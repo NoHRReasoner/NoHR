@@ -46,6 +46,8 @@ public class Ontology {
     /** The _object properties. */
     private static Set<OWLObjectProperty> objectProperties;
 
+	public static CollectionsManager collectionsManager;
+
     private List<String> prologCommands = Arrays.asList(":- abolish_all_tables.",":- set_prolog_flag(unknown,fail).");
 
     private String tempDirProp = "java.io.tmpdir";
@@ -118,6 +120,7 @@ public class Ontology {
     private void initCollections(){
     	_ontologyLabel = ontologyDataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
     	cm = new CollectionsManager();
+    	collectionsManager = cm;
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
         query = new Query();
         ruleCreator = new RuleCreator(cm, ontologyLabel);

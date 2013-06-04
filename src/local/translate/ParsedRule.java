@@ -7,7 +7,7 @@ public class ParsedRule {
 	private String predicate;
     private String variables;
     private boolean isUnderTnot = false;
-
+    private CollectionsManager cm = Ontology.collectionsManager;
 	public ParsedRule(String r){
 		rule = r;
 		parse();
@@ -43,7 +43,8 @@ public class ParsedRule {
             variables = "(";
             for(String argument : _){
             	if(Character.isLowerCase(argument.charAt(0)))
-            		variables+="c"+Utils.getHash(argument)+", ";
+//            		variables+="c"+Utils.getHash(argument)+", ";
+            		variables+="c"+cm.getHashedLabel(argument)+", ";
             	else 
             		variables+=argument+", ";
             }
@@ -51,7 +52,8 @@ public class ParsedRule {
             variables +=")";
             len = _.length;
         }
-        predicate = Utils.getHash(Utils.replaceQuotes(predicate));
+//        predicate = Utils.getHash(Utils.replaceQuotes(predicate));
+        predicate = cm.getHashedLabel(Utils.replaceQuotes(predicate));
 	}
 
 	public boolean isUnderTnot(){
