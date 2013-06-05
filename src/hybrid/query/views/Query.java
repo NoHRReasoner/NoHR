@@ -41,9 +41,8 @@ import com.declarativa.interprolog.XSBSubprocessEngine;
 public class Query implements PrologOutputListener{
 	private JTextArea outPutLog;
 	private DefaultTableModel outTableModel;
-	private TableRowSorter<DefaultTableModel> tableSorter;
-	private RowFilter<DefaultTableModel,Object> rowFilter;
 	private DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer();
+	private int rowCounts = 0;
 	public static JLabel progressLabel;
 	public static JFrame progressFrame;
 	private static OWLModelManager owlModelManager;
@@ -61,11 +60,10 @@ public class Query implements PrologOutputListener{
 	private String previousQuery = "";
 	private static final Logger log = Logger.getLogger(Query.class);
 	
-	public Query(OWLModelManager OwlModelManager, JTextArea TextArea, DefaultTableModel TableModel, TableRowSorter<DefaultTableModel> sorter){
+	public Query(OWLModelManager OwlModelManager, JTextArea TextArea, DefaultTableModel TableModel){
 		owlModelManager = OwlModelManager;
 		outPutLog = TextArea;
 		outTableModel = TableModel;
-		tableSorter = sorter;
 		Init();
 		headerRenderer.setBackground(new Color(239, 198, 46));
 		log.setLevel(Config.logLevel);
@@ -245,17 +243,7 @@ public class Query implements PrologOutputListener{
 					row.add("no");
 					_answers.add(row);
 				}
-				fillTable(0);
-				/*javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		            public void run() {
-		            	log.info("filter table:");
-		            	log.info(rowFilter);
-		            	
-	            		tableSorter.setRowFilter(rowFilter);
-	            		tableSorter.sort();
-		            }
-				});
-				*/
+				fillTable();
 			}
 		}
 		
@@ -362,9 +350,8 @@ public class Query implements PrologOutputListener{
 		return command;
 	}
 	
-	public void query(String command, RowFilter<DefaultTableModel,Object> filter){
+	public void query(String command){
 		queryString = command;
-		rowFilter = filter;
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	queryXSB = new QueryXSB();
@@ -440,16 +427,20 @@ public class Query implements PrologOutputListener{
 			log.error("fillTableHeader: "+e.toString());
 		}
 	}
-	public void fillTable(final int rowCount){
+	public void fillTable(){
 		
 		try{
-			clearTableBody();
-			for(ArrayList<String> row :_answers){
-//				log.info("row to add: "+Arrays.deepToString(row.toArray()));
-				outTableModel.addRow(row.toArray());
-				if(rowCount==1)
-					break;
-			}
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+					clearTableBody();
+					for(ArrayList<String> row :_answers){
+		//				log.info("row to add: "+Arrays.deepToString(row.toArray()));
+						outTableModel.addRow(row.toArray());
+						if(rowCounts==1)
+							break;
+					}
+	            }
+			});
 		}catch(Exception e){
 			clearTable();
 			ArrayList<String> row = new ArrayList<String>();
@@ -494,6 +485,10 @@ public class Query implements PrologOutputListener{
         	progressFrame.setVisible(false);
         }
     }
+
+	public void setRowCounts(int i) {
+		rowCounts = i;
+	}
  
 	
 }	

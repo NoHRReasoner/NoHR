@@ -30,7 +30,6 @@ public class ViewComponent extends AbstractOWLViewComponent {
     private JTextArea _textArea;
     private JTextField _textField;
     private TableRowSorter<DefaultTableModel> sorter;
-    private RowFilter<DefaultTableModel, Object> rowFilter;
     private JPanel settingsPanel;
     private List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
     private static final Logger log = Logger.getLogger(Query.class);
@@ -130,7 +129,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
         panel.add(resultPanel, c);
         
         add(panel, BorderLayout.CENTER);
-        _query = new Query(getOWLModelManager(), _textArea, tableModel, sorter);
+        _query = new Query(getOWLModelManager(), _textArea, tableModel);
         
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -183,12 +182,9 @@ public class ViewComponent extends AbstractOWLViewComponent {
 			public void actionPerformed(ActionEvent e) {
 				if(_textField.getText().length()>0){
 					try {
-						_query.query(_textField.getText(), getFilters());
-						//tableFilterAnswer();
+						_query.query(_textField.getText());
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-						System.out.println("precessButton");
+						log.error("precessButton"+e1.toString());
 					}
 					_textField.selectAll();
 	            	_textField.requestFocus();
@@ -200,7 +196,6 @@ public class ViewComponent extends AbstractOWLViewComponent {
 	}
 	protected JTextField addQueryField(){
 		_textField = new JTextField();
-//		_textField.setText("has(M,N), p(X)");
 		_textField.addKeyListener(new KeyListener() {
 				@Override
 				public void keyPressed(KeyEvent e) {
@@ -209,12 +204,9 @@ public class ViewComponent extends AbstractOWLViewComponent {
 				private void updateText(KeyEvent e) {
 		            if( e.getKeyCode() == KeyEvent.VK_ENTER && _textField.getText().length()>0 )  {
 		            	try {
-							_query.query(_textField.getText(), getFilters());
-							//tableFilterAnswer();
+							_query.query(_textField.getText());
 						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-							System.out.println("add query");
+							log.error("add query"+e1.toString());
 						}
 		            	_textField.selectAll();
 		            	_textField.requestFocus();
@@ -255,7 +247,8 @@ public class ViewComponent extends AbstractOWLViewComponent {
         oneChB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-            	_query.fillTable(1);
+            	_query.setRowCounts(1);
+            	_query.fillTable();
             }
         });
         
@@ -263,7 +256,8 @@ public class ViewComponent extends AbstractOWLViewComponent {
         allChB.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-            	_query.fillTable(0);
+            	_query.setRowCounts(0);
+            	_query.fillTable();
             }
         });
         ButtonGroup group = new ButtonGroup();
