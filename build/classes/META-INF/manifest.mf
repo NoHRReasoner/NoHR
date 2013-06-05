@@ -7,10 +7,10 @@ Bundle-SymbolicName: hybrid.query.views;singleton:=true
 Bundle-Category: protege
 Bundle-ContactAddress: ivanovvvadim@gmail.com
 Bundle-DocURL: http://protege.stanford.edu
-Bundle-Description: A sample tab for learning how to write a plugin
+Bundle-Description: Protege plugin for NM query
 Bundle-Vendor: Vadim Ivanov 
-Update-Url: https://raw.github.com/fustic/protegeplugin/master/update.
- properties
+Update-Url: https://dl.dropboxusercontent.com/u/12449385/nm.query/upda
+ te.properties
 Bundle-ClassPath: .,lib/interprolog.jar, lib/elk-owlapi.jar, lib/commo
  ns-codec-1.8.jar
 Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivato
@@ -21,10 +21,10 @@ Import-Package: org.apache.log4j, javax.swing,javax.swing.border,javax
  laf.multi,javax.swing.plaf.synth,javax.swing.table,javax.swing.text,j
  avax.swing.text.html,javax.swing.text.html.parser,javax.swing.text.rt
  f,javax.swing.tree,javax.swing.undo,javax.xml.parsers
-Bundle-Version: 0.9.2
+Bundle-Version: 0.9.3
 Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  n,org.protege.editor.core.application,org.protege.editor.owl,org.sema
  nticweb.owl.owlapi
 Built-By: vadimivanov
-Build-Date: 06/04/2013 06:20 PM
+Build-Date: 06/05/2013 11:21 AM
 

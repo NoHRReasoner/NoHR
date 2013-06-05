@@ -19,6 +19,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
 public class ViewComponent extends AbstractOWLViewComponent {
@@ -28,12 +30,14 @@ public class ViewComponent extends AbstractOWLViewComponent {
     private JTextArea _textArea;
     private JTextField _textField;
     private TableRowSorter<DefaultTableModel> sorter;
+    private RowFilter<DefaultTableModel, Object> rowFilter;
     private JPanel settingsPanel;
     private List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
-    
+    private static final Logger log = Logger.getLogger(Query.class);
     @Override
     protected void initialiseOWLView() {
         setLayout(new BorderLayout(12,12));
+        log.setLevel(Config.logLevel);
         JPanel panel = new JPanel(new GridBagLayout());
         
         GridBagConstraints c = new GridBagConstraints();
@@ -126,7 +130,7 @@ public class ViewComponent extends AbstractOWLViewComponent {
         panel.add(resultPanel, c);
         
         add(panel, BorderLayout.CENTER);
-        _query = new Query(getOWLModelManager(), _textArea, tableModel);
+        _query = new Query(getOWLModelManager(), _textArea, tableModel, sorter);
         
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -144,7 +148,12 @@ public class ViewComponent extends AbstractOWLViewComponent {
      * the text box.
      */
     private void tableFilterAnswer() {
-        RowFilter<DefaultTableModel, Object> rf = null;
+    	RowFilter<DefaultTableModel, Object> rf = getFilters();
+        sorter.setRowFilter(rf);
+    }
+    
+    private RowFilter<DefaultTableModel, Object> getFilters(){
+    	RowFilter<DefaultTableModel, Object> rf = null;
         //If current expression doesn't parse, don't update.
         try {
         	String filter = "yes|no";
@@ -155,9 +164,9 @@ public class ViewComponent extends AbstractOWLViewComponent {
         	}
             rf = RowFilter.regexFilter(filter, 0);
         } catch (java.util.regex.PatternSyntaxException e) {
-            return;
+            log.error(e);
         }
-        sorter.setRowFilter(rf);
+        return rf;
     }
     
 	@Override
@@ -174,8 +183,8 @@ public class ViewComponent extends AbstractOWLViewComponent {
 			public void actionPerformed(ActionEvent e) {
 				if(_textField.getText().length()>0){
 					try {
-						_query.query(_textField.getText());
-						tableFilterAnswer();
+						_query.query(_textField.getText(), getFilters());
+						//tableFilterAnswer();
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -200,8 +209,8 @@ public class ViewComponent extends AbstractOWLViewComponent {
 				private void updateText(KeyEvent e) {
 		            if( e.getKeyCode() == KeyEvent.VK_ENTER && _textField.getText().length()>0 )  {
 		            	try {
-							_query.query(_textField.getText());
-							tableFilterAnswer();
+							_query.query(_textField.getText(), getFilters());
+							//tableFilterAnswer();
 						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
