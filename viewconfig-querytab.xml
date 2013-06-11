@@ -18,7 +18,7 @@
         </HSNode>
         <CNode>
             <Component label="NM query view">
-                <Property id="pluginId" value="hybrid.query.views.ViewComponent"/>
+                <Property id="pluginId" value="hybrid.query.views.HybridQueryViewComponent"/>
             </Component>
         </CNode>
     </VSNode>
