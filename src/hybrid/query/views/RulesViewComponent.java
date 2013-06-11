@@ -1,4 +1,6 @@
 package hybrid.query.views;
+import hybrid.query.model.Query;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -28,7 +30,6 @@ public class RulesViewComponent extends AbstractOWLViewComponent {
     }
 	@Override
 	protected void disposeOWLView() {
-		// TODO Auto-generated method stub
 		Query.dispose();
 	}
 	

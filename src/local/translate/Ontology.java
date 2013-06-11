@@ -20,8 +20,6 @@ import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import javax.swing.*;
-
 
 /**
  * The Class local.translate.Ontology.
@@ -60,9 +58,6 @@ public class Ontology {
     private CollectionsManager cm;
     private Query query;
 
-    private boolean _isLog = true;
-    private JTextArea _textArea = null;
-    private JLabel progressLabel;
     private static final Logger log = Logger.getLogger(Ontology.class);
     
     public boolean isOntologyChanged = true;
@@ -88,17 +83,13 @@ public class Ontology {
         getDiffTime(date1, "ELK reasoner finished, it took:");
         getOWL();
         initCollections();
-        //
         log.setLevel(Config.logLevel);
     }
 
-    public Ontology(OWLModelManager owlModelManager, JTextArea textArea, JLabel label, boolean isLog) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException {
+    public Ontology(OWLModelManager owlModelManager) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException {
         ontologyManager = owlModelManager.getOWLOntologyManager();
         ontology = owlModelManager.getActiveOntology();
         tempDir = System.getProperty(tempDirProp);
-        _isLog = isLog;
-        _textArea = textArea;
-        progressLabel = label;
         initELK();
         getOWL();
         initCollections();
@@ -106,7 +97,6 @@ public class Ontology {
     }                       
 
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
-        setProgressLabelText("ELK reasoner");
         initELK();
         getOWL();
         cm.clearOntology();
@@ -176,17 +166,6 @@ public class Ontology {
         }
 
     }
-    protected void printLog(String message){
-        if(_isLog){
-            if(_textArea !=null){
-                _textArea.append(message+"\n");
-            }else{
-                System.out.println(message);
-            }
-        }
-    }
-
-
 
     public File Finish() throws IOException {
         Date date1 = new Date();
@@ -221,7 +200,7 @@ public class Ontology {
     protected void getDiffTime(Date startDate, String message){
         Date stoped=new Date();
         long diff=stoped.getTime() - startDate.getTime();
-        printLog(message+" "+diff+" milisec");
+        OntologyLogger.log(message+" "+diff+" milisec");
     }
 
     protected void initELK() throws OWLOntologyCreationException{
@@ -231,10 +210,10 @@ public class Ontology {
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
 //        reasonerFactory.
         OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
-        printLog("Reasoner created");
+        OntologyLogger.log("Reasoner created");
         /** Classify the ontology. */
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
-        printLog("Precomputed inference");
+        OntologyLogger.log("Precomputed inference");
         getDiffTime(date1, "Reasoner finished: ");
         date1 = new Date();
         /**To generate an inferred ontology we use implementations of
@@ -396,11 +375,5 @@ public class Ontology {
 
     public String prepareQuery(String q){
         return query.prepareQuery(q);
-    }
-
-    public void setProgressLabelText(String label) {
-        if(progressLabel!=null){
-            progressLabel.setText(label);
-        }
     }
 }

@@ -2,10 +2,10 @@
 
 <plugin>
 
-   <extension id="ViewComponent" point="org.protege.editor.core.application.ViewComponent">
+   <extension id="HybridQueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
       <label value="NM Query"></label>
       <headerColor value="@org.protege.classcolor"/>
-      <class value="hybrid.query.views.ViewComponent"></class>
+      <class value="hybrid.query.views.HybridQueryViewComponent"></class>
       <category value="@org.protege.ontologycategory"></category>
    </extension>
    <extension id="RulesViewComponent" point="org.protege.editor.core.application.ViewComponent">
@@ -20,10 +20,10 @@
       <class value="hybrid.query.views.RulesManagerViewComponent"></class>
       <category value="@org.protege.ontologycategory"></category>
    </extension>
-   <extension id="WorkspaceTab" point="org.protege.editor.core.application.WorkspaceTab">
+   <extension id="HybridQueryTab" point="org.protege.editor.core.application.WorkspaceTab">
       <label value="NM Query"></label>
       <headerColor value="@org.protege.classcolor"/>
-      <class value="hybrid.query.views.WorkspaceTabQuery"></class>
+      <class value="hybrid.query.views.HybridQueryTab"></class>
       <index value="Y"></index>
       <editorKitId value="OWLEditorKit"></editorKitId>
       <defaultViewConfigFileName value="viewconfig-querytab.xml"></defaultViewConfigFileName>

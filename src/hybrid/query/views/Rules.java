@@ -1,24 +1,23 @@
 package hybrid.query.views;
 
+import hybrid.query.model.Config;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class Rules {
-//	private static HashSet<String> _rules = new HashSet<String>();
 	private static ArrayList<String> _rules = new ArrayList<String>();
 	private static HashSet<JTextArea> _listners = new HashSet<JTextArea>();
 	public static boolean isRulesChanged;
 	public static boolean isRulesOntologyChanged;
 	private static JTextArea _currentTextArea;
-	public static String rulesFilePath;// = "/Users/vadimivanov/Downloads/mkn@fct.unl.pt - cities example/cities.p";
+	public static String rulesFilePath;
 	public static void addRule(String rule, JTextArea textarea){
 		_rules.add(rule);
 		for (JTextArea textArea : _listners) {
@@ -35,10 +34,6 @@ public class Rules {
 		}
 		
 	}
-	public static void addRules(List<String> rules, JTextArea textArea) {
-		
-	}
-	
 	public static void addListener(JTextArea textarea){
 		_listners.add(textarea);
 		addEventsForTextArea(textarea);
@@ -127,9 +122,6 @@ public class Rules {
 	public static void setCurrentTextArea(JTextArea textarea) {
 		_currentTextArea=textarea;
 	}
-	/*public static HashSet<String> getRules() {
-		return _rules;
-	}*/
 	public static ArrayList<String> getRules() {
 		recollectRules(false);
 		return _rules;

@@ -64,12 +64,8 @@ public class RulesManagerViewComponent extends AbstractOWLViewComponent {
         subC.weighty = 0;
         subC.anchor = GridBagConstraints.EAST;
         JPanel panelButton = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//        panelButton.setBorder(BorderFactory.createTitledBorder("asd"));
         panelButton.add(addLoadRulesButton());
         panelButton.add(addSaveRulesButton());
-//        rulesPanel.add(addLoadRulesButton(),subC);
-//        subC.gridx=1;
-//        rulesPanel.add(addSaveRulesButton(),subC);
     	rulesPanel.add(panelButton,subC);
         add(rulesPanel, BorderLayout.CENTER);
         Rules.addListener(_rulesTextArea);
@@ -90,10 +86,8 @@ public class RulesManagerViewComponent extends AbstractOWLViewComponent {
 					_ruleFile = new File(Rules.rulesFilePath);
 					_fileChooser.setSelectedFile(_ruleFile);
 				}
-//				System.out.println(Rules.rulesFilePath);
 				int val = _fileChooser.showDialog(null, "Open");
 				if(val==JFileChooser.APPROVE_OPTION){
-//					_rules = new ArrayList<String>();
 					_rulesTextArea.setText("");
 					try {
 						_ruleFile = _fileChooser.getSelectedFile();
@@ -111,13 +105,11 @@ public class RulesManagerViewComponent extends AbstractOWLViewComponent {
 						in.close();
 						Rules.setCurrentTextArea(_rulesTextArea);
 						Rules.isRulesChanged = true;
-//						Rules.recollectRules(false);
 						
 					} catch (FileNotFoundException e1) {
 						e1.printStackTrace();
 						_textArea.append(e1.toString()+"\n");
 					}
-					// Get the object of DataInputStream
 					catch (IOException e1) {
 						e1.printStackTrace();
 						_textArea.append(e1.toString()+"\n");
