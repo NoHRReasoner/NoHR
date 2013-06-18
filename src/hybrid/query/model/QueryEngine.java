@@ -2,12 +2,14 @@ package hybrid.query.model;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import com.declarativa.interprolog.XSBSubprocessEngine;
 
 public class QueryEngine {
 	private XSBSubprocessEngine _engine;
-	private boolean isEngineStarted;
-	
+	private boolean isEngineStarted=false;
+	private static final Logger log = Logger.getLogger(Query.class);
 	
 	public QueryEngine() throws Exception{
 		String xsbBin = System.getenv("XSB_BIN_DIRECTORY");
@@ -43,7 +45,12 @@ public class QueryEngine {
 		_engine.shutdown();
 	}
 	public Object[] deterministicGoal(String detGoal){
-		return _engine.deterministicGoal(detGoal,"[TM]");
+		try{
+			return _engine.deterministicGoal(detGoal,"[TM]");
+		}catch(Exception e){
+			log.error(e);
+			return null;
+		}
 	}
 	public boolean deterministicGoalBool(String command){
 		return _engine.deterministicGoal(command);

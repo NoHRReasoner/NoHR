@@ -37,6 +37,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
 //    private JLabel progressLabel;
     private JFrame progressFrame;
+    private JLabel progressLabel;
     private QueryWorker queryWorker;
     private boolean isShowAllSolutions = true;
     private static final Logger log = Logger.getLogger(Query.class);
@@ -312,7 +313,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
                 
                 JPanel progressPanel = new JPanel(new BorderLayout());
                 progressPanel.setBorder(new EmptyBorder(0, 10, 0, 10) );
-                progressPanel.add(new JLabel("Rule translation process",SwingConstants.CENTER),BorderLayout.BEFORE_FIRST_LINE);
+                progressLabel = new JLabel("Rule translation process",SwingConstants.CENTER);
+                progressPanel.add(progressLabel,BorderLayout.BEFORE_FIRST_LINE);
                 
                 
                 GridBagConstraints c = new GridBagConstraints();
@@ -332,7 +334,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
                 panel.add(progressBar, c);
                 progressPanel.add(panel, BorderLayout.CENTER);
                 
-                progressFrame = new JFrame("Rule translation process");
+                progressFrame = new JFrame();
                 progressFrame.setSize(300, 100);
                 progressFrame.setLocationByPlatform(true);
                 progressFrame.setUndecorated(true);
@@ -402,6 +404,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
             try {
             	javax.swing.SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
+                    	if(queryEngine.isQueriable())
+                    		progressLabel.setText("Query process");
                 		progressFrame.setVisible(true);
                     }
                 });

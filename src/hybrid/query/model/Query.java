@@ -4,12 +4,14 @@ import hybrid.query.views.Rules;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import local.translate.Ontology;
+import local.translate.OntologyLogger;
 import local.translate.Utils;
 
 import org.apache.log4j.Logger;
@@ -27,7 +29,7 @@ import com.declarativa.interprolog.TermModel;
 public class Query{
 	private static OWLModelManager owlModelManager;
 	private static boolean isOntologyChanged;
-	private boolean isCompiled;
+	private boolean isCompiled=false;
 	private QueryEngine queryEngine;
 	private Ontology _ontology;
 	private ArrayList<String> _variablesList = new ArrayList<String>();
@@ -113,65 +115,80 @@ public class Query{
 				fillTableHeader(command);
 				String detGoal = generateDetermenisticGoal(command);
 				printLog("detGoal: "+detGoal);
-				
+				Date queryStart = new Date();
+				Date subQueryTime;
 				Object[] bindings = queryEngine.deterministicGoal(detGoal);
-				TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
-				TermModel[] flattted = list.flatList();
+				OntologyLogger.getDiffTime(queryStart, "Determenistic Goal time: ");
 				ArrayList<String> row = new ArrayList<String>();
 				String value;
-				for(int i=0;i< flattted.length;i++){
-					value = flattted[i].getChild(0).toString();	
-					if(value.length()>0){
-						row = new ArrayList<String>();
-						row.add(value);
-						for(int j=1; j<=_variablesList.size();j++){
-							row.add(_ontology.getLabelByHash(flattted[i].getChild(j).toString()));
-						}
-						if(!_ontology.isAnyDisjointWithStatement())
-							_answers.add(row);
-						else{					
-							if(value.equals("true") || value.equals("undefined")){
-								printLog("SubDetGoal is: "+generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
-								Object[] subBindings = queryEngine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
-								TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
-								TermModel[] subFlattted = subList.flatList();
-								if(subFlattted.length>0){
-									String subAnswer = subFlattted[0].getChild(0).toString();
-									if(subAnswer.equals("no")){
+				if(bindings!=null){
+					
+					TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
+					TermModel[] flattted = list.flatList();
+					for(int i=0;i< flattted.length;i++){
+						value = flattted[i].getChild(0).toString();	
+						if(value.length()>0){
+							row = new ArrayList<String>();
+							row.add(value);
+							for(int j=1; j<=_variablesList.size();j++){
+								row.add(_ontology.getLabelByHash(flattted[i].getChild(j).toString()));
+							}
+							if(!_ontology.isAnyDisjointWithStatement())
+								_answers.add(row);
+							else{					
+								if(value.equals("true") || value.equals("undefined")){
+									printLog("SubDetGoal is: "+generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
+									subQueryTime = new Date();
+									Object[] subBindings = queryEngine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
+									OntologyLogger.getDiffTime(subQueryTime, "Determenistic sub goal time: ");
+									TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
+									TermModel[] subFlattted = subList.flatList();
+									
+									if(subFlattted.length>0){
+										String subAnswer = subFlattted[0].getChild(0).toString();
+										if(subAnswer.equals("no")){
+											if(value.equals("true")){
+												row.set(0, "inconsistent");
+												_answers.add(row);
+											}
+										}else{
+											_answers.add(row);
+										}
+									}else{
 										if(value.equals("true")){
 											row.set(0, "inconsistent");
 											_answers.add(row);
 										}
-									}else{
-										_answers.add(row);
 									}
-								}else{
-									if(value.equals("true")){
-										row.set(0, "inconsistent");
-										_answers.add(row);
-									}
-								}
-							}else
-								_answers.add(row);
+								}else
+									_answers.add(row);
+							}
 						}
+						
 					}
-					
-				}
-				if(flattted.length==0){
-					clearTable();
-					row = new ArrayList<String>();
-					if(queryEngine.deterministicGoalBool(command))
-						row.add("yes");
-					else
+					if(flattted.length==0){
+						clearTable();
+						row = new ArrayList<String>();
+						if(queryEngine.deterministicGoalBool(command))
+							row.add("yes");
+						else
+							row.add("no");
+						_answers.add(row);
+					}
+					if(_answers.size()==0){
+						clearTable();
+						row = new ArrayList<String>();
 						row.add("no");
-					_answers.add(row);
-				}
-				if(_answers.size()==0){
+						_answers.add(row);
+					}
+				}else{
 					clearTable();
 					row = new ArrayList<String>();
 					row.add("no");
 					_answers.add(row);
+					log.error("Query was interrupted by engine.");
 				}
+				OntologyLogger.getDiffTime(queryStart, "Query is completed, time: ");
 			}
 		}
 		return getData();
@@ -283,8 +300,8 @@ public class Query{
 		return isCompiled;
 	}
 	
-	private boolean isQueriable(){
-		return queryEngine.isEngineStarted() && isCompiled;
+	public boolean isQueriable(){
+		return queryEngine!=null && queryEngine.isEngineStarted() && isCompiled;
 	}
 	
 	public void clearTable(){

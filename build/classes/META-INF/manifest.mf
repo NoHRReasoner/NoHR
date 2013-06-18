@@ -26,5 +26,5 @@ Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  n,org.protege.editor.core.application,org.protege.editor.owl,org.sema
  nticweb.owl.owlapi
 Built-By: vadimivanov
-Build-Date: 06/11/2013 02:39 PM
+Build-Date: 06/18/2013 10:22 PM
 
