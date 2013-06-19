@@ -374,6 +374,6 @@ public class Ontology {
     }
 
     public String prepareQuery(String q){
-        return query.prepareQuery(q);
+		return query.prepareQuery(q, isAnyDisjointWithStatement());
     }
 }

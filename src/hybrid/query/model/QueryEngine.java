@@ -10,7 +10,6 @@ public class QueryEngine {
 	private XSBSubprocessEngine _engine;
 	private boolean isEngineStarted=false;
 	private static final Logger log = Logger.getLogger(Query.class);
-	
 	public QueryEngine() throws Exception{
 		String xsbBin = System.getenv("XSB_BIN_DIRECTORY");
 		printLog("Starting query engine"+Config.nl);
