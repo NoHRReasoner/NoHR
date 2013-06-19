@@ -12,8 +12,12 @@ import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -309,12 +313,12 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
                 progressBar.setIndeterminate(true);
 //                progressBar.setValue(0);
                 progressBar.setStringPainted(true);
-                progressBar.setString("Half way there!");
+//                progressBar.setString("Half way there!");
                 
                 JPanel progressPanel = new JPanel(new BorderLayout());
                 progressPanel.setBorder(new EmptyBorder(0, 10, 0, 10) );
-                progressLabel = new JLabel("Rule translation process",SwingConstants.CENTER);
-                progressPanel.add(progressLabel,BorderLayout.BEFORE_FIRST_LINE);
+//                progressLabel = new JLabel("Rule translation process",SwingConstants.CENTER);
+//                progressPanel.add(progressLabel,BorderLayout.BEFORE_FIRST_LINE);
                 
                 
                 GridBagConstraints c = new GridBagConstraints();
@@ -327,9 +331,10 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
                 c.fill = GridBagConstraints.BOTH;
                 
                 JPanel panel = new JPanel(new GridBagLayout());
-                //progressLabel = new JLabel("Rule translating");
-                //progressLabel.setFont(new Font(progressLabel.getFont().getFontName(),Font.PLAIN, progressLabel.getFont().getSize()+4));
-                //panel.add(progressLabel, c);
+                progressLabel = new JLabel("Processing", JLabel.CENTER);
+//                progressLabel.setBorder(BorderFactory.createTitledBorder("Query"));
+                progressLabel.setFont(new Font(progressLabel.getFont().getFontName(),Font.PLAIN, progressLabel.getFont().getSize()+4));
+                panel.add(progressLabel, c);
                 c.gridy=1;
                 panel.add(progressBar, c);
                 progressPanel.add(panel, BorderLayout.CENTER);
@@ -404,9 +409,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
             try {
             	javax.swing.SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                    	if(queryEngine.isQueriable())
-                    		progressLabel.setText("Query process");
-                		progressFrame.setVisible(true);
+                    	progressFrame.setVisible(true);
                     }
                 });
             	textField.selectAll();
