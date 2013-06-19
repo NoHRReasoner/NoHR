@@ -138,6 +138,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         
         add(panel, BorderLayout.CENTER);
         ViewLogger logger = new ViewLogger();
+        UnionLogger.logger.removeAllObservers();
         UnionLogger.logger.registerObserver(logger);
         startQueryEngine();
         addProgressFrame();

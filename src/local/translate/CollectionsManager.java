@@ -44,7 +44,9 @@ public class CollectionsManager {
         translatedOntologies = new HashSet<String>();
         prediactesAppearedUnderNunderscore = new HashSet<String>();
     }
-
+    public boolean isTabled(String title) {
+		return tablePredicatesOntology.contains(title) || tablePredicatesRules.contains(title);
+	}
     public void addTabledPredicateOntology(String title){
         tablePredicatesOntology.add(title);
     }

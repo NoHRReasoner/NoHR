@@ -45,6 +45,7 @@ public class RuleTranslator {
                 parsedRule = new ParsedRule(subRule);
                 if(parsedRule.isUnderTnot()){
                     tablePredicateFromRule(parsedRule);
+                    addPlainRuleForTabledPredicate(parsedRule);
                     result += parsedRule.getNegPlainRule()+", ";
                 }else
                     result += parsedRule.getRule()+", ";
@@ -65,6 +66,7 @@ public class RuleTranslator {
                 parsedRule = new ParsedRule(subRule);
                 if(parsedRule.isUnderTnot()){
                     tablePredicateFromRule(parsedRule);
+                    addSubRuleForTabledPredicate(parsedRule);
                     result += parsedRule.getNegSubRule()+", ";
                 }else{
                     result += parsedRule.getRule()+", ";
@@ -88,6 +90,7 @@ public class RuleTranslator {
                 parsedRule = new ParsedRule(subRule);
                 if(parsedRule.isUnderTnot()){
                     tablePredicateFromRule(parsedRule);
+                    addPlainRuleForTabledPredicate(parsedRule);
                     result += parsedRule.getNegPlainRule()+", ";
                 }else{
                     result += parsedRule.getSubRule()+", ";
@@ -107,11 +110,15 @@ public class RuleTranslator {
     }
 
     private void tablePredicateFromRule(ParsedRule rule){
-
         cm.addTabledPredicateRule(rule.getTabledRule());
         if(cm.isAnyDisjointStatement()){
             cm.addTabledPredicateRule(rule.getTabledDoubledRule());
         }
     }
-
+    private void addSubRuleForTabledPredicate(ParsedRule parsedRule){
+    	writeLineToAppendedRules(parsedRule.getSubRule() +" "+ Config.eq+" fail.");
+    }
+    private void addPlainRuleForTabledPredicate(ParsedRule parsedRule){
+    	writeLineToAppendedRules(parsedRule.getRule() +" "+ Config.eq+" fail.");
+    }
 }

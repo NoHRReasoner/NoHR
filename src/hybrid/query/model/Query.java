@@ -193,6 +193,13 @@ public class Query{
 					row.add("no");
 					_answers.add(row);
 					log.error("Query was interrupted by engine.");
+					try {
+						compileFile(_ontology.Finish());
+					} catch (IOException e) {
+						log.error(e);
+					} catch (Exception e) {
+						log.error(e);
+					}
 				}
 				OntologyLogger.getDiffTime(queryStart, "Total query time: ");
 			}

@@ -13,6 +13,10 @@ public class Logger implements Log {
 		log = text;
 		notifyObservers();
 	}
+    public void removeAllObservers(){
+    	observers = new ArrayList<Observer>();
+    }
+    
 	@Override
 	public void registerObserver(Observer observer) {
 		observers.add(observer);

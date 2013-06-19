@@ -10,7 +10,7 @@ public class ParsedRule {
     private String variables;
     private boolean isUnderTnot = false;
     private CollectionsManager cm = Ontology.collectionsManager;
-    private static final Logger log = Logger.getLogger(Ontology.class);
+    private static final Logger log = Logger.getLogger(ParsedRule.class);
 	public ParsedRule(String r){
 		rule = r;
 		parse();
@@ -42,10 +42,10 @@ public class ParsedRule {
 
         }
         if(_.length>1 && _[1]!=null){
-        	log.info("vars:"+_);
+//        	log.info("vars:"+_);
             _ = _[1].split("\\)");
             _ = _[0].split(",");
-            log.info("vars under ,:"+_);
+//            log.info("vars under ,:"+_);
             variables = "(";
             for(String argument : _){
             	if(Character.isLowerCase(argument.charAt(0)))
@@ -106,7 +106,7 @@ public class ParsedRule {
             return getRule();
     }
     public String getNegSubRule() {
-        return Config.negation+" d"+predicate+variables;
+        return Config.negation+" "+getSubRule();
     }
 }
 

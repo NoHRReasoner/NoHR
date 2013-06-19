@@ -112,7 +112,7 @@ public class Ontology {
     	cm = new CollectionsManager();
     	collectionsManager = cm;
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
-        query = new Query();
+        query = new Query(cm);
         ruleCreator = new RuleCreator(cm, ontologyLabel);
     }
     public void clear(){
