@@ -99,6 +99,12 @@ public class ParsedRule {
         else
             return getRule();
     }
+    public String getHashedRuleForQuery(){
+    	if(isUnderTnot())
+            return getNegSubRule();
+        else
+            return getRule();
+    }
     public String getNegSubRule() {
         return Config.negation+" d"+predicate+variables;
     }

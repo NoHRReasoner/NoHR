@@ -114,11 +114,12 @@ public class Query{
 				printLog("prepared query: "+command);
 				fillTableHeader(command);
 				String detGoal = generateDetermenisticGoal(command);
+				String subDetGoal;
 				printLog("detGoal: "+detGoal);
 				Date queryStart = new Date();
 				Date subQueryTime;
 				Object[] bindings = queryEngine.deterministicGoal(detGoal);
-				OntologyLogger.getDiffTime(queryStart, "Determenistic Goal time: ");
+				OntologyLogger.getDiffTime(queryStart, "Main query time: ");
 				ArrayList<String> row = new ArrayList<String>();
 				String value;
 				if(bindings!=null){
@@ -137,10 +138,12 @@ public class Query{
 								_answers.add(row);
 							else{					
 								if(value.equals("true") || value.equals("undefined")){
-									printLog("SubDetGoal is: "+generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
+//									printLog("_dRule: "+Utils._dAllrule(command));
+									subDetGoal = generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i]));
+									printLog("SubDetGoal is: "+subDetGoal);
 									subQueryTime = new Date();
-									Object[] subBindings = queryEngine.deterministicGoal(generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i])));
-									OntologyLogger.getDiffTime(subQueryTime, "Determenistic sub goal time: ");
+									Object[] subBindings = queryEngine.deterministicGoal(subDetGoal);
+									OntologyLogger.getDiffTime(subQueryTime, "Doubled subgoal time: ");
 									TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
 									TermModel[] subFlattted = subList.flatList();
 									
@@ -188,7 +191,7 @@ public class Query{
 					_answers.add(row);
 					log.error("Query was interrupted by engine.");
 				}
-				OntologyLogger.getDiffTime(queryStart, "Query is completed, time: ");
+				OntologyLogger.getDiffTime(queryStart, "Total query time: ");
 			}
 		}
 		return getData();

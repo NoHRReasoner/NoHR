@@ -32,6 +32,10 @@ public class Utils {
     public static String getSubRule(String rule){
     	rule = rule.trim();
 //    	System.out.println("rule of d.: "+rule+" and result is: "+"d"+rule.substring(1,rule.length()));
+    	if(rule.startsWith(Config.negation)){
+    		rule =rule.replaceFirst(Config.negation+" ", ""); 
+    		return Config.negation + " a"+rule.substring(1, rule.length());
+    	}
     	return "d"+rule.substring(1,rule.length());
         //ParsedRule parsedRule = new ParsedRule(rule);
         //return parsedRule.getPlainSubRule();
