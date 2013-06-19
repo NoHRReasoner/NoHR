@@ -80,7 +80,7 @@ public class Query{
 	}
 	public void printInfo(String text) {
 		//outPutLog.append(text+Config.nl);
-		//log.info(text);
+		log.info(text);
 		UnionLogger.logger.log(text);
 	}
 	private boolean isChanged(){
