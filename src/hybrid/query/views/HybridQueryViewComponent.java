@@ -2,6 +2,7 @@ package hybrid.query.views;
 
 import hybrid.query.model.Config;
 import hybrid.query.model.Query;
+import union.logger.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -118,7 +119,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         tableHeaderRenderer.setBackground(new Color(239, 198, 46));
         
         tabbedPane.addTab("Result", new JScrollPane(table));
-//        tabbedPane.addTab("Log", outputPanel);
+        tabbedPane.addTab("Log", outputPanel);
         tabPanel.add(tabbedPane, subC);
         subC.gridx = 0;
         subC.gridwidth=1;
@@ -136,6 +137,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         panel.add(resultPanel, c);
         
         add(panel, BorderLayout.CENTER);
+        ViewLogger logger = new ViewLogger();
+        UnionLogger.logger.registerObserver(logger);
         startQueryEngine();
         addProgressFrame();
         textField.requestFocus();
@@ -399,6 +402,15 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		}
 		
 	}
+	
+	public class ViewLogger implements Observer{
+		@Override
+		public void update(String log) {
+			textArea.append(log+Config.nl);
+		}
+		
+	}
+	
 	
 	class QueryWorker extends SwingWorker<Void, Void> {
         /*

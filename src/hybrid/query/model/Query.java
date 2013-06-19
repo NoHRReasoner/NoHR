@@ -24,6 +24,8 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
+import union.logger.UnionLogger;
+
 import com.declarativa.interprolog.TermModel;
 
 public class Query{
@@ -78,7 +80,8 @@ public class Query{
 	}
 	public void printInfo(String text) {
 		//outPutLog.append(text+Config.nl);
-		log.info(text);
+		//log.info(text);
+		UnionLogger.logger.log(text);
 	}
 	private boolean isChanged(){
 		return Rules.isRulesOntologyChanged || isOntologyChanged;
