@@ -3,22 +3,22 @@ package local.translate;
 import org.apache.log4j.Logger;
 
 public class ParsedRule {
-	
-	private String rule;
-	private int len;
-	private String predicate;
+
+    private String rule;
+    private int len;
+    private String predicate;
     private String variables;
     private boolean isUnderTnot = false;
     private CollectionsManager cm = Ontology.collectionsManager;
     private static final Logger log = Logger.getLogger(ParsedRule.class);
-	public ParsedRule(String r){
-		rule = r;
-		parse();
-		log.setLevel(Config.logLevel);
-	}
-	private void parse(){
-		rule = rule.trim();
-		if(rule.startsWith(Config.searchNegation))
+    public ParsedRule(String r){
+        rule = r;
+        parse();
+        log.setLevel(Config.logLevel);
+    }
+    private void parse(){
+        rule = rule.trim();
+        if(rule.startsWith(Config.searchNegation))
             rule = rule.replaceFirst(Config.searchNegation, Config.negation);
         if(rule.startsWith(Config.negation)) {
             rule = rule.replaceFirst(Config.negation+" ", "").trim();
@@ -48,11 +48,11 @@ public class ParsedRule {
 //            log.info("vars under ,:"+_);
             variables = "(";
             for(String argument : _){
-            	if(Character.isLowerCase(argument.charAt(0)))
+                if(Character.isLowerCase(argument.charAt(0)))
 //            		variables+="c"+Utils.getHash(argument)+", ";
-            		variables+="c"+cm.getHashedLabel(argument)+", ";
-            	else 
-            		variables+=argument+", ";
+                    variables+="c"+cm.getHashedLabel(argument)+", ";
+                else
+                    variables+=argument+", ";
             }
             variables = variables.substring(0, variables.length()-2);
             variables +=")";
@@ -60,20 +60,20 @@ public class ParsedRule {
         }
 //        predicate = Utils.getHash(Utils.replaceQuotes(predicate));
         predicate = cm.getHashedLabel(Utils.replaceQuotes(predicate));
-	}
+    }
 
-	public boolean isUnderTnot(){
+    public boolean isUnderTnot(){
         return isUnderTnot;
     }
-	public String getTabledRule(){
-		return "a"+predicate+"/"+len;
-	}
-	public String getTabledDoubledRule(){
-		return "d"+predicate+"/"+len;
-	}
-	public String getTabledNegRule(){
-		return "n"+predicate+"/"+len;
-	}
+    public String getTabledRule(){
+        return "a"+predicate+"/"+len;
+    }
+    public String getTabledDoubledRule(){
+        return "d"+predicate+"/"+len;
+    }
+    public String getTabledNegRule(){
+        return "n"+predicate+"/"+len;
+    }
     public String getRule(){
         return "a"+predicate+variables;
     }
@@ -100,7 +100,7 @@ public class ParsedRule {
             return getRule();
     }
     public String getHashedRuleForQuery(){
-    	if(isUnderTnot())
+        if(isUnderTnot())
             return getNegSubRule();
         else
             return getRule();

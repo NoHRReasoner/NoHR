@@ -44,14 +44,14 @@ public class Ontology {
     /** The _object properties. */
     private static Set<OWLObjectProperty> objectProperties;
 
-	public static CollectionsManager collectionsManager;
+    public static CollectionsManager collectionsManager;
 
     private List<String> prologCommands = Arrays.asList(":- abolish_all_tables.",":- set_prolog_flag(unknown,fail).");
 
     private String tempDirProp = "java.io.tmpdir";
     private String tempDir ="";
     private String resultFileName = "result.p";
-//    private ParsedRule parsedRule;
+    //    private ParsedRule parsedRule;
     private OntologyLabel ontologyLabel;
     private RuleCreator ruleCreator;
     private RuleTranslator ruleTranslator;
@@ -59,7 +59,7 @@ public class Ontology {
     private Query query;
 
     private static final Logger log = Logger.getLogger(Ontology.class);
-    
+
     public boolean isOntologyChanged = true;
     /**
      * Instantiates a new ontology.
@@ -86,15 +86,18 @@ public class Ontology {
         log.setLevel(Config.logLevel);
     }
 
-    public Ontology(OWLModelManager owlModelManager) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException {
+    public Ontology(OWLModelManager owlModelManager) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException, CloneNotSupportedException {
         ontologyManager = owlModelManager.getOWLOntologyManager();
+//        OWLOntologyClone ontologyClone = new OWLOntologyClone(owlModelManager.getActiveOntology());
+//        OWLOntologyClone _ontologyClone = ontologyClone.clone();
+//        ontology = _ontologyClone.getOntology();
         ontology = owlModelManager.getActiveOntology();
         tempDir = System.getProperty(tempDirProp);
         initELK();
         getOWL();
         initCollections();
         log.setLevel(Config.logLevel);
-    }                       
+    } 
 
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
         initELK();
@@ -108,9 +111,9 @@ public class Ontology {
         ontologyDataFactory = ontologyManager.getOWLDataFactory();
     }
     private void initCollections(){
-    	_ontologyLabel = ontologyDataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
-    	cm = new CollectionsManager();
-    	collectionsManager = cm;
+        _ontologyLabel = ontologyDataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+        cm = new CollectionsManager();
+        collectionsManager = cm;
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
         query = new Query(cm);
         ruleCreator = new RuleCreator(cm, ontologyLabel);
@@ -171,9 +174,9 @@ public class Ontology {
         Date date1 = new Date();
         FileWriter writer = new FileWriter(tempDir + resultFileName/*, isTranslated*/);
         HashSet<String> tabled = new HashSet<String>();
-        log.info("tabled ontology count: "+cm.getAllTabledPredicateOntology().size());
+        log.info("tabled ontology count: " + cm.getAllTabledPredicateOntology().size());
         tabled.addAll(cm.getAllTabledPredicateOntology());
-        log.info("tabled rules count: "+cm.getAllTabledPredicateRule().size());
+        log.info("tabled rules count: " + cm.getAllTabledPredicateRule().size());
         tabled.addAll(cm.getAllTabledPredicateRule());
 
         for(String str: prologCommands){
@@ -182,7 +185,7 @@ public class Ontology {
         for(String str: tabled){
             writer.write(":- table "+str+".\n");
         }
-        log.info("ontology count: "+cm.getTranslatedOntologies().size());
+        log.info("ontology count: " + cm.getTranslatedOntologies().size());
         for(String str: cm.getTranslatedOntologies()) {
             writer.write(str+"\n");
         }
@@ -227,20 +230,9 @@ public class Ontology {
 
         InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
         iog.fillOntology(ontologyManager, ontology);
-
-        /** Put the inferred axioms into a fresh empty ontology. */
-        /*OWLOntology infOnt = ontologyManager.createOntology();
-
-        InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
-        iog.fillOntology(ontologyManager, infOnt);
-        try {
-            ontologyManager.saveOntology(infOnt, IRI.create(new File("createdOntology.owl")));
-        } catch (OWLOntologyStorageException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } */
         iog = null;
-//		printLog("Reasoner finished work");
-        getDiffTime(date1,"Merge ontology: ");
+        reasoner.dispose();
+        getDiffTime(date1, "Merge ontology: ");
     }
 
 
@@ -279,6 +271,14 @@ public class Ontology {
                 }
             }
         }
+
+        for (OWLClassAxiom owlClassAxiom : ontology.getGeneralClassAxioms()) {
+            if(owlClassAxiom.getAxiomType() == AxiomType.DISJOINT_CLASSES){
+                cm.setIsAnyDisjointStatement(true);
+                ruleCreator.writeGeneralClassAxiomsWithComplexAssertions(owlClassAxiom);
+            }
+        }
+
     }
     /**
      * Going into loop of all classes
@@ -325,6 +325,15 @@ public class Ontology {
                 }
             }
         }
+        for (OWLClassAxiom owlClassAxiom : ontology.getGeneralClassAxioms()) {
+            if(owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF){
+                ruleCreator.writeGeneralClassAxiomsSubClasses(owlClassAxiom);
+            }
+            if(owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES){
+                ruleCreator.writeGeneralClassAxiomsEquivClasses(owlClassAxiom);
+            }
+        }
+
     }
     private void loopThrowAllProperties(){
         for(OWLObjectProperty objectProperty : objectProperties){
@@ -374,6 +383,6 @@ public class Ontology {
     }
 
     public String prepareQuery(String q){
-		return query.prepareQuery(q, isAnyDisjointWithStatement());
+        return query.prepareQuery(q, isAnyDisjointWithStatement());
     }
 }

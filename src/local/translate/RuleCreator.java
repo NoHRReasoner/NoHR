@@ -1,6 +1,14 @@
 package local.translate;
 
 import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.owl.owlapi.OWLDisjointClassesAxiomImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLEquivalentClassesAxiomImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class RuleCreator {
 
@@ -194,6 +202,65 @@ public class RuleCreator {
             if(isPredicateAppearedInHeadUnderNunderscore("n"+_owlClass+"/1"))
                 rule+=", " + Config.negation + " n" + _owlClass + "(X1)";
             writeLineToFile(rule+".");
+        }
+    }
+
+    public void writeGeneralClassAxiomsWithComplexAssertions(OWLClassAxiom owlClassAxiom){
+        currentRule ="%GeneralClassAxiomsWithComplexAssertions";
+
+        EquivalentClass rules= new EquivalentClass(1);
+        EquivalentClass subEquivalentClass= new EquivalentClass(1);
+        for (OWLClassExpression owlClassExpression : ((OWLDisjointClassesAxiomImpl) owlClassAxiom).getClassExpressions()) {
+            subEquivalentClass = ontologyLabel.getLabelEquivalentClasses(owlClassExpression, 1, subEquivalentClass.getVariableIterator());
+            for (EquivalentClass.EquivalentRules equivalentRules : subEquivalentClass.getListOfRules()) {
+                rules.addRule(equivalentRules.name, equivalentRules.localIterator, equivalentRules.iterator, equivalentRules.ontologyType);
+            }
+
+        }
+        for(String rule : rules.getNegRules()){
+            writeLineToFile(rule);
+        }
+        for (String rule : rules.getNegRulesHeadForTabling()) {
+            cm.addTabledPredicateOntology(rule);
+            addPredicateToSetPredicatesAppearedUnderNunderscore(rule);
+        }
+    }
+    public void writeGeneralClassAxiomsSubClasses(OWLClassAxiom owlClassAxiom){
+        currentRule ="%GeneralClassAxiomsSubClasses";
+        OWLClassExpression superClass = ((OWLSubClassOfAxiomImpl) owlClassAxiom).getSuperClass();
+        OWLClassExpression subClass = ((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass();
+        writeGeneralClassAxioms(superClass, subClass);
+
+    }
+    private void writeGeneralClassAxioms(OWLClassExpression superClass, OWLClassExpression subClass){
+        if(superClass.getClassExpressionType()== ClassExpressionType.OBJECT_INTERSECTION_OF){
+            HashSet<OWLClass> classes = new HashSet<OWLClass>();
+            classes.addAll(getAllOWLClassesFromExpression(((OWLObjectIntersectionOfImpl) superClass).getOperands()));
+            for (OWLClass owlClass : classes) {
+                writeEquivalentRule(owlClass, subClass);
+            }
+
+        }
+
+    }
+
+    private HashSet<OWLClass> getAllOWLClassesFromExpression(Set<OWLClassExpression> owlClassExpressions){
+        HashSet<OWLClass> classes = new HashSet<OWLClass>();
+        for (OWLClassExpression owlClassExpression : owlClassExpressions) {
+            if(owlClassExpression.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
+                classes.add((OWLClass)owlClassExpression);
+            else if(owlClassExpression.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF)
+                classes.addAll(getAllOWLClassesFromExpression(((OWLObjectIntersectionOfImpl) owlClassExpression).getOperands()));
+        }
+        return classes;
+    }
+
+    public void writeGeneralClassAxiomsEquivClasses(OWLClassAxiom owlClassAxiom){
+        currentRule ="%GeneralClassAxiomsEquivClasses";
+        List<OWLClassExpression> classExpressions = ((OWLEquivalentClassesAxiomImpl) owlClassAxiom).getClassExpressionsAsList();
+        if(classExpressions.size()>=2){
+            writeGeneralClassAxioms(classExpressions.get(0),classExpressions.get(1));
+            writeGeneralClassAxioms(classExpressions.get(1),classExpressions.get(0));
         }
     }
     private void addPredicateToSetPredicatesAppearedUnderNunderscore(String s){
