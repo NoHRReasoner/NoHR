@@ -312,18 +312,14 @@ public class Query{
 		
 	}
 	public boolean compileFile(File file) throws Exception {
-		Date engineStartTime = new Date();
-		queryEngine = new QueryEngine();
-		OntologyLogger.getDiffTime(engineStartTime, "Query engine starting time: ");
-		isCompiled=false;
 		Date loadingFileTime = new Date();
+		queryEngine = new QueryEngine();
+		isCompiled=false;
 		if(queryEngine.isEngineStarted() && queryEngine.load(file))
 			isCompiled=true;
-		OntologyLogger.getDiffTime(loadingFileTime, "XSB loading file time: ");
-		Date initEngineTime = new Date();
 		if(isQueriable())
 			queryEngine.deterministicGoal(generateDetermenisticGoal("initQuery"));
-		OntologyLogger.getDiffTime(initEngineTime, "Engine initialization time: ");
+		OntologyLogger.getDiffTime(loadingFileTime, "XSB loading file time: ");
 		return isCompiled;
 	}
 	
