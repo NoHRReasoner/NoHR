@@ -104,9 +104,9 @@ public class Query{
 
 	public ArrayList<ArrayList<String>> queryXSB(){
 		String command = queryString;
-		checkEngine();
+		checkAndStartEngine();
 		if(isQueriable()){
-			printInfo(command+Config.nl);
+			printInfo("You queried: "+command);
 			if(command.endsWith(".")){
 				command = command.substring(0, command.length()-1);
 			}
@@ -206,16 +206,19 @@ public class Query{
 		}
 		return getData();
 	}
-	private void checkEngine(){
+	private void checkAndStartEngine(){
 		if(!isCompiled){
 			try {
+				Date initAndTranslateTime = new Date();
 				InitOntology();
 				_ontology.proceed();
 				_ontology.appendRules(Rules.getRules());
-				compileFile(_ontology.Finish());
+				File xsbFile = _ontology.Finish();
+				OntologyLogger.getDiffTime(initAndTranslateTime, "Total translating time: ");
+				compileFile(xsbFile);
 				isOntologyChanged=false;
 				Rules.isRulesOntologyChanged = false;
-				_ontology.printAllLabels();
+//				_ontology.printAllLabels();
 			} catch (OWLOntologyCreationException e) {
 				e.printStackTrace();
 			} catch (OWLOntologyStorageException e) {
@@ -232,6 +235,7 @@ public class Query{
 			if(dialogResult == JOptionPane.YES_OPTION){
 				try {
 					boolean disjointStatement = _ontology.isAnyDisjointWithStatement();
+					Date initAndTranslateTime = new Date();
 					if(isOntologyChanged){
 						_ontology.PrepareForTranslating();
 						_ontology.proceed();
@@ -243,8 +247,10 @@ public class Query{
 						log.info("Rule recompilation");
 						Rules.isRulesOntologyChanged = false;
 					}
-					compileFile(_ontology.Finish());
-					_ontology.printAllLabels();
+					File xsbFile = _ontology.Finish();
+					OntologyLogger.getDiffTime(initAndTranslateTime, "Total translating time: ");
+					compileFile(xsbFile);
+//					_ontology.printAllLabels();
 				} catch (OWLOntologyCreationException e) {
 					e.printStackTrace();
 				} catch (OWLOntologyStorageException e) {
@@ -306,10 +312,18 @@ public class Query{
 		
 	}
 	public boolean compileFile(File file) throws Exception {
+		Date engineStartTime = new Date();
 		queryEngine = new QueryEngine();
+		OntologyLogger.getDiffTime(engineStartTime, "Query engine starting time: ");
 		isCompiled=false;
+		Date loadingFileTime = new Date();
 		if(queryEngine.isEngineStarted() && queryEngine.load(file))
 			isCompiled=true;
+		OntologyLogger.getDiffTime(loadingFileTime, "XSB loading file time: ");
+		Date initEngineTime = new Date();
+		if(isQueriable())
+			queryEngine.deterministicGoal(generateDetermenisticGoal("initQuery"));
+		OntologyLogger.getDiffTime(initEngineTime, "Engine initialization time: ");
 		return isCompiled;
 	}
 	
