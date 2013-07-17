@@ -215,6 +215,7 @@ public class Query{
 				_ontology.appendRules(Rules.getRules());
 				File xsbFile = _ontology.Finish();
 				OntologyLogger.getDiffTime(initAndTranslateTime, "Total translating time: ");
+				OntologyLogger.log("");
 				compileFile(xsbFile);
 				isOntologyChanged=false;
 				Rules.isRulesOntologyChanged = false;
@@ -249,6 +250,7 @@ public class Query{
 					}
 					File xsbFile = _ontology.Finish();
 					OntologyLogger.getDiffTime(initAndTranslateTime, "Total translating time: ");
+					OntologyLogger.log("");
 					compileFile(xsbFile);
 //					_ontology.printAllLabels();
 				} catch (OWLOntologyCreationException e) {
@@ -320,6 +322,7 @@ public class Query{
 		if(isQueriable())
 			queryEngine.deterministicGoal(generateDetermenisticGoal("initQuery"));
 		OntologyLogger.getDiffTime(loadingFileTime, "XSB loading file time: ");
+		OntologyLogger.log("");
 		return isCompiled;
 	}
 	
