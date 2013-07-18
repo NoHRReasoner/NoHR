@@ -36,6 +36,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private static JTextArea textArea;
     private JTextField textField;
     private TableRowSorter<DefaultTableModel> sorter;
+    private JTable table;
     private DefaultTableModel tableModel;
     private DefaultTableCellRenderer tableHeaderRenderer = new DefaultTableCellRenderer();
     private JPanel settingsPanel;
@@ -111,7 +112,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         
         tableModel = new DefaultTableModel();
         sorter = new TableRowSorter<DefaultTableModel>(tableModel);
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
+        //table.setAutoResizeMode( JTable.AUTO_RESIZE_ALL_COLUMNS );
         table.setRowHeight(30);
         table.setRowSorter(sorter);
         table.setFillsViewportHeight(true);
@@ -379,9 +381,16 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 			tableModel.removeRow(i);
 		}
 		tableModel.setColumnCount(0);
+		tableModel.addColumn("");
 		tableModel.addColumn("valuation");
+		
 	}
-	
+	private void setFirstColumnWidth(){
+//		table.getColumnModel().getColumn(0).setPreferredWidth(10);
+		table.getColumnModel().getColumn(0).setMaxWidth(40);
+//		table.getColumnModel().getColumn(0).setMinWidth(10);
+		table.getColumnModel().getColumn(0).setResizable(false);
+	}
 	private void fillTable(ArrayList<ArrayList<String>> data){
 		try{
 			clearTable();
@@ -389,15 +398,21 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 				tableModel.addColumn(s);
 			}
 			if(data.size()>1){
+				ArrayList<String> row = new ArrayList<String>();
 				for(int i = 1; i<data.size();i++){
-					tableModel.addRow(data.get(i).toArray());
+					row = new ArrayList<String>();
+					row.add(Integer.toString(i));
+					row.addAll(data.get(i));
+					tableModel.addRow(row.toArray());
 					if(!isShowAllSolutions)
 						break;
 				}
+				setFirstColumnWidth();
 			}
 		}catch(Exception e){
 			clearTable();
 			ArrayList<String> row = new ArrayList<String>();
+			row.add("1");
 			row.add("no");
 			tableModel.addRow(row.toArray());
 		}

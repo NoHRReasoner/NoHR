@@ -37,6 +37,8 @@ public class Ontology {
     private OWLDataFactory ontologyDataFactory;
 
     private OWLAnnotationProperty _ontologyLabel;
+    
+    private OWLReasoner reasoner;
 
     //	/** The _owl classes. */
     private static Set<OWLClass> owlClasses;
@@ -88,9 +90,6 @@ public class Ontology {
 
     public Ontology(OWLModelManager owlModelManager) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException, CloneNotSupportedException {
         ontologyManager = owlModelManager.getOWLOntologyManager();
-//        OWLOntologyClone ontologyClone = new OWLOntologyClone(owlModelManager.getActiveOntology());
-//        OWLOntologyClone _ontologyClone = ontologyClone.clone();
-//        ontology = _ontologyClone.getOntology();
         ontology = owlModelManager.getActiveOntology();
         tempDir = System.getProperty(tempDirProp);
         initELK();
@@ -212,7 +211,7 @@ public class Ontology {
         Date date1 = new Date();
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
 //        reasonerFactory.
-        OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
+        reasoner = reasonerFactory.createReasoner(ontology);
         OntologyLogger.log("Reasoner created");
         /** Classify the ontology. */
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
@@ -231,6 +230,9 @@ public class Ontology {
         InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
         iog.fillOntology(ontologyManager, ontology);
         iog = null;
+        
+        
+        
         reasoner.dispose();
         getDiffTime(date1, "Merge ontology: ");
     }
@@ -291,6 +293,8 @@ public class Ontology {
         for(OWLClass owlClass : owlClasses){
             isTopClass=owlClass.isOWLThing() || owlClass.isOWLNothing();
             equivalentClasses = new ArrayList<OWLClassExpression>();
+            
+            
             if(!isTopClass){
                 for(OWLIndividual individual : owlClass.getIndividuals(ontology)){
                     ruleCreator.writeRuleA1(individual, owlClass);

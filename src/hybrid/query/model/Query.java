@@ -19,6 +19,7 @@ import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.semanticweb.owlapi.expression.ParserException;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -201,7 +202,7 @@ public class Query{
 						log.error(e);
 					}
 				}
-				OntologyLogger.getDiffTime(queryStart, "Total query time: ");
+				OntologyLogger.getDiffTime(queryStart, "Total query time: "+Config.nl);
 			}
 		}
 		return getData();
@@ -276,8 +277,8 @@ public class Query{
 			detGoal+=", ";
 			detGoal+=_variablesList.toString().replace("[", "").replace("]", "");
 		}
-		detGoal+="), call_tv(("+command+"), TV), List), buildTermModel(List,TM)";
-		
+//		detGoal+="), call_tv(("+command+"), TV), List), buildTermModel(List,TM)";
+		detGoal+="), call_tv(("+command+"), TV), List), buildInitiallyFlatTermModel(List,TM)";
 		return detGoal;
 	}
 	

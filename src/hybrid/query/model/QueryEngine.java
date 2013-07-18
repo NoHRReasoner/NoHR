@@ -48,6 +48,7 @@ public class QueryEngine {
 			return _engine.deterministicGoal(detGoal,"[TM]");
 		}catch(Exception e){
 			log.error(e);
+//			log.error("Achtung!!! deterministic Goal");
 			return null;
 		}
 	}
