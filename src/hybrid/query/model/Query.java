@@ -41,7 +41,7 @@ public class Query{
 	private String queryString;
 	private String previousQuery = "";
 	private static final Logger log = Logger.getLogger(Query.class);
-	
+	private boolean isQueryForAll = true;
 	public Query(OWLModelManager OwlModelManager) throws Exception{
 		owlModelManager = OwlModelManager;
 		owlModelManager.addOntologyChangeListener(ontologyChangeListener);
@@ -131,6 +131,8 @@ public class Query{
 					TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
 					TermModel[] flattted = list.flatList();
 					for(int i=0;i< flattted.length;i++){
+						if(i==1 && !isQueryForAll)
+							break;
 						value = flattted[i].getChild(0).toString();	
 						if(value.length()>0){
 							row = new ArrayList<String>();
@@ -364,5 +366,9 @@ public class Query{
 		ArrayList<ArrayList<String>> rows = (ArrayList<ArrayList<String>>) _answers.clone();
 		rows.add(0, _variablesList);
 		return rows;
+	}
+	public void setIsQueryForAll(boolean flag){
+		isQueryForAll = flag;
+		previousQuery = "";
 	}
 }	

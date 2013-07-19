@@ -253,12 +253,15 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
             @Override
             public void actionPerformed(ActionEvent ae) {
             	isShowAllSolutions = false;
-            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-		            	queryWorker = new QueryWorker();
-		            	queryWorker.execute();
-                    }
-                });
+            	queryEngine.setIsQueryForAll(false);
+            	if(textField.getText().length()>0){
+	            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	                    public void run() {
+			            	queryWorker = new QueryWorker();
+			            	queryWorker.execute();
+	                    }
+	                });
+            	}
             }
         });
         
@@ -267,12 +270,15 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
             @Override
             public void actionPerformed(ActionEvent ae) {
             	isShowAllSolutions = true;
-            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-		            	queryWorker = new QueryWorker();
-		            	queryWorker.execute();
-                    }
-                });
+            	queryEngine.setIsQueryForAll(true);
+            	if(textField.getText().length()>0){
+	            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	                    public void run() {
+			            	queryWorker = new QueryWorker();
+			            	queryWorker.execute();
+	                    }
+	                });
+            	}
             }
         });
         ButtonGroup group = new ButtonGroup();
@@ -376,12 +382,13 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	}
 	
 	
-	private void clearTable(){
+	private void clearTable(boolean isAddEnumeration){
 		for(int i=tableModel.getRowCount()-1;i>=0;i--){
 			tableModel.removeRow(i);
 		}
 		tableModel.setColumnCount(0);
-		tableModel.addColumn("");
+		if(isAddEnumeration)
+			tableModel.addColumn("");
 		tableModel.addColumn("valuation");
 		
 	}
@@ -393,7 +400,9 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	}
 	private void fillTable(ArrayList<ArrayList<String>> data){
 		try{
-			clearTable();
+			boolean isAddEnumeration = data.get(0).size() > 0;
+			
+			clearTable(isAddEnumeration);
 			for(String s: data.get(0)){
 				tableModel.addColumn(s);
 			}
@@ -401,18 +410,19 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 				ArrayList<String> row = new ArrayList<String>();
 				for(int i = 1; i<data.size();i++){
 					row = new ArrayList<String>();
-					row.add(Integer.toString(i));
+					if(isAddEnumeration)
+						row.add(Integer.toString(i));
 					row.addAll(data.get(i));
 					tableModel.addRow(row.toArray());
 					if(!isShowAllSolutions)
 						break;
 				}
-				setFirstColumnWidth();
+				if(isAddEnumeration)
+					setFirstColumnWidth();
 			}
 		}catch(Exception e){
-			clearTable();
+			clearTable(false);
 			ArrayList<String> row = new ArrayList<String>();
-			row.add("1");
 			row.add("no");
 			tableModel.addRow(row.toArray());
 		}
