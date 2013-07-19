@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
 
@@ -46,6 +47,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private JLabel progressLabel;
     private QueryWorker queryWorker;
     private boolean isShowAllSolutions = true;
+    private boolean isAddEnumeration;
+    private String filter;
     private static final Logger log = Logger.getLogger(Query.class);
     @Override
     protected void initialiseOWLView() {
@@ -119,8 +122,11 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         table.setFillsViewportHeight(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tableHeaderRenderer.setBackground(new Color(239, 198, 46));
-        
-        tabbedPane.addTab("Result", new JScrollPane(table));
+        JScrollPane tableSrollPane = new JScrollPane(table);
+//        LineNumberTableRowHeader tableLineNumber = new LineNumberTableRowHeader(tableSrollPane, table);
+//        tableSrollPane.setRowHeaderView(tableLineNumber);
+//        tableLineNumber.setBackground(Color.LIGHT_GRAY);
+        tabbedPane.addTab("Result", tableSrollPane);
         tabbedPane.addTab("Log", outputPanel);
         tabPanel.add(tabbedPane, subC);
         subC.gridx = 0;
@@ -153,10 +159,30 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
      * the text box.
      */
     private void tableFilterAnswer() {
-    	RowFilter<DefaultTableModel, Object> rf = getFilters();
-        sorter.setRowFilter(rf);
+//    	RowFilter<DefaultTableModel, Object> rf = getFilters();
+//        sorter.setRowFilter(rf);
+//        if(!isShowAllSolutions && table.getRowCount()!=1){
+    	
+    		if(textField.getText().length()>0){
+            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+		            	queryWorker = new QueryWorker();
+		            	queryWorker.execute();
+                    }
+                });
+        	}
+//        }
+        	
     }
-    
+    private String getFilter(){
+    	filter = "yes|no";
+    	for(JCheckBox chb: checkBoxs){
+    		if(chb.isSelected()){
+    			filter+="|"+chb.getText();
+    		}
+    	}
+    	return filter;
+    }
     private RowFilter<DefaultTableModel, Object> getFilters(){
     	RowFilter<DefaultTableModel, Object> rf = null;
         //If current expression doesn't parse, don't update.
@@ -167,7 +193,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         			filter+="|"+chb.getText();
         		}
         	}
-            rf = RowFilter.regexFilter(filter, 0);
+        	int index = isAddEnumeration ? 1 : 0;
+            rf = RowFilter.regexFilter(filter, index);
         } catch (java.util.regex.PatternSyntaxException e) {
             log.error(e);
         }
@@ -387,8 +414,9 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 			tableModel.removeRow(i);
 		}
 		tableModel.setColumnCount(0);
-		if(isAddEnumeration)
+		if(isAddEnumeration){
 			tableModel.addColumn("");
+		}
 		tableModel.addColumn("valuation");
 		
 	}
@@ -400,7 +428,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	}
 	private void fillTable(ArrayList<ArrayList<String>> data){
 		try{
-			boolean isAddEnumeration = data.get(0).size() > 0;
+			isAddEnumeration = data.get(0).size() > 0 || !(data.size() == 2 && (data.get(1).get(0).equals("no answers found") || data.get(1).get(0).equals("no")));
 			
 			clearTable(isAddEnumeration);
 			for(String s: data.get(0)){
@@ -411,10 +439,12 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 				for(int i = 1; i<data.size();i++){
 					row = new ArrayList<String>();
 					if(isAddEnumeration)
-						row.add(Integer.toString(i));
+						//row.add(Integer.toString(i));
+						row.add(Integer.toString(table.getRowCount()+1));
 					row.addAll(data.get(i));
-					tableModel.addRow(row.toArray());
-					if(!isShowAllSolutions)
+					if(filter == null || filter.length()==0 || filter.contains(data.get(i).get(0)))
+						tableModel.addRow(row.toArray());
+					if(!isShowAllSolutions && table.getRowCount()>0)
 						break;
 				}
 				if(isAddEnumeration)
@@ -423,7 +453,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		}catch(Exception e){
 			clearTable(false);
 			ArrayList<String> row = new ArrayList<String>();
-			row.add("no");
+			row.add("no answers found");
 			tableModel.addRow(row.toArray());
 		}
 		
@@ -452,6 +482,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
                 });
             	textField.selectAll();
             	textField.requestFocus();
+            	queryEngine.setFilter(getFilter());
             	fillTable(queryEngine.query(textField.getText()));
 				
 			} catch (Exception e) {

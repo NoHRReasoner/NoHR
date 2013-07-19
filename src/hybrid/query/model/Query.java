@@ -42,6 +42,9 @@ public class Query{
 	private String previousQuery = "";
 	private static final Logger log = Logger.getLogger(Query.class);
 	private boolean isQueryForAll = true;
+	private boolean queriedForAll;
+	private String filter = "";
+	private boolean filterChanged;
 	public Query(OWLModelManager OwlModelManager) throws Exception{
 		owlModelManager = OwlModelManager;
 		owlModelManager.addOntologyChangeListener(ontologyChangeListener);
@@ -113,8 +116,9 @@ public class Query{
 			}
 			command = _ontology.prepareQuery(command);
 //			previousQuery="";
-			if(!command.equals(previousQuery)){
+			if(!command.equals(previousQuery) || !queriedForAll){
 				previousQuery = command;
+				queriedForAll = isQueryForAll;
 				printLog("prepared query: "+command);
 				fillTableHeader(command);
 				String detGoal = generateDetermenisticGoal(command);
@@ -131,9 +135,10 @@ public class Query{
 					TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
 					TermModel[] flattted = list.flatList();
 					for(int i=0;i< flattted.length;i++){
-						if(i==1 && !isQueryForAll)
-							break;
+//						if(i==1 && !isQueryForAll)
+//							break;
 						value = flattted[i].getChild(0).toString();	
+						
 						if(value.length()>0){
 							row = new ArrayList<String>();
 							row.add(value);
@@ -173,27 +178,29 @@ public class Query{
 									_answers.add(row);
 							}
 						}
+						if(!isQueryForAll && filter.contains(row.get(0)))
+							break;
 						
 					}
 					if(flattted.length==0){
-						clearTable();
 						row = new ArrayList<String>();
 						if(queryEngine.deterministicGoalBool(command))
 							row.add("yes");
 						else
-							row.add("no");
+							row.add(_variablesList.size() > 0 ? "no answers found" : "no");
+						clearTable();
 						_answers.add(row);
 					}
 					if(_answers.size()==0){
 						clearTable();
 						row = new ArrayList<String>();
-						row.add("no");
+						row.add("no answers found");
 						_answers.add(row);
 					}
 				}else{
 					clearTable();
 					row = new ArrayList<String>();
-					row.add("no");
+					row.add("no answers found");
 					_answers.add(row);
 					log.error("Query was interrupted by engine.");
 					try {
@@ -369,6 +376,12 @@ public class Query{
 	}
 	public void setIsQueryForAll(boolean flag){
 		isQueryForAll = flag;
-		previousQuery = "";
+		
+	}
+	public void setFilter(String f){
+		if(!filter.equals(f)){
+			filter = f;
+			filterChanged = true;
+		}
 	}
 }	
