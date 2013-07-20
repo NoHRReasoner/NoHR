@@ -17,7 +17,7 @@ public class Rules {
 	public static boolean isRulesChanged;
 	public static boolean isRulesOntologyChanged;
 	private static JTextArea _currentTextArea;
-	public static String rulesFilePath;
+	public static String rulesFilePath = "/Users/vadimivanov/Documents/University/tests/cities/cities.p";
 	public static void addRule(String rule, JTextArea textarea){
 		_rules.add(rule);
 		for (JTextArea textArea : _listners) {

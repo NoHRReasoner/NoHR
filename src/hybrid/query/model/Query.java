@@ -110,13 +110,13 @@ public class Query{
 		String command = queryString;
 		checkAndStartEngine();
 		if(isQueriable()){
-			printInfo("You queried: "+command);
 			if(command.endsWith(".")){
 				command = command.substring(0, command.length()-1);
 			}
 			command = _ontology.prepareQuery(command);
 //			previousQuery="";
 			if(!command.equals(previousQuery) || !queriedForAll){
+				printInfo("You queried: "+queryString);
 				previousQuery = command;
 				queriedForAll = isQueryForAll;
 				printLog("prepared query: "+command);
@@ -211,7 +211,8 @@ public class Query{
 						log.error(e);
 					}
 				}
-				OntologyLogger.getDiffTime(queryStart, "Total query time: "+Config.nl);
+				OntologyLogger.getDiffTime(queryStart, "Total query time: ");
+				OntologyLogger.log("");
 			}
 		}
 		return getData();

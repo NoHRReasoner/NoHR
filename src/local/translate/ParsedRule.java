@@ -48,6 +48,7 @@ public class ParsedRule {
 //            log.info("vars under ,:"+_);
             variables = "(";
             for(String argument : _){
+            	argument = argument.trim();
                 if(Character.isLowerCase(argument.charAt(0)))
 //            		variables+="c"+Utils.getHash(argument)+", ";
                     variables+="c"+cm.getHashedLabel(argument)+", ";

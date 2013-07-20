@@ -27,6 +27,8 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import local.translate.OntologyLogger;
+
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
@@ -48,6 +50,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private QueryWorker queryWorker;
     private boolean isShowAllSolutions = true;
     private boolean isAddEnumeration;
+    private boolean isShowProgress;
+    private boolean isNeedToQuery;
     private String filter;
     private static final Logger log = Logger.getLogger(Query.class);
     @Override
@@ -175,10 +179,12 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         	
     }
     private String getFilter(){
-    	filter = "yes|no";
+    	filter = "yes|no|no answers found";
+    	isNeedToQuery = false;
     	for(JCheckBox chb: checkBoxs){
     		if(chb.isSelected()){
     			filter+="|"+chb.getText();
+    			isNeedToQuery = true;
     		}
     	}
     	return filter;
@@ -428,7 +434,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	}
 	private void fillTable(ArrayList<ArrayList<String>> data){
 		try{
-			isAddEnumeration = data.get(0).size() > 0 || !(data.size() == 2 && (data.get(1).get(0).equals("no answers found") || data.get(1).get(0).equals("no")));
+			isShowProgress = false;
+			isAddEnumeration = data.get(0).size() > 0;// || !(data.size() == 2 && (data.get(1).get(0).equals("no answers found") || data.get(1).get(0).equals("no")));
 			
 			clearTable(isAddEnumeration);
 			for(String s: data.get(0)){
@@ -450,15 +457,19 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 				if(isAddEnumeration)
 					setFirstColumnWidth();
 			}
+			if(table.getRowCount()==0)
+				fillNoAnswersTable();
 		}catch(Exception e){
-			clearTable(false);
-			ArrayList<String> row = new ArrayList<String>();
-			row.add("no answers found");
-			tableModel.addRow(row.toArray());
+			fillNoAnswersTable();
 		}
 		
 	}
-	
+	private void fillNoAnswersTable(){
+		clearTable(false);
+		ArrayList<String> row = new ArrayList<String>();
+		row.add("no answers found");
+		tableModel.addRow(row.toArray());
+	}
 	public class ViewLogger implements Observer{
 		@Override
 		public void update(String log) {
@@ -475,23 +486,34 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         @Override
         public Void doInBackground() {
             try {
-            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                    	progressFrame.setVisible(true);
-                    }
-                });
-            	textField.selectAll();
-            	textField.requestFocus();
             	queryEngine.setFilter(getFilter());
-            	fillTable(queryEngine.query(textField.getText()));
-				
+            	if(isNeedToQuery){
+	            	isShowProgress = true;
+	            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	                    public void run() {
+	                    	int delay = 750; //milliseconds
+	                    	ActionListener taskPerformer = new ActionListener() {
+	                    		public void actionPerformed(ActionEvent evt) {
+	                    			if(isShowProgress)
+	                    				progressFrame.setVisible(true);
+	                	    	}
+	                    	};
+	                    	new Timer(delay, taskPerformer).start();
+	                    }
+	                });
+	            	textField.selectAll();
+	            	textField.requestFocus();
+	            	fillTable(queryEngine.query(textField.getText()));
+            	}else{
+            		OntologyLogger.log("");
+            		OntologyLogger.log("Please, check any valuation option");
+            		OntologyLogger.log("");
+            	}
 			} catch (Exception e) {
 				log.error("Query: ");
+				progressFrame.setVisible(false);
 				e.printStackTrace();
 			}
-            finally {
-            	progressFrame.setVisible(false);	
-            }
             return null;
         }
  
