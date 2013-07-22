@@ -160,7 +160,7 @@ public class Query{
 									
 									if(subFlattted.length>0){
 										String subAnswer = subFlattted[0].getChild(0).toString();
-										if(subAnswer.equals("no")){
+										if(subAnswer.equals("no") || subAnswer.equals("false") || subAnswer.equals("undefined")){
 											if(value.equals("true")){
 												row.set(0, "inconsistent");
 												_answers.add(row);
@@ -184,10 +184,12 @@ public class Query{
 					}
 					if(flattted.length==0){
 						row = new ArrayList<String>();
-						if(queryEngine.deterministicGoalBool(command))
+						row.add(_variablesList.size() > 0 ? "no answers found" : "false");
+						/*if(queryEngine.deterministicGoalBool(command))
 							row.add("yes");
 						else
-							row.add(_variablesList.size() > 0 ? "no answers found" : "no");
+							row.add(_variablesList.size() > 0 ? "no answers found" : "false");
+							*/
 						clearTable();
 						_answers.add(row);
 					}

@@ -449,7 +449,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 						//row.add(Integer.toString(i));
 						row.add(Integer.toString(table.getRowCount()+1));
 					row.addAll(data.get(i));
-					if(filter == null || filter.length()==0 || filter.contains(data.get(i).get(0)))
+					if(!isAddEnumeration || filter == null || filter.length()==0 || filter.contains(data.get(i).get(0)))
 						tableModel.addRow(row.toArray());
 					if(!isShowAllSolutions && table.getRowCount()>0)
 						break;
@@ -506,7 +506,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	            	fillTable(queryEngine.query(textField.getText()));
             	}else{
             		OntologyLogger.log("");
-            		OntologyLogger.log("Please, check any valuation option");
+            		OntologyLogger.log("Please check at least one valuation option!");
             		OntologyLogger.log("");
             	}
 			} catch (Exception e) {
