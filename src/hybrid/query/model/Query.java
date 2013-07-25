@@ -15,11 +15,11 @@ import local.translate.OntologyLogger;
 import local.translate.Utils;
 
 import org.apache.log4j.Logger;
+import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.semanticweb.owlapi.expression.ParserException;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -44,7 +44,6 @@ public class Query{
 	private boolean isQueryForAll = true;
 	private boolean queriedForAll;
 	private String filter = "";
-	private boolean filterChanged;
 	public Query(OWLModelManager OwlModelManager) throws Exception{
 		owlModelManager = OwlModelManager;
 		owlModelManager.addOntologyChangeListener(ontologyChangeListener);
@@ -63,8 +62,10 @@ public class Query{
 	}
 	
 	public static void dispose(){
-		owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
-		owlModelManager.removeListener(modelManagerListener);
+		if(owlModelManager!=null){
+			owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
+			owlModelManager.removeListener(modelManagerListener);
+		}
 		Rules.dispose();
 	}
 	public void disposeQuery(){
@@ -384,7 +385,6 @@ public class Query{
 	public void setFilter(String f){
 		if(!filter.equals(f)){
 			filter = f;
-			filterChanged = true;
 		}
 	}
 }	

@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.6.0_51-b11-457-11M4509 (Apple Inc.)
 Bundle-ManifestVersion: 2
-Bundle-Name: NM Query plugin
+Bundle-Name: NoHR Query plugin
 Bundle-SymbolicName: hybrid.query.views;singleton:=true
 Bundle-Category: protege
 Bundle-ContactAddress: ivanovvvadim@gmail.com
 Bundle-DocURL: http://protege.stanford.edu
-Bundle-Description: Protege plugin for NM query
+Bundle-Description: Protege plugin for NoHR query
 Bundle-Vendor: Vadim Ivanov 
-Update-Url: https://dl.dropboxusercontent.com/u/12449385/nm.query/upda
- te.properties
+Update-Url: https://dl.dropboxusercontent.com/u/12449385/nohr.query/up
+ date.properties
 Bundle-ClassPath: .,lib/interprolog.jar, lib/elk-owlapi.jar, lib/commo
  ns-codec-1.8.jar
 Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivato
@@ -21,10 +21,10 @@ Import-Package: org.apache.log4j, javax.swing,javax.swing.border,javax
  laf.multi,javax.swing.plaf.synth,javax.swing.table,javax.swing.text,j
  avax.swing.text.html,javax.swing.text.html.parser,javax.swing.text.rt
  f,javax.swing.tree,javax.swing.undo,javax.xml.parsers
-Bundle-Version: 0.9.5.7
+Bundle-Version: 0.9.5.8
 Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  n,org.protege.editor.core.application,org.protege.editor.owl,org.sema
  nticweb.owl.owlapi
 Built-By: vadimivanov
-Build-Date: 07/22/2013 07:58 AM
+Build-Date: 07/25/2013 03:52 PM
 

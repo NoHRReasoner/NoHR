@@ -33,18 +33,12 @@ public class Ontology {
 
     /** The ontology. */
     private static OWLOntology ontology;
-
-    private OWLDataFactory ontologyDataFactory;
+    
+    private List<OWLOntology> ontologies = new ArrayList<OWLOntology>();
 
     private OWLAnnotationProperty _ontologyLabel;
     
     private OWLReasoner reasoner;
-
-    //	/** The _owl classes. */
-    private static Set<OWLClass> owlClasses;
-
-    /** The _object properties. */
-    private static Set<OWLObjectProperty> objectProperties;
 
     public static CollectionsManager collectionsManager;
 
@@ -83,34 +77,34 @@ public class Ontology {
         date1=new Date();
         initELK();
         getDiffTime(date1, "ELK reasoner finished, it took:");
-        getOWL();
+//        getOWL();
         initCollections();
         log.setLevel(Config.logLevel);
     }
 
     public Ontology(OWLModelManager owlModelManager) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException, CloneNotSupportedException {
-        ontologyManager = owlModelManager.getOWLOntologyManager();
+    	ontologyManager = owlModelManager.getOWLOntologyManager();
         ontology = owlModelManager.getActiveOntology();
         tempDir = System.getProperty(tempDirProp);
         initELK();
-        getOWL();
+//        getOWL();
         initCollections();
         log.setLevel(Config.logLevel);
     } 
 
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
         initELK();
-        getOWL();
+//        getOWL();
         cm.clearOntology();
         return true;
     }
-    protected void getOWL() throws OWLOntologyCreationException{
-        owlClasses = ontology.getClassesInSignature();
-        objectProperties = ontology.getObjectPropertiesInSignature();
-        ontologyDataFactory = ontologyManager.getOWLDataFactory();
-    }
+//    protected void getOWL() throws OWLOntologyCreationException{
+//        owlClasses = ontology.getClassesInSignature();
+//        objectProperties = ontology.getObjectPropertiesInSignature();
+        //ontologyDataFactory = ontologyManager.getOWLDataFactory();
+//    }
     private void initCollections(){
-        _ontologyLabel = ontologyDataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+        _ontologyLabel = ontologyManager.getOWLDataFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
         cm = new CollectionsManager();
         collectionsManager = cm;
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
@@ -118,8 +112,8 @@ public class Ontology {
         ruleCreator = new RuleCreator(cm, ontologyLabel);
     }
     public void clear(){
-        owlClasses = new HashSet<OWLClass>();
-        objectProperties = new HashSet<OWLObjectProperty>();
+        //owlClasses = new HashSet<OWLClass>();
+        //objectProperties = new HashSet<OWLObjectProperty>();
         cm.clear();
     }
     /**
@@ -127,6 +121,7 @@ public class Ontology {
      * @throws ParserException
      */
     public void proceed() throws ParserException{
+    	
         Date date1=new Date();
 //        setProgressLabelText("Rule translation");
         fillExistsOntologiesAndRules();
@@ -207,14 +202,16 @@ public class Ontology {
 
     protected void initELK() throws OWLOntologyCreationException{
         Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
-//		Logger logger = Logger.getRootLogger();
+        ontologies = new ArrayList<OWLOntology>();
+        ontologies.add(ontology);
         Date date1 = new Date();
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
-//        reasonerFactory.
         reasoner = reasonerFactory.createReasoner(ontology);
+        
         OntologyLogger.log("Reasoner created");
         /** Classify the ontology. */
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+        
         OntologyLogger.log("Precomputed inference");
         getDiffTime(date1, "Reasoner finished: ");
         date1 = new Date();
@@ -227,12 +224,17 @@ public class Ontology {
         getDiffTime(date1,"Generated inferred ontology: ");
         date1 = new Date();
 
+        
+        OWLOntologyManager outputOntologyManager = OWLManager.createOWLOntologyManager();
+        // Put the inferred axioms into a fresh empty ontology.
+        OWLOntology infOnt = outputOntologyManager.createOntology();
+
         InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, gens);
-        iog.fillOntology(ontologyManager, ontology);
+        //iog.fillOntology(ontologyManager, ontology);
+        iog.fillOntology(outputOntologyManager, infOnt);
         iog = null;
-        
-        
-        
+
+        ontologies.add(infOnt);
         reasoner.dispose();
         getDiffTime(date1, "Merge ontology: ");
     }
@@ -250,34 +252,37 @@ public class Ontology {
         boolean isTopClass;
         ClassExpressionType expressionType;
         cm.setIsAnyDisjointStatement(false);
-        for(OWLClass owlClass : owlClasses){
+        
+        for(OWLOntology ont : ontologies){
+        	for(OWLClass owlClass : ont.getClassesInSignature()){
 
-            isTopClass = owlClass.isOWLThing() || owlClass.isOWLNothing();
+                isTopClass = owlClass.isOWLThing() || owlClass.isOWLNothing();
 
-            //Going into loop throw all Disjoint classes
-            for(OWLClassExpression owlClassExpression : owlClass.getDisjointClasses(ontology)){
-                cm.setIsAnyDisjointStatement(true);
-                expressionType = owlClassExpression.getClassExpressionType();
-                if(expressionType==ClassExpressionType.OWL_CLASS && (owlClassExpression.isOWLThing() || owlClassExpression.isOWLNothing()))
-                    break;
-                if(expressionType==ClassExpressionType.OBJECT_SOME_VALUES_FROM && isTopClass){
-                    ruleCreator.writeRuleI3(owlClassExpression);
-                }else if(expressionType==ClassExpressionType.OBJECT_INTERSECTION_OF && isTopClass){
-                    ruleCreator.writeRuleI2(owlClassExpression);
-                }else{
-                    if(expressionType==ClassExpressionType.OWL_CLASS && isTopClass){
-                        ruleCreator.writeRuleI1(owlClassExpression);
-                    }else if (!isTopClass){
-                        ruleCreator.writeNegEquivalentRules(owlClassExpression, owlClass);
+                //Going into loop throw all Disjoint classes
+                for(OWLClassExpression owlClassExpression : owlClass.getDisjointClasses(ont)){
+                    cm.setIsAnyDisjointStatement(true);
+                    expressionType = owlClassExpression.getClassExpressionType();
+                    if(expressionType==ClassExpressionType.OWL_CLASS && (owlClassExpression.isOWLThing() || owlClassExpression.isOWLNothing()))
+                        break;
+                    if(expressionType==ClassExpressionType.OBJECT_SOME_VALUES_FROM && isTopClass){
+                        ruleCreator.writeRuleI3(owlClassExpression);
+                    }else if(expressionType==ClassExpressionType.OBJECT_INTERSECTION_OF && isTopClass){
+                        ruleCreator.writeRuleI2(owlClassExpression);
+                    }else{
+                        if(expressionType==ClassExpressionType.OWL_CLASS && isTopClass){
+                            ruleCreator.writeRuleI1(owlClassExpression);
+                        }else if (!isTopClass){
+                            ruleCreator.writeNegEquivalentRules(owlClassExpression, owlClass);
+                        }
                     }
                 }
             }
-        }
 
-        for (OWLClassAxiom owlClassAxiom : ontology.getGeneralClassAxioms()) {
-            if(owlClassAxiom.getAxiomType() == AxiomType.DISJOINT_CLASSES){
-                cm.setIsAnyDisjointStatement(true);
-                ruleCreator.writeGeneralClassAxiomsWithComplexAssertions(owlClassAxiom);
+            for (OWLClassAxiom owlClassAxiom : ont.getGeneralClassAxioms()) {
+                if(owlClassAxiom.getAxiomType() == AxiomType.DISJOINT_CLASSES){
+                    cm.setIsAnyDisjointStatement(true);
+                    ruleCreator.writeGeneralClassAxiomsWithComplexAssertions(owlClassAxiom);
+                }
             }
         }
 
@@ -290,69 +295,74 @@ public class Ontology {
         OWLClassExpression rightPartOfRule;
         List<OWLClassExpression> equivalentClasses;
         OWLClassExpression equivalentClass;
-        for(OWLClass owlClass : owlClasses){
-            isTopClass=owlClass.isOWLThing() || owlClass.isOWLNothing();
-            equivalentClasses = new ArrayList<OWLClassExpression>();
-            
-            
-            if(!isTopClass){
-                for(OWLIndividual individual : owlClass.getIndividuals(ontology)){
-                    ruleCreator.writeRuleA1(individual, owlClass);
-                }
-
-                for(OWLClassExpression owlClassExpression : owlClass.getSubClasses(ontology)){
-                    ruleCreator.writeDoubledRules(owlClassExpression, owlClass);
-                }
-            }
-
-            for(OWLEquivalentClassesAxiom equivalentClassesAxiom : ontology.getEquivalentClassesAxioms(owlClass)){
-                List<OWLClassExpression> list = equivalentClassesAxiom.getClassExpressionsAsList();
-                for(int i=0; i<list.size(); i++){
-                    equivalentClass = list.get(i);
-                    if(!(equivalentClass.getClassExpressionType()==ClassExpressionType.OWL_CLASS && (equivalentClass.isOWLThing() || equivalentClass.isOWLNothing())))
-                        equivalentClasses.add(equivalentClass);
-                }
-            }
-            if(equivalentClasses.size()>0){
-                equivalentClasses = removeDuplicates(equivalentClasses);
-                for(int i=0; i<equivalentClasses.size(); i++){
-                    rightPartOfRule=equivalentClasses.get(i);
-                    //rightPartOfRuleString=rightPartOfRule.toString();
-                    if(!isTopClass){
-                        if(rightPartOfRule.getClassExpressionType()==ClassExpressionType.OWL_CLASS){
-                            if(!owlClass.equals(rightPartOfRule))
-                                ruleCreator.writeRuleC1(rightPartOfRule, owlClass, false);
-                        }else{
-                            ruleCreator.writeEquivalentRule(owlClass, rightPartOfRule);
-                        }
-                    }
-                }
-            }
+        
+        for(OWLOntology ont : ontologies){
+	        for(OWLClass owlClass : ont.getClassesInSignature()){
+	            isTopClass=owlClass.isOWLThing() || owlClass.isOWLNothing();
+	            equivalentClasses = new ArrayList<OWLClassExpression>();
+	            
+	            
+	            if(!isTopClass){
+	                for(OWLIndividual individual : owlClass.getIndividuals(ont)){
+	                    ruleCreator.writeRuleA1(individual, owlClass);
+	                }
+	
+	                for(OWLClassExpression owlClassExpression : owlClass.getSubClasses(ont)){
+	                    ruleCreator.writeDoubledRules(owlClassExpression, owlClass);
+	                }
+	            }
+	
+	            for(OWLEquivalentClassesAxiom equivalentClassesAxiom : ont.getEquivalentClassesAxioms(owlClass)){
+	                List<OWLClassExpression> list = equivalentClassesAxiom.getClassExpressionsAsList();
+	                for(int i=0; i<list.size(); i++){
+	                    equivalentClass = list.get(i);
+	                    if(!(equivalentClass.getClassExpressionType()==ClassExpressionType.OWL_CLASS && (equivalentClass.isOWLThing() || equivalentClass.isOWLNothing())))
+	                        equivalentClasses.add(equivalentClass);
+	                }
+	            }
+	            if(equivalentClasses.size()>0){
+	                equivalentClasses = removeDuplicates(equivalentClasses);
+	                for(int i=0; i<equivalentClasses.size(); i++){
+	                    rightPartOfRule=equivalentClasses.get(i);
+	                    //rightPartOfRuleString=rightPartOfRule.toString();
+	                    if(!isTopClass){
+	                        if(rightPartOfRule.getClassExpressionType()==ClassExpressionType.OWL_CLASS){
+	                            if(!owlClass.equals(rightPartOfRule))
+	                                ruleCreator.writeRuleC1(rightPartOfRule, owlClass, false);
+	                        }else{
+	                            ruleCreator.writeEquivalentRule(owlClass, rightPartOfRule);
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        for (OWLClassAxiom owlClassAxiom : ont.getGeneralClassAxioms()) {
+	            if(owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF){
+	                ruleCreator.writeGeneralClassAxiomsSubClasses(owlClassAxiom);
+	            }
+	            if(owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES){
+	                ruleCreator.writeGeneralClassAxiomsEquivClasses(owlClassAxiom);
+	            }
+	        }
         }
-        for (OWLClassAxiom owlClassAxiom : ontology.getGeneralClassAxioms()) {
-            if(owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF){
-                ruleCreator.writeGeneralClassAxiomsSubClasses(owlClassAxiom);
-            }
-            if(owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES){
-                ruleCreator.writeGeneralClassAxiomsEquivClasses(owlClassAxiom);
-            }
-        }
-
     }
     private void loopThrowAllProperties(){
-        for(OWLObjectProperty objectProperty : objectProperties){
-            for(OWLAxiom axiom : objectProperty.getReferencingAxioms(ontology)){
-                if(axiom.getAxiomType()==AxiomType.OBJECT_PROPERTY_ASSERTION){
-                    ruleCreator.writeRuleA2(axiom);
-                }
-            }
-            for(OWLObjectPropertyExpression objectPropertyExpression : objectProperty.getSubProperties(ontology)){
-                ruleCreator.writeRuleR1(objectPropertyExpression, objectProperty);
-            }
-        }
-        for(OWLAxiom axiom : ontology.getAxioms(AxiomType.SUB_PROPERTY_CHAIN_OF)){
-            ruleCreator.writeRuleR2(axiom);
-        }
+    	for(OWLOntology ont : ontologies){
+	        for(OWLObjectProperty objectProperty : ont.getObjectPropertiesInSignature()){
+	        	
+	            for(OWLAxiom axiom : objectProperty.getReferencingAxioms(ont)){
+	                if(axiom.getAxiomType()==AxiomType.OBJECT_PROPERTY_ASSERTION){
+	                    ruleCreator.writeRuleA2(axiom);
+	                }
+	            }
+	            for(OWLObjectPropertyExpression objectPropertyExpression : objectProperty.getSubProperties(ont)){
+	                ruleCreator.writeRuleR1(objectPropertyExpression, objectProperty);
+	            }
+	        }
+	        for(OWLAxiom axiom : ont.getAxioms(AxiomType.SUB_PROPERTY_CHAIN_OF)){
+	            ruleCreator.writeRuleR2(axiom);
+	        }
+    	}
     }
 
 

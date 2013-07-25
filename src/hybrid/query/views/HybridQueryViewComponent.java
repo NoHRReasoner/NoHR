@@ -8,18 +8,14 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -30,6 +26,10 @@ import java.util.List;
 import local.translate.OntologyLogger;
 
 import org.apache.log4j.Logger;
+import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.OWLEditorKitFactory;
+import org.protege.editor.owl.ProtegeOWL;
+import org.protege.editor.owl.ui.action.ProtegeOWLAction;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
 public class HybridQueryViewComponent extends AbstractOWLViewComponent {
@@ -189,24 +189,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     	}
     	return filter;
     }
-    private RowFilter<DefaultTableModel, Object> getFilters(){
-    	RowFilter<DefaultTableModel, Object> rf = null;
-        //If current expression doesn't parse, don't update.
-        try {
-        	String filter = "yes|no";
-        	for(JCheckBox chb: checkBoxs){
-        		if(chb.isSelected()){
-        			filter+="|"+chb.getText();
-        		}
-        	}
-        	int index = isAddEnumeration ? 1 : 0;
-            rf = RowFilter.regexFilter(filter, index);
-        } catch (java.util.regex.PatternSyntaxException e) {
-            log.error(e);
-        }
-        return rf;
-    }
-    
 	@Override
 	protected void disposeOWLView() {
 //		metricsComponent.dispose();
