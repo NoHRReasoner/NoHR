@@ -84,25 +84,18 @@ public class Ontology {
 
     public Ontology(OWLModelManager owlModelManager) throws IOException, OWLOntologyCreationException, OWLOntologyStorageException, CloneNotSupportedException {
     	ontologyManager = owlModelManager.getOWLOntologyManager();
-        ontology = owlModelManager.getActiveOntology();
+    	ontology = owlModelManager.getActiveOntology();
         tempDir = System.getProperty(tempDirProp);
-        initELK();
-//        getOWL();
+        getInferredDataFromReasoner(owlModelManager.getReasoner());
         initCollections();
         log.setLevel(Config.logLevel);
     } 
 
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException{
         initELK();
-//        getOWL();
         cm.clearOntology();
         return true;
     }
-//    protected void getOWL() throws OWLOntologyCreationException{
-//        owlClasses = ontology.getClassesInSignature();
-//        objectProperties = ontology.getObjectPropertiesInSignature();
-        //ontologyDataFactory = ontologyManager.getOWLDataFactory();
-//    }
     private void initCollections(){
         _ontologyLabel = ontologyManager.getOWLDataFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
         cm = new CollectionsManager();
@@ -115,6 +108,7 @@ public class Ontology {
         //owlClasses = new HashSet<OWLClass>();
         //objectProperties = new HashSet<OWLObjectProperty>();
         cm.clear();
+        reasoner.dispose();
     }
     /**
      * Main function
@@ -199,15 +193,22 @@ public class Ontology {
         long diff=stoped.getTime() - startDate.getTime();
         OntologyLogger.log(message+" "+diff+" milisec");
     }
-
+    private void getInferredDataFromReasoner(OWLReasoner owlReasoner) throws OWLOntologyCreationException{
+    	boolean isNeedToInitLocalElk = true;
+    	if(owlReasoner!=null && owlReasoner.getReasonerName().equals("ELK Reasoner")){
+    		reasoner = owlReasoner;
+    		getInferredData();
+    		isNeedToInitLocalElk = false;
+    	}
+    	if(isNeedToInitLocalElk)
+    		initELK();
+    	
+    }
     protected void initELK() throws OWLOntologyCreationException{
         Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
-        ontologies = new ArrayList<OWLOntology>();
-        ontologies.add(ontology);
         Date date1 = new Date();
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
         reasoner = reasonerFactory.createReasoner(ontology);
-        
         OntologyLogger.log("Reasoner created");
         /** Classify the ontology. */
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
@@ -215,6 +216,14 @@ public class Ontology {
         OntologyLogger.log("Precomputed inference");
         getDiffTime(date1, "Reasoner finished: ");
         date1 = new Date();
+        
+        getInferredData();
+    }
+
+    private void getInferredData() throws OWLOntologyCreationException{
+    	Date date1 = new Date();
+    	ontologies = new ArrayList<OWLOntology>();
+        ontologies.add(ontology);
         /**To generate an inferred ontology we use implementations of
          inferred axiom generators */
         ArrayList<InferredAxiomGenerator<? extends OWLAxiom>> gens = new ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>();
@@ -235,10 +244,10 @@ public class Ontology {
         iog = null;
 
         ontologies.add(infOnt);
-        reasoner.dispose();
+        //reasoner.dispose();
         getDiffTime(date1, "Merge ontology: ");
-    }
 
+    }
 
     public void setResultFileName(String path){
         resultFileName = path;
