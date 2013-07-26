@@ -19,6 +19,8 @@ import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
+import org.protege.editor.owl.model.io.IOListener;
+import org.protege.editor.owl.model.io.IOListenerEvent;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
@@ -34,7 +36,7 @@ public class Query{
 	private static boolean isOntologyChanged;
 	private boolean isCompiled=false;
 	private QueryEngine queryEngine;
-	private Ontology _ontology;
+	private static Ontology _ontology;
 	private ArrayList<String> _variablesList = new ArrayList<String>();
 	private ArrayList<ArrayList<String>> _answers = new ArrayList<ArrayList<String>>();
 	private Pattern headerPattern = Pattern.compile("\\((.*?)\\)");
@@ -53,7 +55,7 @@ public class Query{
 		log.setLevel(Config.logLevel);
 	}
 	
-	private void InitOntology(){
+	private static void InitOntology(){
 		try{
 			_ontology = new Ontology(owlModelManager);
 		}catch(Exception e){
@@ -101,12 +103,17 @@ public class Query{
 	private static OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
 		
 		@Override
-		public void handleChange(OWLModelManagerChangeEvent arg0) {
+		public void handleChange(OWLModelManagerChangeEvent event) {
 			isOntologyChanged = true;
+			if (event.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
+				Rules.dispose();
+				if(_ontology!=null)
+					_ontology.clear();
+				InitOntology();
+			}
 		}
 	};	
 	
-
 	public ArrayList<ArrayList<String>> queryXSB(){
 		String command = queryString;
 		checkAndStartEngine();
