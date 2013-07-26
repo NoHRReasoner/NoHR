@@ -440,16 +440,17 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 					setFirstColumnWidth();
 			}
 			if(table.getRowCount()==0)
-				fillNoAnswersTable();
+				fillNoAnswersTable("");
 		}catch(Exception e){
-			fillNoAnswersTable();
+			fillNoAnswersTable("");
 		}
 		
 	}
-	private void fillNoAnswersTable(){
+	private void fillNoAnswersTable(String s){
 		clearTable(false);
 		ArrayList<String> row = new ArrayList<String>();
-		row.add("no answers found");
+		s = s.length() == 0 ? "no answers found" : s;  
+		row.add(s);
 		tableModel.addRow(row.toArray());
 	}
 	public class ViewLogger implements Observer{
@@ -469,7 +470,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         public Void doInBackground() {
             try {
             	queryEngine.setFilter(getFilter());
-            	if(isNeedToQuery){
+            	if(isNeedToQuery || !isAddEnumeration){
 	            	isShowProgress = true;
 	            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
 	                    public void run() {
@@ -487,7 +488,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	            	textField.requestFocus();
 	            	fillTable(queryEngine.query(textField.getText()));
             	}else{
-            		fillNoAnswersTable();
+            		fillNoAnswersTable("Please check at least one valuation option!");
             		OntologyLogger.log("");
             		OntologyLogger.log("Please check at least one valuation option!");
             		OntologyLogger.log("");
