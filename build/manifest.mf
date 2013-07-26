@@ -21,10 +21,10 @@ Import-Package: org.apache.log4j, javax.swing,javax.swing.border,javax
  laf.multi,javax.swing.plaf.synth,javax.swing.table,javax.swing.text,j
  avax.swing.text.html,javax.swing.text.html.parser,javax.swing.text.rt
  f,javax.swing.tree,javax.swing.undo,javax.xml.parsers
-Bundle-Version: 0.9.5.16
+Bundle-Version: 0.9.5.17
 Require-Bundle: org.eclipse.equinox.registry,org.eclipse.equinox.commo
  n,org.protege.editor.core.application,org.protege.editor.owl,org.sema
  nticweb.owl.owlapi
 Built-By: vadimivanov
-Build-Date: 07/26/2013 04:45 PM
+Build-Date: 07/26/2013 07:24 PM
 

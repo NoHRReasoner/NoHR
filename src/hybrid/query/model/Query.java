@@ -46,6 +46,7 @@ public class Query{
 	private boolean isQueryForAll = true;
 	private boolean queriedForAll;
 	private String filter = "";
+	private Pattern varXPattern = Pattern.compile("Var\\d+");
 	public Query(OWLModelManager OwlModelManager) throws Exception{
 		owlModelManager = OwlModelManager;
 		owlModelManager.addOntologyChangeListener(ontologyChangeListener);
@@ -138,6 +139,7 @@ public class Query{
 				OntologyLogger.getDiffTime(queryStart, "Main query time: ");
 				ArrayList<String> row = new ArrayList<String>();
 				String value;
+				String subValue;
 				if(bindings!=null){
 					
 					TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
@@ -151,7 +153,9 @@ public class Query{
 							row = new ArrayList<String>();
 							row.add(value);
 							for(int j=1; j<=_variablesList.size();j++){
-								row.add(_ontology.getLabelByHash(flattted[i].getChild(j).toString()));
+								subValue = _ontology.getLabelByHash(flattted[i].getChild(j).toString());
+								subValue = varXPattern.matcher(subValue).find() ? "all values" : subValue;
+								row.add(subValue);
 							}
 							if(!_ontology.isAnyDisjointWithStatement())
 								_answers.add(row);
