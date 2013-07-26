@@ -13,6 +13,9 @@ public class OntologyLogger {
     	log.info(message);
     	UnionLogger.logger.log(message);
 	}
+    public static void debug(Object message){
+    	log.info(message);
+	}
     public static void getDiffTime(Date startDate, String message){
         Date stoped=new Date();
         long diff=stoped.getTime() - startDate.getTime();

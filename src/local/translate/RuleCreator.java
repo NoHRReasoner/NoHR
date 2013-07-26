@@ -194,7 +194,11 @@ public class RuleCreator {
         currentRule ="%DoubledRule";
         EquivalentClass rules = ontologyLabel.getLabelEquivalentClasses(classExpression, 1, 1);
         String _owlClass=ontologyLabel.getLabel(owlClass, 1);
-        writeLineToFile("a"+_owlClass+"(X1)"+ Utils.getEqForRule()+rules.getFinalRule());
+        String finalRule = rules.getFinalRule();
+        if(finalRule.length()>0)
+        	writeLineToFile("a"+_owlClass+"(X1)"+ Utils.getEqForRule()+finalRule);
+        else
+        	writeLineToFile("a"+_owlClass+"(X1).");
         cm.addTabledPredicateOntology("a"+_owlClass + "/1");
         if(cm.isAnyDisjointStatement()){//if(isExistOntology(_owlClass)){
             String rule="d"+_owlClass+"(X1)"+Utils.getEqForRule()+rules.getDoubledRules();
