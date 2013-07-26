@@ -487,6 +487,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	            	textField.requestFocus();
 	            	fillTable(queryEngine.query(textField.getText()));
             	}else{
+            		fillNoAnswersTable();
             		OntologyLogger.log("");
             		OntologyLogger.log("Please check at least one valuation option!");
             		OntologyLogger.log("");
