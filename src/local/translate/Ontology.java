@@ -245,7 +245,7 @@ public class Ontology {
 
         ontologies.add(infOnt);
         //reasoner.dispose();
-        getDiffTime(date1, "Merge ontology: ");
+        getDiffTime(date1, "Total time of retreiving inferred information: ");
 
     }
 
