@@ -76,8 +76,6 @@ public class Ontology {
         getDiffTime(date1, "Initializing is done, it took:");
         date1=new Date();
         initELK();
-        getDiffTime(date1, "ELK reasoner finished, it took:");
-//        getOWL();
         initCollections();
         log.setLevel(Config.logLevel);
     }
@@ -119,7 +117,7 @@ public class Ontology {
         Date date1=new Date();
 //        setProgressLabelText("Rule translation");
         fillExistsOntologiesAndRules();
-        getDiffTime(date1, "PreProcessing and axioms containing DisjointWith finished: ");
+        getDiffTime(date1, "Preprocessing and axioms containing DisjointWith finished: ");
         date1=new Date();
         loopThrowAllClasses();
         getDiffTime(date1, "Processing classes finished: ");
@@ -209,12 +207,10 @@ public class Ontology {
         Date date1 = new Date();
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
         reasoner = reasonerFactory.createReasoner(ontology);
-        OntologyLogger.log("Reasoner created");
         /** Classify the ontology. */
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         
-        OntologyLogger.log("Precomputed inference");
-        getDiffTime(date1, "Reasoner finished: ");
+        getDiffTime(date1, "Running ELK Reasoner: ");
         date1 = new Date();
         
         getInferredData();
@@ -230,7 +226,7 @@ public class Ontology {
         gens.add(new InferredSubClassAxiomGenerator());
         gens.add(new InferredEquivalentClassAxiomGenerator());
         gens.add(new InferredClassAssertionAxiomGenerator());
-        getDiffTime(date1,"Generated inferred ontology: ");
+        getDiffTime(date1,"Generating inferred ontology: ");
         date1 = new Date();
 
         

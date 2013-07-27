@@ -239,7 +239,7 @@ public class Query{
 				_ontology.proceed();
 				_ontology.appendRules(Rules.getRules());
 				File xsbFile = _ontology.Finish();
-				OntologyLogger.getDiffTime(initAndTranslateTime, "Total translating time: ");
+				OntologyLogger.getDiffTime(initAndTranslateTime, "Total translation time: ");
 				OntologyLogger.log("");
 				compileFile(xsbFile);
 				isOntologyChanged=false;
@@ -346,7 +346,7 @@ public class Query{
 			isCompiled=true;
 		if(isQueriable())
 			queryEngine.deterministicGoal(generateDetermenisticGoal("initQuery"));
-		OntologyLogger.getDiffTime(loadingFileTime, "XSB loading file time: ");
+		OntologyLogger.getDiffTime(loadingFileTime, "Loading XSB file: ");
 		OntologyLogger.log("");
 		return isCompiled;
 	}
