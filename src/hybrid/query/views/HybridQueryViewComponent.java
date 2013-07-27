@@ -388,6 +388,23 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         });
 		
 	}
+	private void disableValuationCheckBoxes(){
+		for(JCheckBox checkBox : checkBoxs){
+			checkBox.setEnabled(false);
+		}
+	}
+	private void enableValuationCheckBoxes(){
+		int delay = 500; //milliseconds
+    	ActionListener taskPerformer = new ActionListener() {
+    		public void actionPerformed(ActionEvent evt) {
+    			for(JCheckBox checkBox : checkBoxs){
+    				checkBox.setEnabled(true);
+    			}
+	    	}
+    	};
+    	new Timer(delay, taskPerformer).start();
+		
+	}
 	private void startQueryEngine(){
 		try {
 			queryEngine = new Query(getOWLModelManager());
@@ -397,61 +414,89 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	}
 	
 	
-	private void clearTable(boolean isAddEnumeration){
-		for(int i=tableModel.getRowCount()-1;i>=0;i--){
-			tableModel.removeRow(i);
-		}
-		tableModel.setColumnCount(0);
-		if(isAddEnumeration){
-			tableModel.addColumn("");
-		}
-		tableModel.addColumn("valuation");
+	private void clearTable(final boolean isAddEnumeration){
+		SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	for(int i=tableModel.getRowCount()-1;i>=0;i--){
+        			tableModel.removeRow(i);
+        		}
+        		tableModel.setColumnCount(0);
+        		if(isAddEnumeration){
+        			tableModel.addColumn("");
+        		}
+        		tableModel.addColumn("valuation");
+            }
+        });
+		
 		
 	}
 	private void setFirstColumnWidth(){
-//		table.getColumnModel().getColumn(0).setPreferredWidth(10);
-		table.getColumnModel().getColumn(0).setMaxWidth(40);
-//		table.getColumnModel().getColumn(0).setMinWidth(10);
-		table.getColumnModel().getColumn(0).setResizable(false);
+		SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+        		table.getColumnModel().getColumn(0).setMaxWidth(40);
+        		table.getColumnModel().getColumn(0).setResizable(false);
+            }
+		});
 	}
-	private void fillTable(ArrayList<ArrayList<String>> data){
+	private void fillTable(final ArrayList<ArrayList<String>> data){
 		try{
 			isShowProgress = false;
 			isAddEnumeration = data.get(0).size() > 0;// || !(data.size() == 2 && (data.get(1).get(0).equals("no answers found") || data.get(1).get(0).equals("no")));
 			
 			clearTable(isAddEnumeration);
-			for(String s: data.get(0)){
-				tableModel.addColumn(s);
+			for(final String s: data.get(0)){
+				SwingUtilities.invokeLater(new Runnable() {
+		            public void run() {
+		            	tableModel.addColumn(s);
+		            }
+				});
 			}
 			if(data.size()>1){
-				ArrayList<String> row = new ArrayList<String>();
-				for(int i = 1; i<data.size();i++){
-					row = new ArrayList<String>();
-					if(isAddEnumeration)
-						//row.add(Integer.toString(i));
-						row.add(Integer.toString(table.getRowCount()+1));
-					row.addAll(data.get(i));
-					if(!isAddEnumeration || filter == null || filter.length()==0 || filter.contains(data.get(i).get(0)))
-						tableModel.addRow(row.toArray());
-					if(!isShowAllSolutions && table.getRowCount()>0)
-						break;
-				}
+				SwingUtilities.invokeLater(new Runnable() {
+		            public void run() {
+						for(int i = 1; i<data.size();i++){
+							final ArrayList<String> row = new ArrayList<String>();
+							if(isAddEnumeration)
+								//row.add(Integer.toString(i));
+								row.add(Integer.toString(table.getRowCount()+1));
+							row.addAll(data.get(i));
+							if(!isAddEnumeration || filter == null || filter.length()==0 || filter.contains(data.get(i).get(0))){
+								tableModel.addRow(row.toArray());
+							}
+							if(!isShowAllSolutions && table.getRowCount()>0)
+								break;
+						}
+		            }
+				});
 				if(isAddEnumeration)
 					setFirstColumnWidth();
 			}
-			if(table.getRowCount()==0)
-				fillNoAnswersTable("");
+			SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+					if(table.getRowCount()==0)
+						fillNoAnswersTable("");
+	            }
+			});
 		}catch(Exception e){
 			fillNoAnswersTable("");
+		}
+		finally{
+			
+			enableValuationCheckBoxes();
 		}
 		
 	}
 	private void fillNoAnswersTable(String s){
 		clearTable(false);
-		ArrayList<String> row = new ArrayList<String>();
+		final ArrayList<String> row = new ArrayList<String>();
 		s = s.length() == 0 ? "no answers found" : s;  
 		row.add(s);
-		tableModel.addRow(row.toArray());
+		SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	tableModel.addRow(row.toArray());
+            }
+		});
+		
 	}
 	public class ViewLogger implements Observer{
 		@Override
@@ -471,6 +516,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
             try {
             	queryEngine.setFilter(getFilter());
             	if(isNeedToQuery || !isAddEnumeration){
+            		disableValuationCheckBoxes();
 	            	isShowProgress = true;
 	            	javax.swing.SwingUtilities.invokeLater(new Runnable() {
 	                    public void run() {
@@ -487,6 +533,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	            	textField.selectAll();
 	            	textField.requestFocus();
 	            	fillTable(queryEngine.query(textField.getText()));
+	            	
             	}else{
             		fillNoAnswersTable("Please check at least one valuation option!");
             		OntologyLogger.log("");
