@@ -117,13 +117,13 @@ public class Ontology {
         Date date1=new Date();
 //        setProgressLabelText("Rule translation");
         fillExistsOntologiesAndRules();
-        getDiffTime(date1, "Preprocessing and axioms containing DisjointWith finished: ");
+        getDiffTime(date1, "Preprocessing DisjointWith axioms: ");
         date1=new Date();
         loopThrowAllClasses();
-        getDiffTime(date1, "Processing classes finished: ");
+        getDiffTime(date1, "Processing classes: ");
         date1=new Date();
         loopThrowAllProperties();
-        getDiffTime(date1, "Processing properties finished: ");
+        getDiffTime(date1, "Processing properties: ");
     }
 
 
