@@ -6,19 +6,19 @@
       <label value="NoHR Query"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.HybridQueryViewComponent"></class>
-      <category value="@org.protege.ontologycategory"></category>
+      <category value="@org.protege.querycategory"></category>
    </extension>
    <extension id="RulesViewComponent" point="org.protege.editor.core.application.ViewComponent">
       <label value="NoHR Rules"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.RulesViewComponent"></class>
-      <category value="@org.protege.ontologycategory"></category>
+      <category value="@org.protege.querycategory"></category>
    </extension>
    <extension id="RulesManagerViewComponent" point="org.protege.editor.core.application.ViewComponent">
       <label value="NoHR Rule Editor"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="hybrid.query.views.RulesManagerViewComponent"></class>
-      <category value="@org.protege.ontologycategory"></category>
+      <category value="@org.protege.querycategory"></category>
    </extension>
    <extension id="HybridQueryTab" point="org.protege.editor.core.application.WorkspaceTab">
       <label value="NoHR Query"></label>
