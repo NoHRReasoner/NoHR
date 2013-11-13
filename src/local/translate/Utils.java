@@ -51,7 +51,7 @@ public class Utils {
                 result += Utils.getSubRule(s);
                 if(s.contains("(") && !s.endsWith(")"))
                 	result+=")";
-                result+=", ";
+                result += ", ";
             }
             result = result.substring(0, result.length()-2);
         }

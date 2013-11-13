@@ -6,7 +6,6 @@ public class Logger implements Log {
 	private ArrayList<Observer> observers = new ArrayList<Observer>();
     private String log;
     public Logger() {
-		
 	}
 
     public void log(String text) {
@@ -16,7 +15,6 @@ public class Logger implements Log {
     public void removeAllObservers(){
     	observers = new ArrayList<Observer>();
     }
-    
 	@Override
 	public void registerObserver(Observer observer) {
 		observers.add(observer);
@@ -28,12 +26,12 @@ public class Logger implements Log {
 	}
 
 	@Override
-	public void notifyObservers() {
+	public final void notifyObservers() {
 		for (Observer ob : observers) {
             ob.update(this.log);
 		}
-		
+
 	}
-	
+
 
 }

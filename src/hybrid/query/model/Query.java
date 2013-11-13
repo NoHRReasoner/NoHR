@@ -15,12 +15,9 @@ import local.translate.OntologyLogger;
 import local.translate.Utils;
 
 import org.apache.log4j.Logger;
-import org.protege.editor.owl.ProtegeOWL;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.protege.editor.owl.model.io.IOListener;
-import org.protege.editor.owl.model.io.IOListenerEvent;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
@@ -57,32 +54,34 @@ public class Query{
 	}
 	
 	private static void InitOntology(){
-		try{
+		try {
 			_ontology = new Ontology(owlModelManager);
-		}catch(Exception e){
+		} catch (Exception e) {
 			log.error(e);
 		}
 	}
 	
-	public static void dispose(){
-		if(owlModelManager!=null){
+	public static void dispose() {
+		if (owlModelManager != null) {
 			owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
 			owlModelManager.removeListener(modelManagerListener);
 		}
 		Rules.dispose();
 	}
-	public void disposeQuery(){
+	public void disposeQuery() {
 		owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
 		owlModelManager.removeListener(modelManagerListener);
-		if(_ontology!=null)
+		if (_ontology != null) {
 			_ontology.clear();
-		if(queryEngine!=null)
+		}
+		if (queryEngine != null) {
 			queryEngine.shutdown();
+		}
 		Rules.dispose();
 	}
 	
 	public void printLog(String text) {
-		if(Config.isDebug){
+		if (Config.isDebug) {
 			printInfo(text);
 		}
 	}
@@ -91,7 +90,7 @@ public class Query{
 		log.info(text);
 		UnionLogger.logger.log(text);
 	}
-	private boolean isChanged(){
+	private boolean isChanged() {
 		return Rules.isRulesOntologyChanged || isOntologyChanged;
 	}
 	
@@ -108,12 +107,13 @@ public class Query{
 			isOntologyChanged = true;
 			if (event.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
 				Rules.dispose();
-				if(_ontology!=null)
+				if (_ontology != null) {
 					_ontology.clear();
+				}
 				InitOntology();
 			}
 		}
-	};	
+	};
 	
 	public ArrayList<ArrayList<String>> queryXSB(){
 		String command = queryString;
@@ -152,14 +152,14 @@ public class Query{
 						if(value.length()>0){
 							row = new ArrayList<String>();
 							row.add(value);
-							for(int j=1; j<=_variablesList.size();j++){
+							for (int j = 1; j <= _variablesList.size(); j++) {
 								subValue = _ontology.getLabelByHash(flattted[i].getChild(j).toString());
 								subValue = varXPattern.matcher(subValue).find() ? "all values" : subValue;
 								row.add(subValue);
 							}
-							if(!_ontology.isAnyDisjointWithStatement())
+							if (!_ontology.isAnyDisjointWithStatement()) {
 								_answers.add(row);
-							else{					
+							}else {					
 								if(value.equals("true") || value.equals("undefined")){
 //									printLog("_dRule: "+Utils._dAllrule(command));
 									subDetGoal = generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i]));
@@ -173,9 +173,12 @@ public class Query{
 									if(subFlattted.length>0){
 										String subAnswer = subFlattted[0].getChild(0).toString();
 										if(subAnswer.equals("no") || subAnswer.equals("false") || subAnswer.equals("undefined")){
-											if(value.equals("true")){
+											if (value.equals("true")) {
 												row.set(0, "inconsistent");
 												_answers.add(row);
+											} else if (value.equals("undefined")) {
+											    row.set(0, "undefined");
+                                                _answers.add(row);
 											}
 										}else{
 											_answers.add(row);
@@ -197,11 +200,6 @@ public class Query{
 					if(flattted.length==0){
 						row = new ArrayList<String>();
 						row.add(_variablesList.size() > 0 ? "no answers found" : "false");
-						/*if(queryEngine.deterministicGoalBool(command))
-							row.add("yes");
-						else
-							row.add(_variablesList.size() > 0 ? "no answers found" : "false");
-							*/
 						clearTable();
 						_answers.add(row);
 					}
@@ -211,7 +209,7 @@ public class Query{
 						row.add("no answers found");
 						_answers.add(row);
 					}
-				}else{
+				} else {
 					clearTable();
 					row = new ArrayList<String>();
 					row.add("no answers found");
@@ -225,24 +223,26 @@ public class Query{
 						log.error(e);
 					}
 				}
+				OntologyLogger.log("-----------------------");
 				OntologyLogger.getDiffTime(queryStart, "Total query time: ");
 				OntologyLogger.log("");
 			}
 		}
 		return getData();
 	}
-	private void checkAndStartEngine(){
-		if(!isCompiled){
+	private void checkAndStartEngine() {
+		if (!isCompiled) {
 			try {
 				Date initAndTranslateTime = new Date();
 				InitOntology();
 				_ontology.proceed();
 				_ontology.appendRules(Rules.getRules());
 				File xsbFile = _ontology.Finish();
+				OntologyLogger.log("-----------------------");
 				OntologyLogger.getDiffTime(initAndTranslateTime, "Total translation time: ");
 				OntologyLogger.log("");
 				compileFile(xsbFile);
-				isOntologyChanged=false;
+				isOntologyChanged = false;
 				Rules.isRulesOntologyChanged = false;
 //				_ontology.printAllLabels();
 			} catch (OWLOntologyCreationException e) {
@@ -256,19 +256,19 @@ public class Query{
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}else if(isChanged()){
+		} else if (isChanged()) {
 			int dialogResult = JOptionPane.showConfirmDialog (null, "Some changes have been made, would you like to recompile?", "Warning", JOptionPane.YES_NO_OPTION);
-			if(dialogResult == JOptionPane.YES_OPTION){
+			if (dialogResult == JOptionPane.YES_OPTION) {
 				try {
 					boolean disjointStatement = _ontology.isAnyDisjointWithStatement();
 					Date initAndTranslateTime = new Date();
-					if(isOntologyChanged){
+					if (isOntologyChanged) {
 						_ontology.PrepareForTranslating();
 						_ontology.proceed();
 						isOntologyChanged = false;
 						log.info("Ontology recompilation");
 					}
-					if(disjointStatement != _ontology.isAnyDisjointWithStatement() || Rules.isRulesOntologyChanged){
+					if (disjointStatement != _ontology.isAnyDisjointWithStatement() || Rules.isRulesOntologyChanged) {
 						_ontology.appendRules(Rules.getRules());
 						log.info("Rule recompilation");
 						Rules.isRulesOntologyChanged = false;
@@ -288,7 +288,7 @@ public class Query{
 					e.printStackTrace();
 				} catch (Exception e) {
 					e.printStackTrace();
-				}finally{
+				} finally {
 					previousQuery="";
 				}
 			}
