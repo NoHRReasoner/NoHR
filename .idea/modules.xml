@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/EmptyPlugin.iml" filepath="$PROJECT_DIR$/EmptyPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NoHR.iml" filepath="$PROJECT_DIR$/NoHR.iml" />
     </modules>
   </component>
 </project>
