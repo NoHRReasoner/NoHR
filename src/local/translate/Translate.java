@@ -52,7 +52,6 @@ public class Translate {
 
     /** The result file name. */
     private String resultFileName = "result.p";
-    // private ParsedRule parsedRule;
     /** The ontology label. */
     private OntologyLabel ontologyLabel;
 
@@ -67,6 +66,11 @@ public class Translate {
 
     /** The query. */
     private Query query;
+
+    /**
+     * all processing about ontology
+     */
+    private OntologyProceeder ontologyProceeder;
 
     /** The Constant log. */
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Translate.class);
@@ -99,15 +103,14 @@ public class Translate {
      */
     public Translate(String filePath) throws OWLOntologyCreationException, IOException, OWLOntologyStorageException {
         /** Initializing a OntologyManager */
-        Date date1 = new Date();
+        Date dateStart = new Date();
         ontologyManager = OWLManager.createOWLOntologyManager();
         ontologyFile = new File(filePath);
         if (ontologyFile.exists()) {
             ontologyFile.createNewFile();
         }
         ontology = ontologyManager.loadOntologyFromOntologyDocument(ontologyFile);
-        getDiffTime(date1, "Initializing is done, it took:");
-        date1 = new Date();
+        Utils.getDiffTime(dateStart, "Initializing is done, it took:");
         initELK();
         initCollections();
         log.setLevel(Config.logLevel);
@@ -124,7 +127,6 @@ public class Translate {
         for (String rule : _rules) {
             ruleTranslator.proceedRule(rule);
         }
-
     }
 
     /**
@@ -162,51 +164,6 @@ public class Translate {
     }
 
     /**
-     * Going throw all ontologies and preprocess them.
-     */
-    private void fillExistsOntologiesAndRules() {
-        boolean isTopClass;
-        ClassExpressionType expressionType;
-        cm.setIsAnyDisjointStatement(false);
-
-        for (OWLOntology ont : ontologies) {
-            for (OWLClass owlClass : ont.getClassesInSignature()) {
-
-                isTopClass = owlClass.isOWLThing() || owlClass.isOWLNothing();
-
-                // Going into loop throw all Disjoint classes
-                for (OWLClassExpression owlClassExpression : owlClass.getDisjointClasses(ont)) {
-                    cm.setIsAnyDisjointStatement(true);
-                    expressionType = owlClassExpression.getClassExpressionType();
-                    if ((expressionType == ClassExpressionType.OWL_CLASS)
-                        && (owlClassExpression.isOWLThing() || owlClassExpression.isOWLNothing())) {
-                        break;
-                    }
-                    if ((expressionType == ClassExpressionType.OBJECT_SOME_VALUES_FROM) && isTopClass) {
-                        ruleCreator.writeRuleI3(owlClassExpression);
-                    } else if ((expressionType == ClassExpressionType.OBJECT_INTERSECTION_OF) && isTopClass) {
-                        ruleCreator.writeRuleI2(owlClassExpression);
-                    } else {
-                        if ((expressionType == ClassExpressionType.OWL_CLASS) && isTopClass) {
-                            ruleCreator.writeRuleI1(owlClassExpression);
-                        } else if (!isTopClass) {
-                            ruleCreator.writeNegEquivalentRules(owlClassExpression, owlClass);
-                        }
-                    }
-                }
-            }
-
-            for (OWLClassAxiom owlClassAxiom : ont.getGeneralClassAxioms()) {
-                if (owlClassAxiom.getAxiomType() == AxiomType.DISJOINT_CLASSES) {
-                    cm.setIsAnyDisjointStatement(true);
-                    ruleCreator.writeGeneralClassAxiomsWithComplexAssertions(owlClassAxiom);
-                }
-            }
-        }
-
-    }
-
-    /**
      * Finish.
      *
      * @return the file
@@ -237,21 +194,8 @@ public class Translate {
         }
         writer.close();
 
-        getDiffTime(date1, "Writing XSB file: ");
+        Utils.getDiffTime(date1, "Writing XSB file: ");
         return new File(tempDir + resultFileName);
-    }
-
-    /**
-     * Gets the diff time.
-     *
-     * @param startDate the start date
-     * @param message   the message
-     * @return the diff time
-     */
-    protected void getDiffTime(Date startDate, String message) {
-        Date stoped = new Date();
-        long diff = stoped.getTime() - startDate.getTime();
-        Logger.log(message + " " + diff + " milisec");
     }
 
     /**
@@ -272,7 +216,7 @@ public class Translate {
         gens.add(new InferredSubClassAxiomGenerator());
         gens.add(new InferredEquivalentClassAxiomGenerator());
         gens.add(new InferredClassAssertionAxiomGenerator());
-        getDiffTime(date1, "Generating inferred ontology: ");
+        Utils.getDiffTime(date1, "Generating inferred ontology: ");
         date1 = new Date();
 
         OWLOntologyManager outputOntologyManager = OWLManager.createOWLOntologyManager();
@@ -286,7 +230,7 @@ public class Translate {
 
         ontologies.add(infOnt);
         // reasoner.dispose();
-        getDiffTime(date1, "Retrieving inferred information: ");
+        Utils.getDiffTime(date1, "Retrieving inferred information: ");
 
     }
 
@@ -332,6 +276,7 @@ public class Translate {
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
         query = new Query(cm);
         ruleCreator = new RuleCreator(cm, ontologyLabel);
+        ontologyProceeder = new OntologyProceeder(cm, ontologies, ruleCreator);
     }
 
     /**
@@ -341,14 +286,13 @@ public class Translate {
      */
     protected void initELK() throws OWLOntologyCreationException {
         org.apache.log4j.Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
-        Date date1 = new Date();
+        Date dateStart = new Date();
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
         reasoner = reasonerFactory.createReasoner(ontology);
         /** Classify the ontology. */
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
 
-        getDiffTime(date1, "Running ELK Reasoner: ");
-        date1 = new Date();
+        Utils.getDiffTime(dateStart, "Running ELK Reasoner: ");
 
         getInferredData();
     }
@@ -360,88 +304,6 @@ public class Translate {
      */
     public boolean isAnyDisjointWithStatement() {
         return cm.isAnyDisjointStatement();
-    }
-
-    /**
-     * Going into loop of all classes.
-     */
-    private void loopThrowAllClasses() {
-        boolean isTopClass;
-        OWLClassExpression rightPartOfRule;
-        List<OWLClassExpression> equivalentClasses;
-        OWLClassExpression equivalentClass;
-
-        for (OWLOntology ont : ontologies) {
-            for (OWLClass owlClass : ont.getClassesInSignature()) {
-                isTopClass = owlClass.isOWLThing() || owlClass.isOWLNothing();
-                equivalentClasses = new ArrayList<OWLClassExpression>();
-
-                if (!isTopClass) {
-                    for (OWLIndividual individual : owlClass.getIndividuals(ont)) {
-                        ruleCreator.writeRuleA1(individual, owlClass);
-                    }
-
-                    for (OWLClassExpression owlClassExpression : owlClass.getSubClasses(ont)) {
-                        ruleCreator.writeDoubledRules(owlClassExpression, owlClass);
-                    }
-                }
-
-                for (OWLEquivalentClassesAxiom equivalentClassesAxiom : ont.getEquivalentClassesAxioms(owlClass)) {
-                    List<OWLClassExpression> list = equivalentClassesAxiom.getClassExpressionsAsList();
-                    for (int i = 0; i < list.size(); i++) {
-                        equivalentClass = list.get(i);
-                        if (!((equivalentClass.getClassExpressionType() == ClassExpressionType.OWL_CLASS) && (equivalentClass.isOWLThing() || equivalentClass.isOWLNothing()))) {
-                            equivalentClasses.add(equivalentClass);
-                        }
-                    }
-                }
-                if (equivalentClasses.size() > 0) {
-                    equivalentClasses = removeDuplicates(equivalentClasses);
-                    for (int i = 0; i < equivalentClasses.size(); i++) {
-                        rightPartOfRule = equivalentClasses.get(i);
-                        if (!isTopClass) {
-                            if (rightPartOfRule.getClassExpressionType() == ClassExpressionType.OWL_CLASS) {
-                                if (!owlClass.equals(rightPartOfRule)) {
-                                    ruleCreator.writeRuleC1(rightPartOfRule, owlClass, false);
-                                }
-                            } else {
-                                ruleCreator.writeEquivalentRule(owlClass, rightPartOfRule);
-                            }
-                        }
-                    }
-                }
-            }
-            for (OWLClassAxiom owlClassAxiom : ont.getGeneralClassAxioms()) {
-                if (owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF) {
-                    ruleCreator.writeGeneralClassAxiomsSubClasses(owlClassAxiom);
-                }
-                if (owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES) {
-                    ruleCreator.writeGeneralClassAxiomsEquivClasses(owlClassAxiom);
-                }
-            }
-        }
-    }
-
-    /**
-     * Loop throw all properties.
-     */
-    private void loopThrowAllProperties() {
-        for (OWLOntology ont : ontologies) {
-            for (OWLObjectProperty objectProperty : ont.getObjectPropertiesInSignature()) {
-
-                for (OWLAxiom axiom : objectProperty.getReferencingAxioms(ont)) {
-                    if (axiom.getAxiomType() == AxiomType.OBJECT_PROPERTY_ASSERTION) {
-                        ruleCreator.writeRuleA2(axiom);
-                    }
-                }
-                for (OWLObjectPropertyExpression objectPropertyExpression : objectProperty.getSubProperties(ont)) {
-                    ruleCreator.writeRuleR1(objectPropertyExpression, objectProperty);
-                }
-            }
-            for (OWLAxiom axiom : ont.getAxioms(AxiomType.SUB_PROPERTY_CHAIN_OF)) {
-                ruleCreator.writeRuleR2(axiom);
-            }
-        }
     }
 
     /**
@@ -457,6 +319,9 @@ public class Translate {
         cm.clearOntology();
         return true;
     }
+    public void proceed() throws ParserException {
+        ontologyProceeder.proceed();
+    }
 
     /**
      * Prepare query.
@@ -466,63 +331,6 @@ public class Translate {
      */
     public String prepareQuery(String q) {
         return query.prepareQuery(q, isAnyDisjointWithStatement());
-    }
-
-    /**
-     * Prints the all labels.
-     */
-    public void printAllLabels() {
-        cm.printAllLabels();
-    }
-
-    /**
-     * Main function.
-     *
-     * @throws ParserException the parser exception
-     */
-    public void proceed() throws ParserException {
-
-        Date date1 = new Date();
-        // setProgressLabelText("Rule translation");
-        fillExistsOntologiesAndRules();
-        getDiffTime(date1, "Preprocessing DisjointWith axioms: ");
-        date1 = new Date();
-        loopThrowAllClasses();
-        getDiffTime(date1, "Processing classes: ");
-        date1 = new Date();
-        loopThrowAllProperties();
-        getDiffTime(date1, "Processing properties: ");
-    }
-
-    /**
-     * Process rule.
-     *
-     * @param rule the rule
-     * @return the string
-     */
-    public String processRule(String rule) {
-        String[] parts = rule.split("\\(");
-        String[] subParts;
-        for (String string : parts) {
-            subParts = string.split(" ");
-            string = subParts[subParts.length];
-            rule.replace(" " + string + "(", " " + string.toLowerCase() + "(");
-        }
-        return rule;
-    }
-
-    /**
-     * Removes the duplicates.
-     *
-     * @param list the list
-     * @return the list
-     */
-    private List<OWLClassExpression> removeDuplicates(List<OWLClassExpression> list) {
-        HashSet<OWLClassExpression> h = new HashSet<OWLClassExpression>(list);
-        list.clear();
-        list.addAll(h);
-
-        return list;
     }
 
     /**

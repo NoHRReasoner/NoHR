@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="" />
+    <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/local/translate/Console.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Translate.java" afterPath="$PROJECT_DIR$/src/local/translate/Translate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Utils.java" afterPath="$PROJECT_DIR$/src/local/translate/Utils.java" />
+    </list>
     <ignored path="EmptyPlugin.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -64,83 +69,113 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="plugin.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/plugin.xml">
+      <file leaf-file-name="RuleTranslator.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/RuleTranslator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
+            <state line="147" column="64" selection-start="4690" selection-end="4690" vertical-scroll-proportion="0.0" vertical-offset="2106" max-vertical-offset="2910">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NoHR.iml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/NoHR.iml">
+      <file leaf-file-name="Translate.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
+            <state line="192" column="14" selection-start="6619" selection-end="6619" vertical-scroll-proportion="1.9411764" vertical-offset="675" max-vertical-offset="4020">
+              <folding>
+                <element signature="docComment;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#ontologyFile#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#ontologyManager#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#ontology#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#ontologies#0;class#Translate#0" expanded="false" />
+                <element signature="e#985#998#0" expanded="true" />
+                <element signature="docComment;field#_ontologyLabel#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#reasoner#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#collectionsManager#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#prologCommands#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#tempDirProp#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#tempDir#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#resultFileName#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#ontologyLabel#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#ruleCreator#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#ruleTranslator#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#cm#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;field#query#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#Translate#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#Translate#1;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#appendRules#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#appendRules#1;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#clear#0;class#Translate#0" expanded="false" />
+                <element signature="e#5328#5368#0" expanded="false" />
+                <element signature="docComment;method#Finish#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#getInferredData#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#getInferredDataFromReasoner#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#getLabelByHash#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#initCollections#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#initELK#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#isAnyDisjointWithStatement#0;class#Translate#0" expanded="false" />
+                <element signature="docComment;method#PrepareForTranslating#0;class#Translate#0" expanded="false" />
+                <element signature="e#11592#11593#0" expanded="true" />
+                <element signature="e#11629#11630#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Logger.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/Logger.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="13" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Utils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/Utils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="156" column="17" selection-start="4511" selection-end="4511" vertical-scroll-proportion="0.0" vertical-offset="1461" max-vertical-offset="2265">
+              <folding>
+                <element signature="docComment;method#getDiffTime#0;class#Utils#0" expanded="false" />
+                <element signature="docComment;method#removeDuplicates#0;class#Utils#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OntologyProceeder.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyProceeder.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="24" column="4" selection-start="719" selection-end="765" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2460">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#323#336#0" expanded="true" />
+                <element signature="docComment;method#fillExistsOntologiesAndRules#0;class#OntologyProceeder#0" expanded="false" />
+                <element signature="docComment;method#loopThrowAllClasses#0;class#OntologyProceeder#0" expanded="false" />
+                <element signature="docComment;method#loopThrowAllProperties#0;class#OntologyProceeder#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Query.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="181" column="58" selection-start="6002" selection-end="6002" vertical-scroll-proportion="0.0" vertical-offset="1838" max-vertical-offset="7845">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.properties" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.properties">
+      <file leaf-file-name="Console.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/Console.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="150">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MANIFEST.MF" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="30" column="21" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="viewconfig-rulesmanagertab.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/viewconfig-rulesmanagertab.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="34" selection-start="1044" selection-end="1044" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="viewconfig-querytab.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/viewconfig-querytab.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="52" selection-start="604" selection-end="604" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="update.properties" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/update.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RulesManagerTab.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesManagerTab.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="13" selection-start="98" selection-end="98" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RulesViewComponent.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
-              <folding />
+            <state line="43" column="25" selection-start="1466" selection-end="1473" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="1425">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -174,8 +209,6 @@
         <option value="$PROJECT_DIR$/src/local/translate/Query.java" />
         <option value="$PROJECT_DIR$/src/local/translate/RuleCreator.java" />
         <option value="$PROJECT_DIR$/src/local/translate/RuleTranslator.java" />
-        <option value="$PROJECT_DIR$/src/local/translate/Translate.java" />
-        <option value="$PROJECT_DIR$/src/local/translate/Utils.java" />
         <option value="$PROJECT_DIR$/src/union/logger/Logger.java" />
         <option value="$PROJECT_DIR$/src/union/logger/Observer.java" />
         <option value="$PROJECT_DIR$/src/hybrid/query/model/Query.java" />
@@ -186,6 +219,10 @@
         <option value="$PROJECT_DIR$/viewconfig-querytab.xml" />
         <option value="$PROJECT_DIR$/update.properties" />
         <option value="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        <option value="$PROJECT_DIR$/src/local/translate/Console.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/Utils.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/Translate.java" />
       </list>
     </option>
   </component>
@@ -256,6 +293,82 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="translate" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="query" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="query" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -447,7 +560,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -465,7 +578,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24821173" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24821173" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -599,15 +712,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/Logger.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="78" selection-start="567" selection-end="567" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/ParsedRule.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="82" column="43" selection-start="1664" selection-end="1664" vertical-scroll-proportion="49.115383" vertical-offset="2507" max-vertical-offset="3285">
@@ -639,35 +743,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/RuleTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="147" column="64" selection-start="4690" selection-end="4690" vertical-scroll-proportion="0.0" vertical-offset="2129" max-vertical-offset="2910">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="519" column="54" selection-start="18842" selection-end="18842" vertical-scroll-proportion="0.0" vertical-offset="417" max-vertical-offset="8115">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#985#998#0" expanded="true" />
-            <element signature="e#7858#7866#0" expanded="true" />
-            <element signature="e#9776#9820#0" expanded="true" />
-            <element signature="e#18926#18946#0" expanded="true" />
-            <element signature="e#19177#19178#0" expanded="true" />
-            <element signature="e#19214#19215#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="127" column="67" selection-start="3848" selection-end="3848" vertical-scroll-proportion="0.0" vertical-offset="1229" max-vertical-offset="2010">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/union/logger/Logger.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="31" column="57" selection-start="519" selection-end="519" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1155">
@@ -693,19 +768,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="7" column="19" selection-start="149" selection-end="149" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="506" column="78" selection-start="18079" selection-end="18079" vertical-scroll-proportion="0.0" vertical-offset="7152" max-vertical-offset="7920">
-          <folding>
-            <element signature="e#2998#3186#0" expanded="true" />
-            <element signature="e#3179#3180#0" expanded="true" />
-            <element signature="e#11403#11435#1" expanded="true" />
-            <element signature="e#19262#19263#0" expanded="true" />
-            <element signature="e#19298#19299#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -739,42 +801,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesManagerTab.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="13" selection-start="98" selection-end="98" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+        <state line="4" column="13" selection-start="98" selection-end="98" vertical-scroll-proportion="0.07462686" vertical-offset="0" max-vertical-offset="804">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
+        <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.14925373" vertical-offset="0" max-vertical-offset="804">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/viewconfig-rulesmanagertab.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="34" selection-start="1044" selection-end="1044" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
+        <state line="22" column="34" selection-start="1044" selection-end="1044" vertical-scroll-proportion="0.41044775" vertical-offset="0" max-vertical-offset="804">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/viewconfig-querytab.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="52" selection-start="604" selection-end="604" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
+        <state line="13" column="52" selection-start="604" selection-end="604" vertical-scroll-proportion="0.24253732" vertical-offset="0" max-vertical-offset="804">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/update.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
+        <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.018656716" vertical-offset="0" max-vertical-offset="804">
           <folding />
         </state>
       </provider>
@@ -788,7 +843,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="21" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630">
+        <state line="30" column="21" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.5597015" vertical-offset="0" max-vertical-offset="804">
           <folding />
         </state>
       </provider>
@@ -853,6 +908,110 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/RuleTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="147" column="64" selection-start="4690" selection-end="4690" vertical-scroll-proportion="0.0" vertical-offset="2129" max-vertical-offset="2910">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Logger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="13" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="156" column="17" selection-start="4511" selection-end="4511" vertical-scroll-proportion="0.0" vertical-offset="1461" max-vertical-offset="2265">
+          <folding>
+            <element signature="docComment;method#getDiffTime#0;class#Utils#0" expanded="false" />
+            <element signature="docComment;method#removeDuplicates#0;class#Utils#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Console.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="25" selection-start="1466" selection-end="1473" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="1425">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="181" column="58" selection-start="6002" selection-end="6002" vertical-scroll-proportion="0.0" vertical-offset="2078" max-vertical-offset="7845">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyProceeder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="4" selection-start="719" selection-end="765" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2460">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#323#336#0" expanded="true" />
+            <element signature="docComment;method#fillExistsOntologiesAndRules#0;class#OntologyProceeder#0" expanded="false" />
+            <element signature="docComment;method#loopThrowAllClasses#0;class#OntologyProceeder#0" expanded="false" />
+            <element signature="docComment;method#loopThrowAllProperties#0;class#OntologyProceeder#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="192" column="14" selection-start="6619" selection-end="6619" vertical-scroll-proportion="1.9411764" vertical-offset="675" max-vertical-offset="4020">
+          <folding>
+            <element signature="docComment;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#ontologyFile#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#ontologyManager#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#ontology#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#ontologies#0;class#Translate#0" expanded="false" />
+            <element signature="e#985#998#0" expanded="true" />
+            <element signature="docComment;field#_ontologyLabel#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#reasoner#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#collectionsManager#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#prologCommands#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#tempDirProp#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#tempDir#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#resultFileName#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#ontologyLabel#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#ruleCreator#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#ruleTranslator#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#cm#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;field#query#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#Translate#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#Translate#1;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#appendRules#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#appendRules#1;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#clear#0;class#Translate#0" expanded="false" />
+            <element signature="e#5328#5368#0" expanded="false" />
+            <element signature="docComment;method#Finish#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#getInferredData#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#getInferredDataFromReasoner#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#getLabelByHash#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#initCollections#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#initELK#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#isAnyDisjointWithStatement#0;class#Translate#0" expanded="false" />
+            <element signature="docComment;method#PrepareForTranslating#0;class#Translate#0" expanded="false" />
+            <element signature="e#11592#11593#0" expanded="true" />
+            <element signature="e#11629#11630#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

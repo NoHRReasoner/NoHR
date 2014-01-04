@@ -1,8 +1,12 @@
 package local.translate;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,4 +133,32 @@ public class Utils {
 
         return result;
     }
+
+
+    /**
+     * Gets the diff time.
+     *
+     * @param startDate the start date
+     * @param message   the message
+     * @return the diff time
+     */
+    public static void getDiffTime(Date startDate, String message) {
+        Date stoped = new Date();
+        long diff = stoped.getTime() - startDate.getTime();
+        Logger.log(message + " " + diff + " milisec");
+    }
+
+    /**
+     * Removes the duplicates.
+     *
+     * @param list the list
+     * @return the list
+     */
+    public static List<OWLClassExpression> removeDuplicates(List<OWLClassExpression> list) {
+        HashSet<OWLClassExpression> h = new HashSet<OWLClassExpression>(list);
+        list.clear();
+        list.addAll(h);
+        return list;
+    }
+
 }
