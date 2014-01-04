@@ -1,11 +1,11 @@
 package union.logger;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Interface Observer.
  */
 public interface Observer {
-    
+
     /**
      * Update.
      *

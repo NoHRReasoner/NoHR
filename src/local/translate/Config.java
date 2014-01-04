@@ -2,7 +2,6 @@ package local.translate;
 
 import org.apache.log4j.Level;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Config.
  */
@@ -14,13 +13,13 @@ public class Config {
     /** The alt delimeter. */
     public static String altDelimeter = ":";
 
-    /** The negation. */
+    /** The negation which should appear in the rules at the end. */
     public static String negation = "tnot";
 
-    /** The search negation. */
+    /** The search negation what should be replaced. */
     public static String searchNegation = "not";
 
-    /** The eq. */
+    /** The equivalent symbols */
     public static String eq = ":-";
 
     /** The rule creation debug. */

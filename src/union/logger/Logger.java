@@ -20,13 +20,12 @@ public class Logger implements Log {
 
     /**
      * Log.
-     * 
-     * @param text
-     *            the text
+     *
+     * @param text the text
      */
     public void log(String text) {
-	log = text;
-	notifyObservers();
+        log = text;
+        notifyObservers();
     }
 
     /*
@@ -36,9 +35,9 @@ public class Logger implements Log {
      */
     @Override
     public final void notifyObservers() {
-	for (Observer ob : observers) {
-	    ob.update(log);
-	}
+        for (Observer ob : observers) {
+            ob.update(log);
+        }
 
     }
 
@@ -49,14 +48,14 @@ public class Logger implements Log {
      */
     @Override
     public void registerObserver(Observer observer) {
-	observers.add(observer);
+        observers.add(observer);
     }
 
     /**
      * Removes the all observers.
      */
     public void removeAllObservers() {
-	observers = new ArrayList<Observer>();
+        observers = new ArrayList<Observer>();
     }
 
     /*
@@ -66,7 +65,7 @@ public class Logger implements Log {
      */
     @Override
     public void removeObserver(Observer observer) {
-	observers.remove(observer);
+        observers.remove(observer);
     }
 
 }

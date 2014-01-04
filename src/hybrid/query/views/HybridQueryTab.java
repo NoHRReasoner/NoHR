@@ -1,7 +1,6 @@
 package hybrid.query.views;
 
 import hybrid.query.model.Query;
-
 import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
 
 
@@ -10,14 +9,14 @@ public class HybridQueryTab extends OWLWorkspaceViewsTab {
 
     @Override
     public void setVisible(boolean aFlag) {
-    	super.setVisible(aFlag);
-    	Rules.recollectRules(true);
+        super.setVisible(aFlag);
+        Rules.recollectRules(true);
     }
-    
-	@Override
-	public void dispose() {
-		Query.dispose();
-		super.dispose();
-	}
-    
+
+    @Override
+    public void dispose() {
+        Query.dispose();
+        super.dispose();
+    }
+
 }

@@ -2,10 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/local/translate/Ontology.java" afterPath="$PROJECT_DIR$/src/local/translate/Translate.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/local/translate/Logger.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/local/translate/OntologyLogger.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/CollectionsManager.java" afterPath="$PROJECT_DIR$/src/local/translate/CollectionsManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Config.java" afterPath="$PROJECT_DIR$/src/local/translate/Config.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" afterPath="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryTab.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryTab.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/union/logger/Logger.java" afterPath="$PROJECT_DIR$/src/union/logger/Logger.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/union/logger/Observer.java" afterPath="$PROJECT_DIR$/src/union/logger/Observer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/OntologyLabel.java" afterPath="$PROJECT_DIR$/src/local/translate/OntologyLabel.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/ParsedRule.java" afterPath="$PROJECT_DIR$/src/local/translate/ParsedRule.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/model/Query.java" afterPath="$PROJECT_DIR$/src/hybrid/query/model/Query.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Query.java" afterPath="$PROJECT_DIR$/src/local/translate/Query.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java" afterPath="$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/RuleCreator.java" afterPath="$PROJECT_DIR$/src/local/translate/RuleCreator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/RuleTranslator.java" afterPath="$PROJECT_DIR$/src/local/translate/RuleTranslator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/RulesManagerTab.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/RulesManagerTab.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/RulesManagerViewComponent.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/RulesManagerViewComponent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Translate.java" afterPath="$PROJECT_DIR$/src/local/translate/Translate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Utils.java" afterPath="$PROJECT_DIR$/src/local/translate/Utils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="EmptyPlugin.iws" />
@@ -70,65 +90,98 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Translate.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
+      <file leaf-file-name="Observer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/union/logger/Observer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="17" selection-start="740" selection-end="740" vertical-scroll-proportion="0.0" vertical-offset="1815" max-vertical-offset="9150">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1049#1062#0" expanded="true" />
-                <element signature="e#9290#9334#0" expanded="true" />
-                <element signature="e#17368#17388#0" expanded="true" />
-              </folding>
+            <state line="2" column="32" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Query.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="UnionLogger.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/union/logger/UnionLogger.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="13" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Config.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Config.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="19" selection-start="149" selection-end="149" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Query.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="55" column="28" selection-start="1534" selection-end="1534" vertical-scroll-proportion="0.4293059" vertical-offset="116" max-vertical-offset="8505">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ParsedRule.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/ParsedRule.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="49" selection-start="487" selection-end="494" vertical-scroll-proportion="-9.961538" vertical-offset="131" max-vertical-offset="3285">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CollectionsManager.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/CollectionsManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="184" column="25" selection-start="4518" selection-end="4527" vertical-scroll-proportion="-48.96154" vertical-offset="1322" max-vertical-offset="3780">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OntologyLogger.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyLogger.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="7" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="870">
+            <state line="506" column="78" selection-start="18079" selection-end="18079" vertical-scroll-proportion="0.0" vertical-offset="7152" max-vertical-offset="7920">
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#2998#3186#0" expanded="true" />
+                <element signature="e#3179#3180#0" expanded="true" />
+                <element signature="e#11403#11435#1" expanded="true" />
+                <element signature="e#19262#19263#0" expanded="true" />
+                <element signature="e#19298#19299#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="OntologyLabel.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyLabel.java">
+      <file leaf-file-name="QueryEngine.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="344" column="8" selection-start="9655" selection-end="9655" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5310">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="123" column="74" selection-start="2889" selection-end="2889" vertical-scroll-proportion="0.0" vertical-offset="1139" max-vertical-offset="1920">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HybridQueryTab.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/HybridQueryTab.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="13" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="405">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HybridQueryViewComponent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="22" column="13" selection-start="683" selection-end="683" vertical-scroll-proportion="0.0" vertical-offset="6837" max-vertical-offset="7605">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Rules.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/Rules.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="79" column="49" selection-start="2579" selection-end="2579" vertical-scroll-proportion="0.0" vertical-offset="1304" max-vertical-offset="2085">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RulesManagerTab.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesManagerTab.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="13" selection-start="98" selection-end="98" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RulesViewComponent.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.15364917" vertical-offset="0" max-vertical-offset="781">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -152,15 +205,48 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/src/local/translate/Ontology.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/Config.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/CollectionsManager.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" />
         <option value="$PROJECT_DIR$/src/local/translate/OntologyLabel.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/OntologyLogger.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/Logger.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/ParsedRule.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/Query.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/RuleCreator.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/RuleTranslator.java" />
         <option value="$PROJECT_DIR$/src/local/translate/Translate.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/Utils.java" />
+        <option value="$PROJECT_DIR$/src/union/logger/Logger.java" />
+        <option value="$PROJECT_DIR$/src/union/logger/Observer.java" />
         <option value="$PROJECT_DIR$/src/hybrid/query/model/Query.java" />
+        <option value="$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java" />
+        <option value="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="width" value="1440" />
     <option name="height" value="900" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Class structure</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>AnonymousInnerClass</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -220,10 +306,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logger" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -312,7 +394,7 @@
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="options.lastSelected" value="preferences.sourceCode" />
+    <property name="options.lastSelected" value="Errors" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
@@ -324,6 +406,8 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="LayoutCode.rearrangeEntriesJava" value="true" />
+    <property name="LayoutCode.rearrangeEntries" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -611,25 +695,60 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Config.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="34" selection-start="661" selection-end="661" vertical-scroll-proportion="0.50373137" vertical-offset="0" max-vertical-offset="804">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/CollectionsManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="207" column="56" selection-start="5329" selection-end="5329" vertical-scroll-proportion="0.0" vertical-offset="3126" max-vertical-offset="3930">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#399#407#0" expanded="true" />
+            <element signature="e#513#521#0" expanded="true" />
+            <element signature="e#626#634#0" expanded="true" />
+            <element signature="e#725#733#0" expanded="true" />
+            <element signature="e#860#868#0" expanded="true" />
+            <element signature="e#958#974#0" expanded="true" />
+            <element signature="e#1075#1091#0" expanded="true" />
+            <element signature="e#3507#3508#0" expanded="true" />
+            <element signature="e#3553#3554#0" expanded="true" />
+            <element signature="e#3722#3723#0" expanded="true" />
+            <element signature="e#3765#3766#0" expanded="true" />
+            <element signature="e#4734#4735#0" expanded="true" />
+            <element signature="e#4777#4778#0" expanded="true" />
+            <element signature="e#4921#4922#0" expanded="true" />
+            <element signature="e#4957#4958#0" expanded="true" />
+            <element signature="e#5121#5122#0" expanded="true" />
+            <element signature="e#5166#5167#0" expanded="true" />
+            <element signature="e#6636#6637#0" expanded="true" />
+            <element signature="e#6682#6683#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/EquivalentClass.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="2" selection-start="77" selection-end="77" vertical-scroll-proportion="0.059210528" vertical-offset="0" max-vertical-offset="4065">
+        <state line="47" column="10" selection-start="1152" selection-end="1152" vertical-scroll-proportion="0.0" vertical-offset="3036" max-vertical-offset="3840">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyLabel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="344" column="8" selection-start="9655" selection-end="9655" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5310">
+        <state line="271" column="7" selection-start="9674" selection-end="9674" vertical-scroll-proportion="0.0" vertical-offset="3454" max-vertical-offset="4245">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyLogger.java">
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Logger.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="7" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="870">
+        <state line="28" column="78" selection-start="567" selection-end="567" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -638,33 +757,143 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/ParsedRule.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="49" selection-start="487" selection-end="494" vertical-scroll-proportion="-9.961538" vertical-offset="131" max-vertical-offset="3285">
+        <state line="82" column="43" selection-start="1664" selection-end="1664" vertical-scroll-proportion="49.115383" vertical-offset="2507" max-vertical-offset="3285">
+          <folding>
+            <element signature="e#3129#3130#0" expanded="true" />
+            <element signature="e#3163#3164#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="125" selection-start="1433" selection-end="1433" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="855">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/CollectionsManager.java">
+    <entry file="jar:///Applications/Protege_4.3/plugins/org.semanticweb.owl.owlapi.jar!/org/semanticweb/owlapi/model/OWLClassExpression.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="184" column="25" selection-start="4518" selection-end="4527" vertical-scroll-proportion="-48.96154" vertical-offset="1322" max-vertical-offset="3780">
+        <state line="6" column="17" selection-start="175" selection-end="175" vertical-scroll-proportion="0.10094213" vertical-offset="0" max-vertical-offset="743">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/RuleCreator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="378" column="77" selection-start="15237" selection-end="15237" vertical-scroll-proportion="0.0" vertical-offset="4977" max-vertical-offset="5745">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/RuleTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="147" column="64" selection-start="4690" selection-end="4690" vertical-scroll-proportion="0.0" vertical-offset="2129" max-vertical-offset="2910">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="17" selection-start="740" selection-end="740" vertical-scroll-proportion="0.0" vertical-offset="1815" max-vertical-offset="9150">
+        <state line="519" column="54" selection-start="18842" selection-end="18842" vertical-scroll-proportion="0.0" vertical-offset="417" max-vertical-offset="8115">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1049#1062#0" expanded="true" />
-            <element signature="e#9290#9334#0" expanded="true" />
-            <element signature="e#17368#17388#0" expanded="true" />
+            <element signature="e#985#998#0" expanded="true" />
+            <element signature="e#7858#7866#0" expanded="true" />
+            <element signature="e#9776#9820#0" expanded="true" />
+            <element signature="e#18926#18946#0" expanded="true" />
+            <element signature="e#19177#19178#0" expanded="true" />
+            <element signature="e#19214#19215#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="127" column="67" selection-start="3848" selection-end="3848" vertical-scroll-proportion="0.0" vertical-offset="1229" max-vertical-offset="2010">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/union/logger/Logger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="57" selection-start="519" selection-end="519" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1155">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/union/logger/Observer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="32" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/union/logger/UnionLogger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="13" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Config.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="19" selection-start="149" selection-end="149" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="28" selection-start="1534" selection-end="1534" vertical-scroll-proportion="0.4293059" vertical-offset="116" max-vertical-offset="8505">
+        <state line="506" column="78" selection-start="18079" selection-end="18079" vertical-scroll-proportion="0.0" vertical-offset="7152" max-vertical-offset="7920">
+          <folding>
+            <element signature="e#2998#3186#0" expanded="true" />
+            <element signature="e#3179#3180#0" expanded="true" />
+            <element signature="e#11403#11435#1" expanded="true" />
+            <element signature="e#19262#19263#0" expanded="true" />
+            <element signature="e#19298#19299#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="123" column="74" selection-start="2889" selection-end="2889" vertical-scroll-proportion="0.0" vertical-offset="1139" max-vertical-offset="1920">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/HybridQueryTab.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="13" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="405">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="13" selection-start="683" selection-end="683" vertical-scroll-proportion="0.0" vertical-offset="6837" max-vertical-offset="7605">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/Rules.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="79" column="49" selection-start="2579" selection-end="2579" vertical-scroll-proportion="0.0" vertical-offset="1304" max-vertical-offset="2085">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesManagerTab.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="13" selection-start="98" selection-end="98" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.15364917" vertical-offset="0" max-vertical-offset="781">
           <folding />
         </state>
       </provider>
@@ -747,6 +976,17 @@
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
           <last-edited>lib</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
           <splitter-proportions>
             <option name="proportions">
               <list>
