@@ -1,5 +1,5 @@
 <?xml version = "1.0" encoding = "utf-8"?>
-<project name = "sample plugin project" default = "install" basedir = ".">    
+<project name = "NoHR reasoner" default = "install" basedir = ".">
    <!-- 
         To run this build file set the environment variable
         PROTEGE_HOME to point to a protege distribution and type ant

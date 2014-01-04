@@ -11,13 +11,13 @@
                 </Component>
             </CNode>
             <CNode>
-                <Component label="NM query rules">
+                <Component label="NoHR rules manager">
                     <Property id="pluginId" value="hybrid.query.views.RulesViewComponent"/>
                 </Component>
             </CNode>
         </HSNode>
         <CNode>
-            <Component label="NM query view">
+            <Component label="NoHR query view">
                 <Property id="pluginId" value="hybrid.query.views.HybridQueryViewComponent"/>
             </Component>
         </CNode>

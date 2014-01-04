@@ -2,30 +2,65 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/local/translate/Logger.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/local/translate/OntologyLogger.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/CollectionsManager.java" afterPath="$PROJECT_DIR$/src/local/translate/CollectionsManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Config.java" afterPath="$PROJECT_DIR$/src/local/translate/Config.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" afterPath="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryTab.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryTab.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/union/logger/Logger.java" afterPath="$PROJECT_DIR$/src/union/logger/Logger.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/union/logger/Observer.java" afterPath="$PROJECT_DIR$/src/union/logger/Observer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/OntologyLabel.java" afterPath="$PROJECT_DIR$/src/local/translate/OntologyLabel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/ParsedRule.java" afterPath="$PROJECT_DIR$/src/local/translate/ParsedRule.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/model/Query.java" afterPath="$PROJECT_DIR$/src/hybrid/query/model/Query.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Query.java" afterPath="$PROJECT_DIR$/src/local/translate/Query.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java" afterPath="$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/RuleCreator.java" afterPath="$PROJECT_DIR$/src/local/translate/RuleCreator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/RuleTranslator.java" afterPath="$PROJECT_DIR$/src/local/translate/RuleTranslator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/RulesManagerTab.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/RulesManagerTab.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/RulesManagerViewComponent.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/RulesManagerViewComponent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Translate.java" afterPath="$PROJECT_DIR$/src/local/translate/Translate.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Utils.java" afterPath="$PROJECT_DIR$/src/local/translate/Utils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/CollectionsManager.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/CollectionsManager.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Config.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/Config.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Config.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Config.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$1.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$EquivalentRules.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$EquivalentRules.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$OntologyType.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$OntologyType.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryTab.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryTab.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$10.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$10.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$11.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$11.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$12.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$12.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$13.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$13.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$14.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$14.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$6.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$6.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$7.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$7.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$8.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$8.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$ViewLogger.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$ViewLogger.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/union/logger/Logger.class" afterPath="$PROJECT_DIR$/build/classes/union/logger/Logger.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel$1.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/ParsedRule.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/ParsedRule.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$2.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Query.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Query.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/QueryEngine.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/QueryEngine.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/RuleCreator.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/RuleCreator.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/RuleTranslator.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/RuleTranslator.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$2.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesViewComponent.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesViewComponent.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/union/logger/UnionLogger.class" afterPath="$PROJECT_DIR$/build/classes/union/logger/UnionLogger.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Utils.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Utils.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" afterPath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/manifest.mf" afterPath="$PROJECT_DIR$/build/manifest.mf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" afterPath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/update.properties" afterPath="$PROJECT_DIR$/update.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/viewconfig-querytab.xml" afterPath="$PROJECT_DIR$/viewconfig-querytab.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/viewconfig-querytab.xml" afterPath="$PROJECT_DIR$/build/classes/viewconfig-querytab.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/viewconfig-rulesmanagertab.xml" afterPath="$PROJECT_DIR$/viewconfig-rulesmanagertab.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/viewconfig-rulesmanagertab.xml" afterPath="$PROJECT_DIR$/build/classes/viewconfig-rulesmanagertab.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="EmptyPlugin.iws" />
@@ -90,70 +125,64 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Observer.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/union/logger/Observer.java">
+      <file leaf-file-name="build.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/build.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="32" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+            <state line="193" column="10" selection-start="7411" selection-end="7418" vertical-scroll-proportion="-0.14437085" vertical-offset="3004" max-vertical-offset="3885">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UnionLogger.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/union/logger/UnionLogger.java">
+      <file leaf-file-name="plugin.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/plugin.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="13" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Config.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Config.java">
+      <file leaf-file-name="build.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="19" selection-start="149" selection-end="149" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="150">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Query.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
+      <file leaf-file-name="MANIFEST.MF" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="506" column="78" selection-start="18079" selection-end="18079" vertical-scroll-proportion="0.0" vertical-offset="7152" max-vertical-offset="7920">
-              <folding>
-                <element signature="e#2998#3186#0" expanded="true" />
-                <element signature="e#3179#3180#0" expanded="true" />
-                <element signature="e#11403#11435#1" expanded="true" />
-                <element signature="e#19262#19263#0" expanded="true" />
-                <element signature="e#19298#19299#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="QueryEngine.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="123" column="74" selection-start="2889" selection-end="2889" vertical-scroll-proportion="0.0" vertical-offset="1139" max-vertical-offset="1920">
+            <state line="30" column="21" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HybridQueryTab.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/HybridQueryTab.java">
+      <file leaf-file-name="viewconfig-rulesmanagertab.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/viewconfig-rulesmanagertab.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="13" selection-start="132" selection-end="132" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="405">
+            <state line="22" column="34" selection-start="1044" selection-end="1044" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HybridQueryViewComponent.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java">
+      <file leaf-file-name="viewconfig-querytab.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/viewconfig-querytab.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="13" selection-start="683" selection-end="683" vertical-scroll-proportion="0.0" vertical-offset="6837" max-vertical-offset="7605">
+            <state line="13" column="52" selection-start="604" selection-end="604" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="update.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/update.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
               <folding />
             </state>
           </provider>
@@ -177,10 +206,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RulesViewComponent.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="RulesViewComponent.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.15364917" vertical-offset="0" max-vertical-offset="781">
+            <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
               <folding />
             </state>
           </provider>
@@ -222,6 +251,11 @@
         <option value="$PROJECT_DIR$/src/hybrid/query/model/Query.java" />
         <option value="$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java" />
         <option value="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" />
+        <option value="$PROJECT_DIR$/build.xml" />
+        <option value="$PROJECT_DIR$/viewconfig-rulesmanagertab.xml" />
+        <option value="$PROJECT_DIR$/viewconfig-querytab.xml" />
+        <option value="$PROJECT_DIR$/update.properties" />
+        <option value="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
       </list>
     </option>
   </component>
@@ -305,83 +339,21 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NoHR reasoner" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EmptyPlugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="translate" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NoHR reasoner" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EmptyPlugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="query" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NoHR reasoner" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EmptyPlugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="query" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="model" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NoHR reasoner" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EmptyPlugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="META-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -617,41 +589,6 @@
     <entry file="file://$PROJECT_DIR$/build.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/viewconfig-querytab.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="13" selection-start="737" selection-end="737" vertical-scroll-proportion="0.31578946" vertical-offset="0" max-vertical-offset="760">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/viewconfig-rulesmanagertab.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/plugin.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
           <folding />
         </state>
       </provider>
@@ -893,7 +830,63 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/RulesViewComponent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.15364917" vertical-offset="0" max-vertical-offset="781">
+        <state line="13" column="13" selection-start="299" selection-end="299" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/viewconfig-rulesmanagertab.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="34" selection-start="1044" selection-end="1044" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/viewconfig-querytab.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="52" selection-start="604" selection-end="604" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/update.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plugin.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/manifest.mf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="21" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="193" column="10" selection-start="7411" selection-end="7418" vertical-scroll-proportion="-0.14437085" vertical-offset="3004" max-vertical-offset="3885">
           <folding />
         </state>
       </provider>

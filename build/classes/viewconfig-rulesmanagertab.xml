@@ -20,7 +20,7 @@
             </CNode>
         </HSNode>
         <CNode>
-            <Component label="Non monotonic rules manager">
+            <Component label="NoHR rules manager">
                 <Property id="pluginId" value="hybrid.query.views.RulesManagerViewComponent"/>
             </Component>
         </CNode>
