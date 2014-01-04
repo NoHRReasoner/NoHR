@@ -2,65 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/CollectionsManager.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/CollectionsManager.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Config.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/Config.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Config.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Config.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$1.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$EquivalentRules.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$EquivalentRules.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$OntologyType.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$OntologyType.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryTab.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryTab.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$10.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$10.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$11.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$11.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$12.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$12.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$13.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$13.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$14.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$14.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$6.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$6.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$7.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$7.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$8.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$8.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$ViewLogger.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$ViewLogger.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/union/logger/Logger.class" afterPath="$PROJECT_DIR$/build/classes/union/logger/Logger.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel$1.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/ParsedRule.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/ParsedRule.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$2.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Query.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Query.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/QueryEngine.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/model/QueryEngine.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/RuleCreator.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/RuleCreator.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/RuleTranslator.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/RuleTranslator.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$1.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$2.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesViewComponent.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesViewComponent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/union/logger/UnionLogger.class" afterPath="$PROJECT_DIR$/build/classes/union/logger/UnionLogger.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Utils.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Utils.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" afterPath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/manifest.mf" afterPath="$PROJECT_DIR$/build/manifest.mf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" afterPath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/update.properties" afterPath="$PROJECT_DIR$/update.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/viewconfig-querytab.xml" afterPath="$PROJECT_DIR$/viewconfig-querytab.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/viewconfig-querytab.xml" afterPath="$PROJECT_DIR$/build/classes/viewconfig-querytab.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/viewconfig-rulesmanagertab.xml" afterPath="$PROJECT_DIR$/viewconfig-rulesmanagertab.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/viewconfig-rulesmanagertab.xml" afterPath="$PROJECT_DIR$/build/classes/viewconfig-rulesmanagertab.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/elk-owlapi.jar" afterPath="$PROJECT_DIR$/lib/elk-owlapi.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="EmptyPlugin.iws" />
@@ -125,19 +67,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="build.xml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/build.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="193" column="10" selection-start="7411" selection-end="7418" vertical-scroll-proportion="-0.14437085" vertical-offset="3004" max-vertical-offset="3885">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="plugin.xml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="plugin.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/plugin.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
               <folding />
             </state>
           </provider>
@@ -183,15 +116,6 @@
         <entry file="file://$PROJECT_DIR$/update.properties">
           <provider selected="true" editor-type-id="text-editor">
             <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Rules.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/Rules.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="79" column="49" selection-start="2579" selection-end="2579" vertical-scroll-proportion="0.0" vertical-offset="1304" max-vertical-offset="2085">
               <folding />
             </state>
           </provider>
@@ -354,6 +278,120 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="interprolog.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="META-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="interprolog.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="interprolog" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="interprolog.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="interprolog" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="commons-codec-1.8.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="commons-codec-1.8.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="META-INF" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -618,7 +656,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="22" column="22" selection-start="704" selection-end="704" vertical-scroll-proportion="0.43421054" vertical-offset="0" max-vertical-offset="760">
           <folding>
-            <element signature="e#0#704#0" expanded="true" />
+            <element signature="e#0#704#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -856,13 +894,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/plugin.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
@@ -886,7 +917,56 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/build.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="193" column="10" selection-start="7411" selection-end="7418" vertical-scroll-proportion="-0.14437085" vertical-offset="3004" max-vertical-offset="3885">
+        <state line="222" column="44" selection-start="8512" selection-end="8512" vertical-scroll-proportion="0.4317881" vertical-offset="3004" max-vertical-offset="3885">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/elk-owlapi.jar!/META-INF/MANIFEST.MF">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/elk-owlapi.jar!/META-INF/maven/org.semanticweb.elk/elk-owlapi-standalone/pom.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/elk-owlapi.jar!/META-INF/maven/org.semanticweb.elk/elk-owlapi-standalone/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1965">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/interprolog.jar!/META-INF/MANIFEST.MF">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/commons-codec-1.8.jar!/META-INF/NOTICE.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/commons-codec-1.8.jar!/META-INF/MANIFEST.MF">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="41" selection-start="824" selection-end="824" vertical-scroll-proportion="0.36491677" vertical-offset="0" max-vertical-offset="4320">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plugin.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
           <folding />
         </state>
       </provider>
