@@ -3,22 +3,11 @@
  */
 package hybrid.query.model;
 
+import com.declarativa.interprolog.TermModel;
 import hybrid.query.views.Rules;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.swing.JOptionPane;
-
-import local.translate.Ontology;
 import local.translate.OntologyLogger;
+import local.translate.Translate;
 import local.translate.Utils;
-
 import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
@@ -28,10 +17,16 @@ import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-
 import union.logger.UnionLogger;
 
-import com.declarativa.interprolog.TermModel;
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Class Query.
@@ -50,8 +45,8 @@ public class Query {
     /** The query engine. */
     private QueryEngine queryEngine;
 
-    /** The instance of the local.translate */
-    private static Ontology ontology;
+    /** The instance of the local.translator */
+    private static Translate translator;
 
     /**
      * Dispose.
@@ -67,11 +62,11 @@ public class Query {
     }
 
     /**
-     * Inits the ontology.
+     * Inits the translator.
      */
-    private static void initOntology() {
+    private static void initTranslator() {
 	try {
-	    ontology = new Ontology(owlModelManager);
+	    translator = new Translate(owlModelManager);
 	} catch (Exception e) {
 	    LOG.error(e);
 	}
@@ -126,10 +121,10 @@ public class Query {
 	    if (event
 		    .isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
 		Rules.dispose();
-		if (ontology != null) {
-		    ontology.clear();
+		if (translator != null) {
+		    translator.clear();
 		}
-		initOntology();
+		initTranslator();
 	    }
 	}
     };
@@ -158,10 +153,10 @@ public class Query {
 	if (!isCompiled) {
 	    try {
 		Date initAndTranslateTime = new Date();
-		initOntology();
-		ontology.proceed();
-		ontology.appendRules(Rules.getRules());
-		File xsbFile = ontology.Finish();
+		initTranslator();
+		translator.proceed();
+		translator.appendRules(Rules.getRules());
+		File xsbFile = translator.Finish();
 		OntologyLogger.log("-----------------------");
 		OntologyLogger.getDiffTime(initAndTranslateTime,
 			"Total translation time: ");
@@ -189,23 +184,23 @@ public class Query {
 			    "Warning", JOptionPane.YES_NO_OPTION);
 	    if (dialogResult == JOptionPane.YES_OPTION) {
 		try {
-		    boolean disjointStatement = ontology
+		    boolean disjointStatement = translator
 			    .isAnyDisjointWithStatement();
 		    Date initAndTranslateTime = new Date();
 		    if (isOntologyChanged) {
-			ontology.PrepareForTranslating();
-			ontology.proceed();
+			translator.PrepareForTranslating();
+			translator.proceed();
 			isOntologyChanged = false;
 			LOG.info("Ontology recompilation");
 		    }
-		    if ((disjointStatement != ontology
+		    if ((disjointStatement != translator
 			    .isAnyDisjointWithStatement())
 			    || Rules.isRulesOntologyChanged) {
-			ontology.appendRules(Rules.getRules());
+			translator.appendRules(Rules.getRules());
 			LOG.info("Rule recompilation");
 			Rules.isRulesOntologyChanged = false;
 		    }
-		    File xsbFile = ontology.Finish();
+		    File xsbFile = translator.Finish();
 		    OntologyLogger.getDiffTime(initAndTranslateTime,
 			    "Total translating time: ");
 		    OntologyLogger.log("");
@@ -267,8 +262,8 @@ public class Query {
     public void disposeQuery() {
 	owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
 	owlModelManager.removeListener(modelManagerListener);
-	if (ontology != null) {
-	    ontology.clear();
+	if (translator != null) {
+	    translator.clear();
 	}
 	if (queryEngine != null) {
 	    queryEngine.shutdown();
@@ -447,7 +442,7 @@ public class Query {
 	    if (command.endsWith(".")) {
 		command = command.substring(0, command.length() - 1);
 	    }
-	    command = ontology.prepareQuery(command);
+	    command = translator.prepareQuery(command);
 	    // previousQuery="";
 	    if (!command.equals(previousQuery) || !queriedForAll) {
 		printInfo("You queried: " + queryString);
@@ -480,13 +475,13 @@ public class Query {
 			    row = new ArrayList<String>();
 			    row.add(value);
 			    for (int j = 1; j <= variablesList.size(); j++) {
-				subValue = ontology.getLabelByHash(element
+				subValue = translator.getLabelByHash(element
 					.getChild(j).toString());
 				subValue = varXPattern.matcher(subValue).find() ? "all values"
 					: subValue;
 				row.add(subValue);
 			    }
-			    if (!ontology.isAnyDisjointWithStatement()) {
+			    if (!translator.isAnyDisjointWithStatement()) {
 				answers.add(row);
 			    } else {
 				if (value.equals("true")
@@ -559,7 +554,7 @@ public class Query {
 		    answers.add(row);
 		    LOG.error("Query was interrupted by engine.");
 		    try {
-			compileFile(ontology.Finish());
+			compileFile(translator.Finish());
 		    } catch (IOException e) {
 			LOG.error(e);
 		    } catch (Exception e) {

@@ -24,7 +24,7 @@ public class ParsedRule {
     private boolean isUnderTnot = false;
 
     /** The cm. */
-    private final CollectionsManager cm = Ontology.collectionsManager;
+    private final CollectionsManager cm = Translate.collectionsManager;
 
     /** The Constant log. */
     private static final Logger log = Logger.getLogger(ParsedRule.class);

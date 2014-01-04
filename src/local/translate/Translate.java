@@ -18,9 +18,9 @@ import java.util.*;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class local.translate.Ontology.
+ * The Class local.translate.Translate.
  */
-public class Ontology {
+public class Translate {
 
     /** The ontology file. */
     private File ontologyFile;
@@ -72,7 +72,7 @@ public class Ontology {
     private Query query;
 
     /** The Constant log. */
-    private static final Logger log = Logger.getLogger(Ontology.class);
+    private static final Logger log = Logger.getLogger(Translate.class);
 
     /** The is ontology changed. */
     public boolean isOntologyChanged = true;
@@ -91,7 +91,7 @@ public class Ontology {
      * @throws CloneNotSupportedException
      *             the clone not supported exception
      */
-    public Ontology(OWLModelManager owlModelManager) throws IOException,
+    public Translate(OWLModelManager owlModelManager) throws IOException,
 	    OWLOntologyCreationException, OWLOntologyStorageException,
 	    CloneNotSupportedException {
 	ontologyManager = owlModelManager.getOWLOntologyManager();
@@ -114,7 +114,7 @@ public class Ontology {
      * @throws OWLOntologyStorageException
      *             the oWL ontology storage exception
      */
-    public Ontology(String filePath) throws OWLOntologyCreationException,
+    public Translate(String filePath) throws OWLOntologyCreationException,
 	    IOException, OWLOntologyStorageException {
 	/** Initializing a OntologyManager */
 	Date date1 = new Date();

@@ -2,58 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/log4j-1.2.17.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/EmptyPlugin.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/lib.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/org_protege_common.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/org_protege_editor_core_application.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/org_semanticweb_owl_owlapi.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/local/translate/OWLOntologyClone.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/CollectionsManager.class" afterPath="$PROJECT_DIR$/bin/local/translate/CollectionsManager.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/hybrid/query/model/Config.class" afterPath="$PROJECT_DIR$/bin/hybrid/query/model/Config.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/Config.class" afterPath="$PROJECT_DIR$/bin/local/translate/Config.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/EquivalentClass$EquivalentRules.class" afterPath="$PROJECT_DIR$/bin/local/translate/EquivalentClass$EquivalentRules.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/EquivalentClass$OntologyType.class" afterPath="$PROJECT_DIR$/bin/local/translate/EquivalentClass$OntologyType.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/EquivalentClass.class" afterPath="$PROJECT_DIR$/bin/local/translate/EquivalentClass.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/hybrid/query/views/HybridQueryViewComponent$ViewLogger.class" afterPath="$PROJECT_DIR$/bin/hybrid/query/views/HybridQueryViewComponent$ViewLogger.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/hybrid/query/views/HybridQueryViewComponent.class" afterPath="$PROJECT_DIR$/bin/hybrid/query/views/HybridQueryViewComponent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/union/logger/Logger.class" afterPath="$PROJECT_DIR$/bin/union/logger/Logger.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/Ontology.class" afterPath="$PROJECT_DIR$/bin/local/translate/Ontology.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/OntologyLabel.class" afterPath="$PROJECT_DIR$/bin/local/translate/OntologyLabel.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/OntologyLogger.class" afterPath="$PROJECT_DIR$/bin/local/translate/OntologyLogger.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/ParsedRule.class" afterPath="$PROJECT_DIR$/bin/local/translate/ParsedRule.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/hybrid/query/model/Query$1.class" afterPath="$PROJECT_DIR$/bin/hybrid/query/model/Query$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/hybrid/query/model/Query$2.class" afterPath="$PROJECT_DIR$/bin/hybrid/query/model/Query$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/hybrid/query/model/Query.class" afterPath="$PROJECT_DIR$/bin/hybrid/query/model/Query.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/Query.class" afterPath="$PROJECT_DIR$/bin/local/translate/Query.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/hybrid/query/model/QueryEngine.class" afterPath="$PROJECT_DIR$/bin/hybrid/query/model/QueryEngine.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/RuleCreator.class" afterPath="$PROJECT_DIR$/bin/local/translate/RuleCreator.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/RuleTranslator.class" afterPath="$PROJECT_DIR$/bin/local/translate/RuleTranslator.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/hybrid/query/views/Rules.class" afterPath="$PROJECT_DIR$/bin/hybrid/query/views/Rules.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/union/logger/UnionLogger.class" afterPath="$PROJECT_DIR$/bin/union/logger/UnionLogger.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/local/translate/Utils.class" afterPath="$PROJECT_DIR$/bin/local/translate/Utils.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="$PROJECT_DIR$/.idea/.name" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/local/translate/Ontology.java" afterPath="$PROJECT_DIR$/src/local/translate/Translate.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/CollectionsManager.java" afterPath="$PROJECT_DIR$/src/local/translate/CollectionsManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/model/Config.java" afterPath="$PROJECT_DIR$/src/hybrid/query/model/Config.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Config.java" afterPath="$PROJECT_DIR$/src/local/translate/Config.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" afterPath="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/HybridQueryViewComponent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/union/logger/Logger.java" afterPath="$PROJECT_DIR$/src/union/logger/Logger.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/union/logger/Observer.java" afterPath="$PROJECT_DIR$/src/union/logger/Observer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Ontology.java" afterPath="$PROJECT_DIR$/src/local/translate/Ontology.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/OntologyLabel.java" afterPath="$PROJECT_DIR$/src/local/translate/OntologyLabel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/OntologyLogger.java" afterPath="$PROJECT_DIR$/src/local/translate/OntologyLogger.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/ParsedRule.java" afterPath="$PROJECT_DIR$/src/local/translate/ParsedRule.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/model/Query.java" afterPath="$PROJECT_DIR$/src/hybrid/query/model/Query.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Query.java" afterPath="$PROJECT_DIR$/src/local/translate/Query.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java" afterPath="$PROJECT_DIR$/src/hybrid/query/model/QueryEngine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/RuleCreator.java" afterPath="$PROJECT_DIR$/src/local/translate/RuleCreator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/RuleTranslator.java" afterPath="$PROJECT_DIR$/src/local/translate/RuleTranslator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" afterPath="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/union/logger/UnionLogger.java" afterPath="$PROJECT_DIR$/src/union/logger/UnionLogger.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Utils.java" afterPath="$PROJECT_DIR$/src/local/translate/Utils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="EmptyPlugin.iws" />
@@ -118,16 +70,43 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Ontology.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/Ontology.java">
+      <file leaf-file-name="Translate.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="26" selection-start="773" selection-end="773" vertical-scroll-proportion="0.4477612" vertical-offset="0" max-vertical-offset="9150">
+            <state line="22" column="17" selection-start="740" selection-end="740" vertical-scroll-proportion="0.0" vertical-offset="1815" max-vertical-offset="9150">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1047#1060#0" expanded="true" />
-                <element signature="e#9285#9329#0" expanded="true" />
-                <element signature="e#17363#17383#0" expanded="true" />
+                <element signature="e#1049#1062#0" expanded="true" />
+                <element signature="e#9290#9334#0" expanded="true" />
+                <element signature="e#17368#17388#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Query.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="55" column="28" selection-start="1534" selection-end="1534" vertical-scroll-proportion="0.4293059" vertical-offset="116" max-vertical-offset="8505">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ParsedRule.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/ParsedRule.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="26" column="49" selection-start="487" selection-end="494" vertical-scroll-proportion="-9.961538" vertical-offset="131" max-vertical-offset="3285">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CollectionsManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/CollectionsManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="184" column="25" selection-start="4518" selection-end="4527" vertical-scroll-proportion="-48.96154" vertical-offset="1322" max-vertical-offset="3780">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -174,6 +153,8 @@
       <list>
         <option value="$PROJECT_DIR$/src/local/translate/Ontology.java" />
         <option value="$PROJECT_DIR$/src/local/translate/OntologyLabel.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/Translate.java" />
+        <option value="$PROJECT_DIR$/src/hybrid/query/model/Query.java" />
       </list>
     </option>
   </component>
@@ -241,6 +222,10 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="logger" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -277,6 +262,32 @@
               <option name="myItemId" value="query" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="NoHR reasoner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="EmptyPlugin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="query" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -289,20 +300,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="META-INF" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NoHR reasoner" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EmptyPlugin" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -485,6 +482,7 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32932693" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -500,7 +498,6 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -639,15 +636,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/Ontology.java">
+    <entry file="file://$PROJECT_DIR$/src/local/translate/ParsedRule.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="26" selection-start="773" selection-end="773" vertical-scroll-proportion="0.4477612" vertical-offset="0" max-vertical-offset="9150">
+        <state line="26" column="49" selection-start="487" selection-end="494" vertical-scroll-proportion="-9.961538" vertical-offset="131" max-vertical-offset="3285">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/CollectionsManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="184" column="25" selection-start="4518" selection-end="4527" vertical-scroll-proportion="-48.96154" vertical-offset="1322" max-vertical-offset="3780">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="17" selection-start="740" selection-end="740" vertical-scroll-proportion="0.0" vertical-offset="1815" max-vertical-offset="9150">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1047#1060#0" expanded="true" />
-            <element signature="e#9285#9329#0" expanded="true" />
-            <element signature="e#17363#17383#0" expanded="true" />
+            <element signature="e#1049#1062#0" expanded="true" />
+            <element signature="e#9290#9334#0" expanded="true" />
+            <element signature="e#17368#17388#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="28" selection-start="1534" selection-end="1534" vertical-scroll-proportion="0.4293059" vertical-offset="116" max-vertical-offset="8505">
+          <folding />
         </state>
       </provider>
     </entry>

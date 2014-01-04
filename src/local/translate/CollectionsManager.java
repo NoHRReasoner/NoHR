@@ -1,13 +1,13 @@
 package local.translate;
 
+import org.apache.log4j.Logger;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * The Class CollectionsManager.
@@ -36,7 +36,7 @@ public class CollectionsManager {
     private final HashMap<String, String> labelsValue = new HashMap<String, String>();
 
     /** The Constant log. */
-    private static final Logger log = Logger.getLogger(Ontology.class);
+    private static final Logger log = Logger.getLogger(Translate.class);
 
     /** The is any disjoint statement. */
     private boolean isAnyDisjointStatement;
