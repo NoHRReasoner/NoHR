@@ -1,5 +1,10 @@
 package union.logger;
 
+/**
+ * The Class UnionLogger.
+ */
 public class UnionLogger {
-	public static final Logger logger = new Logger();
+
+    /** The Constant logger. */
+    public static final Logger LOGGER = new Logger();
 }

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="org.semanticweb.owl.owlapi">
+    <CLASSES>
+      <root url="jar:///Applications/Protege_4.3/plugins/org.semanticweb.owl.owlapi.jar!/" />
+      <root url="jar:///Applications/Protege_4.3/plugins/org.protege.editor.owl.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

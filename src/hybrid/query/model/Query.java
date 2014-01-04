@@ -1,4 +1,8 @@
+/*
+ * 
+ */
 package hybrid.query.model;
+
 import hybrid.query.views.Rules;
 
 import java.io.File;
@@ -10,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
+
 import local.translate.Ontology;
 import local.translate.OntologyLogger;
 import local.translate.Utils;
@@ -28,374 +33,567 @@ import union.logger.UnionLogger;
 
 import com.declarativa.interprolog.TermModel;
 
-public class Query{
-	private static OWLModelManager owlModelManager;
-	private static boolean isOntologyChanged;
-	private boolean isCompiled=false;
-	private QueryEngine queryEngine;
-	private static Ontology _ontology;
-	private ArrayList<String> _variablesList = new ArrayList<String>();
-	private ArrayList<ArrayList<String>> _answers = new ArrayList<ArrayList<String>>();
-	private Pattern headerPattern = Pattern.compile("\\((.*?)\\)");
-	private String queryString;
-	private String previousQuery = "";
-	private static final Logger log = Logger.getLogger(Query.class);
-	private boolean isQueryForAll = true;
-	private boolean queriedForAll;
-	private String filter = "";
-	private Pattern varXPattern = Pattern.compile("Var\\d+");
-	public Query(OWLModelManager OwlModelManager) throws Exception{
-		owlModelManager = OwlModelManager;
-		owlModelManager.addOntologyChangeListener(ontologyChangeListener);
-		owlModelManager.addListener(modelManagerListener);
-//		queryEngine = new QueryEngine();
-		
-		log.setLevel(Config.logLevel);
-	}
-	
-	private static void InitOntology(){
-		try {
-			_ontology = new Ontology(owlModelManager);
-		} catch (Exception e) {
-			log.error(e);
-		}
-	}
-	
-	public static void dispose() {
-		if (owlModelManager != null) {
-			owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
-			owlModelManager.removeListener(modelManagerListener);
-		}
-		Rules.dispose();
-	}
-	public void disposeQuery() {
-		owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
-		owlModelManager.removeListener(modelManagerListener);
-		if (_ontology != null) {
-			_ontology.clear();
-		}
-		if (queryEngine != null) {
-			queryEngine.shutdown();
-		}
-		Rules.dispose();
-	}
-	
-	public void printLog(String text) {
-		if (Config.isDebug) {
-			printInfo(text);
-		}
-	}
-	public void printInfo(String text) {
-		//outPutLog.append(text+Config.nl);
-		log.info(text);
-		UnionLogger.logger.log(text);
-	}
-	private boolean isChanged() {
-		return Rules.isRulesOntologyChanged || isOntologyChanged;
-	}
-	
-	// Fired when axioms are added and removed
-	private static OWLOntologyChangeListener ontologyChangeListener = new OWLOntologyChangeListener() {
-		public void ontologiesChanged(List<? extends OWLOntologyChange> changes) {
-			isOntologyChanged = true;
-		}
-	};
-	private static OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
-		
-		@Override
-		public void handleChange(OWLModelManagerChangeEvent event) {
-			isOntologyChanged = true;
-			if (event.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-				Rules.dispose();
-				if (_ontology != null) {
-					_ontology.clear();
-				}
-				InitOntology();
-			}
-		}
-	};
-	
-	public ArrayList<ArrayList<String>> queryXSB(){
-		String command = queryString;
-		checkAndStartEngine();
-		if(isQueriable()){
-			if(command.endsWith(".")){
-				command = command.substring(0, command.length()-1);
-			}
-			command = _ontology.prepareQuery(command);
-//			previousQuery="";
-			if(!command.equals(previousQuery) || !queriedForAll){
-				printInfo("You queried: "+queryString);
-				previousQuery = command;
-				queriedForAll = isQueryForAll;
-				printLog("prepared query: "+command);
-				fillTableHeader(command);
-				String detGoal = generateDetermenisticGoal(command);
-				String subDetGoal;
-				printLog("detGoal: "+detGoal);
-				Date queryStart = new Date();
-				Date subQueryTime;
-				Object[] bindings = queryEngine.deterministicGoal(detGoal);
-				OntologyLogger.getDiffTime(queryStart, "Main query time: ");
-				ArrayList<String> row = new ArrayList<String>();
-				String value;
-				String subValue;
-				if(bindings!=null){
-					
-					TermModel list = (TermModel)bindings[0]; // this gets you the list as a binary tree
-					TermModel[] flattted = list.flatList();
-					for(int i=0;i< flattted.length;i++){
-//						if(i==1 && !isQueryForAll)
-//							break;
-						value = flattted[i].getChild(0).toString();	
-						
-						if(value.length()>0){
-							row = new ArrayList<String>();
-							row.add(value);
-							for (int j = 1; j <= _variablesList.size(); j++) {
-								subValue = _ontology.getLabelByHash(flattted[i].getChild(j).toString());
-								subValue = varXPattern.matcher(subValue).find() ? "all values" : subValue;
-								row.add(subValue);
-							}
-							if (!_ontology.isAnyDisjointWithStatement()) {
-								_answers.add(row);
-							}else {					
-								if(value.equals("true") || value.equals("undefined")){
-//									printLog("_dRule: "+Utils._dAllrule(command));
-									subDetGoal = generateDetermenisticGoal(generateSubQuery(Utils._dAllrule(command), flattted[i]));
-									printLog("SubDetGoal is: "+subDetGoal);
-									subQueryTime = new Date();
-									Object[] subBindings = queryEngine.deterministicGoal(subDetGoal);
-									OntologyLogger.getDiffTime(subQueryTime, "Doubled subgoal time: ");
-									TermModel subList = (TermModel)subBindings[0]; // this gets you the list as a binary tree
-									TermModel[] subFlattted = subList.flatList();
-									
-									if(subFlattted.length>0){
-										String subAnswer = subFlattted[0].getChild(0).toString();
-										if(subAnswer.equals("no") || subAnswer.equals("false") || subAnswer.equals("undefined")){
-											if (value.equals("true")) {
-												row.set(0, "inconsistent");
-												_answers.add(row);
-											} else if (value.equals("undefined")) {
-											    row.set(0, "undefined");
-                                                _answers.add(row);
-											}
-										}else{
-											_answers.add(row);
-										}
-									}else{
-										if(value.equals("true")){
-											row.set(0, "inconsistent");
-											_answers.add(row);
-										}
-									}
-								}else
-									_answers.add(row);
-							}
-						}
-						if(!isQueryForAll && filter.contains(row.get(0)))
-							break;
-						
-					}
-					if(flattted.length==0){
-						row = new ArrayList<String>();
-						row.add(_variablesList.size() > 0 ? "no answers found" : "false");
-						clearTable();
-						_answers.add(row);
-					}
-					if(_answers.size()==0){
-						clearTable();
-						row = new ArrayList<String>();
-						row.add("no answers found");
-						_answers.add(row);
-					}
-				} else {
-					clearTable();
-					row = new ArrayList<String>();
-					row.add("no answers found");
-					_answers.add(row);
-					log.error("Query was interrupted by engine.");
-					try {
-						compileFile(_ontology.Finish());
-					} catch (IOException e) {
-						log.error(e);
-					} catch (Exception e) {
-						log.error(e);
-					}
-				}
-				OntologyLogger.log("-----------------------");
-				OntologyLogger.getDiffTime(queryStart, "Total query time: ");
-				OntologyLogger.log("");
-			}
-		}
-		return getData();
-	}
-	private void checkAndStartEngine() {
-		if (!isCompiled) {
-			try {
-				Date initAndTranslateTime = new Date();
-				InitOntology();
-				_ontology.proceed();
-				_ontology.appendRules(Rules.getRules());
-				File xsbFile = _ontology.Finish();
-				OntologyLogger.log("-----------------------");
-				OntologyLogger.getDiffTime(initAndTranslateTime, "Total translation time: ");
-				OntologyLogger.log("");
-				compileFile(xsbFile);
-				isOntologyChanged = false;
-				Rules.isRulesOntologyChanged = false;
-//				_ontology.printAllLabels();
-			} catch (OWLOntologyCreationException e) {
-				e.printStackTrace();
-			} catch (OWLOntologyStorageException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ParserException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else if (isChanged()) {
-			int dialogResult = JOptionPane.showConfirmDialog (null, "Some changes have been made, would you like to recompile?", "Warning", JOptionPane.YES_NO_OPTION);
-			if (dialogResult == JOptionPane.YES_OPTION) {
-				try {
-					boolean disjointStatement = _ontology.isAnyDisjointWithStatement();
-					Date initAndTranslateTime = new Date();
-					if (isOntologyChanged) {
-						_ontology.PrepareForTranslating();
-						_ontology.proceed();
-						isOntologyChanged = false;
-						log.info("Ontology recompilation");
-					}
-					if (disjointStatement != _ontology.isAnyDisjointWithStatement() || Rules.isRulesOntologyChanged) {
-						_ontology.appendRules(Rules.getRules());
-						log.info("Rule recompilation");
-						Rules.isRulesOntologyChanged = false;
-					}
-					File xsbFile = _ontology.Finish();
-					OntologyLogger.getDiffTime(initAndTranslateTime, "Total translating time: ");
-					OntologyLogger.log("");
-					compileFile(xsbFile);
-//					_ontology.printAllLabels();
-				} catch (OWLOntologyCreationException e) {
-					e.printStackTrace();
-				} catch (OWLOntologyStorageException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (ParserException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					previousQuery="";
-				}
-			}
-		}
-	}
-	
-	private String generateDetermenisticGoal(String command){
-		String detGoal = "findall(myTuple(TV";
-		if(_variablesList.size()>0){
-			detGoal+=", ";
-			detGoal+=_variablesList.toString().replace("[", "").replace("]", "");
-		}
-//		detGoal+="), call_tv(("+command+"), TV), List), buildTermModel(List,TM)";
-		detGoal+="), call_tv(("+command+"), TV), List), buildInitiallyFlatTermModel(List,TM)";
-		return detGoal;
-	}
-	
-	private String generateSubQuery(String command, TermModel model){
-		String result = "";
-		int index;
-		String vars = "";
-		if(_variablesList.size()>0){
-			for(String s: command.split("\\)\\s*,")){
-				index = s.lastIndexOf("(");
-				if(index>0){
-					result += s.substring(0, index);
-					vars = s.substring(index+1, s.length());
-					for(int j=1; j<=_variablesList.size();j++){
-						vars = vars.replace(_variablesList.get(j-1), model.getChild(j).toString());
-					}
-					result +="("+vars;
-					if(!result.endsWith(")"))
-						result+=")";
-					result+=", ";
-					
-				}else
-					result += s+", ";
-			}
-			result = result.substring(0, result.length()-2);
-			return result;
-		}
-		return command;
-	}
-	
-	public ArrayList<ArrayList<String>> query(String command){
-		queryString = command;
-		return queryXSB();
-		
-	}
-	public boolean compileFile(File file) throws Exception {
-		Date loadingFileTime = new Date();
-		queryEngine = new QueryEngine();
-		isCompiled=false;
-		if(queryEngine.isEngineStarted() && queryEngine.load(file))
-			isCompiled=true;
-		if(isQueriable())
-			queryEngine.deterministicGoal(generateDetermenisticGoal("initQuery"));
-		OntologyLogger.getDiffTime(loadingFileTime, "Loading XSB file: ");
-		OntologyLogger.log("");
-		return isCompiled;
-	}
-	
-	public boolean isQueriable(){
-		return queryEngine!=null && queryEngine.isEngineStarted() && isCompiled;
-	}
-	
-	public void clearTable(){
-		_variablesList = new ArrayList<String>();
-		_answers = new ArrayList<ArrayList<String>>();
-	}
-	
-	private void fillTableHeader(String command){
-		clearTable();
-		try {
-    		Matcher m = headerPattern.matcher(command);
-            StringBuffer sb = new StringBuffer();
-            String rule;
-            while (m.find()) {
-                m.appendReplacement(sb, m.group());
-                rule = m.group();
-                rule = rule.substring(1, rule.length()-1);
-                for (String s : rule.split(",")) {
-    				s = s.trim();
-    				if(Character.isUpperCase(s.charAt(0)) && !_variablesList.contains(s))
-    					_variablesList.add(s);
-    			}
-            }
-            sb.setLength(0);
+/**
+ * The Class Query.
+ */
+public class Query {
 
+    /** The owl model manager. */
+    private static OWLModelManager owlModelManager;
+
+    /** The is ontology changed. */
+    private static boolean isOntologyChanged;
+
+    /** The is compiled. */
+    private boolean isCompiled = false;
+
+    /** The query engine. */
+    private QueryEngine queryEngine;
+
+    /** The instance of the local.translate */
+    private static Ontology ontology;
+
+    /**
+     * Dispose.
+     */
+    public static void dispose() {
+
+	if (owlModelManager != null) {
+	    owlModelManager
+		    .removeOntologyChangeListener(ontologyChangeListener);
+	    owlModelManager.removeListener(modelManagerListener);
+	}
+	Rules.dispose();
+    }
+
+    /**
+     * Inits the ontology.
+     */
+    private static void initOntology() {
+	try {
+	    ontology = new Ontology(owlModelManager);
+	} catch (Exception e) {
+	    LOG.error(e);
+	}
+    }
+
+    /** The list of query variables. */
+    private ArrayList<String> variablesList = new ArrayList<String>();
+
+    /** The list of answers. */
+    private ArrayList<ArrayList<String>> answers = new ArrayList<ArrayList<String>>();
+
+    /** The header pattern. */
+    private final Pattern headerPattern = Pattern.compile("\\((.*?)\\)");
+
+    /** The query string. */
+    private String queryString;
+
+    /** The previous query. */
+    private String previousQuery = "";
+
+    /** The Constant log. */
+    private static final Logger LOG = Logger.getLogger(Query.class);
+
+    /** The is query for all. */
+    private boolean isQueryForAll = true;
+
+    /** The queried for all. */
+    private boolean queriedForAll;
+
+    /** The filter. */
+    private String filter = "";
+
+    /** The var x pattern. */
+    private final Pattern varXPattern = Pattern.compile("Var\\d+");
+
+    /**
+     * The ontology change listener. Fired when axioms are added and removed
+     */
+    private static OWLOntologyChangeListener ontologyChangeListener = new OWLOntologyChangeListener() {
+	@Override
+	public void ontologiesChanged(List<? extends OWLOntologyChange> changes) {
+	    isOntologyChanged = true;
+	}
+    };
+
+    /** The model manager listener. */
+    private static OWLModelManagerListener modelManagerListener = new OWLModelManagerListener() {
+
+	@Override
+	public void handleChange(OWLModelManagerChangeEvent event) {
+	    isOntologyChanged = true;
+	    if (event
+		    .isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
+		Rules.dispose();
+		if (ontology != null) {
+		    ontology.clear();
+		}
+		initOntology();
+	    }
+	}
+    };
+
+    /**
+     * Instantiates a new query.
+     * 
+     * @param OwlModelManager
+     *            the owl model manager
+     * @throws Exception
+     *             the exception
+     */
+    public Query(OWLModelManager OwlModelManager) throws Exception {
+	owlModelManager = OwlModelManager;
+	owlModelManager.addOntologyChangeListener(ontologyChangeListener);
+	owlModelManager.addListener(modelManagerListener);
+	// queryEngine = new QueryEngine();
+
+	LOG.setLevel(Config.LOGLEVEL);
+    }
+
+    /**
+     * Check and start engine.
+     */
+    private void checkAndStartEngine() {
+	if (!isCompiled) {
+	    try {
+		Date initAndTranslateTime = new Date();
+		initOntology();
+		ontology.proceed();
+		ontology.appendRules(Rules.getRules());
+		File xsbFile = ontology.Finish();
+		OntologyLogger.log("-----------------------");
+		OntologyLogger.getDiffTime(initAndTranslateTime,
+			"Total translation time: ");
+		OntologyLogger.log("");
+		compileFile(xsbFile);
+		isOntologyChanged = false;
+		Rules.isRulesOntologyChanged = false;
+		// _ontology.printAllLabels();
+	    } catch (OWLOntologyCreationException e) {
+		e.printStackTrace();
+	    } catch (OWLOntologyStorageException e) {
+		e.printStackTrace();
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    } catch (ParserException e) {
+		e.printStackTrace();
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+	} else if (isChanged()) {
+	    int dialogResult = JOptionPane
+		    .showConfirmDialog(
+			    null,
+			    "Some changes have been made, would you like to recompile?",
+			    "Warning", JOptionPane.YES_NO_OPTION);
+	    if (dialogResult == JOptionPane.YES_OPTION) {
+		try {
+		    boolean disjointStatement = ontology
+			    .isAnyDisjointWithStatement();
+		    Date initAndTranslateTime = new Date();
+		    if (isOntologyChanged) {
+			ontology.PrepareForTranslating();
+			ontology.proceed();
+			isOntologyChanged = false;
+			LOG.info("Ontology recompilation");
+		    }
+		    if ((disjointStatement != ontology
+			    .isAnyDisjointWithStatement())
+			    || Rules.isRulesOntologyChanged) {
+			ontology.appendRules(Rules.getRules());
+			LOG.info("Rule recompilation");
+			Rules.isRulesOntologyChanged = false;
+		    }
+		    File xsbFile = ontology.Finish();
+		    OntologyLogger.getDiffTime(initAndTranslateTime,
+			    "Total translating time: ");
+		    OntologyLogger.log("");
+		    compileFile(xsbFile);
+		    // _ontology.printAllLabels();
+		} catch (OWLOntologyCreationException e) {
+		    e.printStackTrace();
+		} catch (OWLOntologyStorageException e) {
+		    e.printStackTrace();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} catch (ParserException e) {
+		    e.printStackTrace();
 		} catch (Exception e) {
-			log.error("fillTableHeader: "+e.toString());
+		    e.printStackTrace();
+		} finally {
+		    previousQuery = "";
 		}
+	    }
 	}
-	
-	private ArrayList<ArrayList<String>> getData(){
-		@SuppressWarnings("unchecked")
-		ArrayList<ArrayList<String>> rows = (ArrayList<ArrayList<String>>) _answers.clone();
-		rows.add(0, _variablesList);
-		return rows;
+    }
+
+    /**
+     * Clear table.
+     */
+    public void clearTable() {
+	variablesList = new ArrayList<String>();
+	answers = new ArrayList<ArrayList<String>>();
+    }
+
+    /**
+     * Compile file.
+     * 
+     * @param file
+     *            the file
+     * @return true, if successful
+     * @throws Exception
+     *             the exception
+     */
+    public boolean compileFile(File file) throws Exception {
+	Date loadingFileTime = new Date();
+	queryEngine = new QueryEngine();
+	isCompiled = false;
+	if (queryEngine.isEngineStarted() && queryEngine.load(file)) {
+	    isCompiled = true;
 	}
-	public void setIsQueryForAll(boolean flag){
-		isQueryForAll = flag;
-		
+	if (isQueriable()) {
+	    queryEngine
+		    .deterministicGoal(generateDetermenisticGoal("initQuery"));
 	}
-	public void setFilter(String f){
-		if(!filter.equals(f)){
-			filter = f;
+	OntologyLogger.getDiffTime(loadingFileTime, "Loading XSB file: ");
+	OntologyLogger.log("");
+	return isCompiled;
+    }
+
+    /**
+     * Dispose query.
+     */
+    public void disposeQuery() {
+	owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
+	owlModelManager.removeListener(modelManagerListener);
+	if (ontology != null) {
+	    ontology.clear();
+	}
+	if (queryEngine != null) {
+	    queryEngine.shutdown();
+	}
+	Rules.dispose();
+    }
+
+    /**
+     * Fill table header.
+     * 
+     * @param command
+     *            the command
+     */
+    private void fillTableHeader(String command) {
+	clearTable();
+	try {
+	    Matcher m = headerPattern.matcher(command);
+	    StringBuffer sb = new StringBuffer();
+	    String rule;
+	    while (m.find()) {
+		m.appendReplacement(sb, m.group());
+		rule = m.group();
+		rule = rule.substring(1, rule.length() - 1);
+		for (String s : rule.split(",")) {
+		    s = s.trim();
+		    if (Character.isUpperCase(s.charAt(0))
+			    && !variablesList.contains(s)) {
+			variablesList.add(s);
+		    }
 		}
+	    }
+	    sb.setLength(0);
+
+	} catch (Exception e) {
+	    LOG.error("fillTableHeader: " + e.toString());
 	}
-}	
+    }
+
+    /**
+     * Generate determenistic goal.
+     * 
+     * @param command
+     *            the command
+     * @return the string
+     */
+    private String generateDetermenisticGoal(String command) {
+	String detGoal = "findall(myTuple(TV";
+	if (variablesList.size() > 0) {
+	    detGoal += ", ";
+	    detGoal += variablesList.toString().replace("[", "")
+		    .replace("]", "");
+	}
+	// detGoal+="), call_tv(("+command+"), TV), List), buildTermModel(List,TM)";
+	detGoal += "), call_tv((" + command
+		+ "), TV), List), buildInitiallyFlatTermModel(List,TM)";
+	return detGoal;
+    }
+
+    /**
+     * Generate sub query.
+     * 
+     * @param command
+     *            the command
+     * @param model
+     *            the model
+     * @return the string
+     */
+    private String generateSubQuery(String command, TermModel model) {
+	String result = "";
+	int index;
+	String vars = "";
+	if (variablesList.size() > 0) {
+	    for (String s : command.split("\\)\\s*,")) {
+		index = s.lastIndexOf("(");
+		if (index > 0) {
+		    result += s.substring(0, index);
+		    vars = s.substring(index + 1, s.length());
+		    for (int j = 1; j <= variablesList.size(); j++) {
+			vars = vars.replace(variablesList.get(j - 1), model
+				.getChild(j).toString());
+		    }
+		    result += "(" + vars;
+		    if (!result.endsWith(")")) {
+			result += ")";
+		    }
+		    result += ", ";
+
+		} else {
+		    result += s + ", ";
+		}
+	    }
+	    result = result.substring(0, result.length() - 2);
+	    return result;
+	}
+	return command;
+    }
+
+    /**
+     * Gets the data.
+     * 
+     * @return the data
+     */
+    private ArrayList<ArrayList<String>> getData() {
+	@SuppressWarnings("unchecked")
+	ArrayList<ArrayList<String>> rows = (ArrayList<ArrayList<String>>) answers
+		.clone();
+	rows.add(0, variablesList);
+	return rows;
+    }
+
+    /**
+     * Checks if is changed.
+     * 
+     * @return true, if is changed
+     */
+    private boolean isChanged() {
+	return Rules.isRulesOntologyChanged || isOntologyChanged;
+    }
+
+    /**
+     * Checks if is queriable.
+     * 
+     * @return true, if is queriable
+     */
+    public boolean isQueriable() {
+	return (queryEngine != null) && queryEngine.isEngineStarted()
+		&& isCompiled;
+    }
+
+    /**
+     * Prints the info.
+     * 
+     * @param text
+     *            the text
+     */
+    public void printInfo(String text) {
+	// outPutLog.append(text+Config.nl);
+	LOG.info(text);
+	UnionLogger.LOGGER.log(text);
+    }
+
+    /**
+     * Prints the log.
+     * 
+     * @param text
+     *            the text
+     */
+    public void printLog(String text) {
+	if (Config.ISDEBUG) {
+	    printInfo(text);
+	}
+    }
+
+    /**
+     * Query.
+     * 
+     * @param command
+     *            the command
+     * @return the array list
+     */
+    public ArrayList<ArrayList<String>> query(String command) {
+	queryString = command;
+	return queryXSB();
+
+    }
+
+    /**
+     * Query xsb.
+     * 
+     * @return the array list
+     */
+    public ArrayList<ArrayList<String>> queryXSB() {
+	String command = queryString;
+	checkAndStartEngine();
+	if (isQueriable()) {
+	    if (command.endsWith(".")) {
+		command = command.substring(0, command.length() - 1);
+	    }
+	    command = ontology.prepareQuery(command);
+	    // previousQuery="";
+	    if (!command.equals(previousQuery) || !queriedForAll) {
+		printInfo("You queried: " + queryString);
+		previousQuery = command;
+		queriedForAll = isQueryForAll;
+		printLog("prepared query: " + command);
+		fillTableHeader(command);
+		String detGoal = generateDetermenisticGoal(command);
+		String subDetGoal;
+		printLog("detGoal: " + detGoal);
+		Date queryStart = new Date();
+		Date subQueryTime;
+		Object[] bindings = queryEngine.deterministicGoal(detGoal);
+		OntologyLogger.getDiffTime(queryStart, "Main query time: ");
+		ArrayList<String> row = new ArrayList<String>();
+		String value;
+		String subValue;
+		if (bindings != null) {
+
+		    TermModel list = (TermModel) bindings[0]; // this gets you
+							      // the list as a
+							      // binary tree
+		    TermModel[] flattted = list.flatList();
+		    for (TermModel element : flattted) {
+			// if(i==1 && !isQueryForAll)
+			// break;
+			value = element.getChild(0).toString();
+
+			if (value.length() > 0) {
+			    row = new ArrayList<String>();
+			    row.add(value);
+			    for (int j = 1; j <= variablesList.size(); j++) {
+				subValue = ontology.getLabelByHash(element
+					.getChild(j).toString());
+				subValue = varXPattern.matcher(subValue).find() ? "all values"
+					: subValue;
+				row.add(subValue);
+			    }
+			    if (!ontology.isAnyDisjointWithStatement()) {
+				answers.add(row);
+			    } else {
+				if (value.equals("true")
+					|| value.equals("undefined")) {
+				    // printLog("_dRule: "+Utils._dAllrule(command));
+				    subDetGoal = generateDetermenisticGoal(generateSubQuery(
+					    Utils._dAllrule(command), element));
+				    printLog("SubDetGoal is: " + subDetGoal);
+				    subQueryTime = new Date();
+				    Object[] subBindings = queryEngine
+					    .deterministicGoal(subDetGoal);
+				    OntologyLogger.getDiffTime(subQueryTime,
+					    "Doubled subgoal time: ");
+				    // this gets you the list as a binary tree
+				    TermModel subList = (TermModel) subBindings[0];
+				    TermModel[] subFlattted = subList
+					    .flatList();
+
+				    if (subFlattted.length > 0) {
+					String subAnswer = subFlattted[0]
+						.getChild(0).toString();
+					if (subAnswer.equals("no")
+						|| subAnswer.equals("false")
+						|| subAnswer
+							.equals("undefined")) {
+					    if (value.equals("true")) {
+						row.set(0, "inconsistent");
+						answers.add(row);
+					    } else if (value
+						    .equals("undefined")) {
+						row.set(0, "undefined");
+						answers.add(row);
+					    }
+					} else {
+					    answers.add(row);
+					}
+				    } else {
+					if (value.equals("true")) {
+					    row.set(0, "inconsistent");
+					    answers.add(row);
+					}
+				    }
+				} else {
+				    answers.add(row);
+				}
+			    }
+			}
+			if (!isQueryForAll && filter.contains(row.get(0))) {
+			    break;
+			}
+
+		    }
+		    if (flattted.length == 0) {
+			row = new ArrayList<String>();
+			row.add(variablesList.size() > 0 ? "no answers found"
+				: "false");
+			clearTable();
+			answers.add(row);
+		    }
+		    if (answers.size() == 0) {
+			clearTable();
+			row = new ArrayList<String>();
+			row.add("no answers found");
+			answers.add(row);
+		    }
+		} else {
+		    clearTable();
+		    row = new ArrayList<String>();
+		    row.add("no answers found");
+		    answers.add(row);
+		    LOG.error("Query was interrupted by engine.");
+		    try {
+			compileFile(ontology.Finish());
+		    } catch (IOException e) {
+			LOG.error(e);
+		    } catch (Exception e) {
+			LOG.error(e);
+		    }
+		}
+		OntologyLogger.log("-----------------------");
+		OntologyLogger.getDiffTime(queryStart, "Total query time: ");
+		OntologyLogger.log("");
+	    }
+	}
+	return getData();
+    }
+
+    /**
+     * Sets the filter.
+     * 
+     * @param f
+     *            the new filter
+     */
+    public void setFilter(String f) {
+	if (!filter.equals(f)) {
+	    filter = f;
+	}
+    }
+
+    /**
+     * Sets the checks if is query for all. otherwise query just first answer
+     * 
+     * @param flag
+     *            the new checks if is query for all
+     */
+    public void setIsQueryForAll(boolean flag) {
+	isQueryForAll = flag;
+
+    }
+}

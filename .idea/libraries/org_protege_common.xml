@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="org.protege.common">
+    <CLASSES>
+      <root url="jar:///Applications/Protege_4.3/bundles/org.protege.common.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -6,62 +6,131 @@ import org.apache.log4j.Logger;
 
 import com.declarativa.interprolog.XSBSubprocessEngine;
 
+/**
+ * The Class QueryEngine.
+ */
 public class QueryEngine {
-	private XSBSubprocessEngine _engine;
-	private boolean isEngineStarted=false;
-	private static final Logger log = Logger.getLogger(Query.class);
-	public QueryEngine() throws Exception{
-		String xsbBin = System.getenv("XSB_BIN_DIRECTORY");
-		printLog("Starting query engine"+Config.nl);
-		printLog(Config.tempDir+Config.nl);
-		
-		if(xsbBin!=null){
-			xsbBin+="/xsb";
-		}else{
-			throw new Exception("Please, set up your XSB_BIN_DIRECTORY");
-		}
-		startEngine(xsbBin);
+
+    /** The xsb engine. */
+    private XSBSubprocessEngine engine;
+
+    /** The is engine started. */
+    private boolean isEngineStarted = false;
+
+    /** The Constant log. */
+    private static final Logger LOG = Logger.getLogger(Query.class);
+
+    /**
+     * Instantiates a new query engine.
+     * 
+     * @throws Exception
+     *             the exception
+     */
+    public QueryEngine() throws Exception {
+
+	/**
+	 * Env variable which should be responsible for directory where XSB was
+	 * installed
+	 */
+	String xsbBin = System.getenv("XSB_BIN_DIRECTORY");
+	printLog("Starting query engine" + Config.NL);
+	printLog(Config.TEMP_DIR + Config.NL);
+
+	if (xsbBin != null) {
+	    xsbBin += "/xsb";
+	} else {
+	    throw new Exception("Please, set up your XSB_BIN_DIRECTORY");
 	}
-	
-	private void startEngine(String xsbBin) throws Exception {
-		if(_engine!=null){
-			
-			_engine.shutdown();
-			_engine = null;
-		}
-		isEngineStarted=true;
-		try{
-			_engine = new XSBSubprocessEngine(xsbBin);
-			//_engine.addPrologOutputListener(this);
-			printLog("Engine started"+Config.nl);
-		}catch(Exception e){
-			isEngineStarted=false;
-			throw new Exception("Query Engine was not started"+Config.nl+e.toString()+Config.nl);
-		}
+	startEngine(xsbBin);
+    }
+
+    /**
+     * Deterministic goal.
+     * 
+     * @param detGoal
+     *            the det goal
+     * @return the object[]
+     */
+    public Object[] deterministicGoal(String detGoal) {
+	try {
+	    return engine.deterministicGoal(detGoal, "[TM]");
+	} catch (Exception e) {
+	    LOG.error(e);
+	    return null;
 	}
-	
-	public void shutdown() {
-		_engine.shutdown();
+    }
+
+    /**
+     * Deterministic goal bool.
+     * 
+     * @param command
+     *            the command
+     * @return true, if successful
+     */
+    public boolean deterministicGoalBool(String command) {
+	return engine.deterministicGoal(command);
+    }
+
+    /**
+     * Checks if is engine started.
+     * 
+     * @return true, if is engine started
+     */
+    public boolean isEngineStarted() {
+	return isEngineStarted;
+    }
+
+    /**
+     * Load.
+     * 
+     * @param file
+     *            the file
+     * @return true, if successful
+     */
+    public boolean load(File file) {
+	return engine.load_dynAbsolute(file);
+    }
+
+    /**
+     * Prints the log.
+     * 
+     * @param message
+     *            the message
+     */
+    private void printLog(String message) {
+
+    }
+
+    /**
+     * Shutdown.
+     */
+    public void shutdown() {
+	engine.shutdown();
+    }
+
+    /**
+     * Start engine.
+     * 
+     * @param xsbBin
+     *            the xsb bin
+     * @throws Exception
+     *             the exception
+     */
+    private void startEngine(String xsbBin) throws Exception {
+	if (engine != null) {
+
+	    engine.shutdown();
+	    engine = null;
 	}
-	public Object[] deterministicGoal(String detGoal){
-		try{
-			return _engine.deterministicGoal(detGoal,"[TM]");
-		}catch(Exception e){
-			log.error(e);
-//			log.error("Achtung!!! deterministic Goal");
-			return null;
-		}
+	isEngineStarted = true;
+	try {
+	    engine = new XSBSubprocessEngine(xsbBin);
+	    // _engine.addPrologOutputListener(this);
+	    printLog("Engine started" + Config.NL);
+	} catch (Exception e) {
+	    isEngineStarted = false;
+	    throw new Exception("Query Engine was not started" + Config.NL
+		    + e.toString() + Config.NL);
 	}
-	public boolean deterministicGoalBool(String command){
-		return _engine.deterministicGoal(command);
-	}
-	public boolean load(File file){
-		return _engine.load_dynAbsolute(file);
-	}
-	public boolean isEngineStarted(){
-		return isEngineStarted;
-	}
-	private void printLog(String message){
-		
-	}
+    }
 }

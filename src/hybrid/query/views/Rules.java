@@ -22,7 +22,7 @@ public class Rules {
 		_rules.add(rule);
 		for (JTextArea textArea : _listners) {
 			if(textArea!=textarea)
-				textArea.append(rule+Config.nl);
+				textArea.append(rule+Config.NL);
 		}
 	}
 	public static void addRule(String rule) {
@@ -30,7 +30,7 @@ public class Rules {
 		isRulesOntologyChanged = true;
 		_rules.add(rule);
 		for (JTextArea textArea : _listners) {
-			textArea.append(rule+Config.nl);
+			textArea.append(rule+Config.NL);
 		}
 		
 	}
@@ -39,7 +39,7 @@ public class Rules {
 		addEventsForTextArea(textarea);
 		textarea.setText("");
 		for (String rule : _rules) {
-			textarea.append(rule+Config.nl);
+			textarea.append(rule+Config.NL);
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class Rules {
 			if(textArea!=_currentTextArea){
 				textArea.setText("");
 				for (String rule : _rules) {
-					textArea.append(rule+Config.nl);
+					textArea.append(rule+Config.NL);
 				}
 			}
 		}

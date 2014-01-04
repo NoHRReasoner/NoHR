@@ -2,12 +2,30 @@ package local.translate;
 
 import org.apache.log4j.Level;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Config.
+ */
 public class Config {
-	public static String delimeter="#";
-	public static String altDelimeter=":";
-	public static String negation="tnot";
-	public static String searchNegation="not";
-	public static String eq=":-";
-	public static boolean ruleCreationDebug = false;
-	public static Level logLevel = Level.ERROR;
+
+    /** The delimeter. */
+    public static String delimeter = "#";
+
+    /** The alt delimeter. */
+    public static String altDelimeter = ":";
+
+    /** The negation. */
+    public static String negation = "tnot";
+
+    /** The search negation. */
+    public static String searchNegation = "not";
+
+    /** The eq. */
+    public static String eq = ":-";
+
+    /** The rule creation debug. */
+    public static boolean ruleCreationDebug = false;
+
+    /** The log level. */
+    public static Level logLevel = Level.ERROR;
 }

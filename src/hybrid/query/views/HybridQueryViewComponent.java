@@ -57,7 +57,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     @Override
     protected void initialiseOWLView() {
         setLayout(new BorderLayout(12,12));
-        log.setLevel(Config.logLevel);
+        log.setLevel(Config.LOGLEVEL);
         JPanel panel = new JPanel(new GridBagLayout());
         
         GridBagConstraints c = new GridBagConstraints();
@@ -150,8 +150,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         
         add(panel, BorderLayout.CENTER);
         ViewLogger logger = new ViewLogger();
-        UnionLogger.logger.removeAllObservers();
-        UnionLogger.logger.registerObserver(logger);
+        UnionLogger.LOGGER.removeAllObservers();
+        UnionLogger.LOGGER.registerObserver(logger);
         startQueryEngine();
         addProgressFrame();
         textField.requestFocus();
@@ -409,7 +409,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		try {
 			queryEngine = new Query(getOWLModelManager());
 		} catch (Exception e) {
-			textArea.append(e.getMessage()+Config.nl);	
+			textArea.append(e.getMessage()+Config.NL);	
 		}
 	}
 	
@@ -501,7 +501,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	public class ViewLogger implements Observer{
 		@Override
 		public void update(String log) {
-			textArea.append(log+Config.nl);
+			textArea.append(log+Config.NL);
 		}
 		
 	}

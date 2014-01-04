@@ -2,10 +2,29 @@ package hybrid.query.model;
 
 import org.apache.log4j.Level;
 
+/**
+ * The Class Configuration for query model using in protege.
+ */
 public final class Config {
-	public static boolean isDebug = false;
-	public static String nl = System.getProperty("line.separator");
-	public static String tempDirProp = "java.io.tmpdir";
-	public static String tempDir = System.getProperty(tempDirProp);
-	public static Level logLevel = Level.ALL;
+    /** The is debug. */
+    public static final boolean ISDEBUG = false;
+
+    /** The log level. */
+    public static final Level LOGLEVEL = Level.ALL;
+
+    /** The nl. The new line symbol */
+    public static final String NL = System.getProperty("line.separator");
+
+    /** The temp dir prop. */
+    public static final String TEMP_DIR_PROP = "java.io.tmpdir";
+
+    /** The temp dir. */
+    public static final String TEMP_DIR = System.getProperty(TEMP_DIR_PROP);
+
+    /**
+     * Instantiates a new config.
+     */
+    private Config() {
+
+    }
 }
