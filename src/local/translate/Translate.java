@@ -170,7 +170,7 @@ public class Translate {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public File Finish() throws IOException {
-        Date date1 = new Date();
+        Date dateStart = new Date();
         FileWriter writer = new FileWriter(tempDir + resultFileName);
         HashSet<String> tabled = new HashSet<String>();
         log.info("tabled ontology count: " + cm.getAllTabledPredicateOntology().size());
@@ -194,7 +194,7 @@ public class Translate {
         }
         writer.close();
 
-        Utils.getDiffTime(date1, "Writing XSB file: ");
+        Utils.getDiffTime(dateStart, "Writing XSB file: ");
         return new File(tempDir + resultFileName);
     }
 
@@ -205,7 +205,7 @@ public class Translate {
      * @throws OWLOntologyCreationException the oWL ontology creation exception
      */
     private void getInferredData() throws OWLOntologyCreationException {
-        Date date1 = new Date();
+        Date dateStart = new Date();
         ontologies = new ArrayList<OWLOntology>();
         ontologies.add(ontology);
         /**
@@ -216,8 +216,8 @@ public class Translate {
         gens.add(new InferredSubClassAxiomGenerator());
         gens.add(new InferredEquivalentClassAxiomGenerator());
         gens.add(new InferredClassAssertionAxiomGenerator());
-        Utils.getDiffTime(date1, "Generating inferred ontology: ");
-        date1 = new Date();
+        Utils.getDiffTime(dateStart, "Generating inferred ontology: ");
+        dateStart = new Date();
 
         OWLOntologyManager outputOntologyManager = OWLManager.createOWLOntologyManager();
         // Put the inferred axioms into a fresh empty ontology.
@@ -230,7 +230,7 @@ public class Translate {
 
         ontologies.add(infOnt);
         // reasoner.dispose();
-        Utils.getDiffTime(date1, "Retrieving inferred information: ");
+        Utils.getDiffTime(dateStart, "Retrieving inferred information: ");
 
     }
 
@@ -244,8 +244,7 @@ public class Translate {
     private void getInferredDataFromReasoner(OWLReasoner owlReasoner)
             throws OWLOntologyCreationException {
         boolean isNeedToInitLocalElk = true;
-        if ((owlReasoner != null)
-            && owlReasoner.getReasonerName().equals("ELK Reasoner")) {
+        if (owlReasoner != null && owlReasoner.getReasonerName().equals("ELK Reasoner")) {
             reasoner = owlReasoner;
             getInferredData();
             isNeedToInitLocalElk = false;
