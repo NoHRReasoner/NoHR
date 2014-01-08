@@ -88,8 +88,8 @@ public class Translate {
         ontologyManager = owlModelManager.getOWLOntologyManager();
         ontology = owlModelManager.getActiveOntology();
         tempDir = System.getProperty(tempDirProp);
-        getInferredDataFromReasoner(owlModelManager.getReasoner());
         initCollections();
+        getInferredDataFromReasoner(owlModelManager.getReasoner());
         log.setLevel(Config.logLevel);
     }
 
@@ -105,14 +105,15 @@ public class Translate {
         /** Initializing a OntologyManager */
         Date dateStart = new Date();
         ontologyManager = OWLManager.createOWLOntologyManager();
+
         ontologyFile = new File(filePath);
         if (ontologyFile.exists()) {
             ontologyFile.createNewFile();
         }
         ontology = ontologyManager.loadOntologyFromOntologyDocument(ontologyFile);
         Utils.getDiffTime(dateStart, "Initializing is done, it took:");
-        initELK();
         initCollections();
+        initELK();
         log.setLevel(Config.logLevel);
     }
 
@@ -231,7 +232,7 @@ public class Translate {
         ontologies.add(infOnt);
         // reasoner.dispose();
         Utils.getDiffTime(dateStart, "Retrieving inferred information: ");
-
+        ontologyProceeder.setOntologiesToProceed(ontologies);
     }
 
     /**
@@ -241,8 +242,7 @@ public class Translate {
      * @return the inferred data from reasoner
      * @throws OWLOntologyCreationException the oWL ontology creation exception
      */
-    private void getInferredDataFromReasoner(OWLReasoner owlReasoner)
-            throws OWLOntologyCreationException {
+    private void getInferredDataFromReasoner(OWLReasoner owlReasoner) throws OWLOntologyCreationException {
         boolean isNeedToInitLocalElk = true;
         if (owlReasoner != null && owlReasoner.getReasonerName().equals("ELK Reasoner")) {
             reasoner = owlReasoner;
@@ -268,14 +268,22 @@ public class Translate {
     /**
      * Inits the collections.
      */
-    private void initCollections() {
+    private void initCollections() throws OWLOntologyCreationException {
         _ontologyLabel = ontologyManager.getOWLDataFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
         cm = new CollectionsManager();
         collectionsManager = cm;
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
         query = new Query(cm);
         ruleCreator = new RuleCreator(cm, ontologyLabel);
-        ontologyProceeder = new OntologyProceeder(cm, ontologies, ruleCreator);
+        ontologyProceeder = new OntologyProceeder(cm, ruleCreator);
+        checkAndPartiallyNormalizeOntology();
+    }
+
+    private void checkAndPartiallyNormalizeOntology() throws OWLOntologyCreationException {
+        if (ontologyProceeder.isOntologyNeedToBeNormalized(ontology)) {
+
+            ontology = ontologyProceeder.normalizeOntology(ontology);
+        }
     }
 
     /**
@@ -283,7 +291,7 @@ public class Translate {
      *
      * @throws OWLOntologyCreationException the oWL ontology creation exception
      */
-    protected void initELK() throws OWLOntologyCreationException {
+    private void initELK() throws OWLOntologyCreationException {
         org.apache.log4j.Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
         Date dateStart = new Date();
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();

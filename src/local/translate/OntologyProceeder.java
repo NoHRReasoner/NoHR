@@ -1,20 +1,103 @@
 package local.translate;
 
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class OntologyProceeder {
     private CollectionsManager cm;
     private List<OWLOntology> ontologies = new ArrayList<OWLOntology>();
     private RuleCreator ruleCreator;
-    public OntologyProceeder(CollectionsManager _cm, List<OWLOntology> _ontologies, RuleCreator _ruleCreator) {
+    private OWLDataFactory owlDataFactory;
+    public OntologyProceeder(CollectionsManager _cm, RuleCreator _ruleCreator) {
         cm = _cm;
-        ontologies = _ontologies;
         ruleCreator = _ruleCreator;
+    }
+
+    public void setOntologiesToProceed(List<OWLOntology> _ontologies) {
+        ontologies = _ontologies;
+    }
+
+    public boolean isOntologyNeedToBeNormalized(OWLOntology ontology) {
+        boolean isOntologyNeedToBeNormalized = false;
+        for (OWLClassAxiom owlClassAxiom : ontology.getGeneralClassAxioms()) {
+            if (owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF) {
+                isOntologyNeedToBeNormalized = true;
+                break;
+            }
+            if (owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES) {
+                isOntologyNeedToBeNormalized = true;
+                break;
+            }
+        }
+        return isOntologyNeedToBeNormalized;
+    }
+
+
+    public OWLOntology normalizeOntology(OWLOntology ontology) throws OWLOntologyCreationException {
+        OWLOntologyManager owlOntologyManager = OWLManager.createOWLOntologyManager();
+        Set<OWLOntology> _onts = new HashSet<OWLOntology>();
+        _onts.add(ontology);
+        OWLOntology owlOntology = owlOntologyManager.createOntology(IRI.generateDocumentIRI(), _onts);
+        owlDataFactory = owlOntologyManager.getOWLDataFactory();
+        Set<OWLAxiom> axiomsToBeAdded;
+        for (OWLClassAxiom owlClassAxiom : owlOntology.getGeneralClassAxioms()) {
+            axiomsToBeAdded = new HashSet<OWLAxiom>();
+            if (owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF) {
+                axiomsToBeAdded.addAll(createNormalizedAxioms(((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass(), ((OWLSubClassOfAxiomImpl) owlClassAxiom).getSuperClass()));
+            }
+            if (owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES) {
+                axiomsToBeAdded.addAll(createNormalizedAxioms(((OWLSubClassOfAxiomImpl) owlClassAxiom).getSuperClass(), ((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass()));
+                axiomsToBeAdded.addAll(createNormalizedAxioms(((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass(), ((OWLSubClassOfAxiomImpl) owlClassAxiom).getSuperClass()));
+            }
+            if (axiomsToBeAdded.size() > 0) {
+                for(OWLAxiom axiom : axiomsToBeAdded) {
+                    owlOntologyManager.addAxiom(owlOntology, axiom);
+                }
+                owlOntologyManager.removeAxiom(owlOntology, owlClassAxiom);
+            }
+        }
+
+        return owlOntology;
+    }
+
+    private Set<OWLAxiom> createNormalizedAxioms(OWLClassExpression superClass, OWLClassExpression subClass) {
+        Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
+        if (hasOwlClassExpressionAnyExists(subClass)) {
+            IRI iri = IRI.generateDocumentIRI();
+            OWLClass tempClass = owlDataFactory.getOWLClass(iri);
+            axioms.add(owlDataFactory.getOWLSubClassOfAxiom(tempClass, superClass));
+            axioms.add(owlDataFactory.getOWLSubClassOfAxiom(subClass, tempClass));
+        }
+        return axioms;
+    }
+
+    private boolean hasOwlClassExpressionAnyExists(OWLClassExpression owlClassExpression) {
+        boolean hasAnyExists = false;
+        ClassExpressionType expressionType = owlClassExpression.getClassExpressionType();
+
+        switch (expressionType) {
+            case OBJECT_SOME_VALUES_FROM:
+                hasAnyExists = true;
+                break;
+            case OBJECT_INTERSECTION_OF:
+                List<OWLClassExpression> operands = ((OWLObjectIntersectionOf) owlClassExpression).getOperandsAsList();
+                for (OWLClassExpression operand : operands) {
+                    hasAnyExists = hasOwlClassExpressionAnyExists(operand);
+                    if (hasAnyExists == true) {
+                        break;
+                    }
+                }
+                break;
+            case OWL_CLASS:
+            default:
+                hasAnyExists = false;
+                break;
+        }
+        return hasAnyExists;
     }
 
     /**

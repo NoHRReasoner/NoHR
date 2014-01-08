@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/local/translate/Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyProceeder.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/OntologyProceeder.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Translate.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Translate.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" afterPath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" afterPath="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Translate.java" afterPath="$PROJECT_DIR$/src/local/translate/Translate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/manifest.mf" afterPath="$PROJECT_DIR$/build/manifest.mf" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" afterPath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/update.properties" afterPath="$PROJECT_DIR$/update.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="EmptyPlugin.iws" />
@@ -63,6 +66,23 @@
       </breakpoint>
     </breakpoint_any>
     <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/src/local/translate/Test.java" line="6" class="local.translate.Test" package="local.translate">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -75,7 +95,7 @@
       <file leaf-file-name="RuleTranslator.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/local/translate/RuleTranslator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="147" column="64" selection-start="4690" selection-end="4690" vertical-scroll-proportion="0.0" vertical-offset="2106" max-vertical-offset="2910">
+            <state line="147" column="64" selection-start="4690" selection-end="4690" vertical-scroll-proportion="0.0" vertical-offset="2205" max-vertical-offset="2910">
               <folding />
             </state>
           </provider>
@@ -84,119 +104,71 @@
       <file leaf-file-name="Translate.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="223" column="23" selection-start="7886" selection-end="7886" vertical-scroll-proportion="-19.615385" vertical-offset="2040" max-vertical-offset="4005">
-              <folding>
-                <element signature="docComment;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#ontologyFile#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#ontologyManager#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#ontology#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#ontologies#0;class#Translate#0" expanded="false" />
-                <element signature="e#985#998#0" expanded="true" />
-                <element signature="docComment;field#_ontologyLabel#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#reasoner#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#collectionsManager#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#prologCommands#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#tempDirProp#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#tempDir#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#resultFileName#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#ontologyLabel#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#ruleCreator#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#ruleTranslator#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#cm#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;field#query#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#Translate#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#Translate#1;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#appendRules#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#appendRules#1;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#clear#0;class#Translate#0" expanded="false" />
-                <element signature="e#5328#5368#0" expanded="false" />
-                <element signature="docComment;method#Finish#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#getInferredData#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#getInferredDataFromReasoner#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#getLabelByHash#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#initCollections#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#initELK#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#isAnyDisjointWithStatement#0;class#Translate#0" expanded="false" />
-                <element signature="docComment;method#PrepareForTranslating#0;class#Translate#0" expanded="false" />
-                <element signature="e#11602#11603#0" expanded="true" />
-                <element signature="e#11639#11640#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="update.properties" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/update.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
+            <state line="173" column="0" selection-start="5668" selection-end="5668" vertical-scroll-proportion="0.0" vertical-offset="2451" max-vertical-offset="5340">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MANIFEST.MF" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
+      <file leaf-file-name="OWLManager.class" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar:///Applications/Protege_4.3/plugins/org.semanticweb.owl.owlapi.jar!/org/semanticweb/owlapi/apibinding/OWLManager.class">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="28" selection-start="858" selection-end="858" vertical-scroll-proportion="0.44174135" vertical-offset="0" max-vertical-offset="781">
+            <state line="6" column="13" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="390">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Logger.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/Logger.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="13" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Utils.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/Utils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="156" column="17" selection-start="4511" selection-end="4511" vertical-scroll-proportion="0.0" vertical-offset="1461" max-vertical-offset="2265">
-              <folding>
-                <element signature="docComment;method#getDiffTime#0;class#Utils#0" expanded="false" />
-                <element signature="docComment;method#removeDuplicates#0;class#Utils#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OntologyProceeder.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="OntologyProceeder.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyProceeder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="76" column="68" selection-start="3273" selection-end="3273" vertical-scroll-proportion="-27.115385" vertical-offset="405" max-vertical-offset="2460">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#323#336#0" expanded="true" />
-                <element signature="docComment;method#fillExistsOntologiesAndRules#0;class#OntologyProceeder#0" expanded="false" />
-                <element signature="docComment;method#loopThrowAllClasses#0;class#OntologyProceeder#0" expanded="false" />
-                <element signature="docComment;method#loopThrowAllProperties#0;class#OntologyProceeder#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Query.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="181" column="58" selection-start="6002" selection-end="6002" vertical-scroll-proportion="0.0" vertical-offset="1838" max-vertical-offset="7845">
+            <state line="88" column="34" selection-start="4159" selection-end="4159" vertical-scroll-proportion="0.56640625" vertical-offset="780" max-vertical-offset="3690">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Console.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/Console.java">
+      <file leaf-file-name="EquivalentClass.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/EquivalentClass.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="25" selection-start="1466" selection-end="1473" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="1425">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="47" column="10" selection-start="1152" selection-end="1152" vertical-scroll-proportion="0.0" vertical-offset="705" max-vertical-offset="3915">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RuleCreator.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/RuleCreator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="108" column="72" selection-start="4024" selection-end="4024" vertical-scroll-proportion="0.0" vertical-offset="1620" max-vertical-offset="5865">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OntologyLabel.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyLabel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="233" column="17" selection-start="8153" selection-end="8475" vertical-scroll-proportion="0.0" vertical-offset="3495" max-vertical-offset="4245">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClassExpressionType.class" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar:///Applications/Protege_4.3/plugins/org.semanticweb.owl.owlapi.jar!/org/semanticweb/owlapi/model/ClassExpressionType.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="4" selection-start="228" selection-end="228" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="390">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Test.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/local/translate/Test.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="0" selection-start="242" selection-end="242" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="255">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -240,10 +212,12 @@
         <option value="$PROJECT_DIR$/viewconfig-querytab.xml" />
         <option value="$PROJECT_DIR$/src/local/translate/Console.java" />
         <option value="$PROJECT_DIR$/src/local/translate/Utils.java" />
-        <option value="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" />
-        <option value="$PROJECT_DIR$/src/local/translate/Translate.java" />
         <option value="$PROJECT_DIR$/update.properties" />
         <option value="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        <option value="$PROJECT_DIR$/src/local/translate/Translate.java" />
+        <option value="$PROJECT_DIR$/src/local/translate/Test.java" />
+        <option value="$PROJECT_DIR$/result.p" />
+        <option value="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" />
       </list>
     </option>
   </component>
@@ -430,13 +404,35 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="LayoutCode.rearrangeEntriesJava" value="true" />
     <property name="LayoutCode.rearrangeEntries" value="false" />
+    <property name="recentsLimit" value="5" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/lib" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Test">
+    <configuration default="false" name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="local.translate.Test" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="NoHR" />
+      <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <ConfigurationWrapper RunnerId="Debug" />
+      <method />
+    </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin" singleton="true">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
@@ -564,7 +560,14 @@
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
-    <list size="0" />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Application.Test" />
+    </list>
+    <recent_temporary>
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="Application.Test" />
+      </list>
+    </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
       <Port>5050</Port>
@@ -588,7 +591,6 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32932693" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -604,9 +606,14 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32932693" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.p" />
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USERS">
@@ -631,13 +638,6 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/build.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3885">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
           <folding />
         </state>
@@ -645,41 +645,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.checkstyle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="26" selection-start="310" selection-end="310" vertical-scroll-proportion="0.14246947" vertical-offset="0" max-vertical-offset="737">
-          <folding />
-        </state>
+        <state line="7" column="26" selection-start="310" selection-end="310" vertical-scroll-proportion="0.14246947" vertical-offset="0" max-vertical-offset="737" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.classpath">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="747">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="747" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.project">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/package-info.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="22" selection-start="704" selection-end="704" vertical-scroll-proportion="0.43421054" vertical-offset="0" max-vertical-offset="760">
-          <folding>
-            <element signature="e#0#704#0" expanded="false" />
-          </folding>
-        </state>
+        <state line="22" column="22" selection-start="704" selection-end="704" vertical-scroll-proportion="0.43421054" vertical-offset="0" max-vertical-offset="760" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/union/logger/package-info.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="32" selection-start="727" selection-end="727" vertical-scroll-proportion="0.35526314" vertical-offset="0" max-vertical-offset="760">
-          <folding>
-            <element signature="e#0#751#0" expanded="false" />
-          </folding>
-        </state>
+        <state line="18" column="32" selection-start="727" selection-end="727" vertical-scroll-proportion="0.35526314" vertical-offset="0" max-vertical-offset="760" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/Config.java">
@@ -717,22 +703,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/EquivalentClass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="10" selection-start="1152" selection-end="1152" vertical-scroll-proportion="0.0" vertical-offset="3036" max-vertical-offset="3840">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyLabel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="271" column="7" selection-start="9674" selection-end="9674" vertical-scroll-proportion="0.0" vertical-offset="3454" max-vertical-offset="4245">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/ParsedRule.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="82" column="43" selection-start="1664" selection-end="1664" vertical-scroll-proportion="49.115383" vertical-offset="2507" max-vertical-offset="3285">
@@ -745,44 +715,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/Query.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="125" selection-start="1433" selection-end="1433" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="855">
-          <folding />
-        </state>
+        <state line="46" column="125" selection-start="1433" selection-end="1433" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="855" />
       </provider>
     </entry>
     <entry file="jar:///Applications/Protege_4.3/plugins/org.semanticweb.owl.owlapi.jar!/org/semanticweb/owlapi/model/OWLClassExpression.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="17" selection-start="175" selection-end="175" vertical-scroll-proportion="0.10094213" vertical-offset="0" max-vertical-offset="743">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/RuleCreator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="378" column="77" selection-start="15237" selection-end="15237" vertical-scroll-proportion="0.0" vertical-offset="4977" max-vertical-offset="5745">
-          <folding />
-        </state>
+        <state line="6" column="17" selection-start="175" selection-end="175" vertical-scroll-proportion="0.10094213" vertical-offset="0" max-vertical-offset="743" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/union/logger/Logger.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="57" selection-start="519" selection-end="519" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1155">
-          <folding />
-        </state>
+        <state line="31" column="57" selection-start="519" selection-end="519" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1155" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/union/logger/Observer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="32" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
-          <folding />
-        </state>
+        <state line="2" column="32" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/union/logger/UnionLogger.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="13" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240">
-          <folding />
-        </state>
+        <state line="5" column="13" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="240" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Config.java">
@@ -850,9 +803,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/build/manifest.mf">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/build.xml">
@@ -864,44 +815,32 @@
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/elk-owlapi.jar!/META-INF/MANIFEST.MF">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/elk-owlapi.jar!/META-INF/maven/org.semanticweb.elk/elk-owlapi-standalone/pom.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/elk-owlapi.jar!/META-INF/maven/org.semanticweb.elk/elk-owlapi-standalone/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1965">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1965" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/interprolog.jar!/META-INF/MANIFEST.MF">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/commons-codec-1.8.jar!/META-INF/NOTICE.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/commons-codec-1.8.jar!/META-INF/MANIFEST.MF">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="41" selection-start="824" selection-end="824" vertical-scroll-proportion="0.36491677" vertical-offset="0" max-vertical-offset="4320">
-          <folding />
-        </state>
+        <state line="19" column="41" selection-start="824" selection-end="824" vertical-scroll-proportion="0.36491677" vertical-offset="0" max-vertical-offset="4320" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/plugin.xml">
@@ -913,14 +852,60 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/NoHR.iml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="781" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/build.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="760" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Logger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="13" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="156" column="17" selection-start="4511" selection-end="4511" vertical-scroll-proportion="0.0" vertical-offset="1461" max-vertical-offset="2265">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="181" column="58" selection-start="6002" selection-end="6002" vertical-scroll-proportion="0.0" vertical-offset="2078" max-vertical-offset="7845">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/update.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="60" selection-start="839" selection-end="839" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Console.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="85" column="8" selection-start="3079" selection-end="3094" vertical-scroll-proportion="0.0" vertical-offset="540" max-vertical-offset="1395">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Applications/Protege_4.3/plugins/org.semanticweb.owl.owlapi.jar!/org/semanticweb/owlapi/model/OWLOntologyManager.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="45" selection-start="4261" selection-end="4261" vertical-scroll-proportion="0.34412956" vertical-offset="645" max-vertical-offset="2565" />
+      </provider>
+    </entry>
+    <entry file="jar:///Applications/Protege_4.3/plugins/org.semanticweb.owl.owlapi.jar!/org/semanticweb/owlapi/apibinding/OWLManager.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="13" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="390">
           <folding />
         </state>
       </provider>
@@ -932,106 +917,58 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/Logger.java">
+    <entry file="file://$PROJECT_DIR$/src/local/translate/EquivalentClass.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="13" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="47" column="10" selection-start="1152" selection-end="1152" vertical-scroll-proportion="0.0" vertical-offset="3036" max-vertical-offset="3840">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/Utils.java">
+    <entry file="file://$PROJECT_DIR$/src/local/translate/RuleCreator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="156" column="17" selection-start="4511" selection-end="4511" vertical-scroll-proportion="0.0" vertical-offset="1461" max-vertical-offset="2265">
-          <folding>
-            <element signature="docComment;method#getDiffTime#0;class#Utils#0" expanded="false" />
-            <element signature="docComment;method#removeDuplicates#0;class#Utils#0" expanded="false" />
-          </folding>
+        <state line="108" column="72" selection-start="4024" selection-end="4024" vertical-scroll-proportion="0.0" vertical-offset="1326" max-vertical-offset="5745">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/Console.java">
+    <entry file="jar:///Applications/Protege_4.3/plugins/org.semanticweb.owl.owlapi.jar!/org/semanticweb/owlapi/model/ClassExpressionType.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="25" selection-start="1466" selection-end="1473" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="1425">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="7" column="4" selection-start="228" selection-end="228" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="390">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hybrid/query/model/Query.java">
+    <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyLabel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="181" column="58" selection-start="6002" selection-end="6002" vertical-scroll-proportion="0.0" vertical-offset="2078" max-vertical-offset="7845">
+        <state line="233" column="17" selection-start="8153" selection-end="8475" vertical-scroll-proportion="0.0" vertical-offset="3495" max-vertical-offset="4245">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="0" selection-start="242" selection-end="242" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="173" column="0" selection-start="5668" selection-end="5668" vertical-scroll-proportion="0.0" vertical-offset="2451" max-vertical-offset="5340">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/result.p">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="65" selection-start="687" selection-end="687" vertical-scroll-proportion="0.21484375" vertical-offset="0" max-vertical-offset="768">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/OntologyProceeder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="68" selection-start="3273" selection-end="3273" vertical-scroll-proportion="-27.115385" vertical-offset="405" max-vertical-offset="2460">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#323#336#0" expanded="true" />
-            <element signature="docComment;method#fillExistsOntologiesAndRules#0;class#OntologyProceeder#0" expanded="false" />
-            <element signature="docComment;method#loopThrowAllClasses#0;class#OntologyProceeder#0" expanded="false" />
-            <element signature="docComment;method#loopThrowAllProperties#0;class#OntologyProceeder#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/local/translate/Translate.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="223" column="23" selection-start="7886" selection-end="7886" vertical-scroll-proportion="-19.615385" vertical-offset="2040" max-vertical-offset="4005">
-          <folding>
-            <element signature="docComment;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#ontologyFile#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#ontologyManager#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#ontology#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#ontologies#0;class#Translate#0" expanded="false" />
-            <element signature="e#985#998#0" expanded="true" />
-            <element signature="docComment;field#_ontologyLabel#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#reasoner#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#collectionsManager#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#prologCommands#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#tempDirProp#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#tempDir#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#resultFileName#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#ontologyLabel#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#ruleCreator#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#ruleTranslator#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#cm#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;field#query#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#Translate#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#Translate#1;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#appendRules#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#appendRules#1;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#clear#0;class#Translate#0" expanded="false" />
-            <element signature="e#5328#5368#0" expanded="false" />
-            <element signature="docComment;method#Finish#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#getInferredData#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#getInferredDataFromReasoner#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#getLabelByHash#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#initCollections#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#initELK#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#isAnyDisjointWithStatement#0;class#Translate#0" expanded="false" />
-            <element signature="docComment;method#PrepareForTranslating#0;class#Translate#0" expanded="false" />
-            <element signature="e#11602#11603#0" expanded="true" />
-            <element signature="e#11639#11640#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/update.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="28" selection-start="858" selection-end="858" vertical-scroll-proportion="0.44174135" vertical-offset="0" max-vertical-offset="781">
+        <state line="88" column="34" selection-start="4159" selection-end="4159" vertical-scroll-proportion="0.56640625" vertical-offset="780" max-vertical-offset="3690">
           <folding />
         </state>
       </provider>
