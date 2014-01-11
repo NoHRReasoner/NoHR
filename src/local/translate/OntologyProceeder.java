@@ -3,6 +3,7 @@ package local.translate;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.owl.owlapi.OWLEquivalentClassesAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 
 import java.util.*;
@@ -37,21 +38,31 @@ public class OntologyProceeder {
     }
 
 
-    public OWLOntology normalizeOntology(OWLOntology ontology) throws OWLOntologyCreationException {
-        OWLOntologyManager owlOntologyManager = OWLManager.createOWLOntologyManager();
+    public OWLOntology normalizeOntology(OWLOntology ontology, OWLOntologyManager owlOntologyManager) throws OWLOntologyCreationException, OWLOntologyStorageException {
+        if (owlOntologyManager == null) {
+            owlOntologyManager = OWLManager.createOWLOntologyManager();
+        }
         Set<OWLOntology> _onts = new HashSet<OWLOntology>();
         _onts.add(ontology);
         OWLOntology owlOntology = owlOntologyManager.createOntology(IRI.generateDocumentIRI(), _onts);
         owlDataFactory = owlOntologyManager.getOWLDataFactory();
         Set<OWLAxiom> axiomsToBeAdded;
+        OWLClassExpression superClassExpression;
+        OWLClassExpression subClassExpression;
+        List<OWLClassExpression> equivalentClassExpressions;
         for (OWLClassAxiom owlClassAxiom : owlOntology.getGeneralClassAxioms()) {
             axiomsToBeAdded = new HashSet<OWLAxiom>();
             if (owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF) {
                 axiomsToBeAdded.addAll(createNormalizedAxioms(((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass(), ((OWLSubClassOfAxiomImpl) owlClassAxiom).getSuperClass()));
             }
             if (owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES) {
-                axiomsToBeAdded.addAll(createNormalizedAxioms(((OWLSubClassOfAxiomImpl) owlClassAxiom).getSuperClass(), ((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass()));
-                axiomsToBeAdded.addAll(createNormalizedAxioms(((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass(), ((OWLSubClassOfAxiomImpl) owlClassAxiom).getSuperClass()));
+                equivalentClassExpressions = ((OWLEquivalentClassesAxiomImpl) owlClassAxiom).getClassExpressionsAsList();
+                if (equivalentClassExpressions.size() >= 2) {
+                    superClassExpression = equivalentClassExpressions.get(0);
+                    subClassExpression = equivalentClassExpressions.get(1);
+                    axiomsToBeAdded.addAll(createNormalizedAxioms(superClassExpression, subClassExpression));
+                    axiomsToBeAdded.addAll(createNormalizedAxioms(subClassExpression, superClassExpression));
+                }
             }
             if (axiomsToBeAdded.size() > 0) {
                 for(OWLAxiom axiom : axiomsToBeAdded) {
@@ -60,7 +71,6 @@ public class OntologyProceeder {
                 owlOntologyManager.removeAxiom(owlOntology, owlClassAxiom);
             }
         }
-
         return owlOntology;
     }
 
@@ -69,8 +79,8 @@ public class OntologyProceeder {
         if (hasOwlClassExpressionAnyExists(subClass)) {
             IRI iri = IRI.generateDocumentIRI();
             OWLClass tempClass = owlDataFactory.getOWLClass(iri);
-            axioms.add(owlDataFactory.getOWLSubClassOfAxiom(tempClass, superClass));
-            axioms.add(owlDataFactory.getOWLSubClassOfAxiom(subClass, tempClass));
+            axioms.add(owlDataFactory.getOWLSubClassOfAxiom(superClass, tempClass));
+            axioms.add(owlDataFactory.getOWLSubClassOfAxiom(tempClass, subClass));
         }
         return axioms;
     }

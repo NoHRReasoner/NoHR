@@ -268,7 +268,7 @@ public class Translate {
     /**
      * Inits the collections.
      */
-    private void initCollections() throws OWLOntologyCreationException {
+    private void initCollections() throws OWLOntologyCreationException, OWLOntologyStorageException {
         _ontologyLabel = ontologyManager.getOWLDataFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
         cm = new CollectionsManager();
         collectionsManager = cm;
@@ -279,10 +279,9 @@ public class Translate {
         checkAndPartiallyNormalizeOntology();
     }
 
-    private void checkAndPartiallyNormalizeOntology() throws OWLOntologyCreationException {
+    private void checkAndPartiallyNormalizeOntology() throws OWLOntologyCreationException, OWLOntologyStorageException {
         if (ontologyProceeder.isOntologyNeedToBeNormalized(ontology)) {
-
-            ontology = ontologyProceeder.normalizeOntology(ontology);
+            ontology = ontologyProceeder.normalizeOntology(ontology, null);
         }
     }
 
