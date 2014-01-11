@@ -2,19 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyProceeder$1.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/OntologyProceeder$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyProceeder.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/OntologyProceeder.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules.class" afterPath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Test.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Test.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/local/translate/Translate.class" afterPath="$PROJECT_DIR$/build/classes/local/translate/Translate.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" afterPath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" afterPath="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Test.java" afterPath="$PROJECT_DIR$/src/local/translate/Test.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Translate.java" afterPath="$PROJECT_DIR$/src/local/translate/Translate.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/manifest.mf" afterPath="$PROJECT_DIR$/build/manifest.mf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" afterPath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result.p" afterPath="$PROJECT_DIR$/result.p" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/update.properties" afterPath="$PROJECT_DIR$/update.properties" />
     </list>
     <ignored path="EmptyPlugin.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -106,10 +95,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Rules.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Rules.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/Rules.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="68" selection-start="958" selection-end="958" vertical-scroll-proportion="0.53691274" vertical-offset="0" max-vertical-offset="2085">
+            <state line="25" column="68" selection-start="958" selection-end="958" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2085">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="update.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/update.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MANIFEST.MF" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="30" column="21" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.59731543" vertical-offset="183" max-vertical-offset="630">
               <folding />
             </state>
           </provider>
@@ -137,15 +144,6 @@
         <entry file="file://$PROJECT_DIR$/src/local/translate/CollectionsManager.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="154" column="36" selection-start="4074" selection-end="4074" vertical-scroll-proportion="0.0" vertical-offset="1826" max-vertical-offset="3645">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RuleCreator.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/local/translate/RuleCreator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="108" column="72" selection-start="4024" selection-end="4024" vertical-scroll-proportion="0.0" vertical-offset="375" max-vertical-offset="5745">
               <folding />
             </state>
           </provider>
@@ -197,8 +195,6 @@
         <option value="$PROJECT_DIR$/viewconfig-rulesmanagertab.xml" />
         <option value="$PROJECT_DIR$/viewconfig-querytab.xml" />
         <option value="$PROJECT_DIR$/src/local/translate/Console.java" />
-        <option value="$PROJECT_DIR$/update.properties" />
-        <option value="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
         <option value="$PROJECT_DIR$/result.p" />
         <option value="$PROJECT_DIR$/src/hybrid/query/model/Config.java" />
         <option value="$PROJECT_DIR$/src/local/translate/Translate.java" />
@@ -206,6 +202,8 @@
         <option value="$PROJECT_DIR$/src/local/translate/Test.java" />
         <option value="$PROJECT_DIR$/src/local/translate/OntologyProceeder.java" />
         <option value="$PROJECT_DIR$/src/hybrid/query/views/Rules.java" />
+        <option value="$PROJECT_DIR$/update.properties" />
+        <option value="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
       </list>
     </option>
   </component>
@@ -832,16 +830,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/update.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="60" selection-start="839" selection-end="839" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/Console.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="85" column="8" selection-start="3079" selection-end="3094" vertical-scroll-proportion="0.0" vertical-offset="540" max-vertical-offset="1395">
@@ -959,7 +947,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hybrid/query/views/Rules.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="68" selection-start="958" selection-end="958" vertical-scroll-proportion="0.53691274" vertical-offset="0" max-vertical-offset="2085">
+        <state line="25" column="68" selection-start="958" selection-end="958" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2085">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/update.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="13" selection-start="35" selection-end="35" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="180">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="21" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.59731543" vertical-offset="183" max-vertical-offset="630">
           <folding />
         </state>
       </provider>
