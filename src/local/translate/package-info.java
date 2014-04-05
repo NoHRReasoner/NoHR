@@ -16,7 +16,7 @@
 
 /**
  * The translator.
- * Translate ontology into rules.
+ * Translate ontology into rules and combines them with other rules.
  */
 package local.translate;
 

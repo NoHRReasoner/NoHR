@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The Class Query.
+ * The Class Query - the main bridge between translator, query engine and ui
  */
 public class Query {
 

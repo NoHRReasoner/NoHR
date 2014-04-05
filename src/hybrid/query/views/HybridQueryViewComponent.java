@@ -116,9 +116,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tableHeaderRenderer.setBackground(new Color(239, 198, 46));
         JScrollPane tableSrollPane = new JScrollPane(table);
-        //        LineNumberTableRowHeader tableLineNumber = new LineNumberTableRowHeader(tableSrollPane, table);
-        //        tableSrollPane.setRowHeaderView(tableLineNumber);
-        //        tableLineNumber.setBackground(Color.LIGHT_GRAY);
         tabbedPane.addTab("Result", tableSrollPane);
         tabbedPane.addTab("Log", outputPanel);
         tabPanel.add(tabbedPane, subC);
@@ -152,10 +149,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
      * the text box.
      */
     private void tableFilterAnswer() {
-        //    	RowFilter<DefaultTableModel, Object> rf = getFilters();
-        //        sorter.setRowFilter(rf);
-        //        if(!isShowAllSolutions && table.getRowCount()!=1){
-
         if (textField.getText().length() > 0) {
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
@@ -164,8 +157,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
                 }
             });
         }
-        //        }
-
     }
 
     private String getFilter() {
@@ -182,7 +173,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 
     @Override
     protected void disposeOWLView() {
-        //		metricsComponent.dispose();
         if (queryEngine != null) {
             queryEngine.disposeQuery();
         }
@@ -191,7 +181,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     protected JButton addProcessButton() {
         JButton button = new JButton("Execute");
         button.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (textField.getText().length() > 0) {

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The Class RuleCreator.
+ * The Class RuleCreator. Translating ontology into the rule
  */
 public class RuleCreator {
 

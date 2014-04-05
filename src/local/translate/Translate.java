@@ -16,7 +16,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * The Class local.translate.Translate.
+ * The Class local.translate.Translate. The entrance to core of magic.
  */
 public class Translate {
 
@@ -76,7 +76,7 @@ public class Translate {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Translate.class);
 
     /**
-     * Instantiates a new ontology.
+     * Instantiates a new translator.
      *
      * @param owlModelManager the owl model manager
      * @throws IOException                  Signals that an I/O exception has occurred.
@@ -94,7 +94,7 @@ public class Translate {
     }
 
     /**
-     * Instantiates a new ontology.
+     * Instantiates a new translator.
      *
      * @param filePath the file path
      * @throws OWLOntologyCreationException the oWL ontology creation exception
