@@ -28,7 +28,7 @@ Import-Package: org.apache.log4j, javax.swing,
  javax.swing.tree,
  javax.swing.undo,
  javax.xml.parsers
-Bundle-Version: 1.0.9
+Bundle-Version: 1.0.10
 Require-Bundle: org.eclipse.equinox.registry,
  org.eclipse.equinox.common,
  org.protege.editor.core.application,

@@ -107,10 +107,16 @@ public class RuleCreator {
     public void writeEquivalentRule(OWLClass owlClass, OWLClassExpression rightPartOfRule) {
         currentRule = "%EquivalentRule";
         EquivalentClass rightSideOfRule = ontologyLabel.getLabelEquivalentClasses(rightPartOfRule, 1, 1);
-        String ruleHead = "a" + ontologyLabel.getLabel(owlClass, 1);
+        String owlClassName = ontologyLabel.getLabel(owlClass, 1);
+        String ruleHead = "a" + owlClassName;
         String rule = ruleHead + "(X1) " + Config.eq + " " + rightSideOfRule.getFinalRule();
         writeLineToFile(rule);
         cm.addTabledPredicateOntology(ruleHead + "/1");
+        if (cm.isAnyDisjointStatement()) {
+            rule = "d" + owlClassName + "(X1)" + Utils.getEqForRule() + rightSideOfRule.getFinalDoubledRule();
+            cm.addTabledPredicateOntology("d" + owlClassName + "/1");
+            writeLineToFile(rule);
+        }
     }
 
     /**

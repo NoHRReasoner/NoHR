@@ -130,19 +130,30 @@ public class EquivalentClass {
 
     /**
      * Gets the final rule.
-     *
+     * @param prefix
      * @return the final rule
      */
-    public String getFinalRule() {
+    public String getFinalRule(String prefix) {
         _rule = "";
         if (rulesList.size() > 0) {
             for (EquivalentRules rule : rulesList) {
-                _rule += "a" + rule.name + rule.getArguments() + ", ";
+                _rule += prefix + rule.name + rule.getArguments() + ", ";
             }
             _rule = _rule.substring(0, _rule.length() - 2) + ".";
         }
         return _rule;
     }
+
+    /**
+     * @return final rule
+     */
+    public String getFinalRule() {
+        return getFinalRule("a");
+    }
+    public String getFinalDoubledRule() {
+        return getFinalRule("d");
+    }
+
 
     /**
      * Gets the list of rules.
