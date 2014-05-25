@@ -2,130 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9b0f257f-cb1a-43d7-bdd3-3480003f1852" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/META-INF/manifest.mf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Config.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$3.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$4.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query$QueryXSB.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/Query.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/QueryEngine.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/model/package-info.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Config.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryTab.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$1$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$10.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$11.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$12.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$13.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$14.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$3.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$4.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$5.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$6.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$7.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$8.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$9.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$QueryWorker.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent$ViewLogger.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/HybridQueryViewComponent.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/LineNumberTableRowHeader$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/LineNumberTableRowHeader$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/LineNumberTableRowHeader$3.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/LineNumberTableRowHeader.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ProgressMonitorDemo$Task.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ProgressMonitorDemo.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Query$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Query$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Query$3.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Query$4.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Query$5.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Query$QueryXSB.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Query.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerTab.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesManagerViewComponent.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/RulesViewComponent.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$1$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$2$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$2.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$3$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$3.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$4$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$4.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$5.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$6.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$QueryWorker$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent$QueryWorker.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/ViewComponent.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/WorkspaceTabQuery.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/lib/commons-codec-1.8.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/lib/elk-owlapi-0-3-2.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/lib/elk-owlapi.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/lib/interprolog.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/lib/log4j-1.2.17.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/CollectionsManager.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Config.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Console.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$EquivalentRules.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass$OntologyType.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/EquivalentClass.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Logger.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/OWLOntologyClone.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Ontology$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Ontology.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyLabel.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyLogger.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyProceeder$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/OntologyProceeder.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/ParsedRule.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Query.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/RuleCreator.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/RuleTranslator.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Test.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Translate.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/Utils.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/local/translate/package-info.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/plugin.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/IListenerSupport.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/ListenerSupportFactory$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/ListenerSupportFactory$ListenerInvocationHandler.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/ListenerSupportFactory.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/Log.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/Logger.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/Observer.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/UnionLogger.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/union/logger/package-info.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/viewconfig-querytab.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/classes/viewconfig-rulesmanagertab.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/lib/log4j.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/manifest.mf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/nm.query.plugin.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/nohr.query.jar" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/org.semanticweb.nohr.jar" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/build/classes/hybrid/query/views/Rules.class" afterPath="$PROJECT_DIR$/out/production/NoHR/hybrid/query/views/Rules.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" afterPath="$PROJECT_DIR$/src/local/translate/EquivalentClass.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/RuleCreator.java" afterPath="$PROJECT_DIR$/src/local/translate/RuleCreator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/local/translate/Test.java" afterPath="$PROJECT_DIR$/src/local/translate/Test.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result.p" afterPath="$PROJECT_DIR$/result.p" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/update.properties" afterPath="$PROJECT_DIR$/update.properties" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/result.p" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="EmptyPlugin.iws" />
@@ -282,8 +160,8 @@
       <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.03851091" vertical-offset="0" max-vertical-offset="779">
-              <caret line="2" column="15" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.057766367" vertical-offset="0" max-vertical-offset="779">
+              <caret line="3" column="21" selection-start-line="3" selection-start-column="8" selection-end-line="3" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -431,24 +309,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="META-INF" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="NoHR reasoner" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="EmptyPlugin" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="build" />
-              <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="classes" />
               <option name="myItemType" value="com.android.tools.idea.gradle.projectView.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1025,14 +885,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/result.p">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46640316" vertical-offset="169" max-vertical-offset="2820">
-          <caret line="27" column="14" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/local/translate/Test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3853755" vertical-offset="0" max-vertical-offset="506">
@@ -1160,8 +1012,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.03851091" vertical-offset="0" max-vertical-offset="779">
-          <caret line="2" column="15" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+        <state vertical-scroll-proportion="0.057766367" vertical-offset="0" max-vertical-offset="779">
+          <caret line="3" column="21" selection-start-line="3" selection-start-column="8" selection-end-line="3" selection-end-column="8" />
           <folding />
         </state>
       </provider>
