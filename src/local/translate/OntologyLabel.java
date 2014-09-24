@@ -128,6 +128,15 @@ public class OntologyLabel {
     }
 
     /**
+     *
+     * @param dataProperty
+     * @param numInList
+     * @return (hashed) label of the data property
+     */
+    public String getLabel(OWLDataProperty dataProperty, int numInList) {
+        return getLabel(dataProperty.getAnnotations(ontology, ontologyLabel), dataProperty.toString(), numInList);
+    }
+    /**
      * Gets the label.
      *
      * @param property  the object property expression
