@@ -266,6 +266,28 @@ public class RuleCreator {
     }
 
     /**
+     *
+     * @param dataProperty
+     * @param individual
+     * @param value
+     * Translates a given data property with its property name, individual, and value into a rule (or two rules).
+     */
+    public void translateDataPropertyAssertion(OWLDataProperty dataProperty, OWLIndividual individual, OWLLiteral value) {
+        String Predicate = ontologyLabel.getLabel(dataProperty,1);
+        String Individual = ontologyLabel.getLabel(individual,1);
+        String Value = cm.getHashedLabel(value.getLiteral());
+        writeLineToFile("a" + Predicate + "(c" + Individual + ", c" + Value + ").");
+        cm.addTabledPredicateOntology("a" + Predicate + "/2");
+        if (cm.isAnyDisjointStatement()) {
+            String rule = "d" + Predicate + "(c" + Individual + ", c" + Value + ")";
+            cm.addTabledPredicateOntology("d" + Predicate + "/2");
+            if (isPredicateAppearedInHeadUnderNunderscore("n" + Predicate + "/2"))
+                rule += Utils.getEqForRule() + Config.negation + " n" + Predicate + "(c" + Individual + ", c" + Value + ")";
+            writeLineToFile(rule + ".");
+        }
+    }
+
+    /**
      * (c1). foreach GCI C ��� D ��� T: D(x)���C(x) and Dd(x) ��� Cd(x), not
      * ND(x).
      *

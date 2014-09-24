@@ -252,6 +252,22 @@ public class OntologyProceeder {
             for (OWLAxiom axiom : ont.getAxioms(AxiomType.SUB_PROPERTY_CHAIN_OF)) {
                 ruleCreator.writeRuleR2(axiom);
             }
+
+            /**
+             * Translate all data property assertions by looping through all individuals, find for each of them
+             * all data properties and for each such data property all property values; then translate each single
+             * obtained axiom
+             */
+            for (OWLNamedIndividual individual : ont.getIndividualsInSignature()) {
+
+                for (OWLDataProperty dataProperty : ont.getDataPropertiesInSignature()) {
+
+                    for (OWLLiteral literal : individual.getDataPropertyValues(dataProperty, ont)) {
+
+                        ruleCreator.translateDataPropertyAssertion(dataProperty, individual, literal);
+                    }
+                }
+            }
         }
     }
 }
