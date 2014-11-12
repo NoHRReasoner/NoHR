@@ -467,12 +467,12 @@ public class Query {
 
                                     if (subFlattted.length > 0) {
                                         String subAnswer = subFlattted[0].getChild(0).toString();
-                                        if (subAnswer.equals("no") || subAnswer.equals("false") || subAnswer.equals("undefined")) {
+                                        if (subAnswer.equals("no") || subAnswer.equals("false")) {
                                             if (value.equals("true")) {
                                                 row.set(0, "inconsistent");
                                                 answers.add(row);
                                             } else if (value.equals("undefined")) {
-                                                row.set(0, "undefined");
+                                                row.set(0, "false");
                                                 answers.add(row);
                                             }
                                         } else {
