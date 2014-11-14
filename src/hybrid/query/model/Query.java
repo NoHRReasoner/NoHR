@@ -503,7 +503,7 @@ public class Query {
                     if (answers.size() == 0) {
                         clearTable();
                         row = new ArrayList<String>();
-                        row.add("no answers found");
+                        row.add(variablesList.size() > 0 ? "no answers found" : "false");
                         answers.add(row);
                     }
                 } else {
