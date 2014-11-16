@@ -494,16 +494,10 @@ public class Query {
                         }
 
                     }
-                    if (flattted.length == 0) {
+                    if ((flattted.length == 0) || (answers.size() == 0)) {
                         row = new ArrayList<String>();
                         row.add(variablesList.size() > 0 ? "no answers found" : "false");
                         clearTable();
-                        answers.add(row);
-                    }
-                    if (answers.size() == 0) {
-                        clearTable();
-                        row = new ArrayList<String>();
-                        row.add(variablesList.size() > 0 ? "no answers found" : "false");
                         answers.add(row);
                     }
                 } else {
