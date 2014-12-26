@@ -6,6 +6,8 @@ import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.profiles.OWL2ELProfile;
+import org.semanticweb.owlapi.profiles.OWL2QLProfile;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -14,6 +16,9 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import java.io.*;
 import java.util.*;
+
+import local.translate.ql.OntologyProceederQL;
+import local.translate.ql.RuleCreatorQL;
 
 /**
  * The Class local.translate.Translate. The entrance to core of magic.
@@ -72,6 +77,10 @@ public class Translate {
      */
     private OntologyProceeder ontologyProceeder;
 
+	private boolean isOwl2elProfile;
+
+	private boolean isOwl2qlProfile;
+
     /** The Constant log. */
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Translate.class);
 
@@ -88,12 +97,23 @@ public class Translate {
         ontologyManager = owlModelManager.getOWLOntologyManager();
         ontology = owlModelManager.getActiveOntology();
         tempDir = System.getProperty(tempDirProp);
+        checkOwlProfile();
         initCollections();
-        getInferredDataFromReasoner(owlModelManager.getReasoner());
+        if (isOwl2elProfile)
+        	getInferredDataFromReasoner(owlModelManager.getReasoner());
         log.setLevel(Config.logLevel);
     }
 
-    /**
+	private void checkOwlProfile() {
+		OWL2ELProfile owl2elProfile = new OWL2ELProfile();
+		OWL2QLProfile owl2qlProfile = new OWL2QLProfile();
+		isOwl2elProfile = owl2elProfile.checkOntology(ontology).isInProfile();
+		isOwl2qlProfile = owl2qlProfile.checkOntology(ontology).isInProfile();
+ 	    Logger.logBool("OWL EL",  isOwl2elProfile);
+	    Logger.logBool("OWL QL", isOwl2qlProfile);
+	}
+
+	/**
      * Instantiates a new translator.
      *
      * @param filePath the file path
@@ -112,6 +132,7 @@ public class Translate {
         }
         ontology = ontologyManager.loadOntologyFromOntologyDocument(ontologyFile);
         Utils.getDiffTime(dateStart, "Initializing is done, it took:");
+        checkOwlProfile();
         initCollections();
         initELK();
         log.setLevel(Config.logLevel);
@@ -274,8 +295,14 @@ public class Translate {
         collectionsManager = cm;
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
         query = new Query(cm);
-        ruleCreator = new RuleCreator(cm, ontologyLabel);
-        ontologyProceeder = new OntologyProceeder(cm, ruleCreator);
+        if (isOwl2elProfile) {
+        	ruleCreator = new RuleCreator(cm, ontologyLabel);
+        	ontologyProceeder = new OntologyProceeder(cm, ruleCreator);
+        }
+        else if (isOwl2qlProfile) {
+        	ruleCreator = new RuleCreatorQL(cm, ontologyLabel);
+        	ontologyProceeder = new OntologyProceederQL(cm, ruleCreator);
+        }
         checkAndPartiallyNormalizeOntology();
     }
 
@@ -291,16 +318,18 @@ public class Translate {
      * @throws OWLOntologyCreationException the oWL ontology creation exception
      */
     private void initELK() throws OWLOntologyCreationException {
-        org.apache.log4j.Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
-        Date dateStart = new Date();
-        OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
-        reasoner = reasonerFactory.createReasoner(ontology);
-        /** Classify the ontology. */
-        reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+    	if (isOwl2elProfile) {
+    		org.apache.log4j.Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
+    		Date dateStart = new Date();
+    		OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
+    		reasoner = reasonerFactory.createReasoner(ontology);
+    		/** Classify the ontology. */
+    		reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
 
-        Utils.getDiffTime(dateStart, "Running ELK Reasoner: ");
+    		Utils.getDiffTime(dateStart, "Running ELK Reasoner: ");
 
-        getInferredData();
+    		getInferredData();
+    	}
     }
 
     /**
@@ -321,7 +350,8 @@ public class Translate {
      * @throws IOException                  Signals that an I/O exception has occurred.
      */
     public boolean PrepareForTranslating() throws OWLOntologyCreationException, OWLOntologyStorageException, IOException {
-        initELK();
+    	checkOwlProfile();
+    	initELK();
         cm.clearOntology();
         return true;
     }

@@ -43,4 +43,9 @@ public class Logger {
         log.info(message);
         UnionLogger.LOGGER.log(message);
     }
+    
+    public static void logBool(String message, boolean bool) {
+    	String ansStr = bool ? "yes" : "no";
+    	log(message + ": " + ansStr);
+    }
 }
