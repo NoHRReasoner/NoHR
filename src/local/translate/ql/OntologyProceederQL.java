@@ -1,16 +1,29 @@
 package local.translate.ql;
 
-import org.semanticweb.owlapi.model.OWLOntology;
+import java.util.Set;
 
 import local.translate.CollectionsManager;
 import local.translate.OntologyProceeder;
 import local.translate.RuleCreator;
 
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
+
 public class OntologyProceederQL extends OntologyProceeder{
 
 	public OntologyProceederQL(CollectionsManager _cm, RuleCreator _ruleCreator) {
 		super(_cm, _ruleCreator);
-		// TODO Auto-generated constructor stub
+	}
+	
+	private Set<OWLEntity> omega() {
+		//TODO implement
+		return null;
+	}
+	
+	private Set<OWLObjectProperty> psi() {
+		//TODO implement
+		return null;
 	}
 
 	/** Test if the ontology need to be normalized. 
