@@ -195,7 +195,7 @@ public class RuleCreator {
      *
      * @param string the string
      */
-    private void writeLineToFile(String string) {
+    protected void writeLineToFile(String string) {
         string += Config.ruleCreationDebug ? currentRule : "";
         cm.addTranslatedOntology(string);
     }

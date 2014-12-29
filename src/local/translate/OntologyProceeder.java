@@ -131,7 +131,7 @@ public class OntologyProceeder {
     /**
      * Going throw all ontologies and preprocess them.
      */
-    private void fillExistsOntologiesAndRules() {
+    protected void fillExistsOntologiesAndRules() {
         boolean isTopClass;
         ClassExpressionType expressionType;
         cm.setIsAnyDisjointStatement(false);

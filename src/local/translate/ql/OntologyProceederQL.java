@@ -1,6 +1,5 @@
 package local.translate.ql;
 
-import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import local.translate.CollectionsManager;
@@ -14,14 +13,22 @@ public class OntologyProceederQL extends OntologyProceeder{
 		// TODO Auto-generated constructor stub
 	}
 
+	/** Test if the ontology need to be normalized. 
+	 * 
+	 * @return false, for OWL QL. */
 	@Override
 	public boolean isOntologyNeedToBeNormalized(OWLOntology ontology) {
 		return false;
 	}
 
+	 /** Handle negative axioms*/
 	@Override
-	public void proceed() throws ParserException {
-		// TODO implement
+	protected void fillExistsOntologiesAndRules() {
+		//Note:
+		//the negative class subsumption axioms supported in the OWL EL profile
+		//are a generalization of the ones supported in OWL QL
+		super.fillExistsOntologiesAndRules();
+		//TODO: handle disjoint property axioms
 	}
 	
 	

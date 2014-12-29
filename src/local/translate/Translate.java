@@ -104,6 +104,7 @@ public class Translate {
         log.setLevel(Config.logLevel);
     }
 
+    //TODO: throw an exception if the ontology is not in a supported profile
 	private void checkOwlProfile() {
 		OWL2ELProfile owl2elProfile = new OWL2ELProfile();
 		OWL2QLProfile owl2qlProfile = new OWL2QLProfile();
@@ -305,7 +306,7 @@ public class Translate {
         }
         checkAndPartiallyNormalizeOntology();
     }
-
+    
     private void checkAndPartiallyNormalizeOntology() throws OWLOntologyCreationException, OWLOntologyStorageException {
         if (ontologyProceeder.isOntologyNeedToBeNormalized(ontology)) {
             ontology = ontologyProceeder.normalizeOntology(ontology, null);
