@@ -3,22 +3,8 @@
  */
 package hybrid.query.model;
 
-import com.declarativa.interprolog.TermModel;
 import hybrid.query.views.Rules;
-import local.translate.Logger;
-import local.translate.Translate;
-import local.translate.Utils;
-import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
-import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.semanticweb.owlapi.expression.ParserException;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
-import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import union.logger.UnionLogger;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,10 +13,32 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
+import local.translate.Logger;
+import local.translate.Translate;
+import local.translate.Utils;
+
+import org.protege.editor.owl.model.OWLModelManager;
+import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
+import org.protege.editor.owl.model.event.OWLModelManagerListener;
+import org.semanticweb.owlapi.expression.ParserException;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyChange;
+import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+
+import union.logger.UnionLogger;
+
+import com.declarativa.interprolog.TermModel;
+
 /**
  * The Class Query - the main bridge between translator, query engine and ui
  */
 public class Query {
+	
+	private static OWLOntology ontology;
 
     /** The owl model manager. */
     private static OWLModelManager owlModelManager;
@@ -64,7 +72,11 @@ public class Query {
      */
     private static void initTranslator() {
         try {
-            translator = new Translate(owlModelManager);
+        	if (owlModelManager != null)
+        		translator = new Translate(owlModelManager);
+        	else
+        		translator = new Translate(ontology);
+        	
         } catch (Exception e) {
             LOG.error(e);
         }
@@ -139,6 +151,10 @@ public class Query {
         // queryEngine = new QueryEngine();
 
         LOG.setLevel(Config.LOGLEVEL);
+    }
+    
+    public Query(OWLOntology owlOntology) {
+    	ontology = owlOntology;
     }
 
     /**
@@ -244,8 +260,10 @@ public class Query {
      * Dispose query.
      */
     public void disposeQuery() {
-        owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
-        owlModelManager.removeListener(modelManagerListener);
+    	if (owlModelManager != null) {
+    		owlModelManager.removeOntologyChangeListener(ontologyChangeListener);
+    		owlModelManager.removeListener(modelManagerListener);
+    	}
         if (translator != null) {
             translator.clear();
         }

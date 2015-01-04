@@ -16,9 +16,9 @@ import java.util.Set;
 public class RuleCreator {
 
     /** The cm. */
-    private final CollectionsManager cm;
+    protected final CollectionsManager cm;
     /** The ontology label. */
-    private final OntologyLabel ontologyLabel;
+    protected final OntologyLabel ontologyLabel;
     /** The current rule. */
     private String currentRule;
 

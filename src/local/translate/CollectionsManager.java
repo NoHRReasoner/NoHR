@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public class CollectionsManager {
 
+	private HashSet<String> hilogPredicates = new HashSet<String>();
+
     /** The table predicates ontology. */
     private HashSet<String> tablePredicatesOntology = new HashSet<String>();
 
@@ -49,6 +51,14 @@ public class CollectionsManager {
         log.setLevel(Config.logLevel);
     }
 
+    public HashSet<String> getHilogPredicates() {
+		return hilogPredicates;
+	}
+	
+	public void addHilogPredicates(String predicate) {
+		hilogPredicates.add(predicate);
+	}
+    
     /**
      * Adds the prediactes appeared under NOT.
      *

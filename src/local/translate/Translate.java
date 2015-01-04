@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.profiles.OWL2ELProfile;
 import org.semanticweb.owlapi.profiles.OWL2QLProfile;
+import org.semanticweb.owlapi.reasoner.ImportsClosureNotInProfileException;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -84,7 +85,19 @@ public class Translate {
     /** The Constant log. */
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Translate.class);
 
-    /**
+    public Translate(OWLOntology owlOntology) throws OWLOntologyCreationException, OWLOntologyStorageException {
+    	 /** Initializing a OntologyManager */
+        Date dateStart = new Date();
+        ontologyManager = OWLManager.createOWLOntologyManager();
+        ontology = owlOntology;
+        Utils.getDiffTime(dateStart, "Initializing is done, it took:");
+        checkOwlProfile();
+        initCollections();
+        initELK();
+        log.setLevel(Config.logLevel);
+	}
+
+	/**
      * Instantiates a new translator.
      *
      * @param owlModelManager the owl model manager
@@ -99,17 +112,28 @@ public class Translate {
         tempDir = System.getProperty(tempDirProp);
         checkOwlProfile();
         initCollections();
-        if (isOwl2elProfile)
+        if(getTranslationAlgorithm()==TranslationAlgorithm.EL)
         	getInferredDataFromReasoner(owlModelManager.getReasoner());
         log.setLevel(Config.logLevel);
     }
 
-    //TODO: throw an exception if the ontology is not in a supported profile
+    public TranslationAlgorithm getTranslationAlgorithm() {
+    	if (isOwl2qlProfile)
+    		return TranslationAlgorithm.DL_LITE_R;
+    	else if (isOwl2elProfile)
+    		return TranslationAlgorithm.EL;
+    	else
+    		return null;
+	}
+
+	//TODO: throw an exception if the ontology is not in a supported profile
 	private void checkOwlProfile() {
 		OWL2ELProfile owl2elProfile = new OWL2ELProfile();
 		OWL2QLProfile owl2qlProfile = new OWL2QLProfile();
 		isOwl2elProfile = owl2elProfile.checkOntology(ontology).isInProfile();
 		isOwl2qlProfile = owl2qlProfile.checkOntology(ontology).isInProfile();
+		if (!isOwl2elProfile && !isOwl2qlProfile)
+        	throw new ImportsClosureNotInProfileException(new OWL2QLProfile());
  	    Logger.logBool("OWL EL",  isOwl2elProfile);
 	    Logger.logBool("OWL QL", isOwl2qlProfile);
 	}
@@ -207,6 +231,9 @@ public class Translate {
         for (String str : tabled) {
             writer.write(":- table " + str + ".\n");
         }
+        for (String str : cm.getHilogPredicates()) {
+        	writer.write(":- hilog " + str + ".\n");
+        }
         log.info("ontology count: " + cm.getTranslatedOntologies().size());
         for (String str : cm.getTranslatedOntologies()) {
             writer.write(str + "\n");
@@ -296,13 +323,14 @@ public class Translate {
         collectionsManager = cm;
         ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
         query = new Query(cm);
-        if (isOwl2elProfile) {
+        switch (getTranslationAlgorithm()) {
+        case DL_LITE_R:
+        	ruleCreator = new RuleCreatorQL(cm, ontologyLabel);
+        	ontologyProceeder = new OntologyProceederQL(cm, ruleCreator, ontology);
+        	break;
+        case EL:
         	ruleCreator = new RuleCreator(cm, ontologyLabel);
         	ontologyProceeder = new OntologyProceeder(cm, ruleCreator);
-        }
-        else if (isOwl2qlProfile) {
-        	ruleCreator = new RuleCreatorQL(cm, ontologyLabel);
-        	ontologyProceeder = new OntologyProceederQL(cm, ruleCreator);
         }
         checkAndPartiallyNormalizeOntology();
     }
@@ -319,7 +347,7 @@ public class Translate {
      * @throws OWLOntologyCreationException the oWL ontology creation exception
      */
     private void initELK() throws OWLOntologyCreationException {
-    	if (isOwl2elProfile) {
+    	if (getTranslationAlgorithm()==TranslationAlgorithm.EL) {
     		org.apache.log4j.Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
     		Date dateStart = new Date();
     		OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();

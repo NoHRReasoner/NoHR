@@ -10,8 +10,8 @@ import java.util.*;
 
 public class OntologyProceeder {
     private CollectionsManager cm;
-    private List<OWLOntology> ontologies = new ArrayList<OWLOntology>();
-    private RuleCreator ruleCreator;
+    protected List<OWLOntology> ontologies = new ArrayList<OWLOntology>();
+    protected RuleCreator ruleCreator;
     private OWLDataFactory owlDataFactory;
     public OntologyProceeder(CollectionsManager _cm, RuleCreator _ruleCreator) {
         cm = _cm;

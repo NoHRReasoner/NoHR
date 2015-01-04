@@ -160,5 +160,14 @@ public class Utils {
         list.addAll(h);
         return list;
     }
-
+    
+    public static String concat(String sep,  List<?> objs){
+		StringBuffer sb = new StringBuffer();
+		String sepToken = "";
+		for(Object obj : objs) {
+			sb.append(sepToken + obj.toString());
+			sepToken = sep;
+		}
+		return new String(sb);
+	}
 }
