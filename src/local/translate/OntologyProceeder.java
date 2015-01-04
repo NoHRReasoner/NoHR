@@ -9,7 +9,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 import java.util.*;
 
 public class OntologyProceeder {
-    private CollectionsManager cm;
+    protected CollectionsManager cm;
     protected List<OWLOntology> ontologies = new ArrayList<OWLOntology>();
     protected RuleCreator ruleCreator;
     private OWLDataFactory owlDataFactory;

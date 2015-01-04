@@ -14,8 +14,6 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLProperty;
-import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
@@ -28,6 +26,9 @@ public class RuleCreatorQL extends RuleCreator {
 
 	protected final TermModel DOM_ATOM = new TermModel("dom");
 	protected final TermModel RAN_ATOM = new TermModel("ran");
+	protected final String X = "X";
+	protected final String Y = "Y";
+	protected final String ANNON_VAR = "_";
 
 	protected PredicateCodifier pc;
 
@@ -101,7 +102,7 @@ public class RuleCreatorQL extends RuleCreator {
 		else if (DLUtils.isExistential(c)) {
 			OWLObjectSomeValuesFrom b = (OWLObjectSomeValuesFrom) c;
 			OWLObjectPropertyExpression p = b.getProperty();
-			return trNeg(p, x, "_");
+			return trNeg(p, x, ANNON_VAR);
 		} else
 			return null;
 	}
@@ -130,11 +131,10 @@ public class RuleCreatorQL extends RuleCreator {
 	protected List<Rule> e() {
 		List<Rule> result = new ArrayList<Rule>();
 		String pVar = "P";
-		String x = "X";
-		result.add(new Rule(trExistential(pVar, x, false), trAtomic(pVar, x,
-				"_")));
-		result.add(new Rule(trExistential(pVar, x, true),
-				trAtomic(pVar, "_", x)));
+		result.add(new Rule(trExistential(pVar, X, false), trAtomic(pVar, X,
+				ANNON_VAR)));
+		result.add(new Rule(trExistential(pVar, X, true), trAtomic(pVar,
+				ANNON_VAR, X)));
 		write(result);
 		return result;
 	}
@@ -147,11 +147,10 @@ public class RuleCreatorQL extends RuleCreator {
 
 	protected List<Rule> s1(OWLClassExpression b1, OWLClassExpression b2) {
 		List<Rule> result = new ArrayList<Rule>();
-		String x = "X";
-		result.add(new Rule(tr(b2, x, false), tr(b1, x, false)));
-		result.add(new Rule(tr(b2, x, true), tr(b1, x, true), new NegativeTerm(
-				new TermModel[] { trNeg(b2, x) })));
-		result.add(new Rule(trNeg(b1, x), trNeg(b2, x)));
+		result.add(new Rule(tr(b2, X, false), tr(b1, X, false)));
+		result.add(new Rule(tr(b2, X, true), tr(b1, X, true), new NegativeTerm(
+				new TermModel[] { trNeg(b2, X) })));
+		result.add(new Rule(trNeg(b1, X), trNeg(b2, X)));
 		write(result);
 		return result;
 	}
@@ -165,38 +164,50 @@ public class RuleCreatorQL extends RuleCreator {
 	protected List<Rule> s2(OWLObjectPropertyExpression q1,
 			OWLObjectPropertyExpression q2) {
 		List<Rule> result = new ArrayList<Rule>();
-		String x = "X";
-		String y = "Y";
-		result.add(new Rule(tr(q2, x, y, false), tr(q1, x, y, false)));
-		result.add(new Rule(tr(q2, x, y, true), tr(q1, x, y, true),
-				new NegativeTerm(new TermModel[] { trNeg(q2, x, y) })));
-		result.add(new Rule(trNeg(q1, x, y), trNeg(q2, x, y)));
+		result.add(new Rule(tr(q2, X, Y, false), tr(q1, X, Y, false)));
+		result.add(new Rule(tr(q2, X, Y, true), tr(q1, X, Y, true),
+				new NegativeTerm(new TermModel[] { trNeg(q2, X, Y) })));
+		result.add(new Rule(trNeg(q1, X, Y), trNeg(q2, X, Y)));
 		write(result);
 		return result;
 	}
 
-	// (n1)
-	// already handled in OntologyProceeder
-
-	protected List<Rule> n2(OWLPropertyExpression property1,
-			OWLPropertyExpression property2) {
-		return null;
-		// TODO implement
+	protected List<Rule> n1(OWLClassExpression b1, OWLClassExpression b2) {
+		List<Rule> result = new ArrayList<Rule>();
+		result.add(new Rule(trNeg(b1, X), tr(b2, X, false)));
+		result.add(new Rule(trNeg(b2, X), tr(b1, X, false)));
+		write(result);
+		return result;
 	}
 
-	protected List<Rule> i1(OWLClass cls) {
-		return null;
-		// TODO implement
+	protected List<Rule> n2(OWLObjectPropertyExpression q1,
+			OWLObjectPropertyExpression q2) {
+		List<Rule> result = new ArrayList<Rule>();
+		result.add(new Rule(trNeg(q1, X, Y), tr(q2, X, Y, false)));
+		result.add(new Rule(trNeg(q2, X, Y), tr(q1, X, Y, false)));
+		write(result);
+		return result;
 	}
 
-	protected List<Rule> i2(OWLProperty prop) {
-		return null;
-		// TODO implement
+	protected List<Rule> i1(OWLClass c) {
+		List<Rule> result = new ArrayList<Rule>();
+		result.add(new Rule(trNeg(c, X)));
+		write(result);
+		return result;
 	}
 
-	private List<Rule> ir(OWLObjectProperty prop) {
-		return null;
-		// TODO implement
+	protected List<Rule> i2(OWLObjectProperty p) {
+		List<Rule> result = new ArrayList<Rule>();
+		result.add(new Rule(trNeg(p, X, Y)));
+		write(result);
+		return result;
+	}
+
+	protected List<Rule> ir(OWLObjectProperty p) {
+		List<Rule> result = new ArrayList<Rule>();
+		result.add(new Rule(trNeg(p, X, X)));
+		write(result);
+		return result;
 	}
 
 	public void write(List<Rule> rules) {

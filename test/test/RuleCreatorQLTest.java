@@ -3,10 +3,12 @@
  */
 package test;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import local.translate.CollectionsManager;
+import local.translate.OntologyLabel;
+import local.translate.ql.RuleCreatorQL;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -26,9 +28,6 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import xsb.Rule;
-import local.translate.CollectionsManager;
-import local.translate.OntologyLabel;
-import local.translate.ql.RuleCreatorQL;
 
 /**
  * @author nunocosta
@@ -62,6 +61,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 		B1 = df.getOWLObjectSomeValuesFrom(P1, A1);
 		B2 = df.getOWLObjectSomeValuesFrom(Q2, A2);
 	}
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -137,7 +137,10 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 	 */
 	@Test
 	public final void testI1() {
-		fail("Not yet implemented"); // TODO
+		List<Rule> rules = i1(A1);
+		String rule = String.format("n%s(X).", A1Lbl);
+		Assert.assertEquals("Should return the rule", rule, rules.get(0)
+				.toString());
 	}
 
 	/**
@@ -147,7 +150,39 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 	 */
 	@Test
 	public final void testI2() {
-		fail("Not yet implemented"); // TODO
+		List<Rule> rules = i2(P1);
+		String rule = String.format("n%s(X,Y).", P1Lbl);
+		Assert.assertEquals("Should return the rule", rule, rules.get(0)
+				.toString());
+	}
+
+	/**
+	 * Test method for
+	 * {@link local.translate.ql.RuleCreatorQL#i2(org.semanticweb.owlapi.model.OWLProperty)}
+	 * .
+	 */
+	@Test
+	public final void testIR() {
+		List<Rule> rules = ir(P1);
+		String rule = String.format("n%s(X,X).", P1Lbl);
+		Assert.assertEquals("Should return the rule", rule, rules.get(0)
+				.toString());
+	}
+
+	/**
+	 * Test method for
+	 * {@link local.translate.ql.RuleCreatorQL#n1(org.semanticweb.owlapi.model.OWLClassExpression, org.semanticweb.owlapi.model.OWLClassExpression)}
+	 * .
+	 */
+	@Test
+	public final void testN1() {
+		List<Rule> rules = n1(A1, A2);
+		String rule1 = String.format("n%s(X):-a%s(X).", A1Lbl, A2Lbl);
+		String rule2 = String.format("n%s(X):-a%s(X).", A2Lbl, A1Lbl);
+		Assert.assertEquals("Should return the first rule", rule1, rules.get(0)
+				.toString());
+		Assert.assertEquals("Should return the first rule", rule2, rules.get(1)
+				.toString());
 	}
 
 	/**
@@ -157,7 +192,21 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 	 */
 	@Test
 	public final void testN2() {
-		fail("Not yet implemented"); // TODO
+		List<Rule> rules = n2(P1, P2);
+		String rule1 = String.format("n%s(X,Y):-a%s(X,Y).", P1Lbl, P2Lbl);
+		String rule2 = String.format("n%s(X,Y):-a%s(X,Y).", P2Lbl, P1Lbl);
+		Assert.assertEquals("Should return the first rule", rule1, rules.get(0)
+				.toString());
+		Assert.assertEquals("Should return the first rule", rule2, rules.get(1)
+				.toString());
+
+		rules = n2(P1, Q2);
+		rule1 = String.format("n%s(X,Y):-a%s(Y,X).", P1Lbl, P2Lbl);
+		rule2 = String.format("n%s(Y,X):-a%s(X,Y).", P2Lbl, P1Lbl);
+		Assert.assertEquals("Should return the first rule", rule1, rules.get(0)
+				.toString());
+		Assert.assertEquals("Should return the first rule", rule2, rules.get(1)
+				.toString());
 	}
 
 	/**

@@ -66,7 +66,7 @@ public class Rules {
     }
 
     public static void recollectRules(boolean isRePrint) {
-        if (isRulesChanged) {
+        if (isRulesChanged && _currentTextArea!=null) {
             isRulesChanged = false;
             isRulesOntologyChanged = true;
             StringReader sr = new StringReader(_currentTextArea.getText());
@@ -137,7 +137,7 @@ public class Rules {
         return _rules;
     }
 
-    private static void resetRules() {
+    public static void resetRules() {
         _rules = new ArrayList<String>();
     }
 
