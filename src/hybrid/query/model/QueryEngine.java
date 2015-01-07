@@ -53,6 +53,7 @@ public class QueryEngine {
             return engine.deterministicGoal(detGoal, "[TM]");
         } catch (Exception e) {
             LOG.error(e);
+            e.printStackTrace();
             return null;
         }
     }

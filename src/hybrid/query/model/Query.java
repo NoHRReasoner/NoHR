@@ -78,6 +78,7 @@ public class Query {
         		translator = new Translate(ontology);
         	
         } catch (Exception e) {
+        	e.printStackTrace();
             LOG.error(e);
         }
     }

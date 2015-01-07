@@ -21,6 +21,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
@@ -56,10 +57,15 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 		P2 = df.getOWLObjectProperty(iri2);
 		P1Lbl = ol.getLabel(P1, 1);
 		P2Lbl = ol.getLabel(P2, 1);
+		c1 = df.getOWLNamedIndividual(IRI.generateDocumentIRI());
+		c2 = df.getOWLNamedIndividual(IRI.generateDocumentIRI());
+		c1Lbl = ol.getLabel(c1, 1);
+		c2Lbl = ol.getLabel(c2, 1);
 		Q1 = df.getOWLObjectInverseOf(P1);
 		Q2 = df.getOWLObjectInverseOf(P2);
 		B1 = df.getOWLObjectSomeValuesFrom(P1, A1);
 		B2 = df.getOWLObjectSomeValuesFrom(Q2, A2);
+		cm.setIsAnyDisjointStatement(true);
 	}
 
 	/**
@@ -85,6 +91,11 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 	private static String P1Lbl;
 
 	private static String P2Lbl;
+	private static OWLIndividual c1;
+	private static OWLIndividual c2;
+	private static String c1Lbl;
+	private static String c2Lbl;
+
 
 	public RuleCreatorQLTest() {
 		super(cm, ol);
@@ -222,6 +233,43 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 				A2Lbl, A1Lbl, A2Lbl);
 		String negativeRule = String.format("n%s(X):-n%s(X).", A1Lbl, A2Lbl);
 		checkTranslation(rule, doubledRule, negativeRule, rules);
+	}
+
+	/**
+	 * Test method for
+	 * {@link local.translate.ql.RuleCreatorQL#a1(org.semanticweb.owlapi.model.OWLClass org.semanticweb.owlapi.model.OWLIndividual)}
+	 * .
+	 */
+	@Test
+	public void testA1() {
+		List<Rule> rules = a1(A1, c1);
+		String rule = String.format("a%s(c%s).", A1Lbl, c1Lbl);
+		String doubledRule = String.format("d%s(c%s):-tnot(n%s(c%s)).", A1Lbl,
+				c1Lbl, A1Lbl, c1Lbl);
+		checkTranslation(rule, doubledRule, rules);
+	}
+	
+	/**
+	 * Test method for
+	 * {@link local.translate.ql.RuleCreatorQL#a2(org.semanticweb.owlapi.model.OWLObjectProperty, org.semanticweb.owlapi.model.OWLIndividual, org.semanticweb.owlapi.model.OWLIndividual)}
+	 * .
+	 */
+	@Test
+	public void testA2() {
+		List<Rule> rules = a2(P1, c1, c2);
+		String rule = String.format("a%s(c%s,c%s).", P1Lbl, c1Lbl, c2Lbl);
+		String doubledRule = String.format("d%s(c%s,c%s):-tnot(n%s(c%s,c%s)).",
+				P1Lbl, c1Lbl, c2Lbl, P1Lbl, c1Lbl, c2Lbl);
+		checkTranslation(rule, doubledRule, rules);
+	}
+	
+	private void checkTranslation(String expectedRule, String expectedDoubledRule,
+			List<Rule> actualRules) {
+		Assert.assertEquals("Should return the translated rule", expectedRule,
+				actualRules.get(0).toString());
+		Assert.assertEquals("Should return the translated doubled rule",
+				expectedDoubledRule, actualRules.get(1).toString());
+		
 	}
 
 	/**
