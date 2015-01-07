@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import local.translate.CollectionsManager;
-import local.translate.OntologyProceeder;
-import local.translate.RuleCreator;
+import local.translate.OntoProceeder;
 
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -20,14 +19,25 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
-public class OntologyProceederQL extends OntologyProceeder {
+
+public class OntologyProceederQL implements OntoProceeder {//extends OntologyProceeder {
+	
+	private CollectionsManager cm;
+	private RuleCreatorQL ruleCreator;
+	private List<OWLOntology> ontologies;
+
 
 	public OntologyProceederQL(CollectionsManager _cm,
-			RuleCreator _ruleCreator, OWLOntology ontology) {
-		super(_cm, _ruleCreator);
+			RuleCreatorQL _ruleCreator, OWLOntology ontology) {
+		this.cm = _cm;
+		this.ruleCreator = _ruleCreator;
+		ontologies = new ArrayList<OWLOntology>();
 		ontologies.add(ontology);
 	}
 
@@ -36,7 +46,6 @@ public class OntologyProceederQL extends OntologyProceeder {
 	 * 
 	 * @return false, for OWL QL.
 	 */
-	@Override
 	public boolean isOntologyNeedToBeNormalized(OWLOntology ontology) {
 		return false;
 	}
@@ -53,18 +62,25 @@ public class OntologyProceederQL extends OntologyProceeder {
 		return result;
 	}
 
-	@Override
+	private boolean hasDisjointStatement(OWLOntology ontology) {
+		return ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES, true)
+				+ ontology.getAxiomCount(AxiomType.DISJOINT_OBJECT_PROPERTIES,
+						true) > 0;
+	}
+	
 	public void proceed() throws ParserException {
 		RuleCreatorQL ruleCreatorQL = (RuleCreatorQL) ruleCreator;
 		ruleCreatorQL.e();
 		for (OWLOntology ontology : ontologies) {
+			cm.setIsAnyDisjointStatement(hasDisjointStatement(ontology));
 			for (OWLClassAssertionAxiom clsAssertion : ontology
 					.getAxioms(AxiomType.CLASS_ASSERTION))
-				ruleCreator.writeRuleA1(clsAssertion.getIndividual(),
-						(OWLClass) clsAssertion.getClassExpression());
+				ruleCreatorQL.a1((OWLClass) clsAssertion.getClassExpression(),
+					clsAssertion.getIndividual());
 			for (OWLObjectPropertyAssertionAxiom propAssertion : ontology
 					.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION))
-				ruleCreator.writeRuleA2(propAssertion);
+				ruleCreatorQL.a2((OWLObjectProperty) propAssertion.getProperty(),
+				propAssertion.getSubject(), propAssertion.getObject());
 			for (OWLSubClassOfAxiom subClsAxiom : ontology
 					.getAxioms(AxiomType.SUBCLASS_OF))
 				ruleCreatorQL.s1(subClsAxiom);
@@ -73,7 +89,6 @@ public class OntologyProceederQL extends OntologyProceeder {
 				ruleCreatorQL.s2(subPropAxiom);
 			for (OWLDisjointClassesAxiom disjClsAxiom : ontology
 					.getAxioms(AxiomType.DISJOINT_CLASSES)) {
-				cm.setIsAnyDisjointStatement(true);
 				for (OWLDisjointClassesAxiom disjWithAxiom : disjClsAxiom
 						.asPairwiseAxioms()) {
 					List<OWLClassExpression> cls = disjWithAxiom
@@ -83,7 +98,6 @@ public class OntologyProceederQL extends OntologyProceeder {
 			}
 			for (OWLDisjointObjectPropertiesAxiom disjPropsAxiom : ontology
 					.getAxioms(AxiomType.DISJOINT_OBJECT_PROPERTIES)) {
-				cm.setIsAnyDisjointStatement(true);
 				Set<OWLObjectPropertyExpression> props = disjPropsAxiom
 						.getProperties();
 				Iterator<OWLObjectPropertyExpression> propsIt1 = props
@@ -112,5 +126,17 @@ public class OntologyProceederQL extends OntologyProceeder {
 		List<OWLObjectProperty> result = new ArrayList<OWLObjectProperty>();
 		// TODO implement
 		return result;
+	}
+
+	@Override
+	public void setOntologiesToProceed(List<OWLOntology> ontologies) {
+		this.ontologies = ontologies;
+	}
+
+	@Override
+	public OWLOntology normalizeOntology(OWLOntology ontology,
+			OWLOntologyManager owlOntologyManager)
+			throws OWLOntologyCreationException, OWLOntologyStorageException {
+		return ontology;
 	}
 }

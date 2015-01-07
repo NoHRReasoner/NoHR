@@ -64,7 +64,11 @@ public class Translate {
     /** The reasoner. */
     private OWLReasoner reasoner;
 
-    /** The collections manager. */
+    public CollectionsManager getCollectionsManager() {
+		return collectionsManager;
+	}
+
+	/** The collections manager. */
     public static CollectionsManager collectionsManager;
 
     /** The prolog commands. */
@@ -96,7 +100,7 @@ public class Translate {
     /**
      * all processing about ontology
      */
-    private OntologyProceeder ontologyProceeder;
+    private OntoProceeder ontologyProceeder;
 
 	private boolean isOwl2elProfile;
 
@@ -345,11 +349,11 @@ public class Translate {
         query = new Query(cm);
         switch (getTranslationAlgorithm()) {
         case DL_LITE_R:
-        	ruleCreator = new RuleCreatorQL(cm, ontologyLabel);
-        	ontologyProceeder = new OntologyProceederQL(cm, ruleCreator, ontology);
+        	RuleCreatorQL ruleCreatorQL = new RuleCreatorQL(cm, ontologyLabel);
+        	ontologyProceeder = new OntologyProceederQL(cm, ruleCreatorQL, ontology);
         	break;
         case EL:
-        	ruleCreator = new RuleCreator(cm, ontologyLabel);
+        	RuleCreator ruleCreator = new RuleCreator(cm, ontologyLabel);
         	ontologyProceeder = new OntologyProceeder(cm, ruleCreator);
         }
         checkAndPartiallyNormalizeOntology();
