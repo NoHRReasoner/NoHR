@@ -105,6 +105,29 @@ public class QueryTest {
 		kb.addRule("A3(X):-A1(X).");
 		assertInconsistent("A3(X)");
 	}
+	
+	/**
+	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
+	 * 
+	 * @throws OWLOntologyCreationException
+	 */
+	@Test
+	public final void unsatisfiableRoles() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLObjectProperty P1 = kb.getRole("P1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLIndividual a = kb.getIndividual("a");
+		OWLIndividual b = kb.getIndividual("b");
+		kb.addAssertion(P1, a, b);
+		kb.addSubsumption(P1, P2);
+		kb.addSubsumption(P2, P1);
+		kb.addSubsumption(P3, P2);
+		kb.addDisjunction(P1, P2);
+		kb.addRule("P3(X,Y):-P1(X,Y).");
+		assertInconsistent("P3(X,Y)");
+	}
+
 
 	/**
 	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.

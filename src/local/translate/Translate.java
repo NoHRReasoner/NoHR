@@ -252,11 +252,14 @@ public class Translate {
         for (String str : prologCommands) {
             writer.write(str + "\n");
         }
-        for (String str : tabled) {
-            writer.write(":- table " + str + ".\n");
-        }
+        writer.write(":- hilog dom.\n");
+        writer.write(":- hilog ran.\n");
         for (String str : cm.getHilogPredicates()) {
         	writer.write(":- hilog " + str + ".\n");
+        }
+        writer.write(":- table apply/3.\n");
+        for (String str : tabled) {
+            writer.write(":- table " + str + ".\n");
         }
         log.info("ontology count: " + cm.getTranslatedOntologies().size());
         for (String str : cm.getTranslatedOntologies()) {
