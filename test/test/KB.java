@@ -1,5 +1,8 @@
 package test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import local.translate.CollectionsManager;
 import local.translate.OntologyLabel;
 import hybrid.query.views.Rules;
@@ -28,7 +31,13 @@ class KB {
 	private OWLOntology ont;
 
 	private OntologyLabel ol;
+	
+	private Map<String, OWLClass> concepts;
+	
+	private Map<String, OWLObjectProperty> roles;
 
+	private Map<String, OWLIndividual> individuals;
+	
 	KB() throws OWLOntologyCreationException {
 		om = OWLManager.createOWLOntologyManager();
 		df = om.getOWLDataFactory();
@@ -36,6 +45,9 @@ class KB {
 		OWLAnnotationProperty lblAnnotProp = om.getOWLDataFactory()
 				.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
 		ol = new OntologyLabel(om.createOntology(), lblAnnotProp, new CollectionsManager());
+		concepts = new HashMap<String, OWLClass>();
+		roles = new HashMap<String, OWLObjectProperty>();
+		individuals = new HashMap<String, OWLIndividual>();
 	}
 	
 	String getLabel(OWLEntity e) {
@@ -75,8 +87,12 @@ class KB {
 	}
 
 	OWLClass getConcept(String name) {
-		OWLClass concept = df.getOWLClass(getEntityIRI(name));
-		om.addAxiom(ont, df.getOWLDeclarationAxiom(concept));
+		OWLClass concept = concepts.get(name);
+		if (concept == null) {
+			concept = df.getOWLClass(getEntityIRI(name));
+			om.addAxiom(ont, df.getOWLDeclarationAxiom(concept));
+			concepts.put(name, concept);
+		}
 		return concept;
 	}
 
@@ -90,7 +106,11 @@ class KB {
 	}
 
 	OWLIndividual getIndividual(String name) {
-		OWLIndividual individual = df.getOWLNamedIndividual(getEntityIRI(name));
+		OWLIndividual individual = individuals.get(name);
+		if (individual == null) {
+			individual = df.getOWLNamedIndividual(getEntityIRI(name));
+			individuals.put(name, individual);
+		}
 		return individual;
 	}
 
@@ -103,8 +123,12 @@ class KB {
 	}
 
 	OWLObjectProperty getRole(String name) {
-		OWLObjectProperty role = df.getOWLObjectProperty(getEntityIRI(name));
-		om.addAxiom(ont, df.getOWLDeclarationAxiom(role));
+		OWLObjectProperty role = roles.get(name);
+		if (role == null) {
+			role = df.getOWLObjectProperty(getEntityIRI(name));
+			om.addAxiom(ont, df.getOWLDeclarationAxiom(role));
+			roles.put(name, role);
+		}
 		return role;
 	}
 
@@ -120,4 +144,15 @@ class KB {
 	String getLabel(String rule) {
 		return ol.getLabel(rule, 1);
 	}
+
+	OWLObjectSomeValuesFrom getExistential(String roleName) {
+		OWLObjectProperty role = getRole(roleName);
+		return df.getOWLObjectSomeValuesFrom(role, df.getOWLThing());
+	}
+
+	public OWLObjectPropertyExpression getInverse(String roleName) {
+		OWLObjectProperty role = getRole(roleName);
+		return df.getOWLObjectInverseOf(role);
+	}
+	
 }

@@ -52,18 +52,30 @@ public class TranslateTest {
 		OWLClass a2 = kb.getConcept("A2");
 		OWLClass a3 = kb.getConcept("A3");
 		OWLClass a4 = kb.getConcept("A4");
+		OWLClass a5 = kb.getConcept("A5");
+		OWLClass a6 = kb.getConcept("A6");
+		OWLClass a7 = kb.getConcept("A7");
 		OWLObjectProperty p1 = kb.getRole("P1");
 		OWLObjectProperty p2 = kb.getRole("P2");
 		OWLObjectProperty p3 = kb.getRole("P3");
 		OWLObjectProperty p4 = kb.getRole("P4");
+		OWLObjectProperty p5 = kb.getRole("P5");
+		OWLObjectProperty p6 = kb.getRole("P6");
+		OWLObjectProperty p7 = kb.getRole("P7");
 		String a1Lbl = kb.getLabel(a1);
 		String a2Lbl = kb.getLabel(a2);
 		String a3Lbl = kb.getLabel(a3);
 		String a4Lbl = kb.getLabel(a4);
+		String a5Lbl = kb.getLabel(a5);
+		String a6Lbl = kb.getLabel(a6);
+		String a7Lbl = kb.getLabel(a7);
 		String p1Lbl = kb.getLabel(p1);
 		String p2Lbl = kb.getLabel(p2);
 		String p3Lbl = kb.getLabel(p3);
 		String p4Lbl = kb.getLabel(p4);
+		String p5Lbl = kb.getLabel(p5);
+		String p6Lbl = kb.getLabel(p6);
+		String p7Lbl = kb.getLabel(p7);
 		String c1Lbl = kb.getLabel(c1);
 		String c2Lbl = kb.getLabel(c2);
 		kb.addAssertion(a1, c1);
@@ -72,6 +84,16 @@ public class TranslateTest {
 		kb.addSubsumption(p1, p2);
 		kb.addDisjunction(a3, a4);
 		kb.addDisjunction(p3, p4);
+		
+		kb.addSubsumption(a5, a6);
+		kb.addSubsumption(a6, a5);
+		kb.addSubsumption(a7, a6);
+		kb.addDisjunction(a5, a6);
+
+		kb.addSubsumption(p5, p6);
+		kb.addSubsumption(p6, p5);
+		kb.addSubsumption(p7, p6);
+		kb.addDisjunction(p5, p6);
 
 		ArrayList<String> rules = new ArrayList<String>();
 		rules.add("q1(X):-q2(X).");
@@ -101,6 +123,15 @@ public class TranslateTest {
 		assertHasRule(tr, "n%s(X):-a%s(X).", true, a3Lbl, a4Lbl);
 		assertHasRule(tr, "n%s(X,Y):-a%s(X,Y).", true, p4Lbl, p3Lbl);
 		assertHasRule(tr, "n%s(X,Y):-a%s(X,Y).", true, p3Lbl, p4Lbl);
+		
+		assertHasRule(tr, "n%s(X).", true, a5Lbl);
+		assertHasRule(tr, "n%s(X).", true, a6Lbl);
+		assertHasRule(tr, "n%s(X).", true, a7Lbl);
+
+		assertHasRule(tr, "n%s(X,Y).", true, p5Lbl);
+		assertHasRule(tr, "n%s(X,Y).", true, p6Lbl);
+		assertHasRule(tr, "n%s(X,Y).", true, p7Lbl);
+
 
 		CollectionsManager cm = tr.getCollectionsManager();
 

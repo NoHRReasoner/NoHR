@@ -84,6 +84,27 @@ public class QueryTest {
 		kb.addDisjunction(A2, A3);
 		assertInconsistent("A3(X)");
 	}
+	
+	/**
+	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
+	 * 
+	 * @throws OWLOntologyCreationException
+	 */
+	@Test
+	public final void unsatisfiableConcepts() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLClass A3 = kb.getConcept("A3");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addSubsumption(A1, A2);
+		kb.addSubsumption(A2, A1);
+		kb.addSubsumption(A3, A2);
+		kb.addDisjunction(A1, A2);
+		kb.addRule("A3(X):-A1(X).");
+		assertInconsistent("A3(X)");
+	}
 
 	/**
 	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
