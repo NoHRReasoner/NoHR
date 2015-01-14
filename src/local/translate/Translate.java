@@ -344,23 +344,26 @@ public class Translate {
     /**
      * Inits the collections.
      */
-    private void initCollections() throws OWLOntologyCreationException, OWLOntologyStorageException {
-        _ontologyLabel = ontologyManager.getOWLDataFactory().getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
-        cm = new CollectionsManager();
-        collectionsManager = cm;
-        ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
-        query = new Query(cm);
-        switch (getTranslationAlgorithm()) {
-        case DL_LITE_R:
-        	RuleCreatorQL ruleCreatorQL = new RuleCreatorQL(cm, ontologyLabel);
-        	ontologyProceeder = new OntologyProceederQL(cm, ruleCreatorQL, ontology);
-        	break;
-        case EL:
-        	RuleCreator ruleCreator = new RuleCreator(cm, ontologyLabel);
-        	ontologyProceeder = new OntologyProceeder(cm, ruleCreator);
-        }
-        checkAndPartiallyNormalizeOntology();
-    }
+	private void initCollections() throws OWLOntologyCreationException,
+			OWLOntologyStorageException {
+		_ontologyLabel = ontologyManager.getOWLDataFactory()
+				.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+		cm = new CollectionsManager();
+		collectionsManager = cm;
+		ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
+		query = new Query(cm);
+		switch (getTranslationAlgorithm()) {
+		case DL_LITE_R:
+			RuleCreatorQL ruleCreatorQL = new RuleCreatorQL(cm, ontologyLabel);
+			ontologyProceeder = new OntologyProceederQL(cm, ruleCreatorQL,
+					ontology, ontologyManager.getOWLDataFactory());
+			break;
+		case EL:
+			RuleCreator ruleCreator = new RuleCreator(cm, ontologyLabel);
+			ontologyProceeder = new OntologyProceeder(cm, ruleCreator);
+		}
+		checkAndPartiallyNormalizeOntology();
+	}
     
     private void checkAndPartiallyNormalizeOntology() throws OWLOntologyCreationException, OWLOntologyStorageException {
         if (ontologyProceeder.isOntologyNeedToBeNormalized(ontology)) {

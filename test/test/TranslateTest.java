@@ -55,6 +55,8 @@ public class TranslateTest {
 		OWLClass a5 = kb.getConcept("A5");
 		OWLClass a6 = kb.getConcept("A6");
 		OWLClass a7 = kb.getConcept("A7");
+		OWLClass a8 = kb.getConcept("A8");
+		OWLClass a9 = kb.getConcept("A9");
 		OWLObjectProperty p1 = kb.getRole("P1");
 		OWLObjectProperty p2 = kb.getRole("P2");
 		OWLObjectProperty p3 = kb.getRole("P3");
@@ -62,6 +64,10 @@ public class TranslateTest {
 		OWLObjectProperty p5 = kb.getRole("P5");
 		OWLObjectProperty p6 = kb.getRole("P6");
 		OWLObjectProperty p7 = kb.getRole("P7");
+		OWLObjectProperty p8 = kb.getRole("P8");
+		OWLObjectProperty p9 = kb.getRole("P9");
+		OWLObjectProperty p10 = kb.getRole("P10");
+		OWLObjectProperty p11 = kb.getRole("P11");
 		String a1Lbl = kb.getLabel(a1);
 		String a2Lbl = kb.getLabel(a2);
 		String a3Lbl = kb.getLabel(a3);
@@ -76,6 +82,8 @@ public class TranslateTest {
 		String p5Lbl = kb.getLabel(p5);
 		String p6Lbl = kb.getLabel(p6);
 		String p7Lbl = kb.getLabel(p7);
+		String p8Lbl = kb.getLabel(p8);
+		String p9Lbl = kb.getLabel(p9);
 		String c1Lbl = kb.getLabel(c1);
 		String c2Lbl = kb.getLabel(c2);
 		kb.addAssertion(a1, c1);
@@ -94,6 +102,14 @@ public class TranslateTest {
 		kb.addSubsumption(p6, p5);
 		kb.addSubsumption(p7, p6);
 		kb.addDisjunction(p5, p6);
+		
+		kb.addSubsumption(kb.getExistential(p8), a8);
+		kb.addSubsumption(kb.getExistential(kb.getInverse(p8)), a9);
+		kb.addDisjunction(a8, a9);
+		
+		kb.addSubsumption(p9, p10);
+		kb.addSubsumption(kb.getInverse(p9), p11);
+		kb.addDisjunction(p10, p11);
 
 		ArrayList<String> rules = new ArrayList<String>();
 		rules.add("q1(X):-q2(X).");
@@ -131,6 +147,10 @@ public class TranslateTest {
 		assertHasRule(tr, "n%s(X,Y).", true, p5Lbl);
 		assertHasRule(tr, "n%s(X,Y).", true, p6Lbl);
 		assertHasRule(tr, "n%s(X,Y).", true, p7Lbl);
+		
+		assertHasRule(tr, "n%s(X,X).", true, p8Lbl);
+		
+		assertHasRule(tr, "n%s(X,X).", true, p9Lbl);
 
 
 		CollectionsManager cm = tr.getCollectionsManager();

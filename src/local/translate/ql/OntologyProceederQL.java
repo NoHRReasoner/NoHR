@@ -12,6 +12,7 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -25,21 +26,29 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
-
 public class OntologyProceederQL implements OntoProceeder {
-	
+
 	private CollectionsManager cm;
-	private RuleCreatorQL ruleCreator;
-	private OWLOntology ontology;
+
 	private TBoxGraph graph;
 
+	private OWLOntology ontology;
+
+	private RuleCreatorQL ruleCreator;
 
 	public OntologyProceederQL(CollectionsManager _cm,
-			RuleCreatorQL _ruleCreator, OWLOntology ontology) {
+			RuleCreatorQL _ruleCreator, OWLOntology ontology,
+			OWLDataFactory dataFactory) {
 		this.cm = _cm;
 		this.ruleCreator = _ruleCreator;
 		this.ontology = ontology;
-		this.graph = new BasicTBoxGraph(ontology);
+		this.graph = new BasicTBoxGraph(ontology, dataFactory);
+	}
+
+	private boolean hasDisjointStatement(OWLOntology ontology) {
+		return ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES, true)
+				+ ontology.getAxiomCount(AxiomType.DISJOINT_OBJECT_PROPERTIES,
+						true) > 0;
 	}
 
 	/**
@@ -51,12 +60,13 @@ public class OntologyProceederQL implements OntoProceeder {
 		return false;
 	}
 
-	private boolean hasDisjointStatement(OWLOntology ontology) {
-		return ontology.getAxiomCount(AxiomType.DISJOINT_CLASSES, true)
-				+ ontology.getAxiomCount(AxiomType.DISJOINT_OBJECT_PROPERTIES,
-						true) > 0;
+	@Override
+	public OWLOntology normalizeOntology(OWLOntology ontology,
+			OWLOntologyManager owlOntologyManager)
+			throws OWLOntologyCreationException, OWLOntologyStorageException {
+		return ontology;
 	}
-	
+
 	public void proceed() throws ParserException {
 		RuleCreatorQL ruleCreatorQL = (RuleCreatorQL) ruleCreator;
 		ruleCreatorQL.e();
@@ -104,20 +114,13 @@ public class OntologyProceederQL implements OntoProceeder {
 				ruleCreatorQL.i1((OWLClass) e);
 			else if (e instanceof OWLObjectProperty)
 				ruleCreatorQL.i2((OWLObjectProperty) e);
-		// for (OWLObjectProperty p : graph.getIrreflexiveRoles())
-		// ruleCreatorQL.ir(p);
+		for (OWLObjectProperty p : graph.getIrreflexiveRoles())
+			ruleCreatorQL.ir(p);
 
 	}
 
 	@Override
 	public void setOntologiesToProceed(List<OWLOntology> ontologies) {
 		this.ontology = ontologies.get(0);
-	}
-
-	@Override
-	public OWLOntology normalizeOntology(OWLOntology ontology,
-			OWLOntologyManager owlOntologyManager)
-			throws OWLOntologyCreationException, OWLOntologyStorageException {
-		return ontology;
 	}
 }

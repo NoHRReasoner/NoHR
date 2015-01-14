@@ -57,7 +57,8 @@ public class TBoxGraphTest {
 		kb.addSubsumption(a[3], a[2]);
 		Set<OWLClassExpression> expectedAncestors = set(a[1], a[2], a[3]);
 		// Test
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology());
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
 		Set<OWLClassExpression> ancestors = graph.getAncestors(a[0]);
 		Assert.assertEquals(expectedAncestors, ancestors);
 	}
@@ -81,7 +82,8 @@ public class TBoxGraphTest {
 		kb.addSubsumption(a[0], a[3]);
 		Set<OWLClassExpression> expectedAncestors = set(a);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology());
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
 		Set<OWLClassExpression> ancestors;
 		// Tests
 		for (int i = 0; i < 4; i++) {
@@ -110,7 +112,8 @@ public class TBoxGraphTest {
 		kb.addSubsumption(a[4], kb.getExistential(p[1]));
 		kb.addSubsumption(kb.getExistential(p[2]), kb.getExistential(p[3]));
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology());
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
 		// Test1
 		Set<OWLClassExpression> predecessors = graph.getPredecessors(a[2]);
 		Assert.assertEquals(set(a[0], a[1]), predecessors);
@@ -157,7 +160,8 @@ public class TBoxGraphTest {
 		Set<OWLObjectPropertyExpression> expectedAncestors = set(p[1], p[2],
 				p[3]);
 		// Test
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology());
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
 		Set<OWLObjectPropertyExpression> ancestors = graph.getAncestors(p[0]);
 		Assert.assertEquals(expectedAncestors, ancestors);
 	}
@@ -181,7 +185,8 @@ public class TBoxGraphTest {
 		kb.addSubsumption(p[0], p[3]);
 		Set<OWLObjectPropertyExpression> expectedAncestors = set(p);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology());
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
 		Set<OWLObjectPropertyExpression> ancestors;
 		// Tests
 		for (int i = 0; i < 4; i++) {
@@ -210,7 +215,8 @@ public class TBoxGraphTest {
 		kb.addSubsumption(kb.getInverse((OWLObjectProperty) p[7]),
 				kb.getInverse((OWLObjectProperty) p[8]));
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology());
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
 		// Test1
 		Set<OWLObjectPropertyExpression> predecessors = graph
 				.getPredecessors(p[2]);
@@ -252,14 +258,54 @@ public class TBoxGraphTest {
 	public void tearDown() throws Exception {
 	}
 
-//	/**
-//	 * Test method for
-//	 * {@link local.translate.ql.BasicTBoxGraph#getIrreflexiveRoles()}.
-//	 */
-//	@Test
-//	public final void testGetIrreflexiveRoles() {
-//		fail("Not yet implemented"); // TODO
-//	}
+	/**
+	 * Test method for
+	 * {@link local.translate.ql.BasicTBoxGraph#getIrreflexiveRoles()}.
+	 * 
+	 * @throws OWLOntologyCreationException
+	 */
+	@Test
+	public final void irreflexiveRolesFromRoleDisjunction()
+			throws OWLOntologyCreationException {
+		KB kb = new KB();
+		OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
+		kb.addSubsumption(p[0], p[1]);
+		kb.addSubsumption(kb.getInverse((OWLObjectProperty) p[0]), p[2]);
+		kb.addDisjunction(p[1], p[2]);
+		Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
+		// TestInit
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
+		Set<OWLObjectProperty> irreflexiveRoles = graph.getIrreflexiveRoles();
+		// Test
+		Assert.assertEquals(expectedIrreflexiveRoles, irreflexiveRoles);
+	}
+
+	/**
+	 * Test method for
+	 * {@link local.translate.ql.BasicTBoxGraph#getIrreflexiveRoles()}.
+	 * 
+	 * @throws OWLOntologyCreationException
+	 */
+	@Test
+	public final void irreflexiveRolesFromConceptDisjunction()
+			throws OWLOntologyCreationException {
+		KB kb = new KB();
+		OWLClassExpression[] a = createAtomicConcepts(kb, 2);
+		OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 1);
+		kb.addSubsumption(kb.getExistential(p[0]), a[0]);
+		kb.addSubsumption(
+				kb.getExistential(kb.getInverse((OWLObjectProperty) p[0])),
+				a[1]);
+		kb.addDisjunction(a[0], a[1]);
+		Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
+		// TestInit
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
+		Set<OWLObjectProperty> irreflexiveRoles = graph.getIrreflexiveRoles();
+		// Test
+		Assert.assertEquals(expectedIrreflexiveRoles, irreflexiveRoles);
+	}
 
 	/**
 	 * Test method for
@@ -272,8 +318,8 @@ public class TBoxGraphTest {
 			throws OWLOntologyCreationException {
 		// Data
 		KB kb = new KB();
-		OWLClassExpression[] a = createAtomicConcepts(kb, 3);
-		OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 3);
+		OWLClassExpression[] a = createAtomicConcepts(kb, 4);
+		OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
 		kb.addSubsumption(a[0], a[1]);
 		kb.addSubsumption(a[0], a[2]);
 		kb.addDisjunction(a[1], a[2]);
@@ -283,7 +329,8 @@ public class TBoxGraphTest {
 		Set<OWLEntity> expectedUnsatisfiableEntities = set((OWLEntity) a[0],
 				(OWLEntity) p[0]);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology());
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
 		Set<OWLEntity> unsatisfiableEntities = graph.getUnsatisfiableEntities();
 		// Test
 		Assert.assertEquals(expectedUnsatisfiableEntities,
@@ -315,7 +362,8 @@ public class TBoxGraphTest {
 				(OWLEntity) a[1], (OWLEntity) a[2], (OWLEntity) p[0],
 				(OWLEntity) p[1], (OWLEntity) p[2]);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology());
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+				kb.getDataFactory());
 		Set<OWLEntity> unsatisfiableEntities = graph.getUnsatisfiableEntities();
 		// Test
 		Assert.assertEquals(expectedUnsatisfiableEntities,

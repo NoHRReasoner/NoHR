@@ -9,6 +9,7 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -23,18 +24,23 @@ public class BasicTBoxGraph implements TBoxGraph {
 
 	private GraphClosure<OWLClassExpression> conceptsClosure;
 
-	private OWLOntology ontology;
-
 	private Map<OWLClassExpression, Set<OWLClassExpression>> conceptsPredecessors;
 
-	private Map<OWLObjectPropertyExpression, Set<OWLObjectPropertyExpression>> rolesPredecessor;
+	private OWLDataFactory dataFactory;
+
+	private Set<OWLObjectProperty> irreflexiveRoles;
+
+	private OWLOntology ontology;
 
 	private GraphClosure<OWLObjectPropertyExpression> rolesClosure;
 
+	private Map<OWLObjectPropertyExpression, Set<OWLObjectPropertyExpression>> rolesPredecessor;
+
 	private Set<OWLEntity> unsatisfiableEntities;
 
-	public BasicTBoxGraph(OWLOntology ontology) {
+	public BasicTBoxGraph(OWLOntology ontology, OWLDataFactory dataFactory) {
 		this.ontology = ontology;
+		this.dataFactory = dataFactory;
 		this.conceptsPredecessors = new HashMap<OWLClassExpression, Set<OWLClassExpression>>();
 		this.rolesPredecessor = new HashMap<OWLObjectPropertyExpression, Set<OWLObjectPropertyExpression>>();
 		for (OWLSubClassOfAxiom axiom : ontology
@@ -61,6 +67,7 @@ public class BasicTBoxGraph implements TBoxGraph {
 				conceptsPredecessors);
 		this.rolesClosure = new BasicLazyGraphClosure<OWLObjectPropertyExpression>(
 				rolesPredecessor);
+		this.irreflexiveRoles = null;
 		this.unsatisfiableEntities = null;
 	}
 
@@ -88,6 +95,25 @@ public class BasicTBoxGraph implements TBoxGraph {
 		return result;
 	}
 
+	private Set<OWLObjectProperty> conceptInverseIntersection(
+			Set<OWLClassExpression> s1, Set<OWLClassExpression> s2) {
+		Set<OWLObjectProperty> result = new HashSet<OWLObjectProperty>();
+		for (OWLClassExpression v : s1) {
+			if (DLUtils.isExistential(v)) {
+				OWLObjectSomeValuesFrom exist = (OWLObjectSomeValuesFrom) v;
+				OWLObjectPropertyExpression prop = exist.getProperty();
+				OWLObjectPropertyExpression invProp = prop.getInverseProperty()
+						.getSimplified();
+				OWLObjectSomeValuesFrom invExist = dataFactory
+						.getOWLObjectSomeValuesFrom(invProp,
+								dataFactory.getOWLThing());
+				if (s2.contains(invExist))
+					result.add(prop.getNamedProperty());
+			}
+		}
+		return result;
+	}
+
 	public Set<OWLClassExpression> getAncestors(OWLClassExpression v) {
 		return conceptsClosure.getAncestors(v);
 	}
@@ -98,9 +124,53 @@ public class BasicTBoxGraph implements TBoxGraph {
 	}
 
 	@Override
-	public List<OWLObjectProperty> getIrreflexiveRoles() {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<OWLObjectProperty> getIrreflexiveRoles() {
+		if (irreflexiveRoles != null)
+			return irreflexiveRoles;
+		irreflexiveRoles = new HashSet<OWLObjectProperty>();
+		for (OWLDisjointClassesAxiom axiom : ontology
+				.getAxioms(AxiomType.DISJOINT_CLASSES))
+			for (OWLDisjointClassesAxiom disjoint : axiom.asPairwiseAxioms()) {
+				List<OWLClassExpression> concepts = disjoint
+						.getClassExpressionsAsList();
+				OWLClassExpression c1 = concepts.get(0);
+				OWLClassExpression c2 = concepts.get(1);
+				Set<OWLClassExpression> c1Ancs = getAncestors(c1);
+				Set<OWLClassExpression> c2Ancs = getAncestors(c2);
+				if (c1Ancs == null)
+					c1Ancs = new HashSet<OWLClassExpression>();
+				if (c2Ancs == null)
+					c2Ancs = new HashSet<OWLClassExpression>();
+				c1Ancs.add(c1);
+				c2Ancs.add(c2);
+				Set<OWLObjectProperty> intersection = conceptInverseIntersection(
+						c1Ancs, c2Ancs);
+				irreflexiveRoles.addAll(intersection);
+			}
+		for (OWLDisjointObjectPropertiesAxiom disjPropsAxiom : ontology
+				.getAxioms(AxiomType.DISJOINT_OBJECT_PROPERTIES)) {
+			Object[] props = disjPropsAxiom.getProperties().toArray();
+			for (int i = 0; i < props.length; i++) {
+				OWLObjectPropertyExpression q1 = (OWLObjectPropertyExpression) props[i];
+				for (int j = 0; j < props.length; j++) {
+					if (i != j) {
+						OWLObjectPropertyExpression q2 = (OWLObjectPropertyExpression) props[j];
+						Set<OWLObjectPropertyExpression> q1Ancs = getAncestors(q1);
+						Set<OWLObjectPropertyExpression> q2Ancs = getAncestors(q2);
+						if (q1Ancs == null)
+							q1Ancs = new HashSet<OWLObjectPropertyExpression>();
+						if (q2Ancs == null)
+							q2Ancs = new HashSet<OWLObjectPropertyExpression>();
+						q1Ancs.add(q1);
+						q2Ancs.add(q2);
+						Set<OWLObjectProperty> intersection = roleInverseIntersection(
+								q1Ancs, q2Ancs);
+						irreflexiveRoles.addAll(intersection);
+					}
+				}
+			}
+		}
+		return irreflexiveRoles;
 	}
 
 	public Set<OWLClassExpression> getPredecessors(OWLClassExpression v) {
@@ -171,6 +241,16 @@ public class BasicTBoxGraph implements TBoxGraph {
 			s2.retainAll(s1);
 			return s2;
 		}
+	}
+
+	private Set<OWLObjectProperty> roleInverseIntersection(
+			Set<OWLObjectPropertyExpression> s1,
+			Set<OWLObjectPropertyExpression> s2) {
+		Set<OWLObjectProperty> result = new HashSet<OWLObjectProperty>();
+		for (OWLObjectPropertyExpression v : s1)
+			if (s2.contains(v.getInverseProperty().getSimplified()))
+				result.add(v.getNamedProperty());
+		return result;
 	}
 
 }

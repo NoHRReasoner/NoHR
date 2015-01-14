@@ -84,50 +84,6 @@ public class QueryTest {
 		kb.addDisjunction(A2, A3);
 		assertInconsistent("A3(X)");
 	}
-	
-	/**
-	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
-	 * 
-	 * @throws OWLOntologyCreationException
-	 */
-	@Test
-	public final void unsatisfiableConcepts() throws OWLOntologyCreationException {
-		kb.clear();
-		OWLClass A1 = kb.getConcept("A1");
-		OWLClass A2 = kb.getConcept("A2");
-		OWLClass A3 = kb.getConcept("A3");
-		OWLIndividual a = kb.getIndividual("a");
-		kb.addAssertion(A1, a);
-		kb.addSubsumption(A1, A2);
-		kb.addSubsumption(A2, A1);
-		kb.addSubsumption(A3, A2);
-		kb.addDisjunction(A1, A2);
-		kb.addRule("A3(X):-A1(X).");
-		assertInconsistent("A3(X)");
-	}
-	
-	/**
-	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
-	 * 
-	 * @throws OWLOntologyCreationException
-	 */
-	@Test
-	public final void unsatisfiableRoles() throws OWLOntologyCreationException {
-		kb.clear();
-		OWLObjectProperty P1 = kb.getRole("P1");
-		OWLObjectProperty P2 = kb.getRole("P2");
-		OWLObjectProperty P3 = kb.getRole("P3");
-		OWLIndividual a = kb.getIndividual("a");
-		OWLIndividual b = kb.getIndividual("b");
-		kb.addAssertion(P1, a, b);
-		kb.addSubsumption(P1, P2);
-		kb.addSubsumption(P2, P1);
-		kb.addSubsumption(P3, P2);
-		kb.addDisjunction(P1, P2);
-		kb.addRule("P3(X,Y):-P1(X,Y).");
-		assertInconsistent("P3(X,Y)");
-	}
-
 
 	/**
 	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
@@ -151,6 +107,8 @@ public class QueryTest {
 		kb.addDisjunction(A, kb.getExistential(P2));
 		assertInconsistent("P2(X,Y)");
 	}
+
+	// TODO test rules (are the rule negative predicates added for tabling?)
 
 	/**
 	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
@@ -278,6 +236,46 @@ public class QueryTest {
 	}
 
 	/**
+	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
+	 * 
+	 * @throws OWLOntologyCreationException
+	 */
+	@Test
+	public final void irreflexiveRolesFromConceptDisjunction()
+			throws OWLOntologyCreationException {
+		kb.clear();
+		OWLObjectProperty P1 = kb.getRole("P1");
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(P1, a, a);
+		kb.addSubsumption(kb.getExistential(P1), A1);
+		kb.addSubsumption(kb.getExistential(kb.getInverse(P1)), A2);
+		kb.addDisjunction(A1, A2);
+		assertInconsistent("P1(X,X)");
+	}
+
+	/**
+	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
+	 * 
+	 * @throws OWLOntologyCreationException
+	 */
+	@Test
+	public final void irreflexiveRolesFromRoleDisjunction()
+			throws OWLOntologyCreationException {
+		kb.clear();
+		OWLObjectProperty P1 = kb.getRole("P1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(P1, a, a);
+		kb.addSubsumption(P1, P2);
+		kb.addSubsumption(kb.getInverse(P1), P3);
+		kb.addDisjunction(P2, P3);
+		assertInconsistent("P1(X,X)");
+	}
+
+	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
@@ -400,6 +398,50 @@ public class QueryTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
+	}
+
+	/**
+	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
+	 * 
+	 * @throws OWLOntologyCreationException
+	 */
+	@Test
+	public final void unsatisfiableConcepts()
+			throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLClass A3 = kb.getConcept("A3");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addSubsumption(A1, A2);
+		kb.addSubsumption(A2, A1);
+		kb.addSubsumption(A3, A2);
+		kb.addDisjunction(A1, A2);
+		kb.addRule("A3(X):-A1(X).");
+		assertInconsistent("A3(X)");
+	}
+
+	/**
+	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
+	 * 
+	 * @throws OWLOntologyCreationException
+	 */
+	@Test
+	public final void unsatisfiableRoles() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLObjectProperty P1 = kb.getRole("P1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLIndividual a = kb.getIndividual("a");
+		OWLIndividual b = kb.getIndividual("b");
+		kb.addAssertion(P1, a, b);
+		kb.addSubsumption(P1, P2);
+		kb.addSubsumption(P2, P1);
+		kb.addSubsumption(P3, P2);
+		kb.addDisjunction(P1, P2);
+		kb.addRule("P3(X,Y):-P1(X,Y).");
+		assertInconsistent("P3(X,Y)");
 	}
 
 }

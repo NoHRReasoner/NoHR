@@ -24,19 +24,19 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 class KB {
+	private Map<String, OWLClass> concepts;
+
 	private OWLDataFactory df;
 
-	private OWLOntologyManager om;
-
-	private OWLOntology ont;
+	private Map<String, OWLIndividual> individuals;
 
 	private OntologyLabel ol;
 	
-	private Map<String, OWLClass> concepts;
+	private OWLOntologyManager om;
 	
-	private Map<String, OWLObjectProperty> roles;
+	private OWLOntology ont;
 
-	private Map<String, OWLIndividual> individuals;
+	private Map<String, OWLObjectProperty> roles;
 	
 	KB() throws OWLOntologyCreationException {
 		om = OWLManager.createOWLOntologyManager();
@@ -50,18 +50,10 @@ class KB {
 		individuals = new HashMap<String, OWLIndividual>();
 	}
 	
-	String getLabel(OWLEntity e) {
-		return ol.getLabel(e, 1);
-	}
-	
-	void addRule(String rule) {
-		Rules.addRule(rule);
-	}
-
 	void addAssertion(OWLClass concept, OWLIndividual individual) {
 		om.addAxiom(ont, df.getOWLClassAssertionAxiom(concept, individual));
 	}
-
+	
 	void addAssertion(OWLObjectProperty role, OWLIndividual ind1,
 			OWLIndividual ind2) {
 		om.addAxiom(ont,
@@ -77,6 +69,10 @@ class KB {
 		om.addAxiom(ont, df.getOWLDisjointObjectPropertiesAxiom(q1, q2));
 	}
 
+	void addRule(String rule) {
+		Rules.addRule(rule);
+	}
+
 	void addSubsumption(OWLClassExpression b1, OWLClassExpression b2) {
 		om.addAxiom(ont, df.getOWLSubClassOfAxiom(b1, b2));
 	}
@@ -84,6 +80,11 @@ class KB {
 	void addSubsumption(OWLObjectPropertyExpression q1,
 			OWLObjectPropertyExpression q2) {
 		om.addAxiom(ont, df.getOWLSubObjectPropertyOfAxiom(q1, q2));
+	}
+
+	void clear() throws OWLOntologyCreationException {
+		ont = om.createOntology(IRI.generateDocumentIRI());
+		Rules.resetRules();
 	}
 
 	OWLClass getConcept(String name) {
@@ -96,6 +97,10 @@ class KB {
 		return concept;
 	}
 
+	public OWLDataFactory getDataFactory() {
+		return df;
+	}
+
 	private IRI getEntityIRI(String name) {
 		IRI ontIRI = ont.getOntologyID().getOntologyIRI();
 		return IRI.create(ontIRI + "#" + name);
@@ -103,6 +108,11 @@ class KB {
 
 	OWLObjectSomeValuesFrom getExistential(OWLObjectPropertyExpression owlObjectPropertyExpression) {
 		return df.getOWLObjectSomeValuesFrom(owlObjectPropertyExpression, df.getOWLThing());
+	}
+
+	OWLObjectSomeValuesFrom getExistential(String roleName) {
+		OWLObjectProperty role = getRole(roleName);
+		return df.getOWLObjectSomeValuesFrom(role, df.getOWLThing());
 	}
 
 	OWLIndividual getIndividual(String name) {
@@ -113,11 +123,28 @@ class KB {
 		}
 		return individual;
 	}
-
+    
 	OWLObjectPropertyExpression getInverse(OWLObjectProperty role) {
 		return df.getOWLObjectInverseOf(role);
 	}
-    
+
+	public OWLObjectPropertyExpression getInverse(String roleName) {
+		OWLObjectProperty role = getRole(roleName);
+		return df.getOWLObjectInverseOf(role);
+	}
+
+	String getLabel(OWLEntity e) {
+		return ol.getLabel(e, 1);
+	}
+
+	String getLabel(OWLIndividual c1) {
+		return ol.getLabel(c1, 1);
+	}
+
+	String getLabel(String rule) {
+		return ol.getLabel(rule, 1);
+	}
+
 	OWLOntology getOntology() {
 		return ont;
 	}
@@ -130,29 +157,6 @@ class KB {
 			roles.put(name, role);
 		}
 		return role;
-	}
-
-	void clear() throws OWLOntologyCreationException {
-		ont = om.createOntology(IRI.generateDocumentIRI());
-		Rules.resetRules();
-	}
-
-	String getLabel(OWLIndividual c1) {
-		return ol.getLabel(c1, 1);
-	}
-
-	String getLabel(String rule) {
-		return ol.getLabel(rule, 1);
-	}
-
-	OWLObjectSomeValuesFrom getExistential(String roleName) {
-		OWLObjectProperty role = getRole(roleName);
-		return df.getOWLObjectSomeValuesFrom(role, df.getOWLThing());
-	}
-
-	public OWLObjectPropertyExpression getInverse(String roleName) {
-		OWLObjectProperty role = getRole(roleName);
-		return df.getOWLObjectInverseOf(role);
 	}
 	
 }
