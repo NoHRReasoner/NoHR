@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ QueryTest.class, RuleCreatorQLTest.class, TranslateTest.class, TBoxGraphTest.class})
+@SuiteClasses({ QueryTest.class, RuleCreatorQLTest.class, TranslationTest.class, TBoxGraphTest.class})
 public class AllTests {
 
 }

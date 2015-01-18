@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import local.translate.ql.OntologyProceederQL;
+import local.translate.ql.OWLQLOntologyProceeder;
 import local.translate.ql.RuleCreatorQL;
 
 import org.protege.editor.owl.model.OWLModelManager;
@@ -100,7 +100,7 @@ public class Translate {
     /**
      * all processing about ontology
      */
-    private OntoProceeder ontologyProceeder;
+    private OWLOntologyProceeder ontologyProceeder;
 
 	private boolean isOwl2elProfile;
 
@@ -147,7 +147,7 @@ public class Translate {
     	else if (isOwl2elProfile)
     		return TranslationAlgorithm.EL;
     	else
-    		return null;
+    		throw new ImportsClosureNotInProfileException(new OWL2QLProfile());
 	}
 
 	//TODO: throw an exception if the ontology is not in a supported profile
@@ -308,7 +308,7 @@ public class Translate {
         ontologies.add(infOnt);
         // reasoner.dispose();
         Utils.getDiffTime(dateStart, "Retrieving inferred information: ");
-        ontologyProceeder.setOntologiesToProceed(ontologies);
+        ((OntologyProceeder) ontologyProceeder).setOntologiesToProceed(ontologies);
     }
 
     /**
@@ -355,20 +355,20 @@ public class Translate {
 		switch (getTranslationAlgorithm()) {
 		case DL_LITE_R:
 			RuleCreatorQL ruleCreatorQL = new RuleCreatorQL(cm, ontologyLabel);
-			ontologyProceeder = new OntologyProceederQL(cm, ruleCreatorQL,
-					ontology, ontologyManager.getOWLDataFactory());
+			ontologyProceeder = new OWLQLOntologyProceeder(cm, ruleCreatorQL,
+					ontology, ontologyManager.getOWLDataFactory(), ontologyManager);
 			break;
 		case EL:
 			RuleCreator ruleCreator = new RuleCreator(cm, ontologyLabel);
 			ontologyProceeder = new OntologyProceeder(cm, ruleCreator);
+			checkAndPartiallyNormalizeOntology();
 		}
-		checkAndPartiallyNormalizeOntology();
 	}
     
     private void checkAndPartiallyNormalizeOntology() throws OWLOntologyCreationException, OWLOntologyStorageException {
-        if (ontologyProceeder.isOntologyNeedToBeNormalized(ontology)) {
-            ontology = ontologyProceeder.normalizeOntology(ontology, null);
-        }
+    	OntologyProceeder proceeder = (OntologyProceeder) ontologyProceeder;
+        if (proceeder.isOntologyNeedToBeNormalized(ontology))
+            ontology = proceeder.normalizeOntology(ontology, null);
     }
 
     /**

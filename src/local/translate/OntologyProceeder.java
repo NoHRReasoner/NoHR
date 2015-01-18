@@ -8,7 +8,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 
 import java.util.*;
 
-public class OntologyProceeder implements OntoProceeder {
+public class OntologyProceeder implements OWLOntologyProceeder {
     protected CollectionsManager cm;
     protected List<OWLOntology> ontologies = new ArrayList<OWLOntology>();
     protected RuleCreator ruleCreator;

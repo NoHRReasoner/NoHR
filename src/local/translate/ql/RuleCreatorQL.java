@@ -7,9 +7,11 @@ import local.translate.CollectionsManager;
 import local.translate.OntologyLabel;
 
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -189,7 +191,7 @@ public class RuleCreatorQL {
 	protected List<Rule> s1(OWLClassExpression b1, OWLClassExpression b2) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(tr(b2, X, false), tr(b1, X, false)));
-		//if (cm.isAnyDisjointStatement())
+		if (cm.isAnyDisjointStatement())
 			result.add(new Rule(tr(b2, X, true), tr(b1, X, true),
 					new NegativeTerm(new TermModel[] { trNeg(b2, X) })));
 		result.add(new Rule(trNeg(b1, X), trNeg(b2, X)));
@@ -207,7 +209,7 @@ public class RuleCreatorQL {
 			OWLObjectPropertyExpression q2) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(tr(q2, X, Y, false), tr(q1, X, Y, false)));
-		//if (cm.isAnyDisjointStatement())
+		if (cm.isAnyDisjointStatement())
 			result.add(new Rule(tr(q2, X, Y, true), tr(q1, X, Y, true),
 					new NegativeTerm(new TermModel[] { trNeg(q2, X, Y) })));
 		result.add(new Rule(trNeg(q1, X, Y), trNeg(q2, X, Y)));
@@ -218,8 +220,7 @@ public class RuleCreatorQL {
 	protected List<Rule> n1(OWLClassExpression b1, OWLClassExpression b2) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(trNeg(b1, X), tr(b2, X, false)));
-		//if (cm.isAnyDisjointStatement())
-			result.add(new Rule(trNeg(b2, X), tr(b1, X, false)));
+		result.add(new Rule(trNeg(b2, X), tr(b1, X, false)));
 		write(result);
 		return result;
 	}
@@ -228,8 +229,7 @@ public class RuleCreatorQL {
 			OWLObjectPropertyExpression q2) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(trNeg(q1, X, Y), tr(q2, X, Y, false)));
-		//if (cm.isAnyDisjointStatement())
-			result.add(new Rule(trNeg(q2, X, Y), tr(q1, X, Y, false)));
+		result.add(new Rule(trNeg(q2, X, Y), tr(q1, X, Y, false)));
 		write(result);
 		return result;
 	}
@@ -258,6 +258,16 @@ public class RuleCreatorQL {
 	public void write(List<Rule> rules) {
 		for (Rule rule : rules)
 			cm.addTranslatedOntology(rule.toString());
+	}
+
+	public void a1(OWLClassAssertionAxiom clsAssertion) {
+		a1((OWLClass) clsAssertion.getClassExpression(),
+				clsAssertion.getIndividual());
+	}
+
+	public void a2(OWLObjectPropertyAssertionAxiom propAssertion) {
+		a2((OWLObjectProperty) propAssertion.getProperty(),
+		propAssertion.getSubject(), propAssertion.getObject());	
 	}
 
 	// *****************************************************************************
