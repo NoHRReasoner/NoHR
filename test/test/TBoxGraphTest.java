@@ -57,7 +57,7 @@ public class TBoxGraphTest {
 		kb.addSubsumption(a[3], a[2]);
 		Set<OWLClassExpression> expectedAncestors = set(a[1], a[2], a[3]);
 		// Test
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		Set<OWLClassExpression> ancestors = graph.getAncestors(a[0]);
 		Assert.assertEquals(expectedAncestors, ancestors);
@@ -82,7 +82,7 @@ public class TBoxGraphTest {
 		kb.addSubsumption(a[0], a[3]);
 		Set<OWLClassExpression> expectedAncestors = set(a);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		Set<OWLClassExpression> ancestors;
 		// Tests
@@ -112,7 +112,7 @@ public class TBoxGraphTest {
 		kb.addSubsumption(a[4], kb.getExistential(p[1]));
 		kb.addSubsumption(kb.getExistential(p[2]), kb.getExistential(p[3]));
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		// Test1
 		Set<OWLClassExpression> predecessors = graph.getPredecessors(a[2]);
@@ -160,7 +160,7 @@ public class TBoxGraphTest {
 		Set<OWLObjectPropertyExpression> expectedAncestors = set(p[1], p[2],
 				p[3]);
 		// Test
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		Set<OWLObjectPropertyExpression> ancestors = graph.getAncestors(p[0]);
 		Assert.assertEquals(expectedAncestors, ancestors);
@@ -185,7 +185,7 @@ public class TBoxGraphTest {
 		kb.addSubsumption(p[0], p[3]);
 		Set<OWLObjectPropertyExpression> expectedAncestors = set(p);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		Set<OWLObjectPropertyExpression> ancestors;
 		// Tests
@@ -215,7 +215,7 @@ public class TBoxGraphTest {
 		kb.addSubsumption(kb.getInverse((OWLObjectProperty) p[7]),
 				kb.getInverse((OWLObjectProperty) p[8]));
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		// Test1
 		Set<OWLObjectPropertyExpression> predecessors = graph
@@ -274,7 +274,7 @@ public class TBoxGraphTest {
 		kb.addDisjunction(p[1], p[2]);
 		Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		Set<OWLObjectProperty> irreflexiveRoles = graph.getIrreflexiveRoles();
 		// Test
@@ -300,7 +300,7 @@ public class TBoxGraphTest {
 		kb.addDisjunction(a[0], a[1]);
 		Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		Set<OWLObjectProperty> irreflexiveRoles = graph.getIrreflexiveRoles();
 		// Test
@@ -329,7 +329,7 @@ public class TBoxGraphTest {
 		Set<OWLEntity> expectedUnsatisfiableEntities = set((OWLEntity) a[0],
 				(OWLEntity) p[0]);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		Set<OWLEntity> unsatisfiableEntities = graph.getUnsatisfiableEntities();
 		// Test
@@ -362,7 +362,7 @@ public class TBoxGraphTest {
 				(OWLEntity) a[1], (OWLEntity) a[2], (OWLEntity) p[0],
 				(OWLEntity) p[1], (OWLEntity) p[2]);
 		// TestInit
-		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getOntology(),
+		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		Set<OWLEntity> unsatisfiableEntities = graph.getUnsatisfiableEntities();
 		// Test

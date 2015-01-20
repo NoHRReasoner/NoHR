@@ -68,6 +68,11 @@ class Translation {
 		Assert.assertEquals(axiom.toString(), expected, result);
 		if (!hasDisjunction()) {
 			kb.add(disjunction);
+			tr = new Translate(kb.getOntology());
+			cm = tr.getCollectionsManager();
+			result = cm.getTranslatedOntologies();
+			cm = tr.getCollectionsManager();
+			result = cm.getTranslatedOntologies();
 			tr.proceed();
 			expected.addAll(drules);
 			expected.add(r1);
