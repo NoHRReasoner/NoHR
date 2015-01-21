@@ -19,6 +19,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 /**
  * @author nunocosta
@@ -162,7 +163,7 @@ public class TBoxGraphTest {
 		// Test
 		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
-		Set<OWLObjectPropertyExpression> ancestors = graph.getAncestors(p[0]);
+		Set<OWLPropertyExpression> ancestors = graph.getAncestors(p[0]);
 		Assert.assertEquals(expectedAncestors, ancestors);
 	}
 
@@ -187,7 +188,7 @@ public class TBoxGraphTest {
 		// TestInit
 		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
-		Set<OWLObjectPropertyExpression> ancestors;
+		Set<OWLPropertyExpression> ancestors;
 		// Tests
 		for (int i = 0; i < 4; i++) {
 			ancestors = graph.getAncestors(p[i]);
@@ -218,7 +219,7 @@ public class TBoxGraphTest {
 		BasicTBoxGraph graph = new BasicTBoxGraph(kb.getNormalizedOntology(),
 				kb.getDataFactory());
 		// Test1
-		Set<OWLObjectPropertyExpression> predecessors = graph
+		Set<OWLPropertyExpression> predecessors = graph
 				.getPredecessors(p[2]);
 		Assert.assertEquals(set(p[0], p[1]), predecessors);
 		// Test2

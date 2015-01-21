@@ -8,6 +8,9 @@ import java.util.Set;
 
 import local.translate.CollectionsManager;
 import local.translate.OntologyLabel;
+import local.translate.Utils;
+import local.translate.ql.INormalizedOntology;
+import local.translate.ql.NormalizedOntology;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -17,9 +20,11 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
@@ -31,6 +36,8 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 class KB {
 
 	private Map<String, OWLClass> concepts;
+
+	private Map<String, OWLDataProperty> dataRoles;
 
 	private OWLDataFactory df;
 
@@ -54,6 +61,7 @@ class KB {
 				new CollectionsManager());
 		concepts = new HashMap<String, OWLClass>();
 		roles = new HashMap<String, OWLObjectProperty>();
+		dataRoles = new HashMap<String, OWLDataProperty>();
 		individuals = new HashMap<String, OWLIndividual>();
 	}
 
@@ -127,6 +135,27 @@ class KB {
 		return df;
 	}
 
+	private OWLDataProperty getDataRole() {
+		return getDataRole("Dnew" + dataRoles.size());
+	}
+
+	public OWLDataProperty getDataRole(String name) {
+		OWLDataProperty dataRole = dataRoles.get(name);
+		if (dataRole == null) {
+			dataRole = df.getOWLDataProperty(getEntityIRI(name));
+			om.addAxiom(ont, df.getOWLDeclarationAxiom(dataRole));
+			dataRoles.put(name, dataRole);
+		}
+		return dataRole;
+	}
+
+	public OWLDataProperty[] getDataRoles(int n) {
+		OWLDataProperty[] result = new OWLDataProperty[n];
+		for (int i = 0; i < n; i++)
+			result[i] = getDataRole();
+		return result;
+	}
+
 	private IRI getEntityIRI(String name) {
 		IRI ontIRI = ont.getOntologyID().getOntologyIRI();
 		return IRI.create(ontIRI + "#" + name);
@@ -170,6 +199,8 @@ class KB {
 			return getLabel((OWLEntity) obj);
 		else if (obj instanceof OWLIndividual)
 			return getLabel((OWLIndividual) obj);
+		else if (obj instanceof OWLLiteral)
+			return Utils.getHash(((OWLLiteral) obj).getLiteral());
 		else
 			return null;
 	}
@@ -182,8 +213,16 @@ class KB {
 		return ol.getLabel(i, 1);
 	}
 
+	public INormalizedOntology getNormalizedOntology() {
+		return new NormalizedOntology(ont);
+	}
+
 	public OWLOntology getOntology() {
 		return ont;
+	}
+
+	public OntologyLabel getOntologyLabel() {
+		return ol;
 	}
 
 	public OWLObjectProperty getRole() {
@@ -216,10 +255,6 @@ class KB {
 		for (int i = 0; i < cls.length; i++)
 			args[i] = getLabel(cls[i]);
 		return String.format(ruleFormat, args);
-	}
-
-	public OntologyLabel getOntologyLabel() {
-		return ol;
 	}
 
 }

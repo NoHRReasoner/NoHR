@@ -6,6 +6,8 @@ import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 public class DLUtils {
 
@@ -21,7 +23,7 @@ public class DLUtils {
 		return prop instanceof OWLObjectProperty;
 	}
 
-	public static boolean isInverse(OWLObjectPropertyExpression prop) {
-		return prop instanceof OWLObjectInverseOf;
+	public static boolean isInverse(OWLPropertyExpression p) {
+		return p instanceof OWLObjectInverseOf;
 	}
 }

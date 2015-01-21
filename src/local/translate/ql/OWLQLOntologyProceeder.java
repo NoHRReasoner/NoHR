@@ -12,18 +12,25 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
+import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLProperty;
+import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 
@@ -51,8 +58,8 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 		for (OWLEntity e : graph.getUnsatisfiableEntities())
 			if (e instanceof OWLClass)
 				ruleCreatorQL.i1((OWLClass) e);
-			else if (e instanceof OWLObjectProperty)
-				ruleCreatorQL.i2((OWLObjectProperty) e);
+			else if (e instanceof OWLProperty)
+				ruleCreatorQL.i2((OWLProperty) e);
 		for (OWLObjectProperty p : graph.getIrreflexiveRoles())
 			ruleCreatorQL.ir(p);
 	}
@@ -72,16 +79,26 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 		for (OWLDisjointClassesAxiom d : normalizedOntology
 				.getConceptDisjunctions())
 			translate(d);
-		for (OWLSubObjectPropertyOfAxiom s : normalizedOntology
+		for (OWLSubPropertyAxiom<?> s : normalizedOntology
 				.getRoleSubsumptions())
 			translate(s);
-		for (OWLDisjointObjectPropertiesAxiom d : normalizedOntology
+		for (OWLNaryPropertyAxiom<?> d : normalizedOntology
 				.getRoleDisjunctions())
 			translate(d);
 	}
 
+	private void translate(OWLNaryPropertyAxiom d) {
+		Iterator<OWLPropertyExpression> dIt = d.getProperties().iterator();
+		OWLPropertyExpression<?, ?> p1 = dIt.next();
+		OWLPropertyExpression<?, ?> p2 = dIt.next();
+		ruleCreatorQL.n2(p1, p2);
+	}
+
 	private void translate(OWLDataPropertyAssertionAxiom f) {
 		OWLDataProperty dataProperty = (OWLDataProperty) f.getProperty();
+		if (dataProperty.isOWLTopDataProperty()
+				|| dataProperty.isOWLBottomDataProperty())
+			return;
 		OWLIndividual individual = f.getSubject();
 		OWLLiteral value = f.getObject();
 		ruleCreatorQL.translateDataPropertyAssertion(dataProperty, individual,
@@ -101,14 +118,6 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 		ruleCreatorQL.n1(cls.get(0), cls.get(1));
 	}
 
-	private void translate(OWLDisjointObjectPropertiesAxiom alpha) {
-		Iterator<OWLObjectPropertyExpression> props = alpha.getProperties()
-				.iterator();
-		OWLObjectPropertyExpression q1 = props.next();
-		OWLObjectPropertyExpression q2 = props.next();
-		ruleCreatorQL.n2(q1, q2);
-	}
-
 	private void translate(OWLObjectPropertyAssertionAxiom f) {
 		OWLObjectPropertyExpression q = f.getProperty();
 		if (q.isOWLBottomObjectProperty() || q.isOWLTopObjectProperty())
@@ -122,9 +131,9 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 		ruleCreatorQL.s1(b, c);
 	}
 
-	private void translate(OWLSubObjectPropertyOfAxiom alpha) {
-		OWLObjectPropertyExpression q1 = alpha.getSubProperty();
-		OWLObjectPropertyExpression q2 = alpha.getSuperProperty();
+	private void translate(OWLSubPropertyAxiom alpha) {
+		OWLPropertyExpression q1 = alpha.getSubProperty();
+		OWLPropertyExpression q2 = alpha.getSuperProperty();
 		ruleCreatorQL.s2(q1, q2);
 	}
 }

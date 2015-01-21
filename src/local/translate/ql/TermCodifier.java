@@ -5,7 +5,8 @@ import local.translate.OntologyLabel;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLProperty;
 
 import com.declarativa.interprolog.TermModel;
 
@@ -17,45 +18,52 @@ public class TermCodifier {
 	private static final String CONSTANT_PREFIX = "c";
 
 	private OntologyLabel ontologyLabel;
-	private CollectionsManager collectionsManager;
+	private CollectionsManager cm;
 
-	public TermCodifier(OntologyLabel ontologyLabel, CollectionsManager collectionsManager) {
+	public TermCodifier(OntologyLabel ontologyLabel,
+			CollectionsManager collectionsManager) {
 		this.ontologyLabel = ontologyLabel;
-		this.collectionsManager = collectionsManager;
+		this.cm = collectionsManager;
 	}
 
 	public TermModel getPredicate(OWLClass cls, boolean doubled) {
-		String pred = (doubled ? DOUBLED_PREFIX : ORIGINAL_PREFIX) +
-				ontologyLabel.getLabel(cls, 1);
-		collectionsManager.addTabledPredicateOntology(pred + "/1");
+		String pred = (doubled ? DOUBLED_PREFIX : ORIGINAL_PREFIX)
+				+ ontologyLabel.getLabel(cls, 1);
+		cm.addTabledPredicateOntology(pred + "/1");
 		return new TermModel(pred);
 	}
 
-	public TermModel getPredicate(OWLObjectProperty prop, boolean doubled) {
+	public TermModel getPredicate(OWLProperty<?, ?> prop, boolean doubled) {
 		String pred = (doubled ? DOUBLED_PREFIX : ORIGINAL_PREFIX)
-		+ ontologyLabel.getLabel(prop, 1);
-		collectionsManager.addTabledPredicateOntology(pred + "/2");
-		collectionsManager.addHilogPredicates(pred);
+				+ ontologyLabel.getLabel(prop, 1);
+		cm.addTabledPredicateOntology(pred + "/2");
+		cm.addHilogPredicates(pred);
 		return new TermModel(pred);
 	}
 
 	public TermModel getNegativePredicate(OWLClass cls) {
 		String pred = CLASSICAL_NEGATION_PREFIX
 				+ ontologyLabel.getLabel(cls, 1);
-		collectionsManager.addTabledPredicateOntology(pred + "/1");
-		collectionsManager.addPrediactesAppearedUnderNunderscore(pred);
+		cm.addTabledPredicateOntology(pred + "/1");
+		cm.addPrediactesAppearedUnderNunderscore(pred);
 		return new TermModel(pred);
 	}
 
-	public TermModel getNegativePredicate(OWLObjectProperty prop) {
+	public TermModel getNegativePredicate(OWLProperty<?, ?> prop) {
 		String pred = CLASSICAL_NEGATION_PREFIX
 				+ ontologyLabel.getLabel(prop, 1);
-		collectionsManager.addTabledPredicateOntology(pred + "/2");
-		collectionsManager.addPrediactesAppearedUnderNunderscore(pred);
+		cm.addTabledPredicateOntology(pred + "/2");
+		cm.addPrediactesAppearedUnderNunderscore(pred);
 		return new TermModel(pred);
 	}
 
-	public Object getConstant(OWLIndividual c) {
+	public TermModel getConstant(OWLIndividual c) {
 		return new TermModel(CONSTANT_PREFIX + ontologyLabel.getLabel(c, 1));
 	}
+
+	public TermModel getConstant(OWLLiteral value) {
+		return new TermModel(CONSTANT_PREFIX
+				+ cm.getHashedLabel(value.getLiteral()));
+	}
+
 }

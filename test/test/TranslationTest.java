@@ -20,6 +20,7 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 public class TranslationTest {
@@ -58,8 +59,7 @@ public class TranslationTest {
 		return result;
 	}
 
-	private HashSet<Rule> subsumptionRules(OWLObjectProperty P1,
-			OWLObjectProperty P2) {
+	private HashSet<Rule> subsumptionRules(OWLProperty P1, OWLProperty P2) {
 		HashSet<Rule> result = new HashSet<Rule>();
 		result.add(rule("a%s(X,Y):-a%s(X,Y).", P2, P1));
 		result.add(rule("d%s(X,Y):-d%s(X,Y),tnot(n%s(X,Y)).", P2, P1, P2));
@@ -97,7 +97,7 @@ public class TranslationTest {
 		OWLDataFactory df = kb.getDataFactory();
 		OWLClass[] A = kb.getConcepts(10);
 		OWLObjectProperty[] P = kb.getRoles(13);
-		OWLDataProperty[] D = kb.getDataRoles(3);
+		OWLDataProperty[] D = kb.getDataRoles(5);
 		OWLLiteral l = df.getOWLLiteral(1);
 		OWLIndividual a = kb.getIndividual();
 		OWLIndividual b = kb.getIndividual();
@@ -159,9 +159,16 @@ public class TranslationTest {
 						disjunctionRules(A[7], A[8])),
 
 				tr(df.getOWLDisjointObjectPropertiesAxiom(P[11], P[12]),
-						disjunctionRules(P[11], P[12]))
+						disjunctionRules(P[11], P[12])),
 
-		};
+				tr(df.getOWLSubDataPropertyOfAxiom(D[1], D[2]),
+						rule("a%s(X,Y):-a%s(X,Y).", D[2], D[1]),
+						rule("d%s(X,Y):-d%s(X,Y),tnot(n%s(X,Y)).", D[2], D[1],
+								D[2]), rule("n%s(X,Y):-n%s(X,Y).", D[1], D[2])),
+
+				tr(df.getOWLDisjointDataPropertiesAxiom(D[3], D[4]),
+						rule("n%s(X,Y):-a%s(X,Y).", D[4], D[3]),
+						rule("n%s(X,Y):-a%s(X,Y).", D[3], D[4])) };
 		for (Translation tr : translations)
 			tr.test();
 	}
@@ -206,6 +213,7 @@ public class TranslationTest {
 		df = kb.getDataFactory();
 		OWLClass[] A = kb.getConcepts(15);
 		OWLObjectProperty[] P = kb.getRoles(15);
+		OWLDataProperty[] D = kb.getDataRoles(10);
 		OWLIndividual a = kb.getIndividual();
 		OWLIndividual b = kb.getIndividual();
 		OWLSubClassOfAxiom someSub = df.getOWLSubClassOfAxiom(A[4],
@@ -305,7 +313,17 @@ public class TranslationTest {
 				tr(df.getOWLAsymmetricObjectPropertyAxiom(P[14]),
 						rule("n%s(X,Y):-a%s(Y,X).", P[14], P[14]),
 						rule("n%s(Y,X):-a%s(X,Y).", P[14], P[14]),
-						rule("n%s(X,X).", P[14])) };
+						rule("n%s(X,X).", P[14])),
+
+				tr(df.getOWLEquivalentDataPropertiesAxiom(D[0], D[1], D[2]),
+						subsumptionRules(D[0], D[1]),
+						subsumptionRules(D[1], D[0]),
+						subsumptionRules(D[0], D[2]),
+						subsumptionRules(D[2], D[0]),
+						subsumptionRules(D[1], D[2]),
+						subsumptionRules(D[2], D[1]))
+
+		};
 
 		for (Translation tr : translations)
 			tr.test();
@@ -318,8 +336,10 @@ public class TranslationTest {
 		df = kb.getDataFactory();
 		OWLClass[] A = kb.getConcepts(15);
 		OWLObjectProperty[] P = kb.getRoles(15);
+		OWLDataProperty[] D = kb.getDataRoles(15);
 		OWLIndividual a = kb.getIndividual();
 		OWLIndividual b = kb.getIndividual();
+		OWLLiteral l = df.getOWLLiteral(1);
 		Translation[] translations = {
 				tr(df.getOWLClassAssertionAxiom(df.getOWLThing(), a)),
 				tr(df.getOWLClassAssertionAxiom(df.getOWLNothing(), a)),
@@ -327,7 +347,12 @@ public class TranslationTest {
 						df.getOWLTopObjectProperty(), a, b)),
 				tr(df.getOWLObjectPropertyAssertionAxiom(
 						df.getOWLBottomObjectProperty(), a, b)),
+				tr(df.getOWLDataPropertyAssertionAxiom(
+						df.getOWLTopDataProperty(), a, l)),
+				tr(df.getOWLDataPropertyAssertionAxiom(
+						df.getOWLBottomDataProperty(), a, l)),
 				tr(df.getOWLSubClassOfAxiom(A[0], df.getOWLThing())),
+				tr(df.getOWLSubClassOfAxiom(df.getOWLThing(), A[4])),
 				tr(df.getOWLSubClassOfAxiom(df.getOWLNothing(), A[1])),
 				tr(df.getOWLSubClassOfAxiom(A[2],
 						df.getOWLObjectComplementOf(df.getOWLNothing()))),
@@ -336,7 +361,22 @@ public class TranslationTest {
 				tr(df.getOWLSubObjectPropertyOfAxiom(P[0],
 						df.getOWLTopObjectProperty())),
 				tr(df.getOWLSubObjectPropertyOfAxiom(
+						df.getOWLTopObjectProperty(), P[2])),
+				tr(df.getOWLSubObjectPropertyOfAxiom(
 						df.getOWLBottomObjectProperty(), P[1])),
+				tr(df.getOWLSubDataPropertyOfAxiom(D[0],
+						df.getOWLTopDataProperty())),
+				tr(df.getOWLSubClassOfAxiom(df.getOWLDataSomeValuesFrom(D[1], df.getIntegerOWLDatatype()), A[4])),
+				tr(df.getOWLSubClassOfAxiom(A[5], df.getOWLDataSomeValuesFrom(D[2], df.getIntegerOWLDatatype()))),
+				tr(df.getOWLDataPropertyDomainAxiom(D[3], A[6])),
+				tr(df.getOWLDataPropertyRangeAxiom(D[4], df.getIntegerOWLDatatype())),
+				tr(df.getOWLDifferentIndividualsAxiom(a, b)),
+//TODO check
+//not in profile
+//				tr(df.getOWLSubDataPropertyOfAxiom(df.getOWLTopDataProperty(),
+//						D[2])),
+				tr(df.getOWLSubDataPropertyOfAxiom(
+						df.getOWLBottomDataProperty(), D[1]))
 		// TODO check this
 		// not in profile
 		// tr(df.getOWLDisjointObjectPropertiesAxiom(P[1],
@@ -355,6 +395,7 @@ public class TranslationTest {
 		df = kb.getDataFactory();
 		OWLClass[] A = kb.getConcepts(15);
 		OWLObjectProperty[] P = kb.getRoles(15);
+		OWLDataProperty[] D = kb.getDataRoles(2);
 		OWLIndividual a = kb.getIndividual();
 		OWLIndividual b = kb.getIndividual();
 		Translation[] translations = {
@@ -362,17 +403,16 @@ public class TranslationTest {
 				tr(df.getOWLSubClassOfAxiom(A[0], df.getOWLNothing()),
 						rule("n%s(X).", A[0])),
 
-				tr(df.getOWLSubClassOfAxiom(A[1],
-						df.getOWLObjectComplementOf(df.getOWLThing())),
-						rule("n%s(X).", A[1])),
-
 				tr(df.getOWLSubClassOfAxiom(df.getOWLThing(),
 						df.getOWLObjectComplementOf(A[2])),
 						rule("n%s(X).", A[2])),
 
 				tr(df.getOWLSubObjectPropertyOfAxiom(P[0],
 						df.getOWLBottomObjectProperty()),
-						rule("n%s(X,Y).", P[0]))
+						rule("n%s(X,Y).", P[0])),
+
+				tr(df.getOWLSubDataPropertyOfAxiom(D[0],
+						df.getOWLBottomDataProperty()), rule("n%s(X,Y).", D[0]))
 
 		// TODO check this
 		// not in profile

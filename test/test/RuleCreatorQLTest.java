@@ -21,7 +21,9 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
@@ -65,6 +67,13 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 		Q2 = df.getOWLObjectInverseOf(P2);
 		B1 = df.getOWLObjectSomeValuesFrom(P1, A1);
 		B2 = df.getOWLObjectSomeValuesFrom(Q2, A2);
+		
+		IRI D1IRI = IRI.generateDocumentIRI();
+		D1 = df.getOWLDataProperty(D1IRI);
+		L1 = df.getOWLLiteral(100);
+		D1Lbl = ol.getLabel(D1, 1);
+		L1Lbl = cm.getHashedLabel(L1.getLiteral());
+		
 		cm.setIsAnyDisjointStatement(true);
 	}
 
@@ -85,12 +94,14 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 	private static OWLObjectProperty P2;
 	private static OWLObjectInverseOf Q1;
 	private static OWLObjectInverseOf Q2;
+	private static OWLDataProperty D1;
+	private static OWLLiteral L1;
 	private static String A1Lbl;
 	private static String A2Lbl;
-
 	private static String P1Lbl;
-
 	private static String P2Lbl;
+	private static String D1Lbl;
+	private static String L1Lbl;
 	private static OWLIndividual c1;
 	private static OWLIndividual c2;
 	private static String c1Lbl;
@@ -349,5 +360,18 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 		negativeRule = String.format("n%s(Y,X):-n%s(Y,X).", P1Lbl, P2Lbl);
 		checkTranslation(rule, doubledRule, negativeRule, rules);
 	}
-
+	
+	/**
+	 * Test method for
+	 * {@link local.translate.ql.RuleCreatorQL#DataProprietyAssertion(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
+	 * .
+	 */
+	@Test
+	public void testTranslateDataPropertyAssertionWithInverses() {
+		List<Rule> rules = translateDataPropertyAssertion(D1, c1, L1);
+		String rule = String.format("a%s(c%s,c%s).", D1Lbl, c1Lbl, L1Lbl);
+		String doubledRule = String.format("d%s(c%s,c%s):-tnot(n%s(c%s,c%s)).", D1Lbl,
+				c1Lbl, L1Lbl, D1Lbl, c1Lbl, L1Lbl);
+		checkTranslation(rule, doubledRule, rules);
+	}
 }

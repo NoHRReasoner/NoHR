@@ -9,11 +9,15 @@ import local.translate.OntologyLabel;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLProperty;
+import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
@@ -29,7 +33,7 @@ public class RuleCreatorQL {
 	protected final String X = "X";
 	protected final String Y = "Y";
 	protected final String ANNON_VAR = "_";
-	
+
 	protected CollectionsManager cm;
 	protected OntologyLabel ol;
 
@@ -52,7 +56,14 @@ public class RuleCreatorQL {
 				new TermModel(tc.getConstant(c2)) };
 		return new TermModel(tc.getPredicate(p, d), consts);
 	}
-	
+
+	protected TermModel trAssertion(OWLDataProperty dataProperty,
+			OWLIndividual individual, OWLLiteral value, boolean d) {
+		TermModel[] consts = { new TermModel(tc.getConstant(individual)),
+				new TermModel(tc.getConstant(value)) };
+		return new TermModel(tc.getPredicate(dataProperty, d), consts);
+	}
+
 	protected TermModel trNegAssertion(OWLClass a, OWLIndividual c) {
 		TermModel[] consts = { new TermModel(tc.getConstant(c)) };
 		return new TermModel(tc.getNegativePredicate(a), consts);
@@ -65,12 +76,19 @@ public class RuleCreatorQL {
 		return new TermModel(tc.getNegativePredicate(p), consts);
 	}
 
+	private TermModel trNegAssertion(OWLDataProperty dataProperty,
+			OWLIndividual individual, OWLLiteral value) {
+		TermModel[] consts = { new TermModel(tc.getConstant(individual)),
+				new TermModel(tc.getConstant(value)) };
+		return new TermModel(tc.getNegativePredicate(dataProperty), consts);
+	}
+
 	protected TermModel trAtomic(OWLClass c, String x, boolean d) {
 		TermModel[] vars = { new TermModel(x) };
 		return new TermModel(tc.getPredicate(c, d), vars);
 	}
 
-	protected TermModel trAtomic(OWLObjectProperty p, String x, String y,
+	protected TermModel trAtomic(OWLProperty<?, ?> p, String x, String y,
 			boolean d) {
 		TermModel[] vars = { new TermModel(x), new TermModel(y) };
 		return new TermModel(tc.getPredicate(p, d), vars);
@@ -86,12 +104,12 @@ public class RuleCreatorQL {
 		return new TermModel(tc.getNegativePredicate(c), vars);
 	}
 
-	protected TermModel trNegatedAtomic(OWLObjectProperty p, String x, String y) {
+	protected TermModel trNegatedAtomic(OWLProperty<?, ?> p, String x, String y) {
 		TermModel[] vars = { new TermModel(x), new TermModel(y) };
 		return new TermModel(tc.getNegativePredicate(p), vars);
 	}
 
-	protected TermModel trExistential(OWLObjectProperty p, String x,
+	protected TermModel trExistential(OWLProperty p, String x,
 			boolean inverse, boolean d) {
 		TermModel[] functArgs = { tc.getPredicate(p, d) };
 		TermModel funct = new TermModel(!inverse ? DOM_ATOM : RAN_ATOM,
@@ -135,19 +153,22 @@ public class RuleCreatorQL {
 			return null;
 	}
 
-	protected TermModel tr(OWLObjectPropertyExpression p, String x, String y,
+	protected TermModel tr(OWLPropertyExpression<?, ?> p, String x, String y,
 			boolean d) {
 		if (!DLUtils.isInverse(p))
-			return trAtomic(p.getNamedProperty(), x, y, d);
+			return trAtomic((OWLProperty<?, ?>) p, x, y, d);
 		else
-			return trAtomic(p.getNamedProperty(), y, x, d);
+			return trAtomic(
+					((OWLObjectPropertyExpression) p).getNamedProperty(), y, x,
+					d);
 	}
 
-	private TermModel trNeg(OWLObjectPropertyExpression p, String x, String y) {
+	private TermModel trNeg(OWLPropertyExpression<?, ?> p, String x, String y) {
 		if (!DLUtils.isInverse(p))
-			return trNegatedAtomic(p.getNamedProperty(), x, y);
+			return trNegatedAtomic((OWLProperty<?, ?>) p, x, y);
 		else
-			return trNegatedAtomic(p.getNamedProperty(), y, x);
+			return trNegatedAtomic(
+					((OWLObjectPropertyExpression) p).getNamedProperty(), y, x);
 	}
 
 	protected List<Rule> e() {
@@ -205,8 +226,8 @@ public class RuleCreatorQL {
 		return s2(q1, q2);
 	}
 
-	protected List<Rule> s2(OWLObjectPropertyExpression q1,
-			OWLObjectPropertyExpression q2) {
+	protected List<Rule> s2(OWLPropertyExpression<?, ?> q1,
+			OWLPropertyExpression<?, ?> q2) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(tr(q2, X, Y, false), tr(q1, X, Y, false)));
 		if (cm.isAnyDisjointStatement())
@@ -225,8 +246,8 @@ public class RuleCreatorQL {
 		return result;
 	}
 
-	protected List<Rule> n2(OWLObjectPropertyExpression q1,
-			OWLObjectPropertyExpression q2) {
+	protected List<Rule> n2(OWLPropertyExpression<?, ?> q1,
+			OWLPropertyExpression<?, ?> q2) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(trNeg(q1, X, Y), tr(q2, X, Y, false)));
 		result.add(new Rule(trNeg(q2, X, Y), tr(q1, X, Y, false)));
@@ -241,23 +262,20 @@ public class RuleCreatorQL {
 		return result;
 	}
 
-	protected List<Rule> i2(OWLObjectProperty p) {
+	protected List<Rule> i2(OWLProperty<?, ?> p) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(trNeg(p, X, Y)));
 		write(result);
 		return result;
 	}
 
+	//TODO remove unused methods
+
 	protected List<Rule> ir(OWLObjectProperty p) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(trNeg(p, X, X)));
 		write(result);
 		return result;
-	}
-
-	public void write(List<Rule> rules) {
-		for (Rule rule : rules)
-			cm.addTranslatedOntology(rule.toString());
 	}
 
 	public void a1(OWLClassAssertionAxiom clsAssertion) {
@@ -267,9 +285,27 @@ public class RuleCreatorQL {
 
 	public void a2(OWLObjectPropertyAssertionAxiom propAssertion) {
 		a2((OWLObjectProperty) propAssertion.getProperty(),
-		propAssertion.getSubject(), propAssertion.getObject());	
+				propAssertion.getSubject(), propAssertion.getObject());
 	}
 
 	// *****************************************************************************
+
+	public List<Rule> translateDataPropertyAssertion(
+			OWLDataProperty dataProperty, OWLIndividual individual,
+			OWLLiteral value) {
+		List<Rule> result = new ArrayList<Rule>();
+		result.add(new Rule(trAssertion(dataProperty, individual, value, false)));
+		if (cm.isAnyDisjointStatement())
+			result.add(new Rule(trAssertion(dataProperty, individual, value,
+					true), new NegativeTerm(new TermModel[] { trNegAssertion(
+					dataProperty, individual, value) })));
+		write(result);
+		return result;
+	}
+
+	public void write(List<Rule> rules) {
+		for (Rule rule : rules)
+			cm.addTranslatedOntology(rule.toString());
+	}
 
 }
