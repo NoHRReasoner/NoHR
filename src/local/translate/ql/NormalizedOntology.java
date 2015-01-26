@@ -101,11 +101,10 @@ public class NormalizedOntology implements INormalizedOntology {
 		return dataAssertions;
 	}
 
-	// TODO ensure univocal
 	private OWLObjectProperty getNewRole(int hashCode) {
 		String fragment = String.valueOf(hashCode);
 		IRI ruleIri = IRI.create(ontologyIRI + "#" + fragment);
-		return df.getOWLObjectProperty(ontologyIRI);
+		return df.getOWLObjectProperty(ruleIri);
 	}
 
 	@Override

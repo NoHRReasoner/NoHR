@@ -1,6 +1,7 @@
-package test;
+package helpers;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import local.translate.CollectionsManager;
@@ -11,26 +12,44 @@ import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
+import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
-class Translation {
+public class Translation {
 
+	
+	boolean full;
+	
 	Set<String> arules;
 	Set<String> drules;
 	Set<String> nrules;
 
 	KB kb;
-	OWLAxiom axiom;
+	Set<OWLAxiom> axioms;
+
 	OWLAxiom disjunction;
 	String r1;
 	String r2;
+	
+	boolean hasDisjunction;
 
-	public Translation(KB kb, OWLAxiom axiom, Rule... rules)
+	public Translation(KB kb, OWLAxiom axiom, Set<Rule> rules)
 			throws OWLOntologyCreationException {
-		this.axiom = axiom;
+		this(kb, new HashSet<OWLAxiom>(), true, rules);
+		this.axioms = new HashSet<OWLAxiom>();
+		this.axioms.add(axiom);	
+	}
+	
+	public Translation(KB kb, Set<OWLAxiom> axioms, Set<Rule> rules) throws OWLOntologyCreationException {
+		this(kb, axioms, true, rules);
+	}
+	
+	public Translation(KB kb, Set<OWLAxiom> axioms, boolean full, Set<Rule> rules)
+			throws OWLOntologyCreationException {
+		this.axioms = axioms;
+		this.full = full;
 		this.kb = kb;
 		arules = new HashSet<String>();
 		drules = new HashSet<String>();
@@ -53,20 +72,32 @@ class Translation {
 			else if (r.startsWith("n"))
 				nrules.add(r);
 		}
+		hasDisjunction = hasDisjunction();
+	}
+	
+	
+	private void check(String msg, Set<String> expected, Set<String> actual) {
+		if (full)
+			Assert.assertEquals(msg, expected, actual);
+		else 
+			Assert.assertTrue(msg, actual.containsAll(expected));
+		
 	}
 
 	public void test() throws OWLOntologyCreationException,
 			OWLOntologyStorageException, ParserException {
 		kb.clear();
-		kb.add(axiom);
+		kb.add(axioms);
 		Translate tr = new Translate(kb.getOntology());
 		tr.proceed();
 		CollectionsManager cm = tr.getCollectionsManager();
 		Set<String> result = cm.getTranslatedOntologies();
 		Set<String> expected = new HashSet<String>(arules);
+		if (hasDisjunction)
+			expected.addAll(drules);
 		expected.addAll(nrules);
-		Assert.assertEquals(axiom.toString(), expected, result);
-		if (!hasDisjunction()) {
+		check(axioms.toString(), expected, result);
+		if (!hasDisjunction) {
 			kb.add(disjunction);
 			tr = new Translate(kb.getOntology());
 			cm = tr.getCollectionsManager();
@@ -78,25 +109,31 @@ class Translation {
 			expected.add(r1);
 			expected.add(r2);
 			result = cm.getTranslatedOntologies();
-			Assert.assertEquals(axiom.toString() + " with inverses", expected,
+			check(axioms.toString() + " with inverses", expected,
 					result);
 		}
 	}
 
-	private boolean isComplement() {
+	private boolean isComplement(OWLAxiom axiom) {
 		if (axiom instanceof OWLSubClassOfAxiom) {
 			OWLSubClassOfAxiom s = (OWLSubClassOfAxiom) axiom;
-			return s.getSuperClass() instanceof OWLObjectIntersectionOf;
+			return s.getSuperClass() instanceof OWLObjectComplementOf;
 		}
-		return true;
+		return false;
 	}
 
 	private boolean hasDisjunction() {
-		AxiomType<?> type = axiom.getAxiomType();
-		return isComplement() || type == AxiomType.DISJOINT_CLASSES
-				|| type == AxiomType.DISJOINT_OBJECT_PROPERTIES
-				|| type == AxiomType.IRREFLEXIVE_OBJECT_PROPERTY
-				|| type == AxiomType.ASYMMETRIC_OBJECT_PROPERTY;
+		Iterator<OWLAxiom> axiomsIt = axioms.iterator();
+		while (axiomsIt.hasNext()) {
+			OWLAxiom axiom = axiomsIt.next();
+			AxiomType<?> type = axiom.getAxiomType();
+			if (isComplement(axiom) || type == AxiomType.DISJOINT_CLASSES
+					|| type == AxiomType.DISJOINT_OBJECT_PROPERTIES
+					|| type == AxiomType.IRREFLEXIVE_OBJECT_PROPERTY
+					|| type == AxiomType.ASYMMETRIC_OBJECT_PROPERTY)
+				return true;
+		}
+		return false;
 	}
 
 }

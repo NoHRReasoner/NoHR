@@ -1,4 +1,4 @@
-package test;
+package helpers;
 
 import hybrid.query.views.Rules;
 
@@ -33,7 +33,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-class KB {
+public class KB {
 
 	private Map<String, OWLClass> concepts;
 
@@ -51,7 +51,7 @@ class KB {
 
 	private Map<String, OWLObjectProperty> roles;
 
-	KB() throws OWLOntologyCreationException {
+	public KB() throws OWLOntologyCreationException {
 		om = OWLManager.createOWLOntologyManager();
 		df = om.getOWLDataFactory();
 		ont = om.createOntology(IRI.generateDocumentIRI());
@@ -68,6 +68,10 @@ class KB {
 	public void add(OWLAxiom... axioms) {
 		for (OWLAxiom a : axioms)
 			om.addAxiom(ont, a);
+	}
+	
+	public void add(Set<OWLAxiom> axioms) {
+		om.addAxioms(ont, axioms);
 	}
 
 	public void addAssertion(OWLClass concept, OWLIndividual individual) {
@@ -250,7 +254,7 @@ class KB {
 		return getRule(rule.format, rule.args);
 	}
 
-	String getRule(String ruleFormat, Object... cls) {
+	public String getRule(String ruleFormat, Object... cls) {
 		Object[] args = new String[cls.length];
 		for (int i = 0; i < cls.length; i++)
 			args[i] = getLabel(cls[i]);

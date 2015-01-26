@@ -1,8 +1,9 @@
 /**
  * 
  */
-package test;
+package testsuite;
 
+import helpers.KB;
 import hybrid.query.model.Query;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -107,8 +109,36 @@ public class QueryTest {
 		kb.addDisjunction(A, kb.getExistential(P2));
 		assertInconsistent("P2(X,Y)");
 	}
+	
+	
+	@Test
+	public final void testEL() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLClass A3 = kb.getConcept("A3");
+		OWLIndividual a = kb.getIndividual("a");
+		OWLDataFactory df = kb.getDataFactory();
+		kb.addAssertion(A1, a);
+		kb.addAssertion(A2, a);
+		kb.addSubsumption(df.getOWLObjectIntersectionOf(A1, A2), A3);
+		assertAnswer("A3(X)", new String[]{"a"});
+	}
 
-	// TODO test rules (are the rule negative predicates added for tabling?)
+	@Test
+	public final void inconsistentRule() throws OWLOntologyCreationException{
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addDisjunction(A2, A1);
+		kb.addRule("A2(X):-A1(X)");
+		kb.addRule("A3(X):-A2(X)");
+		kb.addRule("A1(X):-A3(X)");
+		assertInconsistent("A3(a)");		
+		assertInconsistent("A2(a)");
+	}
 
 	/**
 	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
