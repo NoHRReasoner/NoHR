@@ -111,12 +111,10 @@ public class RuleCreatorQL {
 
 	protected TermModel trExistential(OWLPropertyExpression<?, ?> q, String x,
 			boolean inverse, boolean d) {	
-		OWLProperty<?, ?> p = !DLUtils.isInverse(q) ? (OWLProperty<?, ?>) q : ((OWLObjectPropertyExpression) q).getNamedProperty();
-		TermModel[] functArgs = { tc.getPredicate(p, d) };
-		TermModel funct = new TermModel((inverse == DLUtils.isInverse(q)) ? DOM_ATOM : RAN_ATOM,
-				functArgs);
 		TermModel[] vars = { new TermModel(x) };
-		return new TermModel(funct, vars);
+		boolean isInverse = DLUtils.isInverse(q);
+		OWLProperty<?, ?> p = !isInverse ? (OWLProperty<?, ?>) q : ((OWLObjectPropertyExpression) q).getNamedProperty();
+		return new TermModel(tc.getExistPredicate(p, inverse == isInverse, d), vars);
 	}
 
 	protected TermModel trExistential(String pVar, String x, boolean inverse) {
@@ -172,13 +170,18 @@ public class RuleCreatorQL {
 					((OWLObjectPropertyExpression) p).getNamedProperty(), y, x);
 	}
 
-	protected List<Rule> e() {
+	protected List<Rule> e(OWLProperty<?, ?> p) {
 		List<Rule> result = new ArrayList<Rule>();
-		String pVar = "P";
-		result.add(new Rule(trExistential(pVar, X, false), trAtomic(pVar, X,
-				ANNON_VAR)));
-		result.add(new Rule(trExistential(pVar, X, true), trAtomic(pVar,
-				ANNON_VAR, X)));
+		result.add(new Rule(trExistential(p, X, false, false), tr(p, X,
+				ANNON_VAR, false)));
+		result.add(new Rule(trExistential(p, X, true, false), tr(p,
+				ANNON_VAR, X, false)));
+		if(cm.isAnyDisjointStatement()) {
+			result.add(new Rule(trExistential(p, X, false, true), tr(p, X,
+				ANNON_VAR, false)));
+		result.add(new Rule(trExistential(p, X, true, true), tr(p,
+				ANNON_VAR, X, false)));
+		}
 		write(result);
 		return result;
 	}
@@ -229,7 +232,7 @@ public class RuleCreatorQL {
 
 	protected List<Rule> s2(OWLPropertyExpression<?, ?> q1,
 			OWLPropertyExpression<?, ?> q2) {
-		List<Rule> result = new ArrayList<Rule>();
+		List<Rule> result = new ArrayList<Rule>();		
 		result.add(new Rule(tr(q2, X, Y, false), tr(q1, X, Y, false)));
 		result.add(new Rule(trExistential(q2, X, false, false), trExistential(
 				q1, X, false, false)));

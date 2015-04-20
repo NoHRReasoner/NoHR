@@ -7,7 +7,9 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
@@ -33,5 +35,7 @@ public interface INormalizedOntology {
 	public Set<OWLPropertyExpression<?, ?>> getUnsatisfiableRoles();
 
 	public boolean hasDisjointStatement();
+
+	public Set<OWLObjectProperty> getRoles();
 
 }

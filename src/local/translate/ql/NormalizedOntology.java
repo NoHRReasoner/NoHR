@@ -32,6 +32,7 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -41,6 +42,8 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
 public class NormalizedOntology implements INormalizedOntology {
+
+	private Set<OWLObjectProperty> roles;
 
 	private Set<OWLClassAssertionAxiom> conceptAssertions;
 
@@ -69,6 +72,7 @@ public class NormalizedOntology implements INormalizedOntology {
 	public NormalizedOntology(OWLOntology ontology) {
 		this.ontologyIRI = ontology.getOntologyID().getOntologyIRI();
 		this.df = ontology.getOWLOntologyManager().getOWLDataFactory();
+		this.roles = ontology.getObjectPropertiesInSignature();
 		this.conceptAssertions = new HashSet<OWLClassAssertionAxiom>();
 		this.roleAssertions = new HashSet<OWLObjectPropertyAssertionAxiom>();
 		this.dataAssertions = new HashSet<OWLDataPropertyAssertionAxiom>();
@@ -330,6 +334,11 @@ public class NormalizedOntology implements INormalizedOntology {
 	private OWLClassExpression some(OWLObjectPropertyExpression q) {
 		return df.getOWLObjectSomeValuesFrom(q.getSimplified(),
 				df.getOWLThing());
+	}
+
+	@Override
+	public Set<OWLObjectProperty> getRoles() {
+		return roles;
 	}
 
 }

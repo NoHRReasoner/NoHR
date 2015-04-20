@@ -47,14 +47,18 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 			OWLDataFactory dataFactory, OWLOntologyManager ontologyManager) {
 		this.cm = _cm;
 		this.ruleCreatorQL = _ruleCreator;
+		utils.Logger.start("ontology normalization");
 		this.normalizedOntology = new NormalizedOntology(ontology);
+		utils.Logger.stop("ontology normalization");
 		this.graph = new BasicTBoxGraph(normalizedOntology, dataFactory);
 	}
 
 	public void proceed() {
 		cm.setIsAnyDisjointStatement(normalizedOntology.hasDisjointStatement());
-		ruleCreatorQL.e();
+		utils.Logger.start("ontology translation");
 		translate();
+		utils.Logger.stop("ontology translation");
+		utils.Logger.start("ontology classification");
 		for (OWLEntity e : graph.getUnsatisfiableEntities())
 			if (e instanceof OWLClass)
 				ruleCreatorQL.i1((OWLClass) e);
@@ -62,9 +66,10 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 				ruleCreatorQL.i2((OWLProperty) e);
 		for (OWLObjectProperty p : graph.getIrreflexiveRoles())
 			ruleCreatorQL.ir(p);
+		utils.Logger.stop("ontology classification");
 	}
 
-	private void translate() {
+	private void translate() {	
 		for (OWLClassAssertionAxiom f : normalizedOntology
 				.getConceptAssertions())
 			translate(f);
@@ -85,6 +90,8 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 		for (OWLNaryPropertyAxiom<?> d : normalizedOntology
 				.getRoleDisjunctions())
 			translate(d);
+		for(OWLProperty<?,?> p : normalizedOntology.getRoles())
+			ruleCreatorQL.e(p);
 	}
 
 	private void translate(OWLNaryPropertyAxiom d) {

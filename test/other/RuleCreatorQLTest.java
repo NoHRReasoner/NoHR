@@ -139,19 +139,19 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 	public void tearDown() throws Exception {
 	}
 
-	/**
-	 * Test method for {@link local.translate.ql.RuleCreatorQL#e()}.
-	 */
-	@Test
-	public final void testE() {
-		List<Rule> rules = e();
-		String domRule = "dom(P)(X):-P(X,_).";
-		String ranRule = "ran(P)(X):-P(_,X).";
-		Assert.assertEquals("Should return the dom rule", domRule, rules.get(0)
-				.toString());
-		Assert.assertEquals("Should return the ran rule", ranRule, rules.get(1)
-				.toString());
-	}
+//	/**
+//	 * Test method for {@link local.translate.ql.RuleCreatorQL#e()}.
+//	 */
+//	@Test
+//	public final void testE() {
+//		List<Rule> rules = e();
+//		String domRule = "dom(P)(X):-P(X,_).";
+//		String ranRule = "ran(P)(X):-P(_,X).";
+//		Assert.assertEquals("Should return the dom rule", domRule, rules.get(0)
+//				.toString());
+//		Assert.assertEquals("Should return the ran rule", ranRule, rules.get(1)
+//				.toString());
+//	}
 
 	/**
 	 * Test method for
