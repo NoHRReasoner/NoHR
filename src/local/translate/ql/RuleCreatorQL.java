@@ -109,10 +109,11 @@ public class RuleCreatorQL {
 		return new TermModel(tc.getNegativePredicate(p), vars);
 	}
 
-	protected TermModel trExistential(OWLProperty p, String x,
-			boolean inverse, boolean d) {
+	protected TermModel trExistential(OWLPropertyExpression<?, ?> q, String x,
+			boolean inverse, boolean d) {	
+		OWLProperty<?, ?> p = !DLUtils.isInverse(q) ? (OWLProperty<?, ?>) q : ((OWLObjectPropertyExpression) q).getNamedProperty();
 		TermModel[] functArgs = { tc.getPredicate(p, d) };
-		TermModel funct = new TermModel(!inverse ? DOM_ATOM : RAN_ATOM,
+		TermModel funct = new TermModel((inverse == DLUtils.isInverse(q)) ? DOM_ATOM : RAN_ATOM,
 				functArgs);
 		TermModel[] vars = { new TermModel(x) };
 		return new TermModel(funct, vars);
@@ -230,9 +231,20 @@ public class RuleCreatorQL {
 			OWLPropertyExpression<?, ?> q2) {
 		List<Rule> result = new ArrayList<Rule>();
 		result.add(new Rule(tr(q2, X, Y, false), tr(q1, X, Y, false)));
-		if (cm.isAnyDisjointStatement())
-			result.add(new Rule(tr(q2, X, Y, true), tr(q1, X, Y, true),
-					new NegativeTerm(new TermModel[] { trNeg(q2, X, Y) })));
+		result.add(new Rule(trExistential(q2, X, false, false), trExistential(
+				q1, X, false, false)));
+		result.add(new Rule(trExistential(q2, X, true, false), trExistential(
+				q1, X, true, false)));
+		if (cm.isAnyDisjointStatement()) {
+			TermModel negTerm = new NegativeTerm(new TermModel[] { trNeg(q2, X,
+					Y) });
+			result.add(new Rule(tr(q2, X, Y, true), tr(q1, X, Y, true), negTerm));
+			result.add(new Rule(trExistential(q2, X, false, true),
+					trExistential(q1, X, false, true), negTerm));
+			result.add(new Rule(trExistential(q2, X, true, true),
+					trExistential(q1, X, true, true), new NegativeTerm(
+							new TermModel[] { trNeg(q2, Y, X) })));
+		}
 		result.add(new Rule(trNeg(q1, X, Y), trNeg(q2, X, Y)));
 		write(result);
 		return result;

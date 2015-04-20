@@ -110,20 +110,20 @@ public class QueryTest {
 		assertInconsistent("P2(X,Y)");
 	}
 	
-	
-	@Test
-	public final void testEL() throws OWLOntologyCreationException {
-		kb.clear();
-		OWLClass A1 = kb.getConcept("A1");
-		OWLClass A2 = kb.getConcept("A2");
-		OWLClass A3 = kb.getConcept("A3");
-		OWLIndividual a = kb.getIndividual("a");
-		OWLDataFactory df = kb.getDataFactory();
-		kb.addAssertion(A1, a);
-		kb.addAssertion(A2, a);
-		kb.addSubsumption(df.getOWLObjectIntersectionOf(A1, A2), A3);
-		assertAnswer("A3(X)", new String[]{"a"});
-	}
+//	
+//	@Test
+//	public final void testEL() throws OWLOntologyCreationException {
+//		kb.clear();
+//		OWLClass A1 = kb.getConcept("A1");
+//		OWLClass A2 = kb.getConcept("A2");
+//		OWLClass A3 = kb.getConcept("A3");
+//		OWLIndividual a = kb.getIndividual("a");
+//		OWLDataFactory df = kb.getDataFactory();
+//		kb.addAssertion(A1, a);
+//		kb.addAssertion(A2, a);
+//		kb.addSubsumption(df.getOWLObjectIntersectionOf(A1, A2), A3);
+//		assertAnswer("A3(X)", new String[]{"a"});
+//	}
 
 	@Test
 	public final void inconsistentRule() throws OWLOntologyCreationException{
@@ -244,27 +244,121 @@ public class QueryTest {
 		kb.addDisjunction(kb.getExistential(P1), A2);
 		assertInconsistent("A2(X)");
 	}
-
-	/**
-	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
-	 * 
-	 * @throws OWLOntologyCreationException
-	 */
+	
 	@Test
-	public final void disjointWithInverseRoles()
+	public final void disjunctionExistRoleExist1() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLClass A4 = kb.getConcept("A4");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addSubsumption(A1, kb.getExistential(P2));
+		kb.addSubsumption(P2, P3);
+		kb.addRule("A4(X):-A1(X)");
+		assertConsistent("A4(X)");
+		kb.addDisjunction(kb.getExistential(P3), A4);
+		assertInconsistent("A4(X)");
+	}
+	
+	@Test
+	public final void disjunctionExistRoleExist2() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLClass A4 = kb.getConcept("A4");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addSubsumption(A1, kb.getExistential(kb.getInverse(P2)));
+		kb.addSubsumption(kb.getInverse(P2), P3);
+		kb.addRule("A4(X):-A1(X)");
+		assertConsistent("A4(X)");
+		kb.addDisjunction(kb.getExistential(P3), A4);
+		assertInconsistent("A4(X)");
+	}
+	
+	@Test
+	public final void disjointWithAtomicConceptsToExistRoleExist()
 			throws OWLOntologyCreationException {
 		kb.clear();
-		OWLObjectProperty P1 = kb.getRole("P1");
-		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLObjectProperty P4 = kb.getRole("P4");
+		OWLClass A5 = kb.getConcept("A5");
 		OWLIndividual a = kb.getIndividual("a");
-		OWLIndividual b = kb.getIndividual("b");
-		kb.addAssertion(P1, a, b);
-		kb.addRule("P2(Y,X):-P1(X,Y).");
-		assertConsistent("P2(Y,X)");
-		kb.addDisjunction(P1, kb.getInverse(P2));
-		assertInconsistent("P2(Y,X)");
+		kb.addAssertion(A1, a);
+		kb.addRule("A2(X):-A1(X)");
+		assertConsistent("A2(X)");
+		kb.addDisjunction(A1, A2);
+		kb.addSubsumption(A2, kb.getExistential(P3));
+		kb.addSubsumption(P3, P4);
+		kb.addSubsumption(kb.getExistential(P4), A5);
+		assertInconsistent("A5(X)");
 	}
-
+	
+   @Test
+	public final void disjointWithAtomicConceptsToExistRoleExist2()
+			throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLObjectProperty P4 = kb.getRole("P4");
+		OWLClass A5 = kb.getConcept("A5");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addRule("A2(X):-A1(X)");
+		assertConsistent("A2(X)");
+		kb.addDisjunction(A1, A2);
+		kb.addSubsumption(A2, kb.getExistential(kb.getInverse(P3)));
+		kb.addSubsumption(kb.getInverse(P3), P4);
+		kb.addSubsumption(kb.getExistential(P4), A5);
+		assertInconsistent("A5(X)");
+	}
+		
+    @Test
+	public final void disjointWithAtomicConceptsToExistRoleExist3()
+			throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLObjectProperty P4 = kb.getRole("P4");
+		OWLClass A5 = kb.getConcept("A5");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addRule("A2(X):-A1(X)");
+		assertConsistent("A2(X)");
+		kb.addDisjunction(A1, A2);
+		kb.addSubsumption(A2, kb.getExistential(P3));
+		kb.addSubsumption(P3, kb.getInverse(P4));
+		kb.addSubsumption(kb.getExistential(kb.getInverse(P4)), A5);
+		assertInconsistent("A5(X)");
+	}
+    
+    @Test
+	public final void disjointWithAtomicConceptsToExistRoleExist4()
+			throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLClass A2 = kb.getConcept("A2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLObjectProperty P4 = kb.getRole("P4");
+		OWLClass A5 = kb.getConcept("A5");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addRule("A2(X):-A1(X)");
+		assertConsistent("A2(X)");
+		kb.addDisjunction(A1, A2);
+		kb.addSubsumption(A2, kb.getExistential(kb.getInverse(P3)));
+		kb.addSubsumption(kb.getInverse(P3), kb.getInverse(P4));
+		kb.addSubsumption(kb.getExistential(kb.getInverse(P4)), A5);
+		assertInconsistent("A5(X)");
+	}
+	
 	/**
 	 * Test method for {@link hybrid.query.model.Query#query(java.lang.String)}.
 	 * 
@@ -403,6 +497,66 @@ public class QueryTest {
 		kb.addSubsumption(A1, kb.getExistential(P2));
 		kb.addSubsumption(kb.getExistential(P2), A3);
 		assertAnswer("A3(X)", new String[] { "a" });
+	}
+	
+	@Test
+	public final void subsumptionsExistRoleExist1() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLClass A4 = kb.getConcept("A4");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addSubsumption(A1, kb.getExistential(P2));
+		kb.addSubsumption(P2, P3);
+		kb.addSubsumption(kb.getExistential(P3), A4);
+		assertAnswer("A4(X)", new String[]{ "a" });
+	}
+	
+	@Test
+	public final void subsumptionsExistRoleExist2() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLClass A4 = kb.getConcept("A4");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addSubsumption(A1, kb.getExistential(P2));
+		kb.addSubsumption(P2, kb.getInverse(P3));
+		kb.addSubsumption(kb.getExistential(kb.getInverse(P3)), A4);
+		assertAnswer("A4(X)", new String[]{ "a" });
+	}
+
+	@Test
+	public final void subsumptionsExistRoleExist3() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLClass A4 = kb.getConcept("A4");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addSubsumption(A1, kb.getExistential(kb.getInverse(P2)));
+		kb.addSubsumption(kb.getInverse(P2), P3);
+		kb.addSubsumption(kb.getExistential(P3), A4);
+		assertAnswer("A4(X)", new String[]{ "a" });
+	}
+	
+	@Test
+	public final void subsumptionsExistRoleExist4() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A1 = kb.getConcept("A1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+		OWLObjectProperty P3 = kb.getRole("P3");
+		OWLClass A4 = kb.getConcept("A4");
+		OWLIndividual a = kb.getIndividual("a");
+		kb.addAssertion(A1, a);
+		kb.addSubsumption(A1, kb.getExistential(kb.getInverse(P2)));
+		kb.addSubsumption(kb.getInverse(P2), kb.getInverse(P3));
+		kb.addSubsumption(kb.getExistential(kb.getInverse(P3)), A4);
+		assertAnswer("A4(X)", new String[]{ "a" });
 	}
 
 	/**
