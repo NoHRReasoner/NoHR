@@ -7,8 +7,8 @@ import local.translate.CollectionsManager;
 import local.translate.OntologyLabel;
 
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
@@ -16,12 +16,11 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
-import xsb.NegativeTerm;
+import xsb.NotTerm;
 import xsb.Rule;
 
 import com.declarativa.interprolog.TermModel;
@@ -36,12 +35,18 @@ public class RuleCreatorQL {
 
 	protected CollectionsManager cm;
 	protected OntologyLabel ol;
+	protected INormalizedOntology normOnt;
 
 	protected TermCodifier tc;
 
-	public RuleCreatorQL(CollectionsManager cm, OntologyLabel ol) {
+	protected OWLOntologyManager om;
+
+	public RuleCreatorQL(CollectionsManager cm, OntologyLabel ol,
+			INormalizedOntology normalizedOntology, OWLOntologyManager om) {
 		this.cm = cm;
 		this.ol = ol;
+		this.normOnt = normalizedOntology;
+		this.om = om;
 		tc = new TermCodifier(ol, cm);
 	}
 
@@ -76,7 +81,7 @@ public class RuleCreatorQL {
 		return new TermModel(tc.getNegativePredicate(p), consts);
 	}
 
-	private TermModel trNegAssertion(OWLDataProperty dataProperty,
+	protected TermModel trNegAssertion(OWLDataProperty dataProperty,
 			OWLIndividual individual, OWLLiteral value) {
 		TermModel[] consts = { new TermModel(tc.getConstant(individual)),
 				new TermModel(tc.getConstant(value)) };
@@ -94,11 +99,6 @@ public class RuleCreatorQL {
 		return new TermModel(tc.getPredicate(p, d), vars);
 	}
 
-	protected TermModel trAtomic(String p, String x, String y) {
-		TermModel[] vars = { new TermModel(x), new TermModel(y) };
-		return new TermModel(new TermModel(p), vars);
-	}
-
 	protected TermModel trNegatedAtomic(OWLClass c, String x) {
 		TermModel[] vars = { new TermModel(x) };
 		return new TermModel(tc.getNegativePredicate(c), vars);
@@ -110,19 +110,13 @@ public class RuleCreatorQL {
 	}
 
 	protected TermModel trExistential(OWLPropertyExpression<?, ?> q, String x,
-			boolean inverse, boolean d) {	
+			boolean inverse, boolean d) {
 		TermModel[] vars = { new TermModel(x) };
 		boolean isInverse = DLUtils.isInverse(q);
-		OWLProperty<?, ?> p = !isInverse ? (OWLProperty<?, ?>) q : ((OWLObjectPropertyExpression) q).getNamedProperty();
-		return new TermModel(tc.getExistPredicate(p, inverse == isInverse, d), vars);
-	}
-
-	protected TermModel trExistential(String pVar, String x, boolean inverse) {
-		TermModel[] functVars = { new TermModel(pVar) };
-		TermModel funct = new TermModel(!inverse ? DOM_ATOM : RAN_ATOM,
-				functVars);
-		TermModel[] vars = { new TermModel(x) };
-		return new TermModel(funct, vars);
+		OWLProperty<?, ?> p = !isInverse ? (OWLProperty<?, ?>) q
+				: ((OWLObjectPropertyExpression) q).getNamedProperty();
+		return new TermModel(tc.getExistPredicate(p, inverse == isInverse, d),
+				vars);
 	}
 
 	// *****************************************************************************
@@ -162,7 +156,7 @@ public class RuleCreatorQL {
 					d);
 	}
 
-	private TermModel trNeg(OWLPropertyExpression<?, ?> p, String x, String y) {
+	protected TermModel trNeg(OWLPropertyExpression<?, ?> p, String x, String y) {
 		if (!DLUtils.isInverse(p))
 			return trNegatedAtomic((OWLProperty<?, ?>) p, x, y);
 		else
@@ -170,17 +164,33 @@ public class RuleCreatorQL {
 					((OWLObjectPropertyExpression) p).getNamedProperty(), y, x);
 	}
 
-	protected List<Rule> e(OWLProperty<?, ?> p) {
+	protected OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression q) {
+		OWLDataFactory df = om.getOWLDataFactory();
+		return df.getOWLObjectSomeValuesFrom(q, df.getOWLThing());
+	}
+
+	protected List<Rule> e(OWLObjectProperty p) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trExistential(p, X, false, false), tr(p, X,
-				ANNON_VAR, false)));
-		result.add(new Rule(trExistential(p, X, true, false), tr(p,
-				ANNON_VAR, X, false)));
-		if(cm.isAnyDisjointStatement()) {
-			result.add(new Rule(trExistential(p, X, false, true), tr(p, X,
-				ANNON_VAR, false)));
-		result.add(new Rule(trExistential(p, X, true, true), tr(p,
-				ANNON_VAR, X, false)));
+		boolean hasSome = normOnt.getSubConcepts().contains(some(p));
+		boolean hasInvSome = normOnt.getSubConcepts().contains(
+				some(p.getInverseProperty()));
+		if (hasSome) {
+			TermModel e = trExistential(p, X, false, false);
+			result.add(new Rule(e, tr(p, X, ANNON_VAR, false)));
+		}
+		if (hasInvSome) {
+			TermModel f = trExistential(p, X, true, false);
+			result.add(new Rule(f, tr(p, ANNON_VAR, X, false)));
+		}
+		if (cm.isAnyDisjointStatement()) {
+			if (hasSome) {
+				TermModel g = trExistential(p, X, false, true);
+				result.add(new Rule(g, tr(p, X, ANNON_VAR, false)));
+			}
+			if (hasInvSome) {
+				TermModel h = trExistential(p, X, true, true);
+				result.add(new Rule(h, tr(p, ANNON_VAR, X, false)));
+			}
 		}
 		write(result);
 		return result;
@@ -188,10 +198,17 @@ public class RuleCreatorQL {
 
 	protected List<Rule> a1(OWLClass a, OWLIndividual c) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trAssertion(a, c, false)));
-		if (cm.isAnyDisjointStatement())
-			result.add(new Rule(trAssertion(a, c, true), new NegativeTerm(
-					new TermModel[] { trNegAssertion(a, c) })));
+		TermModel o = trAssertion(a, c, false);
+		result.add(new Rule(o));
+		if (cm.isAnyDisjointStatement()) {
+			TermModel d = trAssertion(a, c, true);
+			TermModel n = trNegAssertion(a, c);
+			if (cm.isInNegHead(n)) {
+				result.add(new Rule(d, new NotTerm(n)));
+				cm.addTabled(n);
+			} else
+				result.add(new Rule(d));
+		}
 		write(result);
 		return result;
 	}
@@ -199,64 +216,122 @@ public class RuleCreatorQL {
 	protected List<Rule> a2(OWLObjectProperty p, OWLIndividual c1,
 			OWLIndividual c2) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trAssertion(p, c1, c2, false)));
-		if (cm.isAnyDisjointStatement())
-			result.add(new Rule(trAssertion(p, c1, c2, true), new NegativeTerm(
-					new TermModel[] { trNegAssertion(p, c1, c2) })));
+		TermModel o = trAssertion(p, c1, c2, false);
+		result.add(new Rule(o));
+		if (cm.isAnyDisjointStatement()) {
+			TermModel d = trAssertion(p, c1, c2, true);
+			TermModel n = trNegAssertion(p, c1, c2);
+			if (cm.isInNegHead(n)) {
+				result.add(new Rule(d, new NotTerm(n)));
+				cm.addTabled(n);
+			} else
+				result.add(new Rule(d));
+		}
 		write(result);
 		return result;
-	}
-
-	protected List<Rule> s1(OWLSubClassOfAxiom subsumption) {
-		OWLClassExpression b1 = subsumption.getSubClass();
-		OWLClassExpression b2 = subsumption.getSuperClass();
-		return s1(b1, b2);
 	}
 
 	protected List<Rule> s1(OWLClassExpression b1, OWLClassExpression b2) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(tr(b2, X, false), tr(b1, X, false)));
-		if (cm.isAnyDisjointStatement())
-			result.add(new Rule(tr(b2, X, true), tr(b1, X, true),
-					new NegativeTerm(new TermModel[] { trNeg(b2, X) })));
-		result.add(new Rule(trNeg(b1, X), trNeg(b2, X)));
+		TermModel o1 = tr(b1, X, false);
+		TermModel o2 = tr(b2, X, false);
+		result.add(new Rule(o2, o1));
+		if (cm.isAnyDisjointStatement()) {
+			TermModel d1 = tr(b1, X, true);
+			TermModel d2 = tr(b2, X, true);
+			TermModel n1 = trNeg(b1, X);
+			TermModel n2 = trNeg(b2, X);
+			if (cm.isInNegHead(n2)) {
+				result.add(new Rule(d2, d1, new NotTerm(n2)));
+				cm.addTabled(n2);
+			} else
+				result.add(new Rule(d2, d1));
+			result.add(new Rule(n1, n2));
+			cm.addTabled(d2);
+			cm.addTabled(n1);
+		}
 		write(result);
+		cm.addTabled(o2);
 		return result;
-	}
-
-	protected List<Rule> s2(OWLSubObjectPropertyOfAxiom subsumption) {
-		OWLObjectPropertyExpression q1 = subsumption.getSubProperty();
-		OWLObjectPropertyExpression q2 = subsumption.getSuperProperty();
-		return s2(q1, q2);
 	}
 
 	protected List<Rule> s2(OWLPropertyExpression<?, ?> q1,
 			OWLPropertyExpression<?, ?> q2) {
-		List<Rule> result = new ArrayList<Rule>();		
-		result.add(new Rule(tr(q2, X, Y, false), tr(q1, X, Y, false)));
-		result.add(new Rule(trExistential(q2, X, false, false), trExistential(
-				q1, X, false, false)));
-		result.add(new Rule(trExistential(q2, X, true, false), trExistential(
-				q1, X, true, false)));
-		if (cm.isAnyDisjointStatement()) {
-			TermModel negTerm = new NegativeTerm(new TermModel[] { trNeg(q2, X,
-					Y) });
-			result.add(new Rule(tr(q2, X, Y, true), tr(q1, X, Y, true), negTerm));
-			result.add(new Rule(trExistential(q2, X, false, true),
-					trExistential(q1, X, false, true), negTerm));
-			result.add(new Rule(trExistential(q2, X, true, true),
-					trExistential(q1, X, true, true), new NegativeTerm(
-							new TermModel[] { trNeg(q2, Y, X) })));
+		List<Rule> result = new ArrayList<Rule>();
+		boolean s = false;
+		boolean si = false;
+		if (q1 instanceof OWLObjectPropertyExpression
+				&& q2 instanceof OWLObjectPropertyExpression) {
+			OWLObjectPropertyExpression op1 = (OWLObjectPropertyExpression) q1;
+			OWLObjectPropertyExpression op2 = (OWLObjectPropertyExpression) q2;
+			s = normOnt.getSuperConcepts().contains(some(op1))
+					&& normOnt.getSubConcepts().contains(some(op2));
+			si = normOnt.getSuperConcepts().contains(
+					some(op1.getInverseProperty()))
+					&& normOnt.getSubConcepts().contains(
+							some(op2.getInverseProperty()));
+
 		}
-		result.add(new Rule(trNeg(q1, X, Y), trNeg(q2, X, Y)));
+		TermModel o1 = tr(q1, X, Y, false);
+		TermModel o2 = tr(q2, X, Y, false);
+		result.add(new Rule(o2, o1));
+		cm.addTabled(o2);
+		if (s) {
+			TermModel e1 = trExistential(q1, X, false, false);
+			TermModel e2 = trExistential(q2, X, false, false);
+			result.add(new Rule(e2, e1));
+			cm.addTabled(e2);
+		}
+		if (si) {
+			TermModel f1 = trExistential(q1, X, true, false);
+			TermModel f2 = trExistential(q2, X, true, false);
+			result.add(new Rule(f2, f1));
+			cm.addTabled(f2);
+		}
+		if (cm.isAnyDisjointStatement()) {
+			TermModel d1 = tr(q1, X, Y, true);
+			TermModel d2 = tr(q2, X, Y, true);
+			TermModel n1 = trNeg(q1, X, Y);
+			TermModel n2 = trNeg(q2, X, Y);
+			if (cm.isInNegHead(n2)) {
+				result.add(new Rule(d2, d1, new NotTerm(n2)));
+				cm.addTabled(n2);
+			} else
+				result.add(new Rule(d2, d1));
+			if (s) {
+				TermModel g1 = trExistential(q1, X, false, true);
+				TermModel g2 = trExistential(q2, X, false, true);
+				if (cm.isInNegHead(n2))
+					result.add(new Rule(g2, g1, new NotTerm(n2)));
+				else
+					result.add(new Rule(g2, g1));
+				cm.addTabled(g2);
+			}
+			if (si) {
+				TermModel h1 = trExistential(q1, X, true, true);
+				TermModel h2 = trExistential(q2, X, true, true);
+				if (cm.isInNegHead(n2))
+					result.add(new Rule(h2, h1, new NotTerm(trNeg(q2, Y, X))));
+				else
+					result.add(new Rule(h2, h1));
+				cm.addTabled(h2);
+			}
+			result.add(new Rule(n1, n2));
+			cm.addTabled(d2);
+			cm.addTabled(n1);
+		}
 		write(result);
 		return result;
 	}
 
 	protected List<Rule> n1(OWLClassExpression b1, OWLClassExpression b2) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trNeg(b1, X), tr(b2, X, false)));
-		result.add(new Rule(trNeg(b2, X), tr(b1, X, false)));
+		TermModel n1 = trNeg(b1, X);
+		TermModel n2 = trNeg(b2, X);
+		result.add(new Rule(n1, tr(b2, X, false)));
+		result.add(new Rule(n2, tr(b1, X, false)));
+		cm.addTabled(n1);
+		cm.addTabled(n2);
 		write(result);
 		return result;
 	}
@@ -264,38 +339,42 @@ public class RuleCreatorQL {
 	protected List<Rule> n2(OWLPropertyExpression<?, ?> q1,
 			OWLPropertyExpression<?, ?> q2) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trNeg(q1, X, Y), tr(q2, X, Y, false)));
-		result.add(new Rule(trNeg(q2, X, Y), tr(q1, X, Y, false)));
+		TermModel n1 = trNeg(q1, X, Y);
+		TermModel n2 = trNeg(q2, X, Y);
+		result.add(new Rule(n1, tr(q2, X, Y, false)));
+		result.add(new Rule(n2, tr(q1, X, Y, false)));
+		cm.addTabled(n1);
+		cm.addTabled(n2);
 		write(result);
 		return result;
 	}
 
 	protected List<Rule> i1(OWLClass c) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trNeg(c, X)));
+		TermModel n = trNeg(c, X);
+		result.add(new Rule(n));
+		cm.addTabled(n);
 		write(result);
 		return result;
 	}
 
 	protected List<Rule> i2(OWLProperty<?, ?> p) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trNeg(p, X, Y)));
+		TermModel n = trNeg(p, X, Y);
+		result.add(new Rule(n));
+		cm.addTabled(n);
 		write(result);
 		return result;
 	}
 
-	//TODO remove unused methods
+	// TODO remove unused methods
 
 	protected List<Rule> ir(OWLObjectProperty p) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trNeg(p, X, X)));
+		TermModel n = trNeg(p, X, X);
+		cm.addTabled(n);
 		write(result);
 		return result;
-	}
-
-	public void a1(OWLClassAssertionAxiom clsAssertion) {
-		a1((OWLClass) clsAssertion.getClassExpression(),
-				clsAssertion.getIndividual());
 	}
 
 	public void a2(OWLObjectPropertyAssertionAxiom propAssertion) {
@@ -309,11 +388,17 @@ public class RuleCreatorQL {
 			OWLDataProperty dataProperty, OWLIndividual individual,
 			OWLLiteral value) {
 		List<Rule> result = new ArrayList<Rule>();
-		result.add(new Rule(trAssertion(dataProperty, individual, value, false)));
-		if (cm.isAnyDisjointStatement())
-			result.add(new Rule(trAssertion(dataProperty, individual, value,
-					true), new NegativeTerm(new TermModel[] { trNegAssertion(
-					dataProperty, individual, value) })));
+		TermModel o = trAssertion(dataProperty, individual, value, false);
+		result.add(new Rule(o));
+		if (cm.isAnyDisjointStatement()) {
+			TermModel d = trAssertion(dataProperty, individual, value, true);
+			TermModel n = trNegAssertion(dataProperty, individual, value);
+			if (cm.isInNegHead(n)) {
+				result.add(new Rule(d, new NotTerm(n)));
+				cm.addTabled(n);
+			} else
+				result.add(new Rule(d));
+		}
 		write(result);
 		return result;
 	}

@@ -37,5 +37,16 @@ public interface INormalizedOntology {
 	public boolean hasDisjointStatement();
 
 	public Set<OWLObjectProperty> getRoles();
+	
+	public Set<OWLClassExpression> getSubConcepts();
+	
+	public Set<OWLClassExpression> getSuperConcepts();
 
+	public Set<OWLClassExpression> getDisjointConcepts();	
+
+	public Set<OWLPropertyExpression> getSubRules();	
+
+	public Set<OWLPropertyExpression> getSuperRoles();	
+
+	public Set<OWLPropertyExpression> getDisjointRules();
 }

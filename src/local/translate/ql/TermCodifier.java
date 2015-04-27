@@ -25,39 +25,32 @@ public class TermCodifier {
 	private OntologyLabel ontologyLabel;
 	private CollectionsManager cm;
 
-	public TermCodifier(OntologyLabel ontologyLabel,
-			CollectionsManager collectionsManager) {
+	public TermCodifier(OntologyLabel ontologyLabel, CollectionsManager cm) {
 		this.ontologyLabel = ontologyLabel;
-		this.cm = collectionsManager;
+		this.cm = cm;
 	}
 
 	public TermModel getPredicate(OWLClass cls, boolean doubled) {
 		String pred = (doubled ? DOUBLED_PREFIX : ORIGINAL_PREFIX)
 				+ ontologyLabel.getLabel(cls, 1);
-		cm.addTabledPredicateOntology(pred + "/1");
 		return new TermModel(pred);
 	}
 
 	public TermModel getPredicate(OWLProperty<?, ?> prop, boolean doubled) {
 		String pred = (doubled ? DOUBLED_PREFIX : ORIGINAL_PREFIX)
 				+ ontologyLabel.getLabel(prop, 1);
-		cm.addTabledPredicateOntology(pred + "/2");
 		return new TermModel(pred);
 	}
 	
 	public TermModel getNegativePredicate(OWLClass cls) {
 		String pred = CLASSICAL_NEGATION_PREFIX
 				+ ontologyLabel.getLabel(cls, 1);
-		cm.addTabledPredicateOntology(pred + "/1");
-		cm.addPrediactesAppearedUnderNunderscore(pred);
 		return new TermModel(pred);
 	}
 
 	public TermModel getNegativePredicate(OWLProperty<?, ?> prop) {
 		String pred = CLASSICAL_NEGATION_PREFIX
 				+ ontologyLabel.getLabel(prop, 1);
-		cm.addTabledPredicateOntology(pred + "/2");
-		cm.addPrediactesAppearedUnderNunderscore(pred);
 		return new TermModel(pred);
 	}
 
@@ -78,8 +71,7 @@ public class TermCodifier {
 		else
 			prefix = inverse ? DOUBLED_DOM_PREFIX : DOUBLED_RAN_PREFIX;
 		String pred = prefix + ontologyLabel.getLabel(prop, 1);
-		cm.addTabledPredicateOntology(pred + "/2");
 		return new TermModel(pred);
-	}
+	}	
 
 }

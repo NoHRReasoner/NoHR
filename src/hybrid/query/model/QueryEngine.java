@@ -1,6 +1,8 @@
 package hybrid.query.model;
 
 import com.declarativa.interprolog.XSBSubprocessEngine;
+import com.declarativa.interprolog.util.PrologHaltedException;
+
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -41,6 +43,13 @@ public class QueryEngine {
         }
         startEngine(xsbBin);
     }
+    
+    public void abolishTables() {
+    	utils.Logger.start("abolishing tables");
+    	boolean r = engine.command("abolish_all_tables");
+    	utils.Logger.end("abolishing tables");
+    	utils.Logger.info("tables abolished: " + r);
+    }
 
     /**
      * Deterministic goal.
@@ -49,13 +58,7 @@ public class QueryEngine {
      * @return the object[]
      */
     public Object[] deterministicGoal(String detGoal) {
-        try {
-            return engine.deterministicGoal(detGoal, "[TM]");
-        } catch (Exception e) {
-            LOG.error(e);
-            e.printStackTrace();
-            return null;
-        }
+    	return engine.deterministicGoal(detGoal, "[TM]");
     }
 
     /**

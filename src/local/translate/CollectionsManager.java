@@ -2,12 +2,15 @@ package local.translate;
 
 import org.apache.log4j.Logger;
 
+import com.declarativa.interprolog.TermModel;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The Class CollectionsManager.
@@ -34,6 +37,9 @@ public class CollectionsManager {
 
     /** The labels value. */
     private final HashMap<String, String> labelsValue = new HashMap<String, String>();
+    
+    private final Set<String> headPredicates = new HashSet<String>();
+    private final Set<String> tailPredicates = new HashSet<String>();
 
     /** The logger. */
     private static final Logger log = Logger.getLogger(Translate.class);
@@ -252,5 +258,17 @@ public class CollectionsManager {
      */
     public void setIsAnyDisjointStatement(boolean value) {
         isAnyDisjointStatement = value;
+    }
+    
+    public void addTabled(TermModel term) {
+    	addTabledPredicateOntology(term.getFunctorArity());
+    }
+    
+    public void addNegHead(TermModel term) {
+    	addPrediactesAppearedUnderNunderscore(term.getFunctorArity());
+    }
+     
+    public boolean isInNegHead(TermModel term) {
+    	return isPrediactesAppearedUnderNunderscore(term.getFunctorArity());
     }
 }

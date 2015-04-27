@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import local.translate.ql.INormalizedOntology;
+import local.translate.ql.NormalizedOntology;
 import local.translate.ql.OWLQLOntologyProceeder;
 import local.translate.ql.RuleCreatorQL;
 
@@ -73,7 +75,8 @@ public class Translate {
 
 	/** The prolog commands. */
 	private final List<String> prologCommands = Arrays.asList(
-			":- abolish_all_tables.", ":- set_prolog_flag(unknown,fail).");
+			":- abolish_all_tables.", ":- set_prolog_flag(unknown,fail).",
+			":- max_memory(3500000000).");
 
 	/** The temp dir prop. */
 	private final String tempDirProp = "java.io.tmpdir";
@@ -115,10 +118,10 @@ public class Translate {
 			throws OWLOntologyCreationException, OWLOntologyStorageException {
 		/** Initializing a OntologyManager */
 		log.setLevel(Config.logLevel);
-//		Date dateStart = new Date();
+		// Date dateStart = new Date();
 		ontologyManager = OWLManager.createOWLOntologyManager();
 		ontology = owlOntology;
-//		Utils.getDiffTime(dateStart, "Initializing is done, it took:");
+		// Utils.getDiffTime(dateStart, "Initializing is done, it took:");
 		checkOwlProfile();
 		initCollections();
 		initELK();
@@ -153,12 +156,12 @@ public class Translate {
 
 	public TranslationAlgorithm getTranslationAlgorithm() {
 		return TranslationAlgorithm.DL_LITE_R;
-//		if (isOwl2qlProfile)
-//			return TranslationAlgorithm.DL_LITE_R;
-//		else if (isOwl2elProfile)
-//			return TranslationAlgorithm.EL;
-//		else
-//			return TranslationAlgorithm.DL_LITE_R;
+		// if (isOwl2qlProfile)
+		// return TranslationAlgorithm.DL_LITE_R;
+		// else if (isOwl2elProfile)
+		// return TranslationAlgorithm.EL;
+		// else
+		// return TranslationAlgorithm.DL_LITE_R;
 		// throw new ImportsClosureNotInProfileException(new OWL2QLProfile());
 	}
 
@@ -190,7 +193,7 @@ public class Translate {
 			IOException, OWLOntologyStorageException {
 		/** Initializing a OntologyManager */
 		log.setLevel(Config.logLevel);
-//		Date dateStart = new Date();
+		// Date dateStart = new Date();
 		ontologyManager = OWLManager.createOWLOntologyManager();
 
 		ontologyFile = new File(filePath);
@@ -199,7 +202,7 @@ public class Translate {
 		}
 		ontology = ontologyManager
 				.loadOntologyFromOntologyDocument(ontologyFile);
-//		Utils.getDiffTime(dateStart, "Initializing is done, it took:");
+		// Utils.getDiffTime(dateStart, "Initializing is done, it took:");
 		checkOwlProfile();
 		initCollections();
 		initELK();
@@ -265,7 +268,7 @@ public class Translate {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public File Finish() throws IOException {
-//		Date dateStart = new Date();
+		// Date dateStart = new Date();
 		FileWriter writer = new FileWriter(tempDir + resultFileName);
 		HashSet<String> tabled = new HashSet<String>();
 		log.info("tabled ontology count: "
@@ -276,7 +279,7 @@ public class Translate {
 
 		for (String str : prologCommands) {
 			writer.write(str + "\n");
-		}	
+		}
 		for (String str : tabled) {
 			writer.write(":- table " + str + ".\n");
 		}
@@ -290,7 +293,7 @@ public class Translate {
 		}
 		writer.close();
 
-//		Utils.getDiffTime(dateStart, "Writing XSB file: ");
+		// Utils.getDiffTime(dateStart, "Writing XSB file: ");
 		return new File(tempDir + resultFileName);
 	}
 
@@ -382,9 +385,14 @@ public class Translate {
 		query = new Query(cm);
 		switch (getTranslationAlgorithm()) {
 		case DL_LITE_R:
-			RuleCreatorQL ruleCreatorQL = new RuleCreatorQL(cm, ontologyLabel);
+			utils.Logger.start("ontology normalization");
+			INormalizedOntology normalizedOntology = new NormalizedOntology(
+					ontology);
+			utils.Logger.stop("ontology normalization");
+			RuleCreatorQL ruleCreatorQL = new RuleCreatorQL(cm, ontologyLabel,
+					normalizedOntology, ontologyManager);
 			ontologyProceeder = new OWLQLOntologyProceeder(cm, ruleCreatorQL,
-					ontology, ontologyManager.getOWLDataFactory(),
+					normalizedOntology, ontologyManager.getOWLDataFactory(),
 					ontologyManager);
 			break;
 		case EL:
@@ -447,7 +455,7 @@ public class Translate {
 			OWLOntologyStorageException, IOException {
 		checkOwlProfile();
 		initELK();
-		//TODO normalize and initialize graph
+		// TODO normalize and initialize graph
 		cm.clearOntology();
 		return true;
 	}

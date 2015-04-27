@@ -1,5 +1,6 @@
 package local.translate.ql;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -69,6 +70,18 @@ public class NormalizedOntology implements INormalizedOntology {
 
 	private Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles;
 
+	private Set<OWLClassExpression> subConcepts;
+
+	private Set<OWLClassExpression> superConcepts;
+
+	private Set<OWLClassExpression> disjointConcepts;
+
+	private Set<OWLPropertyExpression> subRules;
+
+	private Set<OWLPropertyExpression> superRules;
+
+	private Set<OWLPropertyExpression> disjointRules;
+
 	public NormalizedOntology(OWLOntology ontology) {
 		this.ontologyIRI = ontology.getOntologyID().getOntologyIRI();
 		this.df = ontology.getOWLOntologyManager().getOWLDataFactory();
@@ -82,6 +95,12 @@ public class NormalizedOntology implements INormalizedOntology {
 		this.roleDisjunctions = new HashSet<OWLNaryPropertyAxiom<?>>();
 		this.unsatisfiableConcepts = new HashSet<OWLClassExpression>();
 		this.unsatisfiableRoles = new HashSet<OWLPropertyExpression<?, ?>>();
+		this.subConcepts = new HashSet<OWLClassExpression>();
+		this.superConcepts = new HashSet<OWLClassExpression>();
+		this.disjointConcepts = new HashSet<OWLClassExpression>();
+		this.subRules = new HashSet<OWLPropertyExpression>();
+		this.superRules = new HashSet<OWLPropertyExpression>();
+		this.disjointRules = new HashSet<OWLPropertyExpression>();
 		normalize(ontology);
 	}
 
@@ -141,6 +160,36 @@ public class NormalizedOntology implements INormalizedOntology {
 		return hasDisjunction;
 	}
 
+	@Override
+	public Set<OWLClassExpression> getSubConcepts() {
+		return subConcepts;
+	}
+
+	@Override
+	public Set<OWLClassExpression> getSuperConcepts() {
+		return superConcepts;
+	}
+
+	@Override
+	public Set<OWLClassExpression> getDisjointConcepts() {
+		return disjointConcepts;
+	}
+
+	@Override
+	public Set<OWLPropertyExpression> getSubRules() {
+		return subRules;
+	}
+
+	@Override
+	public Set<OWLPropertyExpression> getSuperRoles() {
+		return superRules;
+	}
+
+	@Override
+	public Set<OWLPropertyExpression> getDisjointRules() {
+		return disjointRules;
+	}
+
 	private void normalize(OWLAsymmetricObjectPropertyAxiom alpha) {
 		OWLObjectPropertyExpression q = alpha.getProperty();
 		normalize(df.getOWLDisjointObjectPropertiesAxiom(q, q
@@ -160,6 +209,7 @@ public class NormalizedOntology implements INormalizedOntology {
 		Iterator<OWLPropertyExpression> propsIt1 = props.iterator();
 		while (propsIt1.hasNext()) {
 			OWLPropertyExpression q1 = propsIt1.next();
+			disjointRules.add(q1);
 			if (q1.isBottomEntity())
 				continue;
 			Iterator<OWLPropertyExpression> propsIt2 = props.iterator();
@@ -273,13 +323,16 @@ public class NormalizedOntology implements INormalizedOntology {
 		if (b.isOWLNothing() || c.isOWLThing()
 				|| (b.isOWLThing() && !(c instanceof OWLObjectComplementOf)))
 			return;
-		if (b instanceof OWLDataSomeValuesFrom || c instanceof OWLDataSomeValuesFrom)
+		if (b instanceof OWLDataSomeValuesFrom
+				|| c instanceof OWLDataSomeValuesFrom)
 			return;
 		if (c.isOWLNothing()) // BASE CASE
 			unsatisfiableConcepts.add(b);
-		else if (c instanceof OWLClass) // BASE CASE
+		else if (c instanceof OWLClass) { // BASE CASE
+			subConcepts.add(b);
+			superConcepts.add(c);
 			conceptSubsumptions.add(alpha);
-		else if (c instanceof OWLObjectIntersectionOf) {
+		} else if (c instanceof OWLObjectIntersectionOf) {
 			OWLObjectIntersectionOf c0 = (OWLObjectIntersectionOf) c;
 			Set<OWLClassExpression> ops = c0.getOperands();
 			for (OWLClassExpression ci : ops)
@@ -288,6 +341,8 @@ public class NormalizedOntology implements INormalizedOntology {
 			hasDisjunction = true;
 			OWLObjectComplementOf c0 = (OWLObjectComplementOf) c;
 			OWLClassExpression b1 = c0.getOperand();
+			disjointConcepts.add(b);
+			disjointConcepts.add(b1);
 			if (b1.isOWLNothing())
 				return;
 			if (b1.isOWLThing())
@@ -300,9 +355,11 @@ public class NormalizedOntology implements INormalizedOntology {
 			OWLObjectSomeValuesFrom b0 = (OWLObjectSomeValuesFrom) c;
 			OWLObjectPropertyExpression q = b0.getProperty();
 			OWLClassExpression a = b0.getFiller();
-			if (a.isOWLThing()) // BASE CASE
+			if (a.isOWLThing()) {// BASE CASE
+				subConcepts.add(b);
+				superConcepts.add(c);
 				conceptSubsumptions.add(df.getOWLSubClassOfAxiom(b, c));
-			else {
+			} else {
 				OWLObjectProperty pnew = getNewRole(alpha.hashCode());
 				normalize(df.getOWLSubObjectPropertyOfAxiom(pnew, q));
 				normalize(df.getOWLSubClassOfAxiom(
@@ -315,6 +372,8 @@ public class NormalizedOntology implements INormalizedOntology {
 	private void normalize(OWLSubPropertyAxiom alpha) {
 		OWLPropertyExpression q1 = alpha.getSubProperty();
 		OWLPropertyExpression q2 = alpha.getSuperProperty();
+		subRules.add(q1);
+		superRules.add(q2);
 		if (q1.isBottomEntity() || q2.isTopEntity() || q1.isTopEntity())
 			return;
 		if (q2.isBottomEntity())

@@ -23,6 +23,7 @@ import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLProperty;
@@ -38,24 +39,83 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 
 	private TBoxGraph graph;
 
+	private OWLOntologyManager om;
+
 	private INormalizedOntology normalizedOntology;
 
 	private RuleCreatorQL ruleCreatorQL;
 
+	private static final String X = "X";
+	private static final String Y = "Y";
+
 	public OWLQLOntologyProceeder(CollectionsManager _cm,
-			RuleCreatorQL _ruleCreator, OWLOntology ontology,
+			RuleCreatorQL _ruleCreator, INormalizedOntology normalizedOntology,
 			OWLDataFactory dataFactory, OWLOntologyManager ontologyManager) {
 		this.cm = _cm;
+		this.om = ontologyManager;
 		this.ruleCreatorQL = _ruleCreator;
-		utils.Logger.start("ontology normalization");
-		this.normalizedOntology = new NormalizedOntology(ontology);
-		utils.Logger.stop("ontology normalization");
+		this.normalizedOntology = normalizedOntology;
 		this.graph = new BasicTBoxGraph(normalizedOntology, dataFactory);
 	}
+
+	private void computeNegHeads() {
+		for (OWLClassExpression b : normalizedOntology.getSubConcepts())
+			cm.addNegHead(ruleCreatorQL.trNeg(b, X));
+		for (OWLClassExpression b : normalizedOntology.getDisjointConcepts())
+			cm.addNegHead(ruleCreatorQL.trNeg(b, X));
+		for (OWLPropertyExpression q : normalizedOntology.getSubRules())
+			cm.addNegHead(ruleCreatorQL.trNeg(q, X, Y));
+		for (OWLPropertyExpression q : normalizedOntology.getDisjointRules())
+			cm.addNegHead(ruleCreatorQL.trNeg(q, X, Y));
+		for (OWLEntity e : graph.getUnsatisfiableEntities())
+			if (e instanceof OWLClass)
+				cm.addNegHead(ruleCreatorQL.trNeg((OWLClass) e, X));
+			else if (e instanceof OWLProperty)
+				cm.addNegHead(ruleCreatorQL.trNeg((OWLProperty) e, X, Y));
+		for (OWLObjectProperty p : graph.getIrreflexiveRoles())
+			cm.addNegHead(ruleCreatorQL.trNeg(p, X, Y));
+	}
+
+	// private void computeTabledPreds() {
+	// for (OWLClassExpression b : normalizedOntology.getSuperConcepts())
+	// if (normalizedOntology.getSubConcepts().contains(b)
+	// || normalizedOntology.getDisjointConcepts().contains(b)) {
+	// cm.addTabled(ruleCreatorQL.tr(b, X, false));
+	// if (cm.isAnyDisjointStatement()) {
+	// cm.addTabled(ruleCreatorQL.tr(b, X, true));
+	// cm.addTabled(ruleCreatorQL.trNeg(b, X));
+	// }
+	// }
+	// for (OWLPropertyExpression q : normalizedOntology.getSuperRules())
+	// if (normalizedOntology.getSubRules().contains(q)
+	// || normalizedOntology.getDisjointRules().contains(q)) {
+	// cm.addTabled(ruleCreatorQL.tr(q, X, Y, false));
+	// cm.addTabled(ruleCreatorQL.trExistential(q, X, false, false));
+	// cm.addTabled(ruleCreatorQL.trExistential(q, X, true, false));
+	// if (cm.isAnyDisjointStatement()) {
+	// cm.addTabled(ruleCreatorQL.tr(q, X, Y, true));
+	// cm.addTabled(ruleCreatorQL.trExistential(q, X, false, true));
+	// cm.addTabled(ruleCreatorQL.trExistential(q, X, true, true));
+	// cm.addTabled(ruleCreatorQL.trNeg(q, X, Y));
+	// }
+	// }
+	// for (OWLEntity e : graph.getUnsatisfiableEntities())
+	// if (e instanceof OWLClass)
+	// if (normalizedOntology.getSuperConcepts()
+	// .contains((OWLClass) e))
+	// cm.addTabled(ruleCreatorQL.trNeg((OWLClass) e, X));
+	// else if (e instanceof OWLProperty)
+	// cm.addNegHead(ruleCreatorQL.trNeg((OWLProperty) e, X, Y));
+	// for (OWLObjectProperty p : graph.getIrreflexiveRoles())
+	// if (normalizedOntology.getSuperRules().contains((OWLProperty) p))
+	// cm.addNegHead(ruleCreatorQL.trNeg(p, X, Y));
+	// }
 
 	public void proceed() {
 		cm.setIsAnyDisjointStatement(normalizedOntology.hasDisjointStatement());
 		utils.Logger.start("ontology translation");
+		computeNegHeads();
+		// computeTabledPreds();
 		translate();
 		utils.Logger.stop("ontology translation");
 		utils.Logger.start("ontology classification");
@@ -69,7 +129,7 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 		utils.Logger.stop("ontology classification");
 	}
 
-	private void translate() {	
+	private void translate() {
 		for (OWLClassAssertionAxiom f : normalizedOntology
 				.getConceptAssertions())
 			translate(f);
@@ -85,13 +145,19 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 				.getConceptDisjunctions())
 			translate(d);
 		for (OWLSubPropertyAxiom<?> s : normalizedOntology
-				.getRoleSubsumptions())
-			translate(s);
+				.getRoleSubsumptions()) {
+			if (s instanceof OWLSubObjectPropertyOfAxiom)
+				translate((OWLSubObjectPropertyOfAxiom) s);
+			else if (s instanceof OWLSubDataPropertyOfAxiom)
+				translate((OWLSubDataPropertyOfAxiom) s);
+		}
 		for (OWLNaryPropertyAxiom<?> d : normalizedOntology
 				.getRoleDisjunctions())
 			translate(d);
-		for(OWLProperty<?,?> p : normalizedOntology.getRoles())
-			ruleCreatorQL.e(p);
+		for (OWLPropertyExpression p : normalizedOntology.getRoles())
+			if (p instanceof OWLObjectPropertyExpression)
+				ruleCreatorQL.e(((OWLObjectPropertyExpression) p)
+						.getNamedProperty());
 	}
 
 	private void translate(OWLNaryPropertyAxiom d) {
@@ -138,9 +204,15 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 		ruleCreatorQL.s1(b, c);
 	}
 
-	private void translate(OWLSubPropertyAxiom alpha) {
-		OWLPropertyExpression q1 = alpha.getSubProperty();
-		OWLPropertyExpression q2 = alpha.getSuperProperty();
+	private void translate(OWLSubObjectPropertyOfAxiom alpha) {
+		OWLObjectPropertyExpression q1 = alpha.getSubProperty();
+		OWLObjectPropertyExpression q2 = alpha.getSuperProperty();
+		ruleCreatorQL.s2(q1, q2);
+	}
+
+	private void translate(OWLSubDataPropertyOfAxiom alpha) {
+		OWLDataPropertyExpression q1 = alpha.getSubProperty();
+		OWLDataPropertyExpression q2 = alpha.getSuperProperty();
 		ruleCreatorQL.s2(q1, q2);
 	}
 }

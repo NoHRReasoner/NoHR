@@ -110,7 +110,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 
 	public RuleCreatorQLTest() {
-		super(cm, ol);
+		super(cm, ol, null, null);
 	}
 
 	private void checkTranslation(String expectedRule,
