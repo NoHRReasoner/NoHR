@@ -10,7 +10,7 @@ public final class Config {
     public static final boolean ISDEBUG = false;
 
     /** The log level. */
-    public static final Level LOGLEVEL = Level.ALL;
+    public static final Level LOGLEVEL = Level.OFF;
 
     /** The nl. The new line symbol */
     public static final String NL = System.getProperty("line.separator");

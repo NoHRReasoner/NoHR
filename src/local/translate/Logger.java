@@ -46,6 +46,6 @@ public class Logger {
     
     public static void logBool(String message, boolean bool) {
     	String ansStr = bool ? "yes" : "no";
-    	log(message + ": " + ansStr);
+    	utils.Tracer.info(message + ": " + ansStr);
     }
 }

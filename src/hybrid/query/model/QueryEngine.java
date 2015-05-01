@@ -45,10 +45,7 @@ public class QueryEngine {
     }
     
     public void abolishTables() {
-    	utils.Logger.start("abolishing tables");
-    	boolean r = engine.command("abolish_all_tables");
-    	utils.Logger.end("abolishing tables");
-    	utils.Logger.info("tables abolished: " + r);
+    	engine.command("abolish_all_tables");
     }
 
     /**

@@ -3,8 +3,10 @@ package local.translate;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.owl.owlapi.OWLEquivalentClassesAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
+import utils.Tracer;
 
 import java.util.*;
 
@@ -116,7 +118,7 @@ public class OntologyProceeder implements OWLOntologyProceeder {
      * @throws org.semanticweb.owlapi.expression.ParserException the parser exception
      */
     public void proceed() throws ParserException {
-
+    	Tracer.start("ontology translation");
         Date date1 = new Date();
         // setProgressLabelText("Rule translation");
         fillExistsOntologiesAndRules();
@@ -127,6 +129,7 @@ public class OntologyProceeder implements OWLOntologyProceeder {
         date1 = new Date();
         loopThrowAllProperties();
         Utils.getDiffTime(date1, "Processing properties: ");
+        Tracer.stop("ontology translation", "loading");
     }
     /**
      * Going throw all ontologies and preprocess them.

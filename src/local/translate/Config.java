@@ -26,5 +26,7 @@ public class Config {
     public static boolean ruleCreationDebug = false;
 
     /** The log level. */
-    public static Level logLevel = Level.ERROR;
+    public static Level logLevel = Level.OFF;
+    
+    public static TranslationAlgorithm translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
 }

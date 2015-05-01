@@ -138,6 +138,10 @@ public class Rules {
     }
 
     public static void resetRules() {
+    	if (!_rules.isEmpty()) {
+    		isRulesChanged = true;
+    		isRulesOntologyChanged = true;
+    	}
         _rules = new ArrayList<String>();
     }
 
