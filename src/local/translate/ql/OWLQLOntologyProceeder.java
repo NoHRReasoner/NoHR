@@ -63,9 +63,9 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 			cm.addNegHead(ruleCreatorQL.trNeg(b, X));
 		for (OWLClassExpression b : normalizedOntology.getDisjointConcepts())
 			cm.addNegHead(ruleCreatorQL.trNeg(b, X));
-		for (OWLPropertyExpression q : normalizedOntology.getSubRules())
+		for (OWLPropertyExpression q : normalizedOntology.getSubRoles())
 			cm.addNegHead(ruleCreatorQL.trNeg(q, X, Y));
-		for (OWLPropertyExpression q : normalizedOntology.getDisjointRules())
+		for (OWLPropertyExpression q : normalizedOntology.getDisjointRoles())
 			cm.addNegHead(ruleCreatorQL.trNeg(q, X, Y));
 		for (OWLEntity e : graph.getUnsatisfiableEntities())
 			if (e instanceof OWLClass)
@@ -74,51 +74,15 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 				cm.addNegHead(ruleCreatorQL.trNeg((OWLProperty) e, X, Y));
 		for (OWLObjectProperty p : graph.getIrreflexiveRoles())
 			cm.addNegHead(ruleCreatorQL.trNeg(p, X, Y));
-	}
-
-	// private void computeTabledPreds() {
-	// for (OWLClassExpression b : normalizedOntology.getSuperConcepts())
-	// if (normalizedOntology.getSubConcepts().contains(b)
-	// || normalizedOntology.getDisjointConcepts().contains(b)) {
-	// cm.addTabled(ruleCreatorQL.tr(b, X, false));
-	// if (cm.isAnyDisjointStatement()) {
-	// cm.addTabled(ruleCreatorQL.tr(b, X, true));
-	// cm.addTabled(ruleCreatorQL.trNeg(b, X));
-	// }
-	// }
-	// for (OWLPropertyExpression q : normalizedOntology.getSuperRules())
-	// if (normalizedOntology.getSubRules().contains(q)
-	// || normalizedOntology.getDisjointRules().contains(q)) {
-	// cm.addTabled(ruleCreatorQL.tr(q, X, Y, false));
-	// cm.addTabled(ruleCreatorQL.trExistential(q, X, false, false));
-	// cm.addTabled(ruleCreatorQL.trExistential(q, X, true, false));
-	// if (cm.isAnyDisjointStatement()) {
-	// cm.addTabled(ruleCreatorQL.tr(q, X, Y, true));
-	// cm.addTabled(ruleCreatorQL.trExistential(q, X, false, true));
-	// cm.addTabled(ruleCreatorQL.trExistential(q, X, true, true));
-	// cm.addTabled(ruleCreatorQL.trNeg(q, X, Y));
-	// }
-	// }
-	// for (OWLEntity e : graph.getUnsatisfiableEntities())
-	// if (e instanceof OWLClass)
-	// if (normalizedOntology.getSuperConcepts()
-	// .contains((OWLClass) e))
-	// cm.addTabled(ruleCreatorQL.trNeg((OWLClass) e, X));
-	// else if (e instanceof OWLProperty)
-	// cm.addNegHead(ruleCreatorQL.trNeg((OWLProperty) e, X, Y));
-	// for (OWLObjectProperty p : graph.getIrreflexiveRoles())
-	// if (normalizedOntology.getSuperRules().contains((OWLProperty) p))
-	// cm.addNegHead(ruleCreatorQL.trNeg(p, X, Y));
-	// }
+	}	
 
 	public void proceed() {
 		cm.setIsAnyDisjointStatement(normalizedOntology.hasDisjointStatement());
-		utils.Logger.start("ontology translation");
+		utils.Tracer.start("ontology translation");
 		computeNegHeads();
-		// computeTabledPreds();
 		translate();
-		utils.Logger.stop("ontology translation");
-		utils.Logger.start("ontology classification");
+		utils.Tracer.stop("ontology translation", "loading");
+		utils.Tracer.start("ontology classification");
 		for (OWLEntity e : graph.getUnsatisfiableEntities())
 			if (e instanceof OWLClass)
 				ruleCreatorQL.i1((OWLClass) e);
@@ -126,7 +90,7 @@ public class OWLQLOntologyProceeder implements OWLOntologyProceeder {
 				ruleCreatorQL.i2((OWLProperty) e);
 		for (OWLObjectProperty p : graph.getIrreflexiveRoles())
 			ruleCreatorQL.ir(p);
-		utils.Logger.stop("ontology classification");
+		utils.Tracer.stop("ontology classification", "loading");
 	}
 
 	private void translate() {
