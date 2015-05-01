@@ -1,10 +1,12 @@
 package local.translate;
 
 import org.semanticweb.owlapi.model.*;
+
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyAssertionAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 
@@ -198,6 +200,15 @@ public class OntologyLabel {
             String result;
             if (rule.contains(Config.delimeter)) {
                 result = (rule.split(Config.delimeter)[numInList]).split(">")[0];
+            } else if (rule.contains("<http://")){
+            	//String[] split = rule.split("/");
+            	//result = split[split.length-1];
+            	result = rule.replaceFirst("<http://","");
+            	result = result.replaceAll(">", "");
+            	result = result.replaceAll("/","");
+            	result = result.replaceAll("\\.", "");
+            	if (Character.isUpperCase(result.charAt(0)))
+            		result = result.substring(0, 1).toLowerCase() + result.substring(1);
             } else if (rule.contains(Config.altDelimeter)) {
                 result = (rule.split(Config.altDelimeter)[numInList])
                                  .split(">")[0];
@@ -205,6 +216,7 @@ public class OntologyLabel {
                 result = rule.replaceFirst("<", "").replace(">", "");
             } else {
                 result = "";
+                throw new ParseException(rule, 0);
             }
 
             return getLabel(result);// result;//replaceSymbolsInRule(result);
@@ -215,6 +227,7 @@ public class OntologyLabel {
             printLog(Integer.toString(numInList));
             printLog("------------------------------------------------------------------------");
             printLog(e.toString());
+            e.printStackTrace();
         }
         return getLabel(rule);
     }
