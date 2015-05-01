@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import union.logger.UnionLogger;
+import utils.Tracer;
 
 import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.util.PrologHaltedException;
@@ -53,10 +55,14 @@ public class Query {
 	/** The query engine. */
 	private QueryEngine queryEngine;
 
+	private Map<String, String> labels;
+
 	/** The instance of the local.translator */
 	private static Translate translator;
 
 	private static boolean force;
+
+	private static local.translate.Query query;
 
 	/**
 	 * Dispose.
@@ -164,12 +170,47 @@ public class Query {
 		LOG.setLevel(Config.LOGLEVEL);
 
 		force = false;
+		gc = false;
+	}
+
+	private boolean standalone;
+
+	private boolean hasDisjunction;
+
+	private int queryCount;
+
+	public void resetQueryCount() {
+		queryCount = 1;
+	}
+
+	public Query(OWLOntology owlOntology, boolean gc) {
+		ontology = owlOntology;
+		standalone = true;
+		force = true;
+		this.gc = gc;
+		if (gc) {
+			utils.Tracer.start("loading");
+			checkAndStartEngine();
+			utils.Tracer.stop("loading", "loading");
+			translator.collectionsManager = null;
+			translator = null;
+			ontology = null;
+			System.gc();
+			queryCount = 1;
+		}
 	}
 
 	public Query(OWLOntology owlOntology) {
-		ontology = owlOntology;
-		checkAndStartEngine();
-		force = true;
+		this(owlOntology, true);
+	}
+
+	public String getLabelByHash(String hash) {
+		String originalHash = hash;
+		hash = hash.substring(1, hash.length());
+		if (labels.containsKey(hash)) {
+			return labels.get(hash);
+		}
+		return originalHash;
 	}
 
 	/**
@@ -178,30 +219,32 @@ public class Query {
 	private void checkAndStartEngine() {
 		if (!isCompiled) {
 			try {
-//				Date initAndTranslateTime = new Date();
-				utils.Logger.start("translator initialization");
+				// Date initAndTranslateTime = new Date();
+				utils.Tracer.start("translator initialization");
 				initTranslator();
-				utils.Logger.stop("translator initialization");
-				//Logger.getDiffTime(initAndTranslateTime, "Init time: ");
-				//Date ontologyTranslationTime = new Date();
-				//utils.Logger.begin("ontology proceeding");
-				utils.Logger.start("ontology proceeding");
+				utils.Tracer.stop("translator initialization", "loading");
+				// Logger.getDiffTime(initAndTranslateTime, "Init time: ");
+				// Date ontologyTranslationTime = new Date();
+				// utils.Logger.begin("ontology proceeding");
+				utils.Tracer.start("ontology proceeding");
 				translator.proceed();
-				utils.Logger.stop("ontology proceeding");
-				//utils.Logger.end("ontology proceeding");
-				//Logger.getDiffTime(ontologyTranslationTime, "Ontology translation time: ");
-//				Date rulesTranslationTime = new Date();
-				utils.Logger.start("rules parsing");
+				utils.Tracer.stop("ontology proceeding", "loading");
+				// utils.Logger.end("ontology proceeding");
+				// Logger.getDiffTime(ontologyTranslationTime,
+				// "Ontology translation time: ");
+				// Date rulesTranslationTime = new Date();
+				utils.Tracer.start("rules parsing");
 				translator.appendRules(Rules.getRules());
-				utils.Logger.stop("rules parsing");
-//				Logger.getDiffTime(rulesTranslationTime, "Rules translation time: ");
-				utils.Logger.start("file writing");
+				utils.Tracer.stop("rules parsing", "loading");
+				// Logger.getDiffTime(rulesTranslationTime,
+				// "Rules translation time: ");
+				utils.Tracer.start("file writing");
 				xsbFile = translator.Finish();
-				utils.Logger.stop("file writing");
-//				Logger.log("-----------------------");
-//				Logger.getDiffTime(initAndTranslateTime,
-//						"Total translation time: ");
-//				Logger.log("");
+				utils.Tracer.stop("file writing", "loading");
+				// Logger.log("-----------------------");
+				// Logger.getDiffTime(initAndTranslateTime,
+				// "Total translation time: ");
+				// Logger.log("");
 				compileFile(xsbFile);
 				isOntologyChanged = false;
 				Rules.isRulesOntologyChanged = false;
@@ -226,31 +269,32 @@ public class Query {
 								"Some changes have been made, would you like to recompile?",
 								"Warning", JOptionPane.YES_NO_OPTION);
 				recompile = dialogResult == JOptionPane.YES_OPTION;
-			}	
+			}
 			if (recompile) {
 				try {
 					boolean disjointStatement = translator
 							.isAnyDisjointWithStatement();
-//					Date initAndTranslateTime = new Date();
-					utils.Logger.start("translation");
+					// Date initAndTranslateTime = new Date();
 					if (isOntologyChanged) {
 						translator.PrepareForTranslating();
 						translator.proceed();
 						isOntologyChanged = false;
-						LOG.info("Ontology recompilation");
 					}
 					if ((disjointStatement != translator
 							.isAnyDisjointWithStatement())
 							|| Rules.isRulesOntologyChanged) {
+						utils.Tracer.start("rules parsing");
 						translator.appendRules(Rules.getRules());
-						//LOG.info("Rule recompilation");
+						// LOG.info("Rule recompilation");
+						utils.Tracer.stop("rules parsing", "loading");
 						Rules.isRulesOntologyChanged = false;
 					}
+					utils.Tracer.start("file writing");
 					File xsbFile = translator.Finish();
-					utils.Logger.stop("translation");
-//					Logger.getDiffTime(initAndTranslateTime,
-//							"Total translating time: ");
-//					Logger.log("");
+					utils.Tracer.stop("file writing", "loading"); 
+					// Logger.getDiffTime(initAndTranslateTime,
+					// "Total translating time: ");
+					// Logger.log("");
 					compileFile(xsbFile);
 					// _ontology.printAllLabels();
 				} catch (OWLOntologyCreationException e) {
@@ -268,6 +312,9 @@ public class Query {
 				}
 			}
 		}
+		hasDisjunction = translator.isAnyDisjointWithStatement();
+		labels = translator.getCollectionsManager().getLabels();
+		query = new local.translate.Query(translator.getCollectionsManager());
 	}
 
 	/**
@@ -288,8 +335,8 @@ public class Query {
 	 *             the exception
 	 */
 	public boolean compileFile(File file) throws Exception {
-//		Date loadingFileTime = new Date();
-		utils.Logger.start("xsb loading");
+		// Date loadingFileTime = new Date();
+		utils.Tracer.start("xsb loading");
 		queryEngine = new QueryEngine();
 		isCompiled = false;
 		if (queryEngine.isEngineStarted() && queryEngine.load(file)) {
@@ -299,12 +346,12 @@ public class Query {
 			queryEngine
 					.deterministicGoal(generateDetermenisticGoal("initQuery"));
 		}
-//		Logger.getDiffTime(loadingFileTime, "Loading XSB file: ");
-//		Logger.log("");
-		utils.Logger.stop("xsb loading");
+		// Logger.getDiffTime(loadingFileTime, "Loading XSB file: ");
+		// Logger.log("");
+		utils.Tracer.stop("xsb loading", "loading");
 		return isCompiled;
 	}
-	
+
 	public void abolishTables() {
 		queryEngine.abolishTables();
 	}
@@ -457,9 +504,9 @@ public class Query {
 	 */
 	public void printInfo(String text) {
 		// outPutLog.append(text+Config.nl);
-//		LOG.info(text);
-//		UnionLogger.LOGGER.log(text);
-		utils.Logger.info(text);
+		// LOG.info(text);
+		// UnionLogger.LOGGER.log(text);
+		utils.Tracer.info(text);
 	}
 
 	/**
@@ -492,141 +539,149 @@ public class Query {
 	 *
 	 * @return the array list
 	 */
+
+	private boolean gc;
+
 	public ArrayList<ArrayList<String>> queryXSB() {
 		String command = queryString;
-		checkAndStartEngine();
-		try{
-		if (isQueriable()) {
-			if (command.endsWith(".")) {
-				command = command.substring(0, command.length() - 1);
-			}
-			command = translator.prepareQuery(command);
-			// previousQuery="";
-			if (!command.equals(previousQuery) || !queriedForAll) {
-				printInfo("You queried: " + queryString);
-				previousQuery = command;
-				queriedForAll = isQueryForAll;
-				printLog("prepared query: " + command);
-				fillTableHeader(command);
-				String detGoal = generateDetermenisticGoal(command);
-				String subDetGoal;
-				printLog("detGoal: " + detGoal);
-//				Date queryStart = new Date();
-				utils.Logger.start("xsb querying");
-//				Date subQueryTime;
-				Object[] bindings = queryEngine.deterministicGoal(detGoal);
-				utils.Logger.stop("xsb querying");	
-				utils.Logger.start("answers processing");
-//				Logger.getDiffTime(queryStart, "Main query time: ");
-				ArrayList<String> row = new ArrayList<String>();
-				String value;
-				String subValue;
-				if (bindings != null) {
+		if (!gc)
+			checkAndStartEngine();
+		try {
+			if (isQueriable()) {
+				if (command.endsWith(".")) {
+					command = command.substring(0, command.length() - 1);
+				}
+				command = query.prepareQuery(command, hasDisjunction);
+				// previousQuery="";
+				if ((!command.equals(previousQuery) || !queriedForAll)) {
+					printInfo("You queried: " + queryString);
+					previousQuery = command;
+					queriedForAll = isQueryForAll;
+					printLog("prepared query: " + command);
+					fillTableHeader(command);
+					String detGoal = generateDetermenisticGoal(command);
+					String subDetGoal;
+					printLog("detGoal: " + detGoal);
+					// Date queryStart = new Date();
+					utils.Tracer.start("query" + queryCount);
+					// Date subQueryTime;
+					Object[] bindings = queryEngine.deterministicGoal(detGoal);
+					// utils.Logger.start("answers processing");
+					// Logger.getDiffTime(queryStart, "Main query time: ");
+					ArrayList<String> row = new ArrayList<String>();
+					String value;
+					String subValue;
+					if (bindings != null) {
 
-					TermModel list = (TermModel) bindings[0]; // this gets you
-					// the list as a
-					// binary tree
-					TermModel[] flattted = list.flatList();
-					for (TermModel element : flattted) {
-						// if(i==1 && !isQueryForAll)
-						// break;
-						value = element.getChild(0).toString();
+						TermModel list = (TermModel) bindings[0]; // this gets
+																	// you
+						// the list as a
+						// binary tree
+						TermModel[] flattted = list.flatList();
+						for (TermModel element : flattted) {
+							// if(i==1 && !isQueryForAll)
+							// break;
+							value = element.getChild(0).toString();
 
-						if (value.length() > 0) {
-							row = new ArrayList<String>();
-							row.add(value);
-							for (int j = 1; j <= variablesList.size(); j++) {
-								subValue = translator.getLabelByHash(element
-										.getChild(j).toString());
-								subValue = varXPattern.matcher(subValue).find() ? "all values"
-										: subValue;
-								row.add(subValue);
-							}
-							if (!translator.isAnyDisjointWithStatement()) {
-								answers.add(row);
-							} else {
-								if (value.equals("true")
-										|| value.equals("undefined")) {
-									// printLog("_dRule: "+Utils._dAllrule(command));
-									subDetGoal = generateDetermenisticGoal(generateSubQuery(
-											Utils._dAllrule(command), element));
-									printLog("SubDetGoal is: " + subDetGoal);
-//									subQueryTime = new Date();
-									utils.Logger.start("xsb d-querying");
-									Object[] subBindings = queryEngine
-											.deterministicGoal(subDetGoal);
-									utils.Logger.pause("xsb d-querying");
-//									Logger.getDiffTime(subQueryTime,
-//											"Doubled subgoal time: ");
-									// this gets you the list as a binary tree
-									TermModel subList = (TermModel) subBindings[0];
-									TermModel[] subFlattted = subList
-											.flatList();
+							if (value.length() > 0) {
+								row = new ArrayList<String>();
+								row.add(value);
+								for (int j = 1; j <= variablesList.size(); j++) {
+									subValue = getLabelByHash(element.getChild(
+											j).toString());
+									subValue = varXPattern.matcher(subValue)
+											.find() ? "all values" : subValue;
+									row.add(subValue);
+								}
+								if (!hasDisjunction) {
+									answers.add(row);
+								} else {
+									if (value.equals("true")
+											|| value.equals("undefined")) {
+										// printLog("_dRule: "+Utils._dAllrule(command));
+										subDetGoal = generateDetermenisticGoal(generateSubQuery(
+												Utils._dAllrule(command),
+												element));
+										printLog("SubDetGoal is: " + subDetGoal);
+										// subQueryTime = new Date();
+										// utils.Logger.start("xsb d-querying");
+										Object[] subBindings = queryEngine
+												.deterministicGoal(subDetGoal);
+										// utils.Logger.pause("xsb d-querying");
+										// Logger.getDiffTime(subQueryTime,
+										// "Doubled subgoal time: ");
+										// this gets you the list as a binary
+										// tree
+										TermModel subList = (TermModel) subBindings[0];
+										TermModel[] subFlattted = subList
+												.flatList();
 
-									if (subFlattted.length > 0) {
-										String subAnswer = subFlattted[0]
-												.getChild(0).toString();
-										if (subAnswer.equals("no")
-												|| subAnswer.equals("false")) {
-											if (value.equals("true")) {
-												row.set(0, "inconsistent");
-												answers.add(row);
-											} else if (value
-													.equals("undefined")) {
-												row.set(0, "false");
+										if (subFlattted.length > 0) {
+											String subAnswer = subFlattted[0]
+													.getChild(0).toString();
+											if (subAnswer.equals("no")
+													|| subAnswer
+															.equals("false")) {
+												if (value.equals("true")) {
+													row.set(0, "inconsistent");
+													answers.add(row);
+												} else if (value
+														.equals("undefined")) {
+													row.set(0, "false");
+													answers.add(row);
+												}
+											} else {
 												answers.add(row);
 											}
 										} else {
-											answers.add(row);
+											if (value.equals("true")) {
+												row.set(0, "inconsistent");
+												answers.add(row);
+											}
 										}
 									} else {
-										if (value.equals("true")) {
-											row.set(0, "inconsistent");
-											answers.add(row);
-										}
+										answers.add(row);
 									}
-								} else {
-									answers.add(row);
 								}
 							}
-						}
-						if (!isQueryForAll && filter.contains(row.get(0))) {
-							break;
-						}
+							if (!isQueryForAll && filter.contains(row.get(0))) {
+								break;
+							}
 
-					}
-					utils.Logger.end("xsb d-querying");
-					if ((flattted.length == 0) || (answers.size() == 0)) {
-						row = new ArrayList<String>();
-						row.add(variablesList.size() > 0 ? "no answers found"
-								: "false");
+						}
+						// utils.Logger.end("xsb d-querying");
+						if ((flattted.length == 0) || (answers.size() == 0)) {
+							row = new ArrayList<String>();
+							row.add(variablesList.size() > 0 ? "no answers found"
+									: "false");
+							clearTable();
+							answers.add(row);
+						}
+						utils.Tracer.stop("query" + queryCount++, "queries");
+					} else {
 						clearTable();
+						row = new ArrayList<String>();
+						row.add("no answers found");
 						answers.add(row);
+						LOG.error("Query was interrupted by engine.");
+						try {
+							compileFile(translator.Finish());
+						} catch (IOException e) {
+							LOG.error(e);
+						} catch (Exception e) {
+							LOG.error(e);
+						}
 					}
-				} else {
-					clearTable();
-					row = new ArrayList<String>();
-					row.add("no answers found");
-					answers.add(row);
-					LOG.error("Query was interrupted by engine.");
-					try {
-						compileFile(translator.Finish());
-					} catch (IOException e) {
-						LOG.error(e);
-					} catch (Exception e) {
-						LOG.error(e);
-					}
+					// utils.Logger.stop("answers processing");
+					// Logger.log("-----------------------");
+					// Logger.getDiffTime(queryStart, "Total query time: ");
+					// Logger.log("");
 				}
-				utils.Logger.stop("answers processing");
-//				Logger.log("-----------------------");
-//				Logger.getDiffTime(queryStart, "Total query time: ");
-//				Logger.log("");
 			}
-		}
-		}
-		catch (PrologHaltedException e) {
-			utils.Logger.info("prolog halted");	
+		} catch (Exception e) {
+			e.printStackTrace();
 			try {
+				Tracer.interrupt("query" + queryCount++, "queries");
 				compileFile(xsbFile);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block

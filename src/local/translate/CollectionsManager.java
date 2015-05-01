@@ -270,5 +270,13 @@ public class CollectionsManager {
      
     public boolean isInNegHead(TermModel term) {
     	return isPrediactesAppearedUnderNunderscore(term.getFunctorArity());
+    }	
+    
+    public Map<String, String> getLabels() {
+    	return labels;
     }
+
+	public Map<String, String> getLabelsValue() {
+		return labelsValue;
+	}
 }

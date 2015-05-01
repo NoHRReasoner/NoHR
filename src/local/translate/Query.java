@@ -1,5 +1,7 @@
 package local.translate;
 
+import java.util.Set;
+
 
 /**
  * The Class Query.
@@ -10,7 +12,9 @@ public class Query {
     private ParsedRule parsedRule;
 
     /** The cm. */
-    private final CollectionsManager cm;
+    
+    private Set<String> tablePredicatesOntology;
+    private Set<String> tablePredicatesRules;
 
     /**
      * Instantiates a new query.
@@ -18,9 +22,15 @@ public class Query {
      * @param collectionsManager the collections manager
      */
     public Query(CollectionsManager collectionsManager) {
-        cm = collectionsManager;
+        tablePredicatesOntology = collectionsManager.getAllTabledPredicateOntology();
+        tablePredicatesRules = collectionsManager.getAllTabledPredicateRule();
     }
 
+    public boolean isTabled(String title) {
+        return tablePredicatesOntology.contains(title)
+               || tablePredicatesRules.contains(title);
+    }
+    
     /**
      * Prepare query.
      *
@@ -37,7 +47,7 @@ public class Query {
             isAvailable = true;
             if (parsedRule.isUnderTnot()) {
                 tabledRule = isAnyDisjointWithStatement ? parsedRule.getTabledDoubledRule() : parsedRule.getTabledRule();
-                isAvailable = cm.isTabled(tabledRule);
+                isAvailable = isTabled(tabledRule);
             }
             if (isAvailable) {
                 result += (isAnyDisjointWithStatement ? parsedRule.getHashedRuleForQuery() : parsedRule.getPlainHashedRule())+ ", ";

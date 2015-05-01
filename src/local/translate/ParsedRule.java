@@ -1,5 +1,7 @@
 package local.translate;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -21,12 +23,10 @@ public class ParsedRule {
 
     /** The is under tnot. */
     private boolean isUnderTnot = false;
-
-    /** The cm. */
-    private final CollectionsManager cm = Translate.collectionsManager;
+  
 
     /** The Constant log. */
-    private static final Logger log = Logger.getLogger(ParsedRule.class);
+    private static final Logger log = Logger.getLogger(ParsedRule.class); 
 
     /**
      * Instantiates a new parsed rule.
@@ -34,9 +34,9 @@ public class ParsedRule {
      * @param r the r
      */
     public ParsedRule(String r) {
+        log.setLevel(Config.logLevel);
         rule = r;
         parse();
-        log.setLevel(Config.logLevel);
     }
 
     /**
@@ -198,7 +198,7 @@ public class ParsedRule {
                 argument = argument.trim();
                 if (Character.isLowerCase(argument.charAt(0))) {
                     // variables+="c"+Utils.getHash(argument)+", ";
-                    variables += "c" + cm.getHashedLabel(argument) + ", ";
+                    variables += "c" + getHashedLabel(argument) + ", ";
                 } else {
                     variables += argument + ", ";
                 }
@@ -208,6 +208,10 @@ public class ParsedRule {
             len = _.length;
         }
         // predicate = Utils.getHash(Utils.replaceQuotes(predicate));
-        predicate = cm.getHashedLabel(Utils.replaceQuotes(predicate));
+        predicate = getHashedLabel(Utils.replaceQuotes(predicate));
+    }
+    
+     public String getHashedLabel(String label) { 
+    	 return Utils.getHash(label);
     }
 }
