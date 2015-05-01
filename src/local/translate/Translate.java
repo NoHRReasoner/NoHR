@@ -41,12 +41,17 @@ import org.semanticweb.owlapi.util.InferredClassAssertionAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredEquivalentClassAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
+import org.semanticweb.owlapi.util.DLExpressivityChecker.Construct;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+
+import utils.Tracer;
 
 /**
  * The Class local.translate.Translate. The entrance to core of magic.
  */
 public class Translate {
+
+	private INormalizedOntology normalizedOntology;
 
 	/** The ontology file. */
 	private File ontologyFile;
@@ -75,8 +80,7 @@ public class Translate {
 
 	/** The prolog commands. */
 	private final List<String> prologCommands = Arrays.asList(
-			":- abolish_all_tables.", ":- set_prolog_flag(unknown,fail).",
-			":- max_memory(3500000000).");
+			":- abolish_all_tables.", ":- set_prolog_flag(unknown,fail).");
 
 	/** The temp dir prop. */
 	private final String tempDirProp = "java.io.tmpdir";
@@ -155,14 +159,14 @@ public class Translate {
 	}
 
 	public TranslationAlgorithm getTranslationAlgorithm() {
-		return TranslationAlgorithm.DL_LITE_R;
-		// if (isOwl2qlProfile)
-		// return TranslationAlgorithm.DL_LITE_R;
-		// else if (isOwl2elProfile)
-		// return TranslationAlgorithm.EL;
-		// else
-		// return TranslationAlgorithm.DL_LITE_R;
-		// throw new ImportsClosureNotInProfileException(new OWL2QLProfile());
+		if (Config.translationAlgorithm != null)
+			return Config.translationAlgorithm;
+		if (isOwl2qlProfile)
+			return TranslationAlgorithm.DL_LITE_R;
+		else if (isOwl2elProfile)
+			return TranslationAlgorithm.EL;
+		else
+			throw new ImportsClosureNotInProfileException(new OWL2QLProfile());
 	}
 
 	// TODO: throw an exception if the ontology is not in a supported profile
@@ -385,10 +389,9 @@ public class Translate {
 		query = new Query(cm);
 		switch (getTranslationAlgorithm()) {
 		case DL_LITE_R:
-			utils.Logger.start("ontology normalization");
-			INormalizedOntology normalizedOntology = new NormalizedOntology(
-					ontology);
-			utils.Logger.stop("ontology normalization");
+			utils.Tracer.start("ontology normalization");
+			normalizedOntology = new NormalizedOntology(ontology);
+			utils.Tracer.stop("ontology normalization", "loading");
 			RuleCreatorQL ruleCreatorQL = new RuleCreatorQL(cm, ontologyLabel,
 					normalizedOntology, ontologyManager);
 			ontologyProceeder = new OWLQLOntologyProceeder(cm, ruleCreatorQL,
@@ -419,6 +422,7 @@ public class Translate {
 		if (getTranslationAlgorithm() == TranslationAlgorithm.EL) {
 			org.apache.log4j.Logger.getLogger("org.semanticweb.elk").setLevel(
 					Level.ERROR);
+			Tracer.start("ontology classification");
 			Date dateStart = new Date();
 			OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
 			reasoner = reasonerFactory.createReasoner(ontology);
@@ -428,6 +432,7 @@ public class Translate {
 			Utils.getDiffTime(dateStart, "Running ELK Reasoner: ");
 
 			getInferredData();
+			Tracer.stop("ontology classification", "loading");
 		}
 	}
 

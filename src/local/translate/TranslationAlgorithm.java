@@ -1,6 +1,6 @@
 package local.translate;
 
-enum TranslationAlgorithm {
+public enum TranslationAlgorithm {
 	EL, DL_LITE_R
 
 }

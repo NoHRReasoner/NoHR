@@ -28,5 +28,5 @@ public class Config {
     /** The log level. */
     public static Level logLevel = Level.OFF;
     
-    public static TranslationAlgorithm translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+    public static TranslationAlgorithm translationAlgorithm = null;
 }
