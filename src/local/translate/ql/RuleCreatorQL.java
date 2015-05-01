@@ -235,6 +235,7 @@ public class RuleCreatorQL {
 		List<Rule> result = new ArrayList<Rule>();
 		TermModel o1 = tr(b1, X, false);
 		TermModel o2 = tr(b2, X, false);
+		// boolean table = normOnt.getSubConcepts().contains(b2);
 		result.add(new Rule(o2, o1));
 		if (cm.isAnyDisjointStatement()) {
 			TermModel d1 = tr(b1, X, true);
@@ -247,17 +248,20 @@ public class RuleCreatorQL {
 			} else
 				result.add(new Rule(d2, d1));
 			result.add(new Rule(n1, n2));
+			// if (table)
 			cm.addTabled(d2);
 			cm.addTabled(n1);
 		}
-		write(result);
+		// if (table)
 		cm.addTabled(o2);
+		write(result);
 		return result;
 	}
 
 	protected List<Rule> s2(OWLPropertyExpression<?, ?> q1,
 			OWLPropertyExpression<?, ?> q2) {
 		List<Rule> result = new ArrayList<Rule>();
+		boolean table = true; // normOnt.getSubRoles().contains(DLUtils.getRoleName(q2));
 		boolean s = false;
 		boolean si = false;
 		if (q1 instanceof OWLObjectPropertyExpression
@@ -275,7 +279,8 @@ public class RuleCreatorQL {
 		TermModel o1 = tr(q1, X, Y, false);
 		TermModel o2 = tr(q2, X, Y, false);
 		result.add(new Rule(o2, o1));
-		cm.addTabled(o2);
+		if (table)
+			cm.addTabled(o2);
 		if (s) {
 			TermModel e1 = trExistential(q1, X, false, false);
 			TermModel e2 = trExistential(q2, X, false, false);
@@ -317,8 +322,9 @@ public class RuleCreatorQL {
 				cm.addTabled(h2);
 			}
 			result.add(new Rule(n1, n2));
-			cm.addTabled(d2);
 			cm.addTabled(n1);
+			if (table)
+				cm.addTabled(d2);
 		}
 		write(result);
 		return result;

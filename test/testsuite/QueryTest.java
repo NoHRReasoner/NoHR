@@ -500,6 +500,19 @@ public class QueryTest {
 	}
 	
 	@Test
+	public final void roleCycle() throws OWLOntologyCreationException {
+		kb.clear();
+		OWLClass A = kb.getConcept("A");
+		OWLObjectProperty P1 = kb.getRole("P1");
+		OWLObjectProperty P2 = kb.getRole("P2");
+//		kb.addSubsumption(kb.getExistential(P1), A);
+//		kb.addSubsumption(kb.getExistential(kb.getInverse(P2)), A);
+		kb.addSubsumption(P1, kb.getInverse(P2));
+		kb.addSubsumption(P2, kb.getInverse(P1));
+		assertConsistent("P1(X,Y)");;
+	}
+	
+	@Test
 	public final void subsumptionsExistRoleExist1() throws OWLOntologyCreationException {
 		kb.clear();
 		OWLClass A1 = kb.getConcept("A1");

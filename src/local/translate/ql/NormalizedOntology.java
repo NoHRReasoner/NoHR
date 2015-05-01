@@ -76,11 +76,11 @@ public class NormalizedOntology implements INormalizedOntology {
 
 	private Set<OWLClassExpression> disjointConcepts;
 
-	private Set<OWLPropertyExpression> subRules;
+	private Set<OWLProperty> subRoles;
 
-	private Set<OWLPropertyExpression> superRules;
+	private Set<OWLProperty> superRoles;
 
-	private Set<OWLPropertyExpression> disjointRules;
+	private Set<OWLProperty> disjointRoles;
 
 	public NormalizedOntology(OWLOntology ontology) {
 		this.ontologyIRI = ontology.getOntologyID().getOntologyIRI();
@@ -98,9 +98,9 @@ public class NormalizedOntology implements INormalizedOntology {
 		this.subConcepts = new HashSet<OWLClassExpression>();
 		this.superConcepts = new HashSet<OWLClassExpression>();
 		this.disjointConcepts = new HashSet<OWLClassExpression>();
-		this.subRules = new HashSet<OWLPropertyExpression>();
-		this.superRules = new HashSet<OWLPropertyExpression>();
-		this.disjointRules = new HashSet<OWLPropertyExpression>();
+		this.subRoles = new HashSet<OWLProperty>();
+		this.superRoles = new HashSet<OWLProperty>();
+		this.disjointRoles = new HashSet<OWLProperty>();
 		normalize(ontology);
 	}
 
@@ -176,18 +176,18 @@ public class NormalizedOntology implements INormalizedOntology {
 	}
 
 	@Override
-	public Set<OWLPropertyExpression> getSubRules() {
-		return subRules;
+	public Set<OWLProperty> getSubRoles() {
+		return subRoles;
 	}
 
 	@Override
-	public Set<OWLPropertyExpression> getSuperRoles() {
-		return superRules;
+	public Set<OWLProperty> getSuperRoles() {
+		return superRoles;
 	}
 
 	@Override
-	public Set<OWLPropertyExpression> getDisjointRules() {
-		return disjointRules;
+	public Set<OWLProperty> getDisjointRoles() {
+		return disjointRoles;
 	}
 
 	private void normalize(OWLAsymmetricObjectPropertyAxiom alpha) {
@@ -208,8 +208,10 @@ public class NormalizedOntology implements INormalizedOntology {
 		Set<OWLPropertyExpression> props = alpha.getProperties();
 		Iterator<OWLPropertyExpression> propsIt1 = props.iterator();
 		while (propsIt1.hasNext()) {
-			OWLPropertyExpression q1 = propsIt1.next();
-			disjointRules.add(q1);
+			OWLPropertyExpression q1 = propsIt1.next();	
+			OWLProperty p = DLUtils.getRoleName(q1);
+			disjointRoles.add(p);
+			subRoles.add(p);	
 			if (q1.isBottomEntity())
 				continue;
 			Iterator<OWLPropertyExpression> propsIt2 = props.iterator();
@@ -343,6 +345,8 @@ public class NormalizedOntology implements INormalizedOntology {
 			OWLClassExpression b1 = c0.getOperand();
 			disjointConcepts.add(b);
 			disjointConcepts.add(b1);
+			subConcepts.add(b);
+			subConcepts.add(b1);
 			if (b1.isOWLNothing())
 				return;
 			if (b1.isOWLThing())
@@ -372,8 +376,8 @@ public class NormalizedOntology implements INormalizedOntology {
 	private void normalize(OWLSubPropertyAxiom alpha) {
 		OWLPropertyExpression q1 = alpha.getSubProperty();
 		OWLPropertyExpression q2 = alpha.getSuperProperty();
-		subRules.add(q1);
-		superRules.add(q2);
+		subRoles.add(DLUtils.getRoleName(q1));
+		superRoles.add(DLUtils.getRoleName(q2));
 		if (q1.isBottomEntity() || q2.isTopEntity() || q1.isTopEntity())
 			return;
 		if (q2.isBottomEntity())
