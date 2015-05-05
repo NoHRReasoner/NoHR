@@ -1,10 +1,16 @@
 package hybrid.query.views;
 
 import hybrid.query.model.Config;
-import hybrid.query.model.Query;
+import hybrid.query.model.NoHR;
+
+import org.protege.editor.owl.model.event.EventType;
+import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
+import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
+
 import union.logger.Observer;
 import union.logger.UnionLogger;
+import utils.Tracer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,6 +18,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,10 +27,10 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HybridQueryViewComponent extends AbstractOWLViewComponent {
+public class HybridQueryViewComponent extends AbstractOWLViewComponent implements OWLModelManagerListener {
     private static final long serialVersionUID = -4515710047558710080L;
 
-    private Query queryEngine;
+    private static NoHR nohr;
     private static JTextArea textArea;
     private JTextField textField;
     private TableRowSorter<DefaultTableModel> sorter;
@@ -41,7 +48,24 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private boolean isShowProgress;
     private boolean isNeedToQuery;
     private String filter;
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Query.class);
+    
+    @Override
+	public void handleChange(OWLModelManagerChangeEvent event) {
+		if (event
+				.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED)) {
+			try {
+				nohr = new NoHR(getOWLModelManager().getOWLOntologyManager(), getOWLModelManager().getActiveOntology(), getOWLModelManager().getReasoner());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	} 
+	
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(NoHR.class);
+    
+    public static void clear() {
+    	nohr.dispose();
+    }
 
     @Override
     protected void initialiseOWLView() {
@@ -173,8 +197,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 
     @Override
     protected void disposeOWLView() {
-        if (queryEngine != null) {
-            queryEngine.disposeQuery();
+        if (nohr != null) {
+            nohr.dispose();
         }
     }
 
@@ -254,7 +278,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 isShowAllSolutions = false;
-                queryEngine.setIsQueryForAll(false);
+                nohr.setIsQueryForAll(false);
                 if (textField.getText().length() > 0) {
                     javax.swing.SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
@@ -271,7 +295,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 isShowAllSolutions = true;
-                queryEngine.setIsQueryForAll(true);
+                nohr.setIsQueryForAll(true);
                 if (textField.getText().length() > 0) {
                     javax.swing.SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
@@ -396,7 +420,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 
     private void startQueryEngine() {
         try {
-            queryEngine = new Query(getOWLModelManager());
+            nohr = new NoHR(getOWLModelManager().getOWLOntologyManager(), getOWLModelManager().getActiveOntology(), getOWLModelManager().getReasoner());
         } catch (Exception e) {
             textArea.append(e.getMessage() + Config.NL);
         }
@@ -511,7 +535,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
         @Override
         public Void doInBackground() {
             try {
-                queryEngine.setFilter(getFilter());
+                nohr.setFilter(getFilter());
                 if (isNeedToQuery || !isAddEnumeration) {
                     disableValuationCheckBoxes();
                     isShowProgress = true;
@@ -530,7 +554,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
                     });
                     textField.selectAll();
                     textField.requestFocus();
-                    fillTable(queryEngine.query(textField.getText()));
+                    fillTable(nohr.query(textField.getText()));
 
                 } else {
                     fillNoAnswersTable("Please check at least one valuation option!");

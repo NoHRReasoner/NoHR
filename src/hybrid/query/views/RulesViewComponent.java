@@ -1,6 +1,6 @@
 package hybrid.query.views;
 
-import hybrid.query.model.Query;
+import hybrid.query.model.NoHR;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
 import javax.swing.*;
@@ -33,7 +33,7 @@ public class RulesViewComponent extends AbstractOWLViewComponent {
 
     @Override
     protected void disposeOWLView() {
-        Query.dispose();
+    	Rules.dispose();
     }
 
 }

@@ -1,6 +1,6 @@
 package hybrid.query.views;
 
-import hybrid.query.model.Query;
+import hybrid.query.model.NoHR;
 import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
 
 
@@ -15,7 +15,8 @@ public class HybridQueryTab extends OWLWorkspaceViewsTab {
 
     @Override
     public void dispose() {
-        Query.dispose();
+//        NoHR.dispose();
+    	HybridQueryViewComponent.clear();
         super.dispose();
     }
 

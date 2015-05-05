@@ -19,7 +19,7 @@ public class QueryEngine {
     private boolean isEngineStarted = false;
 
     /** The Constant log. */
-    private static final Logger LOG = Logger.getLogger(Query.class);
+    private static final Logger LOG = Logger.getLogger(NoHR.class);
 
     /**
      * Instantiates a new query engine.

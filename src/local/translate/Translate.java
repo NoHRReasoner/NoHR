@@ -60,7 +60,7 @@ public class Translate {
 	private final OWLOntologyManager ontologyManager;
 
 	/** The ontology. */
-	private static OWLOntology ontology;
+	private OWLOntology ontology;
 
 	/** The ontologies. */
 	private List<OWLOntology> ontologies = new ArrayList<OWLOntology>();
@@ -145,17 +145,17 @@ public class Translate {
 	 * @throws CloneNotSupportedException
 	 *             the clone not supported exception
 	 */
-	public Translate(OWLModelManager owlModelManager) throws IOException,
+	public Translate(OWLOntologyManager owlModelManager, OWLOntology ontology, OWLReasoner owlReasoner) throws IOException,
 			OWLOntologyCreationException, OWLOntologyStorageException,
 			CloneNotSupportedException {
 		log.setLevel(Config.logLevel);
-		ontologyManager = owlModelManager.getOWLOntologyManager();
-		ontology = owlModelManager.getActiveOntology();
+		ontologyManager = owlModelManager;
+		this.ontology = ontology;
 		tempDir = System.getProperty(tempDirProp);
 		checkOwlProfile();
 		initCollections();
 		if (getTranslationAlgorithm() == TranslationAlgorithm.EL)
-			getInferredDataFromReasoner(owlModelManager.getReasoner());
+			getInferredDataFromReasoner(owlReasoner);
 	}
 
 	public TranslationAlgorithm getTranslationAlgorithm() {
