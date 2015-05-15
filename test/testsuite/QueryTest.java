@@ -4,9 +4,10 @@
 package testsuite;
 
 import helpers.KB;
-import hybrid.query.model.NoHR;
 
 import java.util.ArrayList;
+
+import nohr.reasoner.HybridKB;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,7 +44,7 @@ public class QueryTest {
 	private KB kb;
 
 	private void assertAnswer(String query, String[] expectedAns) {
-		ArrayList<ArrayList<String>> result = (new NoHR(kb.getOntology()))
+		ArrayList<ArrayList<String>> result = (new HybridKB(kb.getOntology()))
 				.query(query);
 		Assert.assertNotEquals("Should have anwswers", "no answers found",
 				result.get(1).get(0));
@@ -53,21 +54,21 @@ public class QueryTest {
 	}
 
 	private void assertConsistent(String query) {
-		ArrayList<ArrayList<String>> result = (new NoHR(kb.getOntology()))
+		ArrayList<ArrayList<String>> result = (new HybridKB(kb.getOntology()))
 				.query(query);
 		Assert.assertNotEquals("Should be consistent", "inconsistent", result
 				.get(1).get(0));
 	}
 
 	private void assertInconsistent(String query) {
-		ArrayList<ArrayList<String>> result = (new NoHR(kb.getOntology()))
+		ArrayList<ArrayList<String>> result = (new HybridKB(kb.getOntology()))
 				.query(query);
 		Assert.assertEquals("Should be inconsistent", "inconsistent", result
 				.get(1).get(0));
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -88,7 +89,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -141,7 +142,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -164,7 +165,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -186,7 +187,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -205,7 +206,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -226,7 +227,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -360,7 +361,7 @@ public class QueryTest {
 	}
 	
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -380,7 +381,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -408,7 +409,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -428,7 +429,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -445,7 +446,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -463,7 +464,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -481,7 +482,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -573,7 +574,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -598,7 +599,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -620,7 +621,7 @@ public class QueryTest {
 	}
 
 	/**
-	 * Test method for {@link hybrid.query.model.NoHR#query(java.lang.String)}.
+	 * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */

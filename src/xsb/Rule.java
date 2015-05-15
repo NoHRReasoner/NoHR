@@ -3,7 +3,7 @@ package xsb;
 import java.util.Arrays;
 import java.util.List;
 
-import local.translate.Utils;
+import other.Utils;
 
 import com.declarativa.interprolog.TermModel;
 

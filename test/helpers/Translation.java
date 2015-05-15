@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import local.translate.CollectionsManager;
-import local.translate.Translate;
+import nohr.reasoner.translation.Translate;
+import nohr.reasoner.translation.ontology.CollectionsManager;
 
 import org.junit.Assert;
 import org.semanticweb.owlapi.expression.ParserException;

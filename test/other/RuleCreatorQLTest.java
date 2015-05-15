@@ -7,9 +7,9 @@ package other;
 import java.util.ArrayList;
 import java.util.List;
 
-import local.translate.CollectionsManager;
-import local.translate.OntologyLabel;
-import local.translate.ql.RuleCreatorQL;
+import nohr.reasoner.translation.ontology.CollectionsManager;
+import nohr.reasoner.translation.ontology.OntologyLabel;
+import nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -37,7 +37,7 @@ import xsb.Rule;
  * @author nunocosta
  *
  */
-public class RuleCreatorQLTest extends RuleCreatorQL {
+public class RuleCreatorQLTest extends QLAxiomsTranslator {
 
 	/**
 	 * @throws java.lang.Exception
@@ -155,7 +155,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#i1(org.semanticweb.owlapi.model.OWLClass)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#i1(org.semanticweb.owlapi.model.OWLClass)}
 	 * .
 	 */
 	@Test
@@ -168,7 +168,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#i2(org.semanticweb.owlapi.model.OWLProperty)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#i2(org.semanticweb.owlapi.model.OWLProperty)}
 	 * .
 	 */
 	@Test
@@ -181,7 +181,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#i2(org.semanticweb.owlapi.model.OWLProperty)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#i2(org.semanticweb.owlapi.model.OWLProperty)}
 	 * .
 	 */
 	@Test
@@ -194,7 +194,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#n1(org.semanticweb.owlapi.model.OWLClassExpression, org.semanticweb.owlapi.model.OWLClassExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#n1(org.semanticweb.owlapi.model.OWLClassExpression, org.semanticweb.owlapi.model.OWLClassExpression)}
 	 * .
 	 */
 	@Test
@@ -210,7 +210,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#n2(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#n2(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
 	 * .
 	 */
 	@Test
@@ -234,7 +234,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#s1(org.semanticweb.owlapi.model.OWLClassExpression, org.semanticweb.owlapi.model.OWLClassExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#s1(org.semanticweb.owlapi.model.OWLClassExpression, org.semanticweb.owlapi.model.OWLClassExpression)}
 	 * .
 	 */
 	@Test
@@ -263,7 +263,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 	
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#a2(org.semanticweb.owlapi.model.OWLObjectProperty, org.semanticweb.owlapi.model.OWLIndividual, org.semanticweb.owlapi.model.OWLIndividual)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#a2(org.semanticweb.owlapi.model.OWLObjectProperty, org.semanticweb.owlapi.model.OWLIndividual, org.semanticweb.owlapi.model.OWLIndividual)}
 	 * .
 	 */
 	@Test
@@ -286,7 +286,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#s1(org.semanticweb.owlapi.model.OWLClassExpression, org.semanticweb.owlapi.model.OWLClassExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#s1(org.semanticweb.owlapi.model.OWLClassExpression, org.semanticweb.owlapi.model.OWLClassExpression)}
 	 * .
 	 */
 	@Test
@@ -315,7 +315,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#s2(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#s2(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
 	 * .
 	 */
 	@Test
@@ -334,7 +334,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#s2(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#s2(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
 	 * .
 	 */
 	@Test
@@ -364,7 +364,7 @@ public class RuleCreatorQLTest extends RuleCreatorQL {
 	
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.RuleCreatorQL#DataProprietyAssertion(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#DataProprietyAssertion(org.semanticweb.owlapi.model.OWLPropertyExpression, org.semanticweb.owlapi.model.OWLPropertyExpression)}
 	 * .
 	 */
 	@Test

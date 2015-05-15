@@ -124,4 +124,13 @@ public class Tracer {
 			tables.get(table).put(phase, run, dataset, duration);
 	}
 
+	public static void err(String string) {
+		info(string);
+	}
+
+	public static void logBool(String message, boolean bool) {
+		String ansStr = bool ? "yes" : "no";
+		info(message + ": " + ansStr);
+	}
+
 }

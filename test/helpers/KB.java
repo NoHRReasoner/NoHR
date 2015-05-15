@@ -1,16 +1,14 @@
 package helpers;
 
-import hybrid.query.views.Rules;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import local.translate.CollectionsManager;
-import local.translate.OntologyLabel;
-import local.translate.Utils;
-import local.translate.ql.INormalizedOntology;
-import local.translate.ql.NormalizedOntology;
+import nohr.plugin.Rules;
+import nohr.reasoner.translation.ontology.CollectionsManager;
+import nohr.reasoner.translation.ontology.OntologyLabel;
+import nohr.reasoner.translation.ontology.ql.INormalizedOntology;
+import nohr.reasoner.translation.ontology.ql.Normalizer;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -32,6 +30,8 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+
+import other.Utils;
 
 public class KB {
 
@@ -218,7 +218,7 @@ public class KB {
 	}
 
 	public INormalizedOntology getNormalizedOntology() {
-		return new NormalizedOntology(ont);
+		return new Normalizer(ont);
 	}
 
 	public OWLOntology getOntology() {

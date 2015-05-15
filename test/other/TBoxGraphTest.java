@@ -9,7 +9,7 @@ import helpers.KB;
 import java.util.HashSet;
 import java.util.Set;
 
-import local.translate.ql.BasicTBoxGraph;
+import nohr.reasoner.translation.ontology.ql.BasicTBoxGraph;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -46,7 +46,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
 	 * .
 	 * 
 	 * @throws OWLOntologyCreationException
@@ -69,7 +69,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
 	 * .
 	 * 
 	 * @throws OWLOntologyCreationException
@@ -98,7 +98,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getPredecessors(org.semanticweb.owlapi.model.OWLClassExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getPredecessors(org.semanticweb.owlapi.model.OWLClassExpression)}
 	 * .
 	 * 
 	 * @throws OWLOntologyCreationException
@@ -148,7 +148,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLObjectPropertyExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLObjectPropertyExpression)}
 	 * .
 	 * 
 	 * @throws OWLOntologyCreationException
@@ -172,7 +172,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
 	 * .
 	 * 
 	 * @throws OWLOntologyCreationException
@@ -202,7 +202,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getPredecessors(org.semanticweb.owlapi.model.OWLObjectPropertyExpression)}
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getPredecessors(org.semanticweb.owlapi.model.OWLObjectPropertyExpression)}
 	 * .
 	 * 
 	 * @throws OWLOntologyCreationException
@@ -264,7 +264,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getIrreflexiveRoles()}.
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getIrreflexiveRoles()}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -287,7 +287,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getIrreflexiveRoles()}.
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getIrreflexiveRoles()}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -313,7 +313,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getUnsatisfiableEntities()}.
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getUnsatisfiableEntities()}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */
@@ -343,7 +343,7 @@ public class TBoxGraphTest {
 
 	/**
 	 * Test method for
-	 * {@link local.translate.ql.BasicTBoxGraph#getUnsatisfiableEntities()}.
+	 * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getUnsatisfiableEntities()}.
 	 * 
 	 * @throws OWLOntologyCreationException
 	 */

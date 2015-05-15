@@ -84,7 +84,6 @@ class RunTimesTable {
 		Charset charset = Charset.forName("US-ASCII");
 		Path file = FileSystems.getDefault().getPath(name + ".csv");
 		try (BufferedWriter writer = Files.newBufferedWriter(file, charset)) {
-			writer.write(",");
 			for (String dataset : datasets) {
 				writer.write(",");
 				writer.write(dataset);
@@ -93,8 +92,6 @@ class RunTimesTable {
 			for (String phase : phases) {
 				for (int run = 1; run <= runs; run++) {
 					writer.write(phase);
-					writer.write(",");
-					writer.write(String.valueOf(run));
 					for (String dataset : datasets) {
 						long time = get(phase, run, dataset);
 						writer.write(",");
@@ -102,15 +99,15 @@ class RunTimesTable {
 					}
 					writer.newLine();
 				}
-				writer.write(phase);
-				writer.write(",");
-				writer.write("average");
-				for (String dataset : datasets) {
-					long average = average(phase, dataset);
-					writer.write(",");
-					writer.write(average == -1 ? "-" : String.valueOf(average));
-				}
-				writer.newLine();
+//				writer.write(phase);
+//				writer.write(",");
+//				writer.write("average");
+//				for (String dataset : datasets) {
+//					long average = average(phase, dataset);
+//					writer.write(",");
+//					writer.write(average == -1 ? "-" : String.valueOf(average));
+//				}
+//				writer.newLine();
 			}
 		} catch (IOException x) {
 			System.err.format("IOException: %s%n", x);

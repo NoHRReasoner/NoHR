@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import local.translate.ql.BasicLazyGraphClosure;
-import local.translate.ql.GraphClosure;
+import nohr.reasoner.translation.ontology.ql.BasicLazyGraphClosure;
+import nohr.reasoner.translation.ontology.ql.GraphClosure;
 
 import org.junit.Test;
 
