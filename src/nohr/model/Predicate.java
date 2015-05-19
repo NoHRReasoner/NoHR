@@ -1,9 +1,13 @@
 package nohr.model;
 
-public interface Variable extends Term {
+public interface Predicate {
 	
 	@Override
 	public boolean equals(Object obj);
+	
+	public int getArity();
+	
+	public String getName();
 	
 	public String getSymbol();
 	

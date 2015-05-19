@@ -2,8 +2,16 @@ package nohr.model;
 
 public interface Answer {
 	
-	public TruthValue getValuation();
+	@Override
+	public boolean equals(Object obj);
 	
-	public Term getValue(Variable var);
+	public Query getQuery();
+	
+	public TruthValue getValuation();
 
+	public Term getValue(Variable var);
+	
+	@Override
+	public String toString();
+	
 }

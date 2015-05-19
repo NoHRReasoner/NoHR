@@ -2,17 +2,16 @@ package nohr.model;
 
 import java.util.List;
 
-public interface Rule {
+public interface Query {
 
 	@Override
 	public boolean equals(Object obj);
 	
-	public List<Literal> getBody();
+	public List<Literal> getLiterals();
 	
-	public PositiveLiteral getHead();
-	
-	public boolean isFact();
+	public List<Variable> getVariables();
 	
 	@Override
 	public String toString();
+
 }
