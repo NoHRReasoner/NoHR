@@ -7,6 +7,12 @@ public interface Query {
     public Query acept(Visitor visitor);
 
     /**
+     * @param list
+     * @return
+     */
+    public Query apply(List<Term> list);
+
+    /**
      * @param sub
      * @return
      */

@@ -1,6 +1,7 @@
 package xsb;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,6 @@ import nohr.model.Config;
 import nohr.model.ModelException;
 import nohr.model.Query;
 import nohr.model.Rule;
-import nohr.model.Substitution;
-import nohr.model.SubstitutionImpl;
 import nohr.model.Term;
 import nohr.model.TermModelAdapter;
 import nohr.model.TruthValue;
@@ -82,16 +81,15 @@ public class XSBDatabase {
 	return engine.deterministicGoal(String.format("assert((%s))", rule));
     }
 
-    private void addAnswer(SortedMap<Variable, Integer> varsIdx,
-	    TermModel valuesList, Map<Substitution, TruthValue> answers) {
+    private void addAnswer(TermModel valuesList,
+	    Map<List<Term>, TruthValue> answers) {
 	try {
 	    TermModel[] termsList = valuesList.flatList();
+	    List<Term> vals = new ArrayList<Term>(termsList.length);
+	    for (int i = 1; i < termsList.length; i++)
+		vals.add(TermModelAdapter.getTerm(termsList[i]));
 	    TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
-	    Term[] vals = new Term[varsIdx.size()];
-	    for (int i = 0; i < varsIdx.size(); i++)
-		vals[i] = TermModelAdapter.getTerm(termsList[i + 1]);
-	    Substitution substitution = new SubstitutionImpl(varsIdx, vals);
-	    answers.put(substitution, truth);
+	    answers.put(vals, truth);
 	} catch (ModelException e) {
 	    e.printStackTrace();
 	    System.exit(1);
@@ -103,9 +101,9 @@ public class XSBDatabase {
 	try {
 	    TermModel[] termsList = valuesList.flatList();
 	    TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
-	    Term[] vals = new Term[varsIdx.size()];
-	    for (int i = 0; i < varsIdx.size(); i++)
-		vals[i] = TermModelAdapter.getTerm(termsList[i + 1]);
+	    List<Term> vals = new ArrayList<Term>(termsList.length);
+	    for (int i = 1; i < varsIdx.size(); i++)
+		vals.add(TermModelAdapter.getTerm(termsList[i]));
 	    return new AnswerImpl(query, truth, vals, varsIdx);
 	} catch (ModelException e) {
 	    e.printStackTrace();
@@ -176,15 +174,13 @@ public class XSBDatabase {
 		(TermModel) objs[0]);
     }
 
-    public Map<Substitution, TruthValue> queryAll(Query query) {
-	Map<Substitution, TruthValue> answers = new HashMap<Substitution, TruthValue>();
-	SortedMap<Variable, Integer> varsIdx = variablesIndex(query
-		.getVariables());
+    public Map<List<Term>, TruthValue> queryAll(Query query) {
+	Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
 	String goal = String.format("nonDetGoal(%s, %s, TM)",
 		query.getVariables(), query);
 	TermModel ansList = (TermModel) engine.deterministicGoal(goal, "[TM]")[0];
 	for (TermModel ans : ansList.flatList())
-	    addAnswer(varsIdx, ans, answers);
+	    addAnswer(ans, answers);
 	return answers;
     }
 

@@ -13,7 +13,6 @@ import nohr.model.Literal;
 import nohr.model.PositiveLiteralImpl;
 import nohr.model.Query;
 import nohr.model.QueryImpl;
-import nohr.model.Substitution;
 import nohr.model.Term;
 import nohr.model.TruthValue;
 import nohr.model.Variable;
@@ -88,10 +87,10 @@ public class XSBDatabaseTest extends XSBDatabase {
 	engine.command("assert((p(a)))");
 	engine.command("assert((p(b)))");
 	engine.command("assert((p(c)))");
-	Map<Substitution, TruthValue> answers = queryAll(query);
+	Map<List<Term>, TruthValue> answers = queryAll(query);
 	Set<String> result = new HashSet<String>();
-	for (Substitution sub : answers.keySet())
-	    result.add(query.apply(sub).toString());
+	for (List<Term> list : answers.keySet())
+	    result.add(query.apply(list).toString());
 	Assert.assertEquals("incorrect answers", set("p(a)", "p(b)", "p(c)"),
 		result);
     }

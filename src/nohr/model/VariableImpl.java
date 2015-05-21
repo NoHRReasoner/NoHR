@@ -40,12 +40,26 @@ public class VariableImpl implements Variable {
 	return symbol.compareTo(o.getSymbol());
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
-	if (!(obj instanceof Variable))
+	if (this == obj)
+	    return true;
+	if (obj == null)
 	    return false;
-	Variable var = (Variable) obj;
-	return symbol.equals(var.getSymbol());
+	if (!(obj instanceof VariableImpl))
+	    return false;
+	VariableImpl other = (VariableImpl) obj;
+	if (symbol == null) {
+	    if (other.symbol != null)
+		return false;
+	} else if (!symbol.equals(other.symbol))
+	    return false;
+	return true;
     }
 
     @Override
@@ -53,9 +67,17 @@ public class VariableImpl implements Variable {
 	return symbol;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
-	return symbol.hashCode();
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + (symbol == null ? 0 : symbol.hashCode());
+	return result;
     }
 
     @Override

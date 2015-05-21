@@ -1,7 +1,10 @@
 package nohr.model;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import other.Utils;
 
@@ -30,6 +33,25 @@ public class QueryImpl implements Query {
     /*
      * (non-Javadoc)
      * 
+     * @see nohr.model.Query#apply(java.util.List)
+     */
+    @Override
+    public Query apply(List<Term> list) {
+	Map<Variable, Term> map = new HashMap<Variable, Term>();
+	Iterator<Variable> varsIt = variables.iterator();
+	Iterator<Term> listIt = list.iterator();
+	while (varsIt.hasNext() && listIt.hasNext())
+	    map.put(varsIt.next(), listIt.next());
+	List<Literal> lits = new LinkedList<Literal>();
+	List<Variable> args = new LinkedList<Variable>(variables);
+	for (Literal literal : literals)
+	    lits.add(literal.apply(map));
+	return new QueryImpl(lits, args);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see nohr.model.Query#apply(nohr.model.Substitution)
      */
     @Override
@@ -43,7 +65,7 @@ public class QueryImpl implements Query {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -80,7 +102,7 @@ public class QueryImpl implements Query {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

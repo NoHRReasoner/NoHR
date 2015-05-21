@@ -1,5 +1,6 @@
 package nohr.model;
 
+import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
@@ -15,16 +16,27 @@ public class SubstitutionImpl implements Substitution {
 	this.values = values;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
-	if (!(obj instanceof Substitution))
+	if (this == obj)
+	    return true;
+	if (obj == null)
 	    return false;
-	Substitution sub = (Substitution) obj;
-	if (!sub.getVariables().equals(getVariables()))
+	if (!(obj instanceof SubstitutionImpl))
 	    return false;
-	for (Variable var : sub.getVariables())
-	    if (!sub.getValue(var).equals(getValue(var)))
+	SubstitutionImpl other = (SubstitutionImpl) obj;
+	if (!Arrays.equals(values, other.values))
+	    return false;
+	if (variablesIndex == null) {
+	    if (other.variablesIndex != null)
 		return false;
+	} else if (!variablesIndex.equals(other.variablesIndex))
+	    return false;
 	return true;
     }
 
@@ -38,9 +50,17 @@ public class SubstitutionImpl implements Substitution {
 	return variablesIndex.keySet();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
-	return toString().hashCode();
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + Arrays.hashCode(values);
+	return result;
     }
 
     @Override

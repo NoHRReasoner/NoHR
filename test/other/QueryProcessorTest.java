@@ -3,17 +3,21 @@
  */
 package other;
 
+import static nohr.model.Model.ans;
 import static nohr.model.Model.cons;
 import static nohr.model.Model.posLiteral;
-import static nohr.model.Model.subs;
 import static nohr.model.Model.var;
 import static org.junit.Assert.fail;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
+import nohr.model.Answer;
 import nohr.model.Model;
 import nohr.model.Query;
-import nohr.model.Substitution;
+import nohr.model.Term;
 import nohr.model.TruthValue;
 import nohr.model.Variable;
 import nohr.reasoner.QueryProcessor;
@@ -53,6 +57,12 @@ public class QueryProcessorTest extends QueryProcessor {
      */
     public QueryProcessorTest() throws Exception {
 	super(new XSBDatabase());
+    }
+
+    private List<Term> l(Term... elems) {
+	List<Term> res = new LinkedList<Term>();
+	Collections.addAll(res, elems);
+	return res;
     }
 
     /**
@@ -108,19 +118,18 @@ public class QueryProcessorTest extends QueryProcessor {
 	xsbDatabase.add("dp(h):-tnot(dp(h))");
 
 	Variable var = var("X");
-	Query query = Model.query(posLiteral("p", var));
+	Query q = Model.query(posLiteral("p", var));
 
-	Map<Substitution, TruthValue> ans = queryAll(query);
+	Collection<Answer> ans = queryAll(q);
 
-	Assert.assertEquals(TruthValue.TRUE, ans.get(subs(var, cons("a"))));
-	Assert.assertEquals(TruthValue.TRUE, ans.get(subs(var, cons("b"))));
-	Assert.assertEquals(TruthValue.INCONSITENT,
-		ans.get(subs(var, cons("c"))));
-	Assert.assertEquals(TruthValue.UNDIFINED, ans.get(subs(var, cons("d"))));
-	Assert.assertEquals(TruthValue.UNDIFINED, ans.get(subs(var, cons("e"))));
-	Assert.assertNull(ans.get(subs(var, cons("f"))));
-	Assert.assertNull(ans.get(subs(var, cons("g"))));
-	Assert.assertNull(ans.get(subs(var, cons("h"))));
-	Assert.assertNull(ans.get(subs(var, cons("i"))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSITENT,
+		l(cons("c")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDIFINED,
+		l(cons("d")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDIFINED,
+		l(cons("e")))));
+	Assert.assertTrue(ans.size() == 5);
     }
 }

@@ -1,6 +1,7 @@
 package nohr.model;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,20 @@ import nohr.model.predicates.Predicate;
 import nohr.model.predicates.PredicateImpl;
 
 public class Model {
+
+    public static Answer ans(Query query, TruthValue truthValue,
+	    List<Term> values) {
+	Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
+	int i = 0;
+	for (Variable var : query.getVariables())
+	    varsIdx.put(var, i);
+	return new AnswerImpl(query, truthValue, values, varsIdx);
+    }
+
+    public static Answer answer(Query query, TruthValue truthValue,
+	    List<Term> values, Map<Variable, Integer> variablesIndex) {
+	return new AnswerImpl(query, truthValue, values, variablesIndex);
+    }
 
     public static Constant cons(Number n) {
 	return new NumericConstantImpl(n);
@@ -85,8 +100,8 @@ public class Model {
 	return new SubstitutionImpl(varsIdx, vals);
     }
 
-    public static Substitution subs(
-	    SortedMap<Variable, Integer> varsIdx, Term... vals) {
+    public static Substitution subs(SortedMap<Variable, Integer> varsIdx,
+	    Term... vals) {
 	return new SubstitutionImpl(varsIdx, vals);
     }
 

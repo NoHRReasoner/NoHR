@@ -9,47 +9,91 @@ import java.util.Map.Entry;
 import other.Utils;
 
 public class AnswerImpl implements Answer {
-	
-	private Query query;
-	
-	private TruthValue truthValue;
-	
-	private Term [] values;
-	
-	private Map<Variable, Integer> variablesIndex;
-	
-	public AnswerImpl(Query query, TruthValue truthValue, Term[] values,
-			Map<Variable, Integer> variablesIndex) {
-		this.query = query;
-		this.truthValue = truthValue;
-		this.values = values;
-		this.variablesIndex = variablesIndex;
-	}
 
-	@Override
-	public Query getQuery() {
-		return query;
-	}
+    private Query query;
 
-	@Override
-	public TruthValue getValuation() {
-		return truthValue;
-	}
+    private TruthValue truthValue;
 
-	@Override
-	public Term getValue(Variable var) {
-		return values[variablesIndex.get(var)];
-	}
-	
-	@Override
-	public String toString() {
-		Map<Variable, Term> substitution = new HashMap<Variable, Term>();
-		for(Entry<Variable, Integer> entry : variablesIndex.entrySet())
-			substitution.put(entry.getKey(), values[entry.getValue()]);	
-		List<Literal> literals = new LinkedList<Literal>();
-		for(Literal literal : query.getLiterals())
-			literals.add(literal.apply(substitution));
-		return Utils.concat(",", literals);
-	}
+    private List<Term> values;
+
+    private Map<Variable, Integer> variablesIndex;
+
+    public AnswerImpl(Query query, TruthValue truthValue, List<Term> values,
+	    Map<Variable, Integer> variablesIndex) {
+	this.query = query;
+	this.truthValue = truthValue;
+	this.values = values;
+	this.variablesIndex = variablesIndex;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (!(obj instanceof AnswerImpl))
+	    return false;
+	AnswerImpl other = (AnswerImpl) obj;
+	if (truthValue != other.truthValue)
+	    return false;
+	if (values == null) {
+	    if (other.values != null)
+		return false;
+	} else if (!values.equals(other.values))
+	    return false;
+	if (variablesIndex == null) {
+	    if (other.variablesIndex != null)
+		return false;
+	} else if (!variablesIndex.equals(other.variablesIndex))
+	    return false;
+	return true;
+    }
+
+    @Override
+    public Query getQuery() {
+	return query;
+    }
+
+    @Override
+    public TruthValue getValuation() {
+	return truthValue;
+    }
+
+    @Override
+    public Term getValue(Variable var) {
+	return values.get(variablesIndex.get(var));
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result
+		+ (truthValue == null ? 0 : truthValue.hashCode());
+	result = prime * result + (values == null ? 0 : values.hashCode());
+	return result;
+    }
+
+    @Override
+    public String toString() {
+	Map<Variable, Term> substitution = new HashMap<Variable, Term>();
+	for (Entry<Variable, Integer> entry : variablesIndex.entrySet())
+	    substitution.put(entry.getKey(), values.get(entry.getValue()));
+	List<Literal> literals = new LinkedList<Literal>();
+	for (Literal literal : query.getLiterals())
+	    literals.add(literal.apply(substitution));
+	return Utils.concat(",", literals);
+    }
 
 }

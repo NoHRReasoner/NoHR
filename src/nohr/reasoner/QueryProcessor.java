@@ -1,13 +1,18 @@
 package nohr.reasoner;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import nohr.model.Answer;
+import nohr.model.Model;
 import nohr.model.Query;
-import nohr.model.Substitution;
+import nohr.model.Term;
 import nohr.model.TruthValue;
+import nohr.model.Variable;
 import nohr.model.Visitor;
 import nohr.model.predicates.PredicateTypes;
 import nohr.reasoner.translation.EncodeVisitor;
@@ -50,26 +55,30 @@ public class QueryProcessor {
 	return process(originalAnswer, doubledAnswer);
     }
 
-    public Map<Substitution, TruthValue> queryAll(Query query) {
+    public Collection<Answer> queryAll(Query query) {
 	Visitor originalEncoder = new EncodeVisitor(PredicateTypes.ORIGINAL);
 	Visitor doubledEncoder = new EncodeVisitor(PredicateTypes.DOUBLED);
-	Map<Substitution, TruthValue> originalAns = xsbDatabase.queryAll(query
+	Map<List<Term>, TruthValue> originalAns = xsbDatabase.queryAll(query
 		.acept(originalEncoder));
-	Map<Substitution, TruthValue> doubledAns = xsbDatabase.queryAll(query
+	Map<List<Term>, TruthValue> doubledAns = xsbDatabase.queryAll(query
 		.acept(doubledEncoder));
-	Map<Substitution, TruthValue> result = new HashMap<Substitution, TruthValue>();
-	for (Entry<Substitution, TruthValue> originalEntry : originalAns
+	Collection<Answer> result = new LinkedList<Answer>();
+	Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
+	int i = 0;
+	for (Variable var : query.getVariables())
+	    varsIdx.put(var, i++);
+	for (Entry<List<Term>, TruthValue> originalEntry : originalAns
 		.entrySet()) {
-	    Substitution substitution = originalEntry.getKey();
+	    List<Term> vals = originalEntry.getKey();
 	    TruthValue originalTruth = originalEntry.getValue();
 	    if (originalTruth == null)
 		originalTruth = TruthValue.FALSE;
-	    TruthValue doubledTruth = doubledAns.get(substitution);
+	    TruthValue doubledTruth = doubledAns.get(vals);
 	    if (doubledTruth == null)
 		doubledTruth = TruthValue.FALSE;
 	    TruthValue truth = process(originalTruth, doubledTruth);
 	    if (truth != TruthValue.FALSE)
-		result.put(substitution, truth);
+		result.add(Model.answer(query, truth, vals, varsIdx));
 	}
 	return result;
     }
