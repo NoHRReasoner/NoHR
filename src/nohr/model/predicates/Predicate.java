@@ -1,4 +1,6 @@
-package nohr.model;
+package nohr.model.predicates;
+
+import nohr.model.Visitor;
 
 public interface Predicate {
 	
@@ -16,5 +18,7 @@ public interface Predicate {
 	
 	@Override
 	public String toString();
+	
+	public Predicate acept(Visitor visitor);
 
 }

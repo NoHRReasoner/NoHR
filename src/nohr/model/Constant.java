@@ -21,4 +21,6 @@ public interface Constant extends Term {
 	@Override
 	public String toString();
 	
+	public Constant acept(Visitor visitor);
+	
 }
