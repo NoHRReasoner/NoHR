@@ -1,8 +1,7 @@
 /**
  *
  */
-package nohr.model.predicates;
-
+package pt.unl.fct.di.centria.nohr.model.predicates;
 
 /**
  * @author nunocosta

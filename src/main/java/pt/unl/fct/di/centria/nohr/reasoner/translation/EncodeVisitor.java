@@ -1,21 +1,21 @@
-package nohr.reasoner.translation;
+package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
-import nohr.model.Atom;
-import nohr.model.Constant;
-import nohr.model.ConstantImpl;
-import nohr.model.ListTermImpl;
-import nohr.model.Literal;
-import nohr.model.ModelException;
-import nohr.model.NegativeLiteral;
-import nohr.model.PositiveLiteral;
-import nohr.model.Query;
-import nohr.model.Rule;
-import nohr.model.Term;
-import nohr.model.Variable;
-import nohr.model.Visitor;
-import nohr.model.predicates.Predicate;
-import nohr.model.predicates.PredicateImpl;
-import nohr.model.predicates.PredicateTypes;
+import pt.unl.fct.di.centria.nohr.model.Atom;
+import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.ConstantImpl;
+import pt.unl.fct.di.centria.nohr.model.ListTermImpl;
+import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.ModelException;
+import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
+import pt.unl.fct.di.centria.nohr.model.PositiveLiteral;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateImpl;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypes;
 
 public class EncodeVisitor implements Visitor {
 

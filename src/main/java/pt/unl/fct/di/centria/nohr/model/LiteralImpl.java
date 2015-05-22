@@ -1,6 +1,7 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
+
 
 public abstract class LiteralImpl implements Literal {
 

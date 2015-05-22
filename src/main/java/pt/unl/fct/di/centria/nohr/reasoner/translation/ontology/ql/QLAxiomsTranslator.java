@@ -1,10 +1,7 @@
-package nohr.reasoner.translation.ontology.ql;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import nohr.reasoner.translation.ontology.CollectionsManager;
-import nohr.reasoner.translation.ontology.OntologyLabel;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -20,8 +17,10 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
-import xsb.NotTerm;
-import xsb.Rule;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.CollectionsManager;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.xsb.NotTerm;
+import pt.unl.fct.di.centria.xsb.Rule;
 
 import com.declarativa.interprolog.TermModel;
 

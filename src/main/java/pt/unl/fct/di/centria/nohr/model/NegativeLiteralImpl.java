@@ -1,4 +1,4 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nohr.model.Literal#apply(nohr.model.Substitution)
      */
     @Override
@@ -45,7 +45,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -67,7 +67,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -92,5 +92,5 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
     public String toString() {
 	return String.format("tnot(%s)", atom);
     }
-
+ 
 }

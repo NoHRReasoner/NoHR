@@ -1,4 +1,4 @@
-package xsb;
+package pt.unl.fct.di.centria.xsb;
 
 import java.util.Arrays;
 import java.util.List;

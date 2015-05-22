@@ -1,4 +1,4 @@
-package nohr.reasoner.translation.ontology.ql;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import java.util.Collection;
 import java.util.HashSet;

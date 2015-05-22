@@ -1,10 +1,7 @@
-package nohr.reasoner.translation.ontology.ql;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import java.util.Iterator;
 import java.util.List;
-
-import nohr.reasoner.translation.ontology.CollectionsManager;
-import nohr.reasoner.translation.ontology.OntologyTranslator;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -32,6 +29,9 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
+
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.CollectionsManager;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
 
 public class QLOntologyTranslator implements OntologyTranslator {
 

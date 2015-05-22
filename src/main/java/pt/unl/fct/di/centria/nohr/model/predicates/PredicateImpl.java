@@ -1,6 +1,6 @@
-package nohr.model.predicates;
+package pt.unl.fct.di.centria.nohr.model.predicates;
 
-import nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 public class PredicateImpl implements Predicate {
 
@@ -20,7 +20,7 @@ public class PredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -59,7 +59,7 @@ public class PredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

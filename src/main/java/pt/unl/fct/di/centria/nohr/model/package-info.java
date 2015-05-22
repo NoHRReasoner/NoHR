@@ -17,5 +17,5 @@
 /**
  * Creates a bridge between Translater and XSB via Interprolog.
  */
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 

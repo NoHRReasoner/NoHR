@@ -1,4 +1,4 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class ListTermImpl implements Term {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override

@@ -1,8 +1,8 @@
-package nohr.reasoner.translation;
+package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
-import nohr.reasoner.translation.ontology.CollectionsManager;
 import other.Config;
 import other.Utils;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.CollectionsManager;
 
 /**
  * The Class RuleTranslator.

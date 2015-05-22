@@ -1,4 +1,4 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 import java.util.Map;

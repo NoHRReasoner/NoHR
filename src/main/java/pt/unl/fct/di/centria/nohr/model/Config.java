@@ -1,4 +1,4 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import org.apache.log4j.Level;
 

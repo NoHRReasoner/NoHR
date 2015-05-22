@@ -1,4 +1,4 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,8 +9,8 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nohr.model.predicates.Predicate;
-import nohr.model.predicates.PredicateImpl;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateImpl;
 
 public class Model {
 

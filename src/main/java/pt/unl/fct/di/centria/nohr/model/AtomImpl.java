@@ -1,12 +1,12 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import nohr.model.predicates.Predicate;
 import other.Utils;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public class AtomImpl implements Atom {
 

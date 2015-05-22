@@ -1,4 +1,4 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -16,9 +16,20 @@ public class SubstitutionImpl implements Substitution {
 	this.values = values;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + Arrays.hashCode(values);	
+	return result;
+    }
+    
+    
+
+    /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -48,19 +59,6 @@ public class SubstitutionImpl implements Substitution {
     @Override
     public Set<Variable> getVariables() {
 	return variablesIndex.keySet();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + Arrays.hashCode(values);
-	return result;
     }
 
     @Override

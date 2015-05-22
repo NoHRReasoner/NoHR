@@ -1,8 +1,8 @@
-package nohr.plugin;
-
-import nohr.reasoner.HybridKB;
+package pt.unl.fct.di.centria.nohr.plugin;
 
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
+
+import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

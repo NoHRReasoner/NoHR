@@ -1,9 +1,9 @@
 /**
  *
  */
-package nohr.model.predicates;
+package pt.unl.fct.di.centria.nohr.model.predicates;
 
-import nohr.reasoner.translation.EncodeVisitor;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.EncodeVisitor;
 
 /**
  * @author nunocosta

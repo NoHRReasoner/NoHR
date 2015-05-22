@@ -1,4 +1,4 @@
-package nohr.plugin;
+package pt.unl.fct.di.centria.nohr.plugin;
 
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 

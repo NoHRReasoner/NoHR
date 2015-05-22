@@ -1,13 +1,13 @@
-package nohr.reasoner.translation.ontology.ql;
-
-import nohr.reasoner.translation.ontology.CollectionsManager;
-import nohr.reasoner.translation.ontology.OntologyLabel;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
+
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.CollectionsManager;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
 
 import com.declarativa.interprolog.TermModel;
 

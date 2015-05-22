@@ -1,8 +1,8 @@
 package other;
 
-import nohr.reasoner.translation.ontology.TranslationAlgorithm;
-
 import org.apache.log4j.Level;
+
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
 
 //TODO remove
 
@@ -31,6 +31,6 @@ public class Config {
 
     /** The log level. */
     public static Level logLevel = Level.OFF;
-    
+
     public static TranslationAlgorithm translationAlgorithm = null;
 }

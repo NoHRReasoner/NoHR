@@ -1,4 +1,4 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class PositiveLiteralImpl extends LiteralImpl implements PositiveLiteral 
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see nohr.model.Literal#apply(nohr.model.Substitution)
      */
     @Override
@@ -45,7 +45,7 @@ public class PositiveLiteralImpl extends LiteralImpl implements PositiveLiteral 
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -67,7 +67,7 @@ public class PositiveLiteralImpl extends LiteralImpl implements PositiveLiteral 
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override

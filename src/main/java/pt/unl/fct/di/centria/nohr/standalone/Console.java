@@ -1,9 +1,9 @@
-package nohr.standalone;
+package pt.unl.fct.di.centria.nohr.standalone;
 import java.io.File;
 import java.util.Date;
 import java.util.Scanner;
 
-import nohr.reasoner.translation.Translate;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Translate;
 
 public class Console {
     /**

@@ -1,10 +1,10 @@
-package nohr.reasoner;
+package pt.unl.fct.di.centria.nohr.reasoner;
 
 import java.util.Set;
 
-import nohr.reasoner.translation.ParsedRule;
-import nohr.reasoner.translation.ontology.CollectionsManager;
 import other.Utils;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ParsedRule;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.CollectionsManager;
 
 
 /**

@@ -1,4 +1,4 @@
-package nohr.reasoner.translation.ontology;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology;
 
 //TODO remove
 

@@ -3,4 +3,4 @@
  * Hybrid Query View Component creates the main view
  * Rules Manager View Component creates the rule tab
  */
-package nohr.plugin;
+package pt.unl.fct.di.centria.nohr.plugin;

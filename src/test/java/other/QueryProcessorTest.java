@@ -9,6 +9,7 @@ import static nohr.model.Model.posLiteral;
 import static nohr.model.Model.var;
 import static org.junit.Assert.fail;
 
+import java.nio.file.FileSystems;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -56,7 +57,8 @@ public class QueryProcessorTest extends QueryProcessor {
      * @throws Exception
      */
     public QueryProcessorTest() throws Exception {
-	super(new XSBDatabase());
+	super(new XSBDatabase(FileSystems.getDefault().getPath(
+		System.getenv("XSB_BIN_DIRECTORY"))));
     }
 
     private List<Term> l(Term... elems) {

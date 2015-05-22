@@ -1,4 +1,4 @@
-package nohr.reasoner;
+package pt.unl.fct.di.centria.nohr.reasoner;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import nohr.model.Answer;
-import nohr.model.Model;
-import nohr.model.Query;
-import nohr.model.Term;
-import nohr.model.TruthValue;
-import nohr.model.Variable;
-import nohr.model.Visitor;
-import nohr.model.predicates.PredicateTypes;
-import nohr.reasoner.translation.EncodeVisitor;
-import xsb.XSBDatabase;
+import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Model;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.TruthValue;
+import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypes;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.EncodeVisitor;
+import pt.unl.fct.di.centria.xsb.XSBDatabase;
 
 public class QueryProcessor {
 

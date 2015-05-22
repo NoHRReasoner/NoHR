@@ -1,9 +1,9 @@
-package nohr.model;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 import java.util.Set;
 
-import nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public interface Rule {
 

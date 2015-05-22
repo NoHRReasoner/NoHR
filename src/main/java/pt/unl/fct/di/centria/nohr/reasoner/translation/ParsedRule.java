@@ -1,4 +1,4 @@
-package nohr.reasoner.translation;
+package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
 import java.util.Map;
 

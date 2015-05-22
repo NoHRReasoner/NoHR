@@ -1,8 +1,8 @@
-package nohr.plugin;
-
-import nohr.reasoner.HybridKB;
+package pt.unl.fct.di.centria.nohr.plugin;
 
 import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
+
+import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 
 
 public class HybridQueryTab extends OWLWorkspaceViewsTab {

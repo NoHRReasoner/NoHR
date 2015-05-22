@@ -1,6 +1,7 @@
-package xsb;
+package pt.unl.fct.di.centria.xsb;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,17 +9,16 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nohr.model.Answer;
-import nohr.model.AnswerImpl;
-import nohr.model.Config;
-import nohr.model.ModelException;
-import nohr.model.Query;
-import nohr.model.Rule;
-import nohr.model.Term;
-import nohr.model.TermModelAdapter;
-import nohr.model.TruthValue;
-import nohr.model.Variable;
-import nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.AnswerImpl;
+import pt.unl.fct.di.centria.nohr.model.Config;
+import pt.unl.fct.di.centria.nohr.model.ModelException;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.TermModelAdapter;
+import pt.unl.fct.di.centria.nohr.model.TruthValue;
+import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.XSBSubprocessEngine;
@@ -40,21 +40,20 @@ public class XSBDatabase {
      * @throws Exception
      *             the exception
      */
-    public XSBDatabase() throws Exception {
+    public XSBDatabase(Path xsbPath) throws Exception {
 
 	/**
 	 * Env variable which should be responsible for directory where XSB was
 	 * installed
 	 */
-	String xsbBin = System.getenv("XSB_BIN_DIRECTORY");
 	printLog("Starting query engine" + Config.NL);
 	printLog(Config.TEMP_DIR + Config.NL);
 
-	if (xsbBin != null)
-	    xsbBin += "/xsb";
-	else
-	    throw new Exception("Please, set up your XSB_BIN_DIRECTORY");
-	startEngine(xsbBin);
+	// if (xsbBin != null)
+	// xsbBin += "/xsb";
+	// else
+	// throw new Exception("Please, set up your XSB_BIN_DIRECTORY");
+	startEngine(xsbPath.toAbsolutePath().toString());
 
 	engine.deterministicGoal("dynamic detGoal/3");
 	engine.deterministicGoal("dynamic nonDetGoal/3");
@@ -71,7 +70,7 @@ public class XSBDatabase {
 	return engine.deterministicGoal("dynamic " + predicate);
     }
 
-    public boolean add(Rule rule) {
+    public boolean add(pt.unl.fct.di.centria.nohr.model.Rule rule) {
 	for (Predicate pred : rule.getPredicates())
 	    add(pred);
 	return engine.deterministicGoal(String.format("assert((%s))", rule));

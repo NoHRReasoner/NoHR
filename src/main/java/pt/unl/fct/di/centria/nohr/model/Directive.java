@@ -1,5 +1,1 @@
-package nohr.model;
-
-public interface Directive {
-
-}
+package pt.unl.fct.di.centria.nohr.model;

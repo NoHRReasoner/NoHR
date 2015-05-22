@@ -1,5 +1,6 @@
 package other;
 
+import java.nio.file.FileSystems;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -40,7 +41,8 @@ public class XSBDatabaseTest extends XSBDatabase {
     }
 
     public XSBDatabaseTest() throws Exception {
-	super();
+	super(FileSystems.getDefault().getPath(
+		System.getenv("XSB_BIN_DIRECTORY")));
     }
 
     public <E> List<E> list(E... elems) {
