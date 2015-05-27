@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+
+<plugin>
+
+   <extension id="HybridQueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
+      <label value="NoHR Query"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.HybridQueryViewComponent"></class>
+      <category value="@org.protege.querycategory"></category>
+   </extension>
+   <extension id="RulesViewComponent" point="org.protege.editor.core.application.ViewComponent">
+      <label value="NoHR Rules"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.RulesViewComponent"></class>
+      <category value="@org.protege.querycategory"></category>
+   </extension>
+   <extension id="RulesManagerViewComponent" point="org.protege.editor.core.application.ViewComponent">
+      <label value="NoHR Rule Editor"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.RulesManagerViewComponent"></class>
+      <category value="@org.protege.querycategory"></category>
+   </extension>
+   <extension id="HybridQueryTab" point="org.protege.editor.core.application.WorkspaceTab">
+      <label value="NoHR Query"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.HybridQueryTab"></class>
+      <index value="Y"></index>
+      <editorKitId value="OWLEditorKit"></editorKitId>
+      <defaultViewConfigFileName value="viewconfig-querytab.xml"></defaultViewConfigFileName>
+   </extension>
+   <extension id="RulesManagerTab" point="org.protege.editor.core.application.WorkspaceTab">
+      <label value="NoHR Rules"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.RulesManagerTab"></class>
+      <index value="X"></index>
+      <editorKitId value="OWLEditorKit"></editorKitId>
+      <defaultViewConfigFileName value="viewconfig-rulesmanagertab.xml"></defaultViewConfigFileName>
+   </extension>
+   
+</plugin>
