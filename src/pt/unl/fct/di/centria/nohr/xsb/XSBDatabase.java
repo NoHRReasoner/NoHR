@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import other.Utils;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Config;
 import pt.unl.fct.di.centria.nohr.model.ModelException;
@@ -105,7 +106,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#addAll(java.util.Collection)
      */
     @Override
@@ -167,7 +168,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#contains(java.lang.Object)
      */
     @Override
@@ -182,7 +183,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
     @Override
@@ -242,7 +243,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#isEmpty()
      */
     @Override
@@ -261,7 +262,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#iterator()
      */
     @Override
@@ -306,8 +307,8 @@ public class XSBDatabase implements Collection<Rule> {
     public Map<List<Term>, TruthValue> queryAll(Query query) {
 	flush();
 	Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
-	String goal = String.format("nonDetGoal(%s, %s, TM)",
-		query.getVariables(), query);
+	String goal = String.format("nonDetGoal([%s], (%s), TM)",
+		Utils.concat(",", query.getVariables()), query);
 	Object[] bindings = engine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
 	    return answers;
@@ -319,7 +320,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#remove(java.lang.Object)
      */
     @Override
@@ -338,7 +339,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
     @Override
@@ -351,7 +352,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
     @Override
@@ -368,7 +369,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#size()
      */
     @Override
@@ -415,7 +416,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#toArray()
      */
     @Override
@@ -425,7 +426,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)format
-     *
+     * 
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
     @Override

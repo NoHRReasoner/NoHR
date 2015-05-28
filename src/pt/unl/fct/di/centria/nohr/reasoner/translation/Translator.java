@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -96,7 +97,7 @@ public class Translator {
     private String tempDir = "";
 
     /** The result file name. */
-    private String resultFileName = "result.p";
+    private String resultFileName = "nohrtr.P";
 
     /** The ontology label. */
     private OntologyLabel ontologyLabel;
@@ -150,9 +151,9 @@ public class Translator {
      */
     public Translator(OWLOntologyManager owlModelManager, OWLOntology ontology,
 	    OWLReasoner owlReasoner, XSBDatabase xsbDatabase)
-		    throws IOException, OWLOntologyCreationException,
-		    OWLOntologyStorageException, CloneNotSupportedException,
-		    UnsupportedOWLProfile {
+	    throws IOException, OWLOntologyCreationException,
+	    OWLOntologyStorageException, CloneNotSupportedException,
+	    UnsupportedOWLProfile {
 	ontologyManager = owlModelManager;
 	this.xsbDatabase = xsbDatabase;
 	this.ontology = ontology;
@@ -177,7 +178,7 @@ public class Translator {
      * @throws UnsupportedOWLProfile
      */
     public Translator(String filePath) throws OWLOntologyCreationException,
-    IOException, OWLOntologyStorageException, UnsupportedOWLProfile {
+	    IOException, OWLOntologyStorageException, UnsupportedOWLProfile {
 	/** Initializing a OntologyManager */
 	// Date dateStart = new Date();
 	ontologyManager = OWLManager.createOWLOntologyManager();
@@ -280,7 +281,9 @@ public class Translator {
      */
     public File Finish() throws IOException {
 	// Date dateStart = new Date();
-	FileWriter writer = new FileWriter(tempDir + resultFileName);
+	File file = FileSystems.getDefault().getPath(tempDir, resultFileName)
+		.toAbsolutePath().toFile();
+	FileWriter writer = new FileWriter(file);
 	HashSet<String> tabled = new HashSet<String>();
 	tabled.addAll(cm.getAllTabledPredicateOntology());
 	tabled.addAll(cm.getAllTabledPredicateRule());
@@ -295,7 +298,7 @@ public class Translator {
 	writer.close();
 
 	// Utils.getDiffTime(dateStart, "Writing XSB file: ");
-	return new File(tempDir + resultFileName);
+	return file;
     }
 
     public CollectionsManager getCollectionsManager() {
@@ -338,7 +341,7 @@ public class Translator {
 	// reasoner.dispose();
 	// Utils.getDiffTime(dateStart, "Retrieving inferred information: ");
 	((ELOntologyTranslator) ontologyProceeder)
-	.setOntologiesToProceed(ontologies);
+		.setOntologiesToProceed(ontologies);
     }
 
     /**
@@ -389,7 +392,7 @@ public class Translator {
      * Inits the collections.
      */
     private void initCollections() throws OWLOntologyCreationException,
-    OWLOntologyStorageException {
+	    OWLOntologyStorageException {
 	_ontologyLabel = ontologyManager.getOWLDataFactory()
 		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
 	cm = new CollectionsManager();
@@ -459,7 +462,7 @@ public class Translator {
      * @throws UnsupportedOWLProfile
      */
     public boolean PrepareForTranslating() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, IOException, UnsupportedOWLProfile {
+	    OWLOntologyStorageException, IOException, UnsupportedOWLProfile {
 	checkOwlProfile();
 	initELK();
 	// TODO normalize and initialize graph
