@@ -10,7 +10,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -41,14 +43,22 @@ import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
+import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Config;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import union.logger.Observer;
 import union.logger.UnionLogger;
 
 public class HybridQueryViewComponent extends AbstractOWLViewComponent
-implements OWLModelManagerListener {
+	implements OWLModelManagerListener {
     class QueryWorker extends SwingWorker<Void, Void> {
+
+	private final Parser parser = new Parser();
+
 	/*
 	 * Main task. Executed in background thread.
 	 */
@@ -56,7 +66,7 @@ implements OWLModelManagerListener {
 	public Void doInBackground() {
 	    try {
 		nohr.setFilter(getFilter());
-		if (isNeedToQuery || !isAddEnumeration) {
+		if (isNeedToQuery || !hasVariables) {
 		    disableValuationCheckBoxes();
 		    isShowProgress = true;
 		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -75,7 +85,10 @@ implements OWLModelManagerListener {
 		    });
 		    textField.selectAll();
 		    textField.requestFocus();
-		    fillTable(nohr.query(textField.getText()));
+
+		    Query query = parser.parseQuery(textField.getText());
+		    Collection<Answer> answers = nohr.queryAll(query);
+		    fillTable(query, answers);
 
 		} else {
 		    fillNoAnswersTable("Please check at least one valuation option!");
@@ -127,7 +140,7 @@ implements OWLModelManagerListener {
     private JLabel progressLabel;
     private QueryWorker queryWorker;
     private boolean isShowAllSolutions = true;
-    private boolean isAddEnumeration;
+    private boolean hasVariables;
 
     private boolean isShowProgress;
 
@@ -207,7 +220,7 @@ implements OWLModelManagerListener {
 		progressFrame.setUndecorated(true);
 		progressFrame.setContentPane(progressPanel);
 		progressFrame
-		.setLocationRelativeTo(HybridQueryViewComponent.this);
+			.setLocationRelativeTo(HybridQueryViewComponent.this);
 		// progressFrame.setVisible(true);
 	    }
 	});
@@ -390,42 +403,44 @@ implements OWLModelManagerListener {
 
     }
 
-    private void fillTable(final ArrayList<ArrayList<String>> data) {
+    private void fillTable(final Query query, final Collection<Answer> answers) {
 	try {
 	    isShowProgress = false;
-	    isAddEnumeration = data.get(0).size() > 0;// || !(data.size() == 2
-	    // &&
-	    // (data.get(1).get(0).equals("no answers found")
-	    // ||
-	    // data.get(1).get(0).equals("no")));
+	    hasVariables = !query.getVariables().isEmpty();
 
-	    clearTable(isAddEnumeration);
-	    for (final String s : data.get(0))
+	    clearTable(hasVariables);
+
+	    for (final Variable var : query.getVariables())
 		SwingUtilities.invokeLater(new Runnable() {
 		    @Override
 		    public void run() {
-			tableModel.addColumn(s);
+			tableModel.addColumn(var);
 		    }
 		});
-	    if (data.size() > 1) {
+
+	    if (!answers.isEmpty()) {
 		SwingUtilities.invokeLater(new Runnable() {
 		    @Override
 		    public void run() {
-			for (int i = 1; i < data.size(); i++) {
-			    final ArrayList<String> row = new ArrayList<String>();
-			    if (isAddEnumeration)
+			for (Answer answer : answers) {
+			    final Vector<String> row = new Vector<String>();
+			    if (hasVariables)
 				row.add(Integer.toString(table.getRowCount() + 1));
-			    row.addAll(data.get(i));
-			    if (!isAddEnumeration || filter == null
+			    for (Term value : answer.getValues())
+				row.add(value.toString());
+			    row.add(answer.getValuation().name());
+			    if (!hasVariables
+				    || filter == null
 				    || filter.length() == 0
-				    || filter.contains(data.get(i).get(0)))
-				tableModel.addRow(row.toArray());
+				    || filter.contains(answer.getValuation()
+					    .name()))
+				tableModel.addRow(row);
 			    if (!isShowAllSolutions && table.getRowCount() > 0)
 				break;
 			}
 		    }
 		});
-		if (isAddEnumeration)
+		if (hasVariables)
 		    setFirstColumnWidth();
 	    }
 	    SwingUtilities.invokeLater(new Runnable() {
