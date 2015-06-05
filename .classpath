@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="test/resources/benchmarks/src/" kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry excluding="test/resources/benchmarks/src/" kind="src" output="build/classes" path="src"/>
+	<classpathentry kind="src" output="build/classes" path="test"/>
 	<classpathentry kind="src" path="benchmarks/src"/>
 	<classpathentry kind="src" path="benchmarks/lubm/uba/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
@@ -13,7 +13,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/elk-owlapi-0.4.1.jar"/>
-	<classpathentry kind="lib" path="lib/interprolog-2.1.2.jar">
+	<classpathentry kind="lib" path="/home/nunocosta/workspace/protegeplugin/lib/interprolog.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.declarativa.com/interprolog/htmldocs/overview-summary.html"/>
 		</attributes>

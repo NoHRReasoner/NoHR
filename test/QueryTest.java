@@ -62,7 +62,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(parser.parseQuery(query));
+		    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
 	    assertEquals("should have exactly one answer", result.size(), 1);
 	    Answer ans = result.iterator().next();
@@ -89,7 +89,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(parser.parseQuery(query));
+		    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should't be null", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    Answer ans = result.iterator().next();
@@ -115,7 +115,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(parser.parseQuery(query));
+		    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
 	    assertEquals("should have exactly one answer", result.size(), 1);
 	    Answer ans = result.iterator().next();
@@ -397,6 +397,27 @@ public class QueryTest extends Object {
 	assertConsistent("a4(X)");
 	kb.addDisjunction(kb.getExistential(p3), A4);
 	assertInconsistent("a4(X)");
+    }
+
+    @Test
+    public final void flounderingInS1() throws OWLOntologyCreationException {
+	kb.clear();
+	// originate the doubled rules
+	OWLClass ad1 = kb.getConcept("ad1");
+	OWLClass ad2 = kb.getConcept("ad2");
+	kb.addDisjunction(ad1, ad2);
+
+	// originate (s1) case
+	OWLClass a1 = kb.getConcept("a1");
+	OWLObjectProperty p2 = kb.getRole("p2");
+	OWLIndividual a = kb.getIndividual("a");
+	kb.addAssertion(a1, a);
+	kb.addSubsumption(a1, kb.getExistential(p2));
+
+	// to check an answer
+	OWLClass a3 = kb.getConcept("a3");
+	kb.addSubsumption(kb.getExistential(p2), a3);
+	assertAnswer("a3(X).", "a");
     }
 
     @Test

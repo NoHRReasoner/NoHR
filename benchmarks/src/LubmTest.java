@@ -15,7 +15,7 @@ public class LubmTest {
 	try {
 	    if (args.length != 5 && args.length != 7) {
 		System.err
-			.println("expected args: [-o results directory] <profile> <data directory> <queries file> <max universities> <step>");
+		.println("expected args: [-o results directory] <profile> <data directory> <queries file> <max universities> <step>");
 		System.exit(1);
 	    }
 	    String outDir = null;
@@ -47,7 +47,7 @@ public class LubmTest {
 		nohrRepository.load(u);
 		Iterator<QuerySpecification> queriesIt = queries.iterator();
 		while (queriesIt.hasNext())
-		    nohrRepository.issueQuery(queriesIt.next().query_);
+		    nohrRepository.issueQuery(queriesIt.next());
 	    }
 	    Tracer.close();
 	    System.out.println("Consult loading times at loading.csv");

@@ -39,8 +39,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
 
-import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
-import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
@@ -53,12 +51,10 @@ import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import union.logger.Observer;
 import union.logger.UnionLogger;
 
-public class HybridQueryViewComponent extends AbstractOWLViewComponent
-	implements OWLModelManagerListener {
+public class HybridQueryViewComponent extends AbstractOWLViewComponent {
+    // implements OWLModelManagerListener {
+
     class QueryWorker extends SwingWorker<Void, Void> {
-
-	private final Parser parser = new Parser();
-
 	/*
 	 * Main task. Executed in background thread.
 	 */
@@ -69,26 +65,24 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent
 		if (isNeedToQuery || !hasVariables) {
 		    disableValuationCheckBoxes();
 		    isShowProgress = true;
-		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-			    int delay = 750; // milliseconds
-			    ActionListener taskPerformer = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-				    if (isShowProgress)
-					progressFrame.setVisible(true);
-				}
-			    };
-			    new Timer(delay, taskPerformer).start();
-			}
-		    });
+		    // javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		    // @Override
+		    // public void run() {
+		    // int delay = 750; // milliseconds
+		    // ActionListener taskPerformer = new ActionListener() {
+		    // @Override
+		    // public void actionPerformed(ActionEvent evt) {
+		    // if (isShowProgress)
+		    // progressFrame.setVisible(true);
+		    // }
+		    // };
+		    // new Timer(delay, taskPerformer).start();
+		    // }
+		    // });
 		    textField.selectAll();
 		    textField.requestFocus();
-
 		    Query query = parser.parseQuery(textField.getText());
-		    Collection<Answer> answers = nohr.queryAll(query);
-		    fillTable(query, answers);
+		    fillTable(query, nohr.queryAll(query));
 
 		} else {
 		    fillNoAnswersTable("Please check at least one valuation option!");
@@ -124,6 +118,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent
     public static void clear() {
 	nohr.dispose();
     }
+
+    private final Parser parser = new Parser();
 
     private static final long serialVersionUID = -4515710047558710080L;
     private static HybridKB nohr;
@@ -205,7 +201,9 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent
 
 		JPanel panel = new JPanel(new GridBagLayout());
 		progressLabel = new JLabel("Processing", SwingConstants.CENTER);
-		// progressLabel.setBorder(BorderFactory.createTitledBorder("Query"));
+		//
+		progressLabel.setBorder(BorderFactory
+			.createTitledBorder("Query"));
 		progressLabel.setFont(new Font(progressLabel.getFont()
 			.getFontName(), Font.PLAIN, progressLabel.getFont()
 			.getSize() + 4));
@@ -220,7 +218,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent
 		progressFrame.setUndecorated(true);
 		progressFrame.setContentPane(progressPanel);
 		progressFrame
-			.setLocationRelativeTo(HybridQueryViewComponent.this);
+		.setLocationRelativeTo(HybridQueryViewComponent.this);
 		// progressFrame.setVisible(true);
 	    }
 	});
@@ -403,9 +401,10 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent
 
     }
 
-    private void fillTable(final Query query, final Collection<Answer> answers) {
+    private void fillTable(Query query, final Collection<Answer> answers) {
 	try {
 	    isShowProgress = false;
+
 	    hasVariables = !query.getVariables().isEmpty();
 
 	    clearTable(hasVariables);
@@ -414,10 +413,9 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent
 		SwingUtilities.invokeLater(new Runnable() {
 		    @Override
 		    public void run() {
-			tableModel.addColumn(var);
+			tableModel.addColumn(var.toString());
 		    }
 		});
-
 	    if (!answers.isEmpty()) {
 		SwingUtilities.invokeLater(new Runnable() {
 		    @Override
@@ -426,9 +424,9 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent
 			    final Vector<String> row = new Vector<String>();
 			    if (hasVariables)
 				row.add(Integer.toString(table.getRowCount() + 1));
-			    for (Term value : answer.getValues())
-				row.add(value.toString());
-			    row.add(answer.getValuation().name());
+			    for (Term t : answer.getValues())
+				row.add(t.toString());
+			    row.add(answer.getValuation().name().toLowerCase());
 			    if (!hasVariables
 				    || filter == null
 				    || filter.length() == 0
@@ -470,19 +468,19 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent
 	return filter;
     }
 
-    @Override
-    public void handleChange(OWLModelManagerChangeEvent event) {
-	if (event
-		.isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED))
-	    try {
-		nohr = new HybridKB(getOWLModelManager()
-			.getOWLOntologyManager(), getOWLModelManager()
-			.getActiveOntology(), getOWLModelManager()
-			.getReasoner());
-	    } catch (Exception e) {
-		e.printStackTrace();
-	    }
-    }
+    // @Override
+    // public void handleChange(OWLModelManagerChangeEvent event) {
+    // if (event
+    // .isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED))
+    // try {
+    // nohr = new HybridKB(getOWLModelManager()
+    // .getOWLOntologyManager(), getOWLModelManager()
+    // .getActiveOntology(), getOWLModelManager()
+    // .getReasoner());
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // }
 
     @Override
     protected void initialiseOWLView() {

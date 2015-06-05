@@ -83,7 +83,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private File xsbFile;
 
-    public HybridKB(OWLOntology ontology) {
+    public HybridKB(OWLOntology ontology) throws IPException {
 	try {
 	    om = OWLManager.createOWLOntologyManager();
 	    this.ontology = ontology;
@@ -94,6 +94,10 @@ public class HybridKB implements OWLOntologyChangeListener {
 
 	    queryProcessor = new QueryProcessor(xsbDatabase);
 
+	    translator = new Translator(ontology, xsbDatabase);
+
+	} catch (IPException e) {
+	    throw e;
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
@@ -111,6 +115,8 @@ public class HybridKB implements OWLOntologyChangeListener {
 	xsbDatabase = xsbDatabase();
 
 	queryProcessor = new QueryProcessor(xsbDatabase);
+
+	translator = new Translator(ontology, xsbDatabase);
     }
 
     public void abolishTables() {
@@ -262,7 +268,6 @@ public class HybridKB implements OWLOntologyChangeListener {
 	try {
 	    boolean hasDisjunctions = hasDisjunction;
 	    utils.Tracer.start("translator initialization");
-	    translator = new Translator(om, ontology, reasoner, xsbDatabase);
 	    utils.Tracer.stop("translator initialization", "loading");
 	    if (isOntologyChanged) {
 		utils.Tracer.start("ontology proceeding");

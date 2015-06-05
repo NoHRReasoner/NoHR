@@ -59,7 +59,7 @@ public class XSBDatabase implements Collection<Rule> {
      * @throws Exception
      *             the exception
      */
-    public XSBDatabase(Path xsbPath) throws Exception {
+    public XSBDatabase(Path xsbPath) throws Exception, IPException {
 
 	this.xsbPath = xsbPath;
 
@@ -106,7 +106,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#addAll(java.util.Collection)
      */
     @Override
@@ -168,7 +168,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#contains(java.lang.Object)
      */
     @Override
@@ -183,7 +183,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
     @Override
@@ -243,7 +243,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#isEmpty()
      */
     @Override
@@ -262,7 +262,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#iterator()
      */
     @Override
@@ -294,7 +294,7 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     public Answer query(Query query) {
-	flush();
+	// flush();
 	String goal = String.format("detGoal(%s, %s, TM)",
 		query.getVariables(), query);
 	Object[] objs = engine.deterministicGoal(goal, "[TM]");
@@ -305,7 +305,7 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     public Map<List<Term>, TruthValue> queryAll(Query query) {
-	flush();
+	// flush();
 	Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
 	String goal = String.format("nonDetGoal([%s], (%s), TM)",
 		Utils.concat(",", query.getVariables()), query);
@@ -320,7 +320,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#remove(java.lang.Object)
      */
     @Override
@@ -339,7 +339,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
     @Override
@@ -352,7 +352,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
     @Override
@@ -369,7 +369,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#size()
      */
     @Override
@@ -385,7 +385,7 @@ public class XSBDatabase implements Collection<Rule> {
      * @throws Exception
      *             the exception
      */
-    private void startEngine(String xsbBin) throws Exception {
+    private void startEngine(String xsbBin) throws Exception, IPException {
 	if (engine != null) {
 
 	    engine.shutdown();
@@ -403,6 +403,10 @@ public class XSBDatabase implements Collection<Rule> {
 	    engine.deterministicGoal("assert((detGoal(Vars,G,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
 	    engine.deterministicGoal("assert((nonDetGoal(Vars,G,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
 
+	} catch (IPException e) {
+	    isEngineStarted = false;
+	    throw new Exception(e.getMessage());
+
 	} catch (Exception e) {
 	    isEngineStarted = false;
 	    throw new Exception("Query Engine was not started" + Config.NL
@@ -416,7 +420,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#toArray()
      */
     @Override
@@ -426,7 +430,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)format
-     * 
+     *
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
     @Override

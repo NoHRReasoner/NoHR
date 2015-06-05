@@ -129,9 +129,9 @@ public class Translator {
 	this.xsbDatabase = xsbDatabase;
 	ontologyManager = OWLManager.createOWLOntologyManager();
 	ontology = owlOntology;
-	checkOwlProfile();
-	initCollections();
-	initELK();
+	// checkOwlProfile();
+	// initCollections();
+	// initELK();
     }
 
     /**
@@ -151,17 +151,17 @@ public class Translator {
      */
     public Translator(OWLOntologyManager owlModelManager, OWLOntology ontology,
 	    OWLReasoner owlReasoner, XSBDatabase xsbDatabase)
-	    throws IOException, OWLOntologyCreationException,
-	    OWLOntologyStorageException, CloneNotSupportedException,
-	    UnsupportedOWLProfile {
+		    throws IOException, OWLOntologyCreationException,
+		    OWLOntologyStorageException, CloneNotSupportedException,
+		    UnsupportedOWLProfile {
 	ontologyManager = owlModelManager;
 	this.xsbDatabase = xsbDatabase;
 	this.ontology = ontology;
 	tempDir = System.getProperty(tempDirProp);
-	checkOwlProfile();
-	initCollections();
-	if (getTranslationAlgorithm() == TranslationAlgorithm.EL)
-	    getInferredDataFromReasoner(owlReasoner);
+	// checkOwlProfile();
+	// initCollections();
+	// if (getTranslationAlgorithm() == TranslationAlgorithm.EL)
+	// getInferredDataFromReasoner(owlReasoner);
     }
 
     /**
@@ -178,7 +178,7 @@ public class Translator {
      * @throws UnsupportedOWLProfile
      */
     public Translator(String filePath) throws OWLOntologyCreationException,
-	    IOException, OWLOntologyStorageException, UnsupportedOWLProfile {
+    IOException, OWLOntologyStorageException, UnsupportedOWLProfile {
 	/** Initializing a OntologyManager */
 	// Date dateStart = new Date();
 	ontologyManager = OWLManager.createOWLOntologyManager();
@@ -189,9 +189,9 @@ public class Translator {
 	ontology = ontologyManager
 		.loadOntologyFromOntologyDocument(ontologyFile);
 	// Utils.getDiffTime(dateStart, "Initializing is done, it took:");
-	checkOwlProfile();
-	initCollections();
-	initELK();
+	// checkOwlProfile();
+	// initCollections();
+	// initELK();
     }
 
     /**
@@ -203,6 +203,7 @@ public class Translator {
      *             the exception
      */
     public void appendRules(ArrayList<String> _rules) throws Exception {
+	cm.clearRules();
 	ruleTranslator = new RuleTranslator(cm);
 	for (String rule : _rules)
 	    ruleTranslator.proceedRule(rule);
@@ -267,7 +268,8 @@ public class Translator {
     public void clear() {
 	// owlClasses = new HashSet<OWLClass>();
 	// objectProperties = new HashSet<OWLObjectProperty>();
-	cm.clear();
+	if (cm != null)
+	    cm.clear();
 	if (reasoner != null)
 	    reasoner.dispose();
     }
@@ -341,7 +343,7 @@ public class Translator {
 	// reasoner.dispose();
 	// Utils.getDiffTime(dateStart, "Retrieving inferred information: ");
 	((ELOntologyTranslator) ontologyProceeder)
-		.setOntologiesToProceed(ontologies);
+	.setOntologiesToProceed(ontologies);
     }
 
     /**
@@ -392,7 +394,7 @@ public class Translator {
      * Inits the collections.
      */
     private void initCollections() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException {
+    OWLOntologyStorageException {
 	_ontologyLabel = ontologyManager.getOWLDataFactory()
 		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
 	cm = new CollectionsManager();
@@ -462,7 +464,7 @@ public class Translator {
      * @throws UnsupportedOWLProfile
      */
     public boolean PrepareForTranslating() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, IOException, UnsupportedOWLProfile {
+    OWLOntologyStorageException, IOException, UnsupportedOWLProfile {
 	checkOwlProfile();
 	initELK();
 	// TODO normalize and initialize graph
@@ -481,7 +483,13 @@ public class Translator {
 	return query.prepareQuery(q, isAnyDisjointWithStatement());
     }
 
-    public void proceed() throws ParserException {
+    public void proceed() throws ParserException, UnsupportedOWLProfile,
+    OWLOntologyCreationException, OWLOntologyStorageException {
+	checkOwlProfile();
+	initCollections();
+	if (getTranslationAlgorithm() == TranslationAlgorithm.EL)
+	    initELK();
+	cm.clearOntology();
 	ontologyProceeder.proceed();
     }
 

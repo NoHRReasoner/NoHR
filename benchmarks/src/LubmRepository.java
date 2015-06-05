@@ -27,8 +27,8 @@ import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
-import ubt.api.Query;
 import ubt.api.QueryResult;
+import ubt.api.QuerySpecification;
 import utils.Tracer;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
@@ -75,24 +75,20 @@ public class LubmRepository {
 	lastQuery = null;
     }
 
-    public QueryResult issueQuery(Query query) throws IOException,
-	    PrologParserException, Exception {
-	String queryStr = query.getString();
+    public QueryResult issueQuery(QuerySpecification querySpecification)
+	    throws IOException, PrologParserException, Exception {
+	String queryStr = querySpecification.query_.getString();
+	if (!queryStr.endsWith("."))
+	    queryStr = queryStr + ".";
 	boolean sameQuery = queryStr.equals(lastQuery);
-	String[] queryStruct = queryStr.split(":-");
-	if (queryStruct.length == 2 && !queryStr.equals(lastQuery)) {
-	    Rules.addRule(query.getString());
-	    System.out.println("Added rule: " + queryStr);
-	}
 	if (!sameQuery)
 	    nohrQuery.abolishTables();
-	String q = queryStruct[0];
-	if (!q.endsWith("."))
-	    q = q + ".";
-	Collection<Answer> result = nohrQuery.queryAll(parser.parseQuery(q));
+
+	Collection<Answer> result = nohrQuery.queryAll(parser
+		.parseQuery(queryStr));
 	Tracer.info(String.valueOf(result.size()) + " answers");
 	if (!sameQuery && resultsDirectory != null)
-	    logResults(query.getString(), result);
+	    logResults(querySpecification, result);
 	lastQuery = queryStr;
 	if (!sameQuery)
 	    queryCount++;
@@ -161,11 +157,12 @@ public class LubmRepository {
 	file = null;
     }
 
-    private void logResults(String query, Collection<Answer> result2) {
+    private void logResults(QuerySpecification querySpecification,
+	    Collection<Answer> result2) {
 	// if (!dataset.endsWith("/1"))
 	// return;
 	Charset charset = Charset.defaultCharset();
-	String fileName = universities + "." + queryCount + ".txt";
+	String fileName = universities + "." + querySpecification.id_ + ".txt";
 	Path path = FileSystems.getDefault()
 		.getPath(resultsDirectory, fileName);
 	try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
