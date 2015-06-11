@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -687,19 +688,21 @@ public class QueryTest extends Object {
     public void tearDown() throws Exception {
     }
 
-    // @Test
-    // public final void testEL() throws OWLOntologyCreationException {
-    // kb.clear();
-    // OWLClass a1 = kb.getConcept("a1");
-    // OWLClass a2 = kb.getConcept("a2");
-    // OWLClass a3 = kb.getConcept("a3");
-    // OWLIndividual a = kb.getIndividual("a");
-    // OWLDataFactory df = kb.getDataFactory();
-    // kb.addAssertion(a1, a);
-    // kb.addAssertion(a2, a);
-    // kb.addSubsumption(df.getOWLObjectIntersectionOf(a1, a2), a3);
-    // assertAnswer("a3(X)", new String[] { "a" });
-    // }
+    @Test
+    public final void testEL() throws OWLOntologyCreationException {
+	Config.translationAlgorithm = null;
+	kb.clear();
+	OWLClass a1 = kb.getConcept("a1");
+	OWLClass a2 = kb.getConcept("a2");
+	OWLClass a3 = kb.getConcept("a3");
+	OWLIndividual a = kb.getIndividual("a");
+	OWLDataFactory df = kb.getDataFactory();
+	kb.addAssertion(a1, a);
+	kb.addAssertion(a2, a);
+	kb.addSubsumption(df.getOWLObjectIntersectionOf(a1, a2), a3);
+	assertAnswer("a3(X)", new String[] { "a" });
+	Config.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+    }
 
     /**
      * Test method for {@link nohr.reasoner.HybridKB#query(java.lang.String)}.

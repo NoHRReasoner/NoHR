@@ -196,7 +196,7 @@ public class HybridKB implements OWLOntologyChangeListener {
     private ArrayList<ArrayList<String>> getData() {
 	@SuppressWarnings("unchecked")
 	ArrayList<ArrayList<String>> rows = (ArrayList<ArrayList<String>>) answers
-		.clone();
+	.clone();
 	rows.add(0, variablesList);
 	return rows;
     }

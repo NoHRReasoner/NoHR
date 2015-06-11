@@ -65,20 +65,20 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		if (isNeedToQuery || !hasVariables) {
 		    disableValuationCheckBoxes();
 		    isShowProgress = true;
-		    // javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		    // @Override
-		    // public void run() {
-		    // int delay = 750; // milliseconds
-		    // ActionListener taskPerformer = new ActionListener() {
-		    // @Override
-		    // public void actionPerformed(ActionEvent evt) {
-		    // if (isShowProgress)
-		    // progressFrame.setVisible(true);
-		    // }
-		    // };
-		    // new Timer(delay, taskPerformer).start();
-		    // }
-		    // });
+		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+			    int delay = 750; // milliseconds
+			    ActionListener taskPerformer = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+				    if (isShowProgress)
+					progressFrame.setVisible(true);
+				}
+			    };
+			    new Timer(delay, taskPerformer).start();
+			}
+		    });
 		    textField.selectAll();
 		    textField.requestFocus();
 		    Query query = parser.parseQuery(textField.getText());
@@ -431,7 +431,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 				    || filter == null
 				    || filter.length() == 0
 				    || filter.contains(answer.getValuation()
-					    .name()))
+					    .name().toLowerCase()))
 				tableModel.addRow(row);
 			    if (!isShowAllSolutions && table.getRowCount() > 0)
 				break;
@@ -440,14 +440,14 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		});
 		if (hasVariables)
 		    setFirstColumnWidth();
-	    }
-	    SwingUtilities.invokeLater(new Runnable() {
-		@Override
-		public void run() {
-		    if (table.getRowCount() == 0)
-			fillNoAnswersTable("");
-		}
-	    });
+	    } else
+		SwingUtilities.invokeLater(new Runnable() {
+		    @Override
+		    public void run() {
+			if (table.getRowCount() == 0)
+			    fillNoAnswersTable("");
+		    }
+		});
 	} catch (Exception e) {
 	    fillNoAnswersTable("");
 	} finally {

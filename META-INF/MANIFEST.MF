@@ -8,7 +8,7 @@ Bundle-DocURL: http://protege.stanford.edu
 Bundle-Description: Protege plugin for NoHR query
 Bundle-Vendor: Vadim Ivanov 
 Update-Url: https://dl.dropboxusercontent.com/u/12449385/nohr.query/update.properties
-Bundle-ClassPath: .,lib/prologparser-1.3.2.jar,lib/interprolog.jar,lib/ lib/elk-owlapi.jar, lib/commons-codec-1.8.jar
+Bundle-ClassPath: .,lib/prologparser-1.3.2.jar,lib/interprolog.jar,lib/log4j-1.2.17.jar,lib/elk-owlapi.jar, lib/commons-codec-1.8.jar
 Bundle-Activator: org.protege.editor.core.plugin.DefaultPluginActivator
 Import-Package: org.apache.log4j, javax.swing,
  javax.swing.border,
