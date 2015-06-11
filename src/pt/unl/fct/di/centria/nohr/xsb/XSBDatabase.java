@@ -106,7 +106,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#addAll(java.util.Collection)
      */
     @Override
@@ -138,7 +138,7 @@ public class XSBDatabase implements Collection<Rule> {
 	    TermModel[] termsList = valuesList.flatList();
 	    TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
 	    List<Term> vals = new ArrayList<Term>(termsList.length);
-	    for (int i = 1; i < varsIdx.size(); i++)
+	    for (int i = 1; i <= varsIdx.size(); i++)
 		vals.add(TermModelAdapter.getTerm(termsList[i]));
 	    return ans(query, truth, vals);
 	} catch (ModelException e) {
@@ -168,7 +168,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#contains(java.lang.Object)
      */
     @Override
@@ -183,7 +183,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
     @Override
@@ -243,7 +243,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#isEmpty()
      */
     @Override
@@ -262,7 +262,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#iterator()
      */
     @Override
@@ -294,20 +294,33 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     public Answer query(Query query) {
-	// flush();
-	String goal = String.format("detGoal(%s, %s, TM)",
-		query.getVariables(), query);
-	Object[] objs = engine.deterministicGoal(goal, "[TM]");
-	if (objs == null)
+	return query(query, null);
+    }
+
+    public Answer query(Query query, TruthValue valuation) {
+	flush();
+	String valArg = valuation == null ? "" : valuation.name().toLowerCase()
+		+ ",";
+	String goal = String.format("detGoal([%s],(%s)," + valArg + "TM)",
+		Utils.concat(",", query.getVariables()), query);
+	Object[] bindings = engine.deterministicGoal(goal, "[TM]");
+	if (bindings == null)
 	    return null;
 	return answer(query, variablesIndex(query.getVariables()),
-		(TermModel) objs[0]);
+		(TermModel) bindings[0]);
     }
 
     public Map<List<Term>, TruthValue> queryAll(Query query) {
+	return queryAll(query, null);
+    }
+
+    public Map<List<Term>, TruthValue> queryAll(Query query,
+	    TruthValue valuation) {
 	flush();
 	Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
-	String goal = String.format("nonDetGoal([%s], (%s), TM)",
+	String valArg = valuation == null ? "" : valuation.name().toLowerCase()
+		+ ",";
+	String goal = String.format("nonDetGoal([%s],(%s)," + valArg + "TM)",
 		Utils.concat(",", query.getVariables()), query);
 	Object[] bindings = engine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
@@ -320,7 +333,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#remove(java.lang.Object)
      */
     @Override
@@ -339,7 +352,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
     @Override
@@ -352,7 +365,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
     @Override
@@ -369,7 +382,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#size()
      */
     @Override
@@ -401,7 +414,9 @@ public class XSBDatabase implements Collection<Rule> {
 	    engine.deterministicGoal("dynamic detGoal/3");
 	    engine.deterministicGoal("dynamic nonDetGoal/3");
 	    engine.deterministicGoal("assert((detGoal(Vars,G,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
+	    engine.deterministicGoal("assert((detGoal(Vars,G,TV,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
 	    engine.deterministicGoal("assert((nonDetGoal(Vars,G,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
+	    engine.deterministicGoal("assert((nonDetGoal(Vars,G,TV,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
 
 	} catch (IPException e) {
 	    isEngineStarted = false;
@@ -420,7 +435,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#toArray()
      */
     @Override
@@ -430,7 +445,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)format
-     * 
+     *
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
     @Override

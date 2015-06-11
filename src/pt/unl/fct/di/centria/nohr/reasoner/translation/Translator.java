@@ -150,10 +150,9 @@ public class Translator {
      * @throws UnsupportedOWLProfile
      */
     public Translator(OWLOntologyManager owlModelManager, OWLOntology ontology,
-	    OWLReasoner owlReasoner, XSBDatabase xsbDatabase)
-		    throws IOException, OWLOntologyCreationException,
-		    OWLOntologyStorageException, CloneNotSupportedException,
-		    UnsupportedOWLProfile {
+	    XSBDatabase xsbDatabase) throws IOException,
+	    OWLOntologyCreationException, OWLOntologyStorageException,
+	    CloneNotSupportedException, UnsupportedOWLProfile {
 	ontologyManager = owlModelManager;
 	this.xsbDatabase = xsbDatabase;
 	this.ontology = ontology;
@@ -178,7 +177,7 @@ public class Translator {
      * @throws UnsupportedOWLProfile
      */
     public Translator(String filePath) throws OWLOntologyCreationException,
-    IOException, OWLOntologyStorageException, UnsupportedOWLProfile {
+	    IOException, OWLOntologyStorageException, UnsupportedOWLProfile {
 	/** Initializing a OntologyManager */
 	// Date dateStart = new Date();
 	ontologyManager = OWLManager.createOWLOntologyManager();
@@ -343,7 +342,7 @@ public class Translator {
 	// reasoner.dispose();
 	// Utils.getDiffTime(dateStart, "Retrieving inferred information: ");
 	((ELOntologyTranslator) ontologyProceeder)
-	.setOntologiesToProceed(ontologies);
+		.setOntologiesToProceed(ontologies);
     }
 
     /**
@@ -394,7 +393,7 @@ public class Translator {
      * Inits the collections.
      */
     private void initCollections() throws OWLOntologyCreationException,
-    OWLOntologyStorageException {
+	    OWLOntologyStorageException {
 	_ontologyLabel = ontologyManager.getOWLDataFactory()
 		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
 	cm = new CollectionsManager();
@@ -464,7 +463,7 @@ public class Translator {
      * @throws UnsupportedOWLProfile
      */
     public boolean PrepareForTranslating() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, IOException, UnsupportedOWLProfile {
+	    OWLOntologyStorageException, IOException, UnsupportedOWLProfile {
 	checkOwlProfile();
 	initELK();
 	// TODO normalize and initialize graph
@@ -484,7 +483,7 @@ public class Translator {
     }
 
     public void proceed() throws ParserException, UnsupportedOWLProfile,
-    OWLOntologyCreationException, OWLOntologyStorageException {
+	    OWLOntologyCreationException, OWLOntologyStorageException {
 	checkOwlProfile();
 	initCollections();
 	if (getTranslationAlgorithm() == TranslationAlgorithm.EL)

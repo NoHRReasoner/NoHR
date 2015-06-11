@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.ParserException;
@@ -25,7 +22,6 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
-import other.Utils;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
@@ -35,39 +31,19 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.Translator;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
 import utils.Tracer;
 
-import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.util.IPException;
 
 public class HybridKB implements OWLOntologyChangeListener {
 
-    private static final Pattern HEADER_PATTERN = Pattern
-	    .compile("\\((.*?)\\)");
-
     private boolean isOntologyChanged;
-
-    private static Query query;
 
     private static Translator translator;
 
-    private static final Pattern VARXPATTERN = Pattern.compile("Var\\d+");
-
-    private ArrayList<ArrayList<String>> answers = new ArrayList<ArrayList<String>>();
-
-    private String filter = "";
-
     private boolean hasDisjunction;
-
-    private boolean isQueryForAll = true;
-
-    private Map<String, String> labels;
 
     private OWLOntologyManager om;
 
     private OWLOntology ontology;
-
-    private String previousQuery = "";
-
-    private boolean queriedForAll;
 
     private int queryCount;
 
@@ -75,11 +51,9 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private XSBDatabase xsbDatabase;
 
-    private String queryString;
-
     public OWLReasoner reasoner;
 
-    private ArrayList<String> variablesList = new ArrayList<String>();
+    private final ArrayList<String> variablesList = new ArrayList<String>();
 
     private File xsbFile;
 
@@ -96,18 +70,19 @@ public class HybridKB implements OWLOntologyChangeListener {
 
 	    translator = new Translator(ontology, xsbDatabase);
 
-	} catch (IPException e) {
+	    queryCount = 1;
+
+	} catch (final IPException e) {
 	    throw e;
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    e.printStackTrace();
 	}
     }
 
-    public HybridKB(OWLOntologyManager ontologyManager, OWLOntology ontolgy,
-	    OWLReasoner owlReasoner) throws Exception {
+    public HybridKB(OWLOntologyManager ontologyManager, OWLOntology ontolgy)
+	    throws Exception {
 	om = ontologyManager;
 	ontology = ontolgy;
-	reasoner = owlReasoner;
 	om.addOntologyChangeListener(this);
 	isOntologyChanged = true;
 	Rules.isRulesOntologyChanged = true;
@@ -117,25 +92,8 @@ public class HybridKB implements OWLOntologyChangeListener {
 	queryProcessor = new QueryProcessor(xsbDatabase);
 
 	translator = new Translator(ontology, xsbDatabase);
-    }
 
-    public void abolishTables() {
-	xsbDatabase.abolishTables();
-    }
-
-    private void clearTable() {
-	variablesList = new ArrayList<String>();
-	answers = new ArrayList<ArrayList<String>>();
-    }
-
-    public void dispose() {
-	if (om != null)
-	    om.removeOntologyChangeListener(this);
-	if (translator != null)
-	    translator.clear();
-	if (xsbDatabase != null)
-	    xsbDatabase.shutdown();
-	Rules.dispose();
+	queryCount = 1;
     }
 
     // TODO remove
@@ -150,87 +108,6 @@ public class HybridKB implements OWLOntologyChangeListener {
 	detGoal += "), call_tv((" + command
 		+ "), TV), List), buildInitiallyFlatTermModel(List,TM)";
 	return detGoal;
-    }
-
-    /**
-     * Generate sub query.
-     *
-     * @param command
-     *            the command
-     * @param model
-     *            the model
-     * @return the string
-     */
-    private String generateSubQuery(String command, TermModel model) {
-	String result = "";
-	int index;
-	String vars = "";
-	if (variablesList.size() > 0) {
-	    for (String s : command.split("\\)\\s*,")) {
-		index = s.lastIndexOf("(");
-		if (index > 0) {
-		    result += s.substring(0, index);
-		    vars = s.substring(index + 1, s.length());
-		    for (int j = 1; j <= variablesList.size(); j++)
-			vars = vars.replace(variablesList.get(j - 1), model
-				.getChild(j).toString());
-		    result += "(" + vars;
-		    if (!result.endsWith(")"))
-			result += ")";
-		    result += ", ";
-
-		} else
-		    result += s + ", ";
-	    }
-	    result = result.substring(0, result.length() - 2);
-	    return result;
-	}
-	return command;
-    }
-
-    /**
-     * Gets the data.
-     *
-     * @return the data
-     */
-    private ArrayList<ArrayList<String>> getData() {
-	@SuppressWarnings("unchecked")
-	ArrayList<ArrayList<String>> rows = (ArrayList<ArrayList<String>>) answers
-	.clone();
-	rows.add(0, variablesList);
-	return rows;
-    }
-
-    private String getLabelByHash(String hash) {
-	String originalHash = hash;
-	hash = hash.substring(1, hash.length());
-	if (labels.containsKey(hash))
-	    return labels.get(hash);
-	return originalHash;
-    }
-
-    private void getVariables(String command) {
-	clearTable();
-	try {
-	    Matcher m = HEADER_PATTERN.matcher(command);
-	    StringBuffer sb = new StringBuffer();
-	    String rule;
-	    while (m.find()) {
-		m.appendReplacement(sb, m.group());
-		rule = m.group();
-		rule = rule.substring(1, rule.length() - 1);
-		for (String s : rule.split(",")) {
-		    s = s.trim();
-		    if (Character.isUpperCase(s.charAt(0))
-			    && !variablesList.contains(s))
-			variablesList.add(s);
-		}
-	    }
-	    sb.setLength(0);
-
-	} catch (Exception e) {
-	    Tracer.err("fillTableHeader: " + e.toString());
-	}
     }
 
     private void loadRulesInXSB(File file) throws IPException, Exception {
@@ -249,8 +126,8 @@ public class HybridKB implements OWLOntologyChangeListener {
     public void ontologiesChanged(List<? extends OWLOntologyChange> changes)
 	    throws OWLException {
 	try {
-	    translator = new Translator(om, ontology, reasoner, xsbDatabase);
-	    for (OWLOntologyChange change : changes)
+	    translator = new Translator(om, ontology, xsbDatabase);
+	    for (final OWLOntologyChange change : changes)
 		if (change.getOntology() == ontology) {
 		    isOntologyChanged = true;
 		    Rules.dispose();
@@ -266,7 +143,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private void preprocessKB() throws Exception {
 	try {
-	    boolean hasDisjunctions = hasDisjunction;
+	    final boolean hasDisjunctions = hasDisjunction;
 	    utils.Tracer.start("translator initialization");
 	    utils.Tracer.stop("translator initialization", "loading");
 	    if (isOntologyChanged) {
@@ -288,142 +165,22 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    isOntologyChanged = false;
 	    Rules.isRulesOntologyChanged = false;
 	    hasDisjunction = translator.isAnyDisjointWithStatement();
-	    labels = translator.getCollectionsManager().getLabels();
-	    query = new Query(translator.getCollectionsManager());
-	    //
-	    // utils.Tracer.start("file writing");
-	    // File xsbFile = translator.Finish();
-	    // utils.Tracer.stop("file writing", "loading");
-	    // loadRulesInXSB(xsbFile);
+	    translator.getCollectionsManager().getLabels();
+	    new Query(translator.getCollectionsManager());
 
-	} catch (OWLOntologyCreationException e) {
+	} catch (final OWLOntologyCreationException e) {
 	    e.printStackTrace();
-	} catch (OWLOntologyStorageException e) {
+	} catch (final OWLOntologyStorageException e) {
 	    e.printStackTrace();
-	} catch (IOException e) {
+	} catch (final IOException e) {
 	    e.printStackTrace();
-	} catch (ParserException e) {
+	} catch (final ParserException e) {
 	    e.printStackTrace();
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    e.printStackTrace();
 	} finally {
-	    previousQuery = "";
 
 	}
-    }
-
-    public ArrayList<ArrayList<String>> query(String command) {
-	try {
-	    queryString = command;
-	    if (isOntologyChanged || Rules.isRulesOntologyChanged)
-		preprocessKB();
-	    if (command.endsWith("."))
-		command = command.substring(0, command.length() - 1);
-	    command = query.prepareQuery(command, hasDisjunction);
-	    // previousQuery="";
-
-	    if (!command.equals(previousQuery) || !queriedForAll) {
-		Tracer.info("You queried: " + queryString);
-		previousQuery = command;
-		queriedForAll = isQueryForAll;
-		getVariables(command);
-		String detGoal = generateDetermenisticGoal(command);
-		String subDetGoal;
-		utils.Tracer.start("query" + queryCount);
-		Object[] bindings = xsbDatabase.deterministicGoal(detGoal);
-
-		ArrayList<String> row = new ArrayList<String>();
-		String value;
-		String subValue;
-		if (bindings != null) {
-
-		    TermModel list = (TermModel) bindings[0]; // this gets
-		    // you
-		    // the list as a
-		    // binary tree
-		    TermModel[] flattted = list.flatList();
-		    for (TermModel element : flattted) {
-			// if(i==1 && !isQueryForAll)
-			// break;
-			value = element.getChild(0).toString();
-
-			if (value.length() > 0) {
-			    row = new ArrayList<String>();
-			    row.add(value);
-			    for (int j = 1; j <= variablesList.size(); j++) {
-				subValue = getLabelByHash(element.getChild(j)
-					.toString());
-				subValue = VARXPATTERN.matcher(subValue).find() ? "all values"
-					: subValue;
-				row.add(subValue);
-			    }
-			    if (!hasDisjunction)
-				answers.add(row);
-			    else if (value.equals("true")
-				    || value.equals("undefined")) {
-				subDetGoal = generateDetermenisticGoal(generateSubQuery(
-					Utils._dAllrule(command), element));
-
-				Object[] subBindings = xsbDatabase
-					.deterministicGoal(subDetGoal);
-				// this gets you the list as a binary
-				// tree
-				TermModel subList = (TermModel) subBindings[0];
-				TermModel[] subFlattted = subList.flatList();
-
-				if (subFlattted.length > 0) {
-				    String subAnswer = subFlattted[0].getChild(
-					    0).toString();
-				    if (subAnswer.equals("no")
-					    || subAnswer.equals("false")) {
-					if (value.equals("true")) {
-					    row.set(0, "inconsistent");
-					    answers.add(row);
-					} else if (value.equals("undefined")) {
-					    row.set(0, "false");
-					    answers.add(row);
-					}
-				    } else
-					answers.add(row);
-				} else if (value.equals("true")) {
-				    row.set(0, "inconsistent");
-				    answers.add(row);
-				}
-			    } else
-				answers.add(row);
-			}
-			if (!isQueryForAll && filter.contains(row.get(0)))
-			    break;
-
-		    }
-		    if (flattted.length == 0 || answers.size() == 0) {
-			row = new ArrayList<String>();
-			row.add(variablesList.size() > 0 ? "no answers found"
-				: "false");
-			clearTable();
-			answers.add(row);
-		    }
-		    utils.Tracer.stop("query" + queryCount++, "queries");
-		} else {
-		    clearTable();
-		    row = new ArrayList<String>();
-		    row.add("no answers found");
-		    answers.add(row);
-		    Tracer.err("Query was interrupted by engine.");
-		}
-	    }
-
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    try {
-		Tracer.interrupt("query" + queryCount++, "queries");
-		loadRulesInXSB(xsbFile);
-	    } catch (Exception e1) {
-		e1.printStackTrace();
-	    }
-	    return new ArrayList<ArrayList<String>>();
-	}
-	return getData();
     }
 
     public Collection<Answer> queryAll(
@@ -431,31 +188,18 @@ public class HybridKB implements OWLOntologyChangeListener {
 	Tracer.info("query: " + query.toString());
 	if (isOntologyChanged || Rules.isRulesOntologyChanged)
 	    preprocessKB();
-	Visitor hashVisitor = new HashVisitor(
+	final Visitor hashVisitor = new HashVisitor(
 		translator.getCollectionsManager());
-	Visitor deHashVisitor = new DeHashVisitor(
+	final Visitor deHashVisitor = new DeHashVisitor(
 		translator.getCollectionsManager());
 	Tracer.start("query" + queryCount);
-	Collection<Answer> answers = queryProcessor.queryAll(
+	final Collection<Answer> answers = queryProcessor.queryAll(
 		query.acept(hashVisitor), hasDisjunction);
 	Tracer.stop("query" + queryCount++, "queries");
-	Collection<Answer> res = new LinkedList<Answer>();
-	for (Answer ans : answers)
+	final Collection<Answer> res = new LinkedList<Answer>();
+	for (final Answer ans : answers)
 	    res.add(ans.acept(deHashVisitor));
 	return res;
-    }
-
-    public void resetQueryCount() {
-	queryCount = 1;
-    }
-
-    public void setFilter(String f) {
-	if (!filter.equals(f))
-	    filter = f;
-    }
-
-    public void setIsQueryForAll(boolean flag) {
-	isQueryForAll = flag;
     }
 
     private XSBDatabase xsbDatabase() throws Exception {

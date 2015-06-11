@@ -61,7 +61,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	@Override
 	public Void doInBackground() {
 	    try {
-		nohr.setFilter(getFilter());
 		if (isNeedToQuery || !hasVariables) {
 		    disableValuationCheckBoxes();
 		    isShowProgress = true;
@@ -116,7 +115,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     }
 
     public static void clear() {
-	nohr.dispose();
+	nohr = null;
     }
 
     private final Parser parser = new Parser();
@@ -218,7 +217,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		progressFrame.setUndecorated(true);
 		progressFrame.setContentPane(progressPanel);
 		progressFrame
-		.setLocationRelativeTo(HybridQueryViewComponent.this);
+			.setLocationRelativeTo(HybridQueryViewComponent.this);
 		// progressFrame.setVisible(true);
 	    }
 	});
@@ -283,7 +282,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	    @Override
 	    public void actionPerformed(ActionEvent ae) {
 		isShowAllSolutions = false;
-		nohr.setIsQueryForAll(false);
 		if (textField.getText().length() > 0)
 		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -300,7 +298,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	    @Override
 	    public void actionPerformed(ActionEvent ae) {
 		isShowAllSolutions = true;
-		nohr.setIsQueryForAll(true);
 		if (textField.getText().length() > 0)
 		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -370,8 +367,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 
     @Override
     protected void disposeOWLView() {
-	if (nohr != null)
-	    nohr.dispose();
+	nohr = null;
     }
 
     private void enableValuationCheckBoxes() {
@@ -594,8 +590,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private void startQueryEngine() {
 	try {
 	    nohr = new HybridKB(getOWLModelManager().getOWLOntologyManager(),
-		    getOWLModelManager().getActiveOntology(),
-		    getOWLModelManager().getReasoner());
+		    getOWLModelManager().getActiveOntology());
 	} catch (Exception e) {
 	    textArea.append(e.getMessage() + Config.NL);
 	}
