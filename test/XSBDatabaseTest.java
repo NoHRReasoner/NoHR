@@ -65,6 +65,44 @@ public class XSBDatabaseTest extends XSBDatabase {
     }
 
     @Test
+    public final void testHasAnswers() {
+	Predicate p = new PredicateImpl("p", 1);
+	Variable x = var("X");
+	Literal l = posLiteral(p, x);
+	Query q = Model.query(l);
+	engine.deterministicGoal("table(p/1)");
+	engine.deterministicGoal("assert((p(a)))");
+	engine.deterministicGoal("assert((p(b):-tnot(p(b))))");
+	Assert.assertTrue(hasAnswers(q));
+	Assert.assertTrue(hasAnswers(q, true));
+	Assert.assertTrue(hasAnswers(q, false));
+
+	p = new PredicateImpl("q", 1);
+	l = posLiteral(p, x);
+	q = Model.query(l);
+	engine.deterministicGoal("dynamic(q/1)");
+	Assert.assertFalse(hasAnswers(q));
+	Assert.assertFalse(hasAnswers(q, true));
+	Assert.assertFalse(hasAnswers(q, false));
+
+	p = new PredicateImpl("r", 1);
+	l = posLiteral(p, x);
+	q = Model.query(l);
+	engine.deterministicGoal("assert(r(a))");
+	Assert.assertTrue(hasAnswers(q));
+	Assert.assertTrue(hasAnswers(q, true));
+	Assert.assertFalse(hasAnswers(q, false));
+
+	p = new PredicateImpl("s", 1);
+	l = posLiteral(p, x);
+	q = Model.query(l);
+	engine.deterministicGoal("table(s/1),assert((s(b):-tnot(s(b))))");
+	Assert.assertTrue(hasAnswers(q));
+	Assert.assertFalse(hasAnswers(q, true));
+	Assert.assertTrue(hasAnswers(q, false));
+    }
+
+    @Test
     public final void testlazlyQueryAll() {
 	Predicate p = new PredicateImpl("p", 1);
 	Variable x = var("X");
@@ -86,7 +124,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
-	answers.cancel();
+	Assert.assertFalse(answersIt.hasNext());
 	answers = lazilyQueryAll(query, true);
 	answersIt = answers.iterator();
 	for (String expecteAns : list("p(c)", "p(b)", "p(a)")) {
@@ -95,7 +133,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
-	answers.cancel();
+	Assert.assertFalse(answersIt.hasNext());
 	answers = lazilyQueryAll(query, false);
 	answersIt = answers.iterator();
 	for (String expecteAns : list("p(f)", "p(e)", "p(d)")) {
@@ -104,6 +142,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
+	Assert.assertFalse(answersIt.hasNext());
     }
 
     @Test

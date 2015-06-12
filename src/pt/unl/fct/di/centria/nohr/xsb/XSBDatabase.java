@@ -48,7 +48,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     private final Queue<String> rulesBuffer = new LinkedList<String>();
 
-    private Path xsbPath;
+    protected Path xsbPath;
 
     private int rulesCount;
 
@@ -243,6 +243,22 @@ public class XSBDatabase implements Collection<Rule> {
 	Tracer.stop("xsb loading", "loading");
     }
 
+    public boolean hasAnswers(Query query) {
+	return hasAnswers(query, null);
+    }
+
+    public boolean hasAnswers(Query query, Boolean trueAnswers) {
+	flush();
+	String goal;
+	if (trueAnswers == null)
+	    goal = query.toString();
+	else {
+	    String truth = trueAnswers ? "true" : "undefined";
+	    goal = String.format("call_tv(%s,%s)", query, truth);
+	}
+	return engine.deterministicGoal(goal);
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -302,12 +318,16 @@ public class XSBDatabase implements Collection<Rule> {
 		return new Iterator<Answer>() {
 		    @Override
 		    public boolean hasNext() {
-			return solutions.hasNext();
+			boolean hasNext = solutions.hasNext();
+			if (!hasNext)
+			    solutions.cancel();
+			return hasNext;
 		    }
 
 		    @Override
 		    public Answer next() {
-			TermModel valuesList = (TermModel) solutions.next()[0];
+			Object[] bindings = solutions.next();
+			TermModel valuesList = (TermModel) bindings[0];
 			return answer(query, varsIdx, valuesList);
 		    }
 
