@@ -23,7 +23,7 @@ public class Model {
 	return new AnswerImpl(query, truthValue, values, varsIdx);
     }
 
-    public static Answer answer(Query query, TruthValue truthValue,
+    public static Answer ans(Query query, TruthValue truthValue,
 	    List<Term> values, Map<Variable, Integer> variablesIndex) {
 	return new AnswerImpl(query, truthValue, values, variablesIndex);
     }

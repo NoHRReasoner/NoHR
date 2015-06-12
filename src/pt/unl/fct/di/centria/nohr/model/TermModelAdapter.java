@@ -40,7 +40,7 @@ public class TermModelAdapter {
 	if (valStr.equals("true"))
 	    return TruthValue.TRUE;
 	else if (valStr.equals("undefined"))
-	    return TruthValue.UNDIFINED;
+	    return TruthValue.UNDEFINED;
 	else if (valStr.equals("false"))
 	    return TruthValue.FALSE;
 	else

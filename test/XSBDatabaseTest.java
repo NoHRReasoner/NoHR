@@ -61,18 +61,20 @@ public class XSBDatabaseTest extends XSBDatabase {
     public void tearDown() throws Exception {
     }
 
-    // @Test
-    // public final void testQuery() {
-    // Predicate p = new PredicateImpl("p", 1);
-    // Variable x = var("X");
-    // Literal l = posLiteral(p, x);
-    // Query query = Model.query(l);
-    // engine.command("dynamic p/1");
-    // Assert.assertNull("goal should fail", query(query));
-    // engine.command("assert((p(a)))");
-    // Answer answer = query(query);
-    // Assert.assertTrue("incorrect answer", answer.toString().equals("p(a)"));
-    // }
+    @Test
+    public final void testQuery() {
+	Predicate p = new PredicateImpl("p", 1);
+	Variable x = var("X");
+	Literal l = posLiteral(p, x);
+	Query q = Model.query(l);
+	engine.deterministicGoal("table p/1");
+	engine.deterministicGoal("assert((p(a))),assert((p(b):-tnot(p(b))))");
+	Assert.assertEquals("incorrect answer", "p(b)", query(q).toString());
+	Assert.assertEquals("incorrect answer", "p(a)", query(q, true)
+		.toString());
+	Assert.assertEquals("incorrect answer", "p(b)", query(q, false)
+		.toString());
+    }
 
     @Test
     public final void testQueryAll() {
@@ -80,16 +82,30 @@ public class XSBDatabaseTest extends XSBDatabase {
 	Variable x = var("X");
 	Literal l = posLiteral(p, x);
 	Query query = Model.query(l);
-	engine.command("dynamic p/1");
-	Assert.assertTrue("goal should fail", queryAll(query).isEmpty());
-	engine.command("assert((p(a)))");
-	engine.command("assert((p(b)))");
-	engine.command("assert((p(c)))");
+	engine.deterministicGoal("table p/1");
+	engine.deterministicGoal("assert((p(a)))");
+	engine.deterministicGoal("assert((p(b)))");
+	engine.deterministicGoal("assert((p(c)))");
+	engine.deterministicGoal("assert((p(d):-tnot(p(d))))");
+	engine.deterministicGoal("assert((p(e):-tnot(p(e))))");
+	engine.deterministicGoal("assert((p(f):-tnot(p(f))))");
 	Map<List<Term>, TruthValue> answers = queryAll(query);
 	Set<String> result = new HashSet<String>();
 	for (List<Term> list : answers.keySet())
 	    result.add(query.apply(list).toString());
+	Assert.assertEquals("incorrect answers",
+		set("p(a)", "p(b)", "p(c)", "p(d)", "p(e)", "p(f)"), result);
+	answers = queryAll(query, true);
+	result = new HashSet<String>();
+	for (List<Term> list : answers.keySet())
+	    result.add(query.apply(list).toString());
 	Assert.assertEquals("incorrect answers", set("p(a)", "p(b)", "p(c)"),
+		result);
+	answers = queryAll(query, false);
+	result = new HashSet<String>();
+	for (List<Term> list : answers.keySet())
+	    result.add(query.apply(list).toString());
+	Assert.assertEquals("incorrect answers", set("p(d)", "p(e)", "p(f)"),
 		result);
     }
 

@@ -40,7 +40,7 @@ public class ConstantImpl implements Constant {
 	if (symbol.equals("true"))
 	    return TruthValue.TRUE;
 	else if (symbol.equals("undefined"))
-	    return TruthValue.UNDIFINED;
+	    return TruthValue.UNDEFINED;
 	else if (symbol.equals("false"))
 	    return TruthValue.FALSE;
 	else

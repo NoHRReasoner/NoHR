@@ -33,11 +33,11 @@ public class QueryProcessor {
     private TruthValue process(TruthValue originalTruth, TruthValue doubledTruth) {
 	if (originalTruth == TruthValue.FALSE)
 	    return TruthValue.FALSE;
-	else if (originalTruth == TruthValue.UNDIFINED)
+	else if (originalTruth == TruthValue.UNDEFINED)
 	    if (doubledTruth == TruthValue.FALSE)
 		return TruthValue.FALSE;
 	    else
-		return TruthValue.UNDIFINED;
+		return TruthValue.UNDEFINED;
 	else if (originalTruth == TruthValue.TRUE)
 	    if (doubledTruth == TruthValue.FALSE)
 		return TruthValue.INCONSITENT;
@@ -83,7 +83,7 @@ public class QueryProcessor {
 		truth = process(originalTruth, doubledTruth);
 	    }
 	    if (truth != TruthValue.FALSE)
-		result.add(Model.answer(query, truth, vals, varsIdx));
+		result.add(Model.ans(query, truth, vals, varsIdx));
 	}
 	return result;
     }

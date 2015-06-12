@@ -297,12 +297,17 @@ public class XSBDatabase implements Collection<Rule> {
 	return query(query, null);
     }
 
-    public Answer query(Query query, TruthValue valuation) {
+    public Answer query(Query query, Boolean trueAnswers) {
 	flush();
-	String valArg = valuation == null ? "" : valuation.name().toLowerCase()
-		+ ",";
-	String goal = String.format("detGoal([%s],(%s)," + valArg + "TM)",
-		Utils.concat(",", query.getVariables()), query);
+	String vars = Utils.concat(",", query.getVariables());
+	String goal;
+	if (trueAnswers == null)
+	    goal = String.format("detGoal([%s],(%s),TM)", vars, query);
+	else {
+	    String truth = trueAnswers ? "true" : "undefined";
+	    goal = String
+		    .format("detGoal([%s],(%s),%s,TM)", vars, query, truth);
+	}
 	Object[] bindings = engine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
 	    return null;
@@ -314,14 +319,18 @@ public class XSBDatabase implements Collection<Rule> {
 	return queryAll(query, null);
     }
 
-    public Map<List<Term>, TruthValue> queryAll(Query query,
-	    TruthValue valuation) {
+    public Map<List<Term>, TruthValue> queryAll(Query query, Boolean trueAnswers) {
 	flush();
 	Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
-	String valArg = valuation == null ? "" : valuation.name().toLowerCase()
-		+ ",";
-	String goal = String.format("nonDetGoal([%s],(%s)," + valArg + "TM)",
-		Utils.concat(",", query.getVariables()), query);
+	String vars = Utils.concat(",", query.getVariables());
+	String goal;
+	if (trueAnswers == null)
+	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars, query);
+	else {
+	    String truth = trueAnswers ? "true" : "undefined";
+	    goal = String.format("nonDetGoal([%s],(%s),%s,TM)", vars, query,
+		    truth);
+	}
 	Object[] bindings = engine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
 	    return answers;
@@ -411,8 +420,6 @@ public class XSBDatabase implements Collection<Rule> {
 	    // _engine.addPrologOutputListener(this);
 	    printLog("Engine started" + Config.NL);
 
-	    engine.deterministicGoal("dynamic detGoal/3");
-	    engine.deterministicGoal("dynamic nonDetGoal/3");
 	    engine.deterministicGoal("assert((detGoal(Vars,G,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
 	    engine.deterministicGoal("assert((detGoal(Vars,G,TV,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
 	    engine.deterministicGoal("assert((nonDetGoal(Vars,G,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
