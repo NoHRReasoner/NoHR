@@ -16,7 +16,7 @@ public interface Query {
      * @param sub
      * @return
      */
-    public Object apply(Substitution sub);
+    public Query apply(Substitution sub);
 
     @Override
     public boolean equals(Object obj);

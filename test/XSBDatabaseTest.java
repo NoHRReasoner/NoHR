@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.AnswersIterator;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -59,6 +61,45 @@ public class XSBDatabaseTest extends XSBDatabase {
 
     @After
     public void tearDown() throws Exception {
+    }
+
+    @Test
+    public final void testlazlyQueryAll() {
+	Predicate p = new PredicateImpl("p", 1);
+	Variable x = var("X");
+	Literal l = posLiteral(p, x);
+	Query query = Model.query(l);
+	engine.deterministicGoal("table p/1");
+	engine.deterministicGoal("assert((p(a)))");
+	engine.deterministicGoal("assert((p(b)))");
+	engine.deterministicGoal("assert((p(c)))");
+	engine.deterministicGoal("assert((p(d):-tnot(p(d))))");
+	engine.deterministicGoal("assert((p(e):-tnot(p(e))))");
+	engine.deterministicGoal("assert((p(f):-tnot(p(f))))");
+	AnswersIterator answers = lazilyQueryAll(query);
+	for (String expecteAns : list("p(f)", "p(e)", "p(d)", "p(c)", "p(b)",
+		"p(a)")) {
+	    Assert.assertTrue(answers.hasNext());
+	    Answer ans = answers.next();
+	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
+		    .toString());
+	}
+	answers.cancel();
+	answers = lazilyQueryAll(query, true);
+	for (String expecteAns : list("p(c)", "p(b)", "p(a)")) {
+	    Assert.assertTrue(answers.hasNext());
+	    Answer ans = answers.next();
+	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
+		    .toString());
+	}
+	answers.cancel();
+	answers = lazilyQueryAll(query);
+	for (String expecteAns : list("p(f)", "p(e)", "p(d)")) {
+	    Assert.assertTrue(answers.hasNext());
+	    Answer ans = answers.next();
+	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
+		    .toString());
+	}
     }
 
     @Test

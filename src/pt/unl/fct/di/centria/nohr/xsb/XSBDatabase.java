@@ -19,6 +19,7 @@ import java.util.TreeMap;
 
 import other.Utils;
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.AnswersIterator;
 import pt.unl.fct.di.centria.nohr.model.Config;
 import pt.unl.fct.di.centria.nohr.model.ModelException;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -30,6 +31,7 @@ import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import utils.Tracer;
 
+import com.declarativa.interprolog.SolutionIterator;
 import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
@@ -268,6 +270,50 @@ public class XSBDatabase implements Collection<Rule> {
     @Override
     public Iterator<Rule> iterator() {
 	return rules.iterator();
+    }
+
+    public AnswersIterator lazilyQueryAll(Query query) {
+	return lazilyQueryAll(query, null);
+    }
+
+    public AnswersIterator lazilyQueryAll(final Query query, Boolean trueAnswers) {
+	flush();
+	String vars = Utils.concat(",", query.getVariables());
+	String goal;
+	if (trueAnswers == null)
+	    goal = String.format("detGoal([%s],(%s),TM)", vars, query);
+	else {
+	    String truth = trueAnswers ? "true" : "undefined";
+	    goal = String
+		    .format("detGoal([%s],(%s),%s,TM)", vars, query, truth);
+	}
+	final Map<Variable, Integer> varsIdx = variablesIndex(query
+		.getVariables());
+	final SolutionIterator solutions = engine.goal(goal, "[TM]");
+	return new AnswersIterator() {
+
+	    @Override
+	    public void cancel() {
+		solutions.cancel();
+	    }
+
+	    @Override
+	    public boolean hasNext() {
+		return solutions.hasNext();
+	    }
+
+	    @Override
+	    public Answer next() {
+		TermModel valuesList = (TermModel) solutions.next()[0];
+		return answer(query, varsIdx, valuesList);
+	    }
+
+	    @Override
+	    public void remove() {
+		solutions.remove();
+	    }
+
+	};
     }
 
     /**
