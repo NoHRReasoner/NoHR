@@ -19,7 +19,7 @@ import java.util.TreeMap;
 
 import other.Utils;
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.AnswersIterator;
+import pt.unl.fct.di.centria.nohr.model.AnswersIterable;
 import pt.unl.fct.di.centria.nohr.model.Config;
 import pt.unl.fct.di.centria.nohr.model.ModelException;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -272,11 +272,11 @@ public class XSBDatabase implements Collection<Rule> {
 	return rules.iterator();
     }
 
-    public AnswersIterator lazilyQueryAll(Query query) {
+    public AnswersIterable lazilyQueryAll(Query query) {
 	return lazilyQueryAll(query, null);
     }
 
-    public AnswersIterator lazilyQueryAll(final Query query, Boolean trueAnswers) {
+    public AnswersIterable lazilyQueryAll(final Query query, Boolean trueAnswers) {
 	flush();
 	String vars = Utils.concat(",", query.getVariables());
 	String goal;
@@ -290,7 +290,7 @@ public class XSBDatabase implements Collection<Rule> {
 	final Map<Variable, Integer> varsIdx = variablesIndex(query
 		.getVariables());
 	final SolutionIterator solutions = engine.goal(goal, "[TM]");
-	return new AnswersIterator() {
+	return new AnswersIterable() {
 
 	    @Override
 	    public void cancel() {
@@ -298,19 +298,24 @@ public class XSBDatabase implements Collection<Rule> {
 	    }
 
 	    @Override
-	    public boolean hasNext() {
-		return solutions.hasNext();
-	    }
+	    public Iterator<Answer> iterator() {
+		return new Iterator<Answer>() {
+		    @Override
+		    public boolean hasNext() {
+			return solutions.hasNext();
+		    }
 
-	    @Override
-	    public Answer next() {
-		TermModel valuesList = (TermModel) solutions.next()[0];
-		return answer(query, varsIdx, valuesList);
-	    }
+		    @Override
+		    public Answer next() {
+			TermModel valuesList = (TermModel) solutions.next()[0];
+			return answer(query, varsIdx, valuesList);
+		    }
 
-	    @Override
-	    public void remove() {
-		solutions.remove();
+		    @Override
+		    public void remove() {
+			solutions.remove();
+		    }
+		};
 	    }
 
 	};

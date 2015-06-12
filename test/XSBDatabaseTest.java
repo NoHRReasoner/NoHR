@@ -4,6 +4,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import java.nio.file.FileSystems;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.AnswersIterator;
+import pt.unl.fct.di.centria.nohr.model.AnswersIterable;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -76,27 +77,30 @@ public class XSBDatabaseTest extends XSBDatabase {
 	engine.deterministicGoal("assert((p(d):-tnot(p(d))))");
 	engine.deterministicGoal("assert((p(e):-tnot(p(e))))");
 	engine.deterministicGoal("assert((p(f):-tnot(p(f))))");
-	AnswersIterator answers = lazilyQueryAll(query);
+	AnswersIterable answers = lazilyQueryAll(query);
+	Iterator<Answer> answersIt = answers.iterator();
 	for (String expecteAns : list("p(f)", "p(e)", "p(d)", "p(c)", "p(b)",
 		"p(a)")) {
-	    Assert.assertTrue(answers.hasNext());
-	    Answer ans = answers.next();
+	    Assert.assertTrue(answersIt.hasNext());
+	    Answer ans = answersIt.next();
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
 	answers.cancel();
 	answers = lazilyQueryAll(query, true);
+	answersIt = answers.iterator();
 	for (String expecteAns : list("p(c)", "p(b)", "p(a)")) {
-	    Assert.assertTrue(answers.hasNext());
-	    Answer ans = answers.next();
+	    Assert.assertTrue(answersIt.hasNext());
+	    Answer ans = answersIt.next();
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
 	answers.cancel();
-	answers = lazilyQueryAll(query);
+	answers = lazilyQueryAll(query, false);
+	answersIt = answers.iterator();
 	for (String expecteAns : list("p(f)", "p(e)", "p(d)")) {
-	    Assert.assertTrue(answers.hasNext());
-	    Answer ans = answers.next();
+	    Assert.assertTrue(answersIt.hasNext());
+	    Answer ans = answersIt.next();
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
