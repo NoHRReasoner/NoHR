@@ -186,6 +186,7 @@ public class QueryProcessorTest extends QueryProcessor {
      */
     @Test
     public final void testQueryAll() {
+
 	xsbDatabase.table("ap/1");
 	xsbDatabase.table("dp/1");
 
@@ -212,16 +213,54 @@ public class QueryProcessorTest extends QueryProcessor {
 	Variable var = var("X");
 	Query q = Model.query(posLiteral("p", var));
 
-	Collection<Answer> ans = queryAll(q, true);
-
+	Collection<Answer> ans = queryAll(q, true, true, true, true);
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
 		l(cons("c")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
-		l(cons("d")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
 		l(cons("e")))));
 	Assert.assertTrue(ans.size() == 5);
+
+	ans = queryAll(q, true, true, true, false);
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
+		l(cons("e")))));
+	Assert.assertTrue(ans.size() == 4);
+
+	ans = queryAll(q, true, true, false, true);
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
+		l(cons("c")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
+	Assert.assertTrue(ans.size() == 4);
+
+	ans = queryAll(q, true, false, true, true);
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
+		l(cons("c")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
+		l(cons("e")))));
+	Assert.assertTrue(ans.size() == 2);
+
+	ans = queryAll(q, true, true, false, false);
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
+	Assert.assertTrue(ans.size() == 3);
+
+	ans = queryAll(q, true, false, true, false);
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
+		l(cons("e")))));
+	Assert.assertTrue(ans.size() == 1);
+
+	ans = queryAll(q, true, false, false, true);
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
+		l(cons("c")))));
+	Assert.assertTrue(ans.size() == 1);
+
     }
 }

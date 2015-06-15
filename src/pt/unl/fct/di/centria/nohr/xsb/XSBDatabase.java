@@ -254,9 +254,7 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     public boolean hasAnswers(Query query, Boolean trueAnswers) {
-	Tracer.log("hasAnswers( " + query + ", " + trueAnswers + ")");
 	flush();
-	Tracer.log("flushed");
 	String goal;
 	if (trueAnswers == null)
 	    goal = query.toString();
@@ -264,7 +262,6 @@ public class XSBDatabase implements Collection<Rule> {
 	    String truth = trueAnswers ? "true" : "undefined";
 	    goal = String.format("call_tv(%s,%s)", query, truth);
 	}
-	Tracer.log("goal=" + goal);
 	return engine.deterministicGoal(goal);
     }
 
@@ -408,7 +405,6 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     public Map<List<Term>, TruthValue> queryAll(Query query, Boolean trueAnswers) {
-	clearSolutionIterator();
 	flush();
 	Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
 	String vars = Utils.concat(",", query.getVariables());

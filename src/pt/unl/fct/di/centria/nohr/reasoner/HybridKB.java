@@ -194,7 +194,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 		translator.getCollectionsManager());
 	Tracer.start("query" + queryCount);
 	final Collection<Answer> answers = queryProcessor.queryAll(
-		query.acept(hashVisitor), hasDisjunction);
+		query.acept(hashVisitor), hasDisjunction, true, true, true);
 	Tracer.stop("query" + queryCount++, "queries");
 	final Collection<Answer> res = new LinkedList<Answer>();
 	for (final Answer ans : answers)
