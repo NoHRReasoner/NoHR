@@ -10,15 +10,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypes;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.EncodeVisitor;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
+import utils.Tracer;
 
 public class QueryProcessor {
 
@@ -32,13 +29,10 @@ public class QueryProcessor {
 	if (originalTruth == TruthValue.FALSE)
 	    return TruthValue.FALSE;
 	else if (originalTruth == TruthValue.UNDEFINED)
-	    if (doubledTruth == TruthValue.FALSE)
-		return TruthValue.FALSE;
-	    else
-		return TruthValue.UNDEFINED;
+	    return doubledTruth;
 	else if (originalTruth == TruthValue.TRUE)
 	    if (doubledTruth == TruthValue.FALSE)
-		return TruthValue.INCONSITENT;
+		return TruthValue.INCONSISTENT;
 	    else
 		return TruthValue.TRUE;
 	else
@@ -46,84 +40,107 @@ public class QueryProcessor {
     }
 
     public Answer query(Query query) {
-	return query(query, null, true);
+	return query(query, true, true, true, true);
     }
 
     public Answer query(Query query, boolean hasDoubled) {
-	return query(query, null, hasDoubled);
+	return query(query, hasDoubled, true, true, hasDoubled);
     }
 
-    public Answer query(Query query, TruthValue valuation, boolean hasDoubled) {
-	if (valuation == TruthValue.FALSE)
-	    throw new IllegalArgumentException("valuation can't be false");
-	if (valuation == TruthValue.INCONSITENT && hasDoubled == false)
+    public Answer query(Query query, boolean hasDoubled, boolean trueAnswers,
+	    boolean undefinedAnswers, boolean inconsistentAnswers) {
+	Tracer.info("query: " + query);
+	if (inconsistentAnswers && hasDoubled == false)
 	    throw new IllegalArgumentException(
 		    "can't be inconsistent if there is no doubled rules");
+	if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
+	    throw new IllegalArgumentException(
+		    "must have at least one truth value enabled");
 	Query origQuery = query.getOriginal();
-	if (valuation == TruthValue.INCONSITENT) {
-	    for (Answer origAns : xsbDatabase.lazilyQueryAll(origQuery, true)) {
+	Tracer.log("undefined original answers");
+	// undefined original answers
+	if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
+	    for (Answer origAns : xsbDatabase.lazilyQuery(origQuery, false)) {
+		if (!hasDoubled)
+		    return ans(query, TruthValue.UNDEFINED, origAns.getValues());
 		Query doubQuery = query.getDouble().apply(origAns.getValues());
-		if (!xsbDatabase.hasAnswers(doubQuery))
-		    return ans(query, TruthValue.INCONSITENT,
+		if (xsbDatabase.hasAnswers(doubQuery, false))
+		    return ans(query, TruthValue.UNDEFINED, origAns.getValues());
+	    }
+	Tracer.log("true original answers");
+	// true original answers
+	if ((trueAnswers || inconsistentAnswers) && !undefinedAnswers)
+	    for (Answer origAns : xsbDatabase.lazilyQuery(origQuery, true)) {
+		if (trueAnswers && !hasDoubled)
+		    return ans(query, TruthValue.TRUE, origAns.getValues());
+		Query doubQuery = query.getDouble().apply(origAns.getValues());
+		Tracer.log("has doubled answers for " + doubQuery + " ?");
+		boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
+		Tracer.log(hasDoubAns + "");
+		if (trueAnswers && hasDoubAns)
+		    return ans(query, TruthValue.TRUE, origAns.getValues());
+		else if (inconsistentAnswers && !hasDoubAns)
+		    return ans(query, TruthValue.INCONSISTENT,
 			    origAns.getValues());
 	    }
-	    return null;
-	}
-	Boolean trueAnsInOrigQuery = null;
-	if (valuation == TruthValue.TRUE)
-	    trueAnsInOrigQuery = true;
-	else if (valuation == TruthValue.UNDEFINED)
-	    trueAnsInOrigQuery = false;
-	Answer origAns = xsbDatabase.query(origQuery, trueAnsInOrigQuery);
-	if (origAns == null)
-	    return null;
-	TruthValue origTruth = origAns.getValuation();
-	TruthValue truth = origTruth;
-	if (hasDoubled) {
+	Tracer.log("all original answers");
+	// all original answers
+	for (Answer origAns : xsbDatabase.lazilyQuery(origQuery, null)) {
+	    TruthValue origTruth = origAns.getValuation();
+	    if ((trueAnswers && origTruth == TruthValue.TRUE || undefinedAnswers
+		    && origTruth == TruthValue.UNDEFINED)
+		    && !hasDoubled)
+		return ans(query, origTruth, origAns.getValues());
 	    Query doubQuery = query.getDouble().apply(origAns.getValues());
-	    Answer doubAns = xsbDatabase.query(doubQuery);
-	    if (valuation == TruthValue.TRUE)
-		if (!xsbDatabase.hasAnswers(doubQuery))
-		    return null;
-		else
-		    return Model.ans(query, TruthValue.TRUE,
+	    if ((trueAnswers || inconsistentAnswers)
+		    && origTruth == TruthValue.TRUE) {
+		boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
+		if (trueAnswers && hasDoubAns)
+		    return ans(query, TruthValue.TRUE, origAns.getValues());
+		else if (inconsistentAnswers && !hasDoubAns)
+		    return ans(query, TruthValue.INCONSISTENT,
 			    origAns.getValues());
-	    TruthValue doubTruth = doubAns == null ? TruthValue.FALSE : doubAns
-		    .getValuation();
-	    truth = process(origTruth, doubTruth);
+	    }
+	    if ((trueAnswers && hasDoubled || undefinedAnswers)
+		    && origTruth == TruthValue.UNDEFINED) {
+		Answer doubAns = xsbDatabase.query(doubQuery);
+		if (doubAns != null) {
+		    TruthValue doubTruth = doubAns.getValuation();
+		    if (trueAnswers && doubTruth == TruthValue.TRUE)
+			return ans(query, TruthValue.TRUE, origAns.getValues());
+		    else if (undefinedAnswers
+			    && doubTruth == TruthValue.UNDEFINED)
+			return ans(query, TruthValue.UNDEFINED,
+				origAns.getValues());
+		}
+	    }
 	}
-	return Model.ans(query, truth, origAns.getValues());
+	return null;
     }
 
-    public Collection<Answer> queryAll(Query query, boolean hasDoubled) {
-	Visitor originalEncoder = new EncodeVisitor(PredicateTypes.ORIGINAL);
-	Map<List<Term>, TruthValue> originalAns = xsbDatabase.queryAll(query
-		.acept(originalEncoder));
-	Map<List<Term>, TruthValue> doubledAns = null;
-	if (hasDoubled) {
-	    Visitor doubledEncoder = new EncodeVisitor(PredicateTypes.DOUBLED);
-	    doubledAns = xsbDatabase.queryAll(query.acept(doubledEncoder));
-	}
+    public Collection<Answer> queryAll(Query query, boolean hasDoubled,
+	    TruthValue... valuations) {
 	Collection<Answer> result = new LinkedList<Answer>();
 	Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
 	int i = 0;
 	for (Variable var : query.getVariables())
 	    varsIdx.put(var, i++);
-	for (Entry<List<Term>, TruthValue> originalEntry : originalAns
-		.entrySet()) {
-	    List<Term> vals = originalEntry.getKey();
-	    TruthValue originalTruth = originalEntry.getValue();
-	    if (originalTruth == null)
-		originalTruth = TruthValue.FALSE;
-	    TruthValue truth = originalTruth;
+	Map<List<Term>, TruthValue> origAnss = xsbDatabase.queryAll(query
+		.getOriginal());
+	for (Entry<List<Term>, TruthValue> origEntry : origAnss.entrySet()) {
+	    List<Term> vals = origEntry.getKey();
+	    TruthValue origTruth = origEntry.getValue();
+	    TruthValue truth = origTruth;
 	    if (hasDoubled) {
-		TruthValue doubledTruth = doubledAns.get(vals);
-		if (doubledTruth == null)
-		    doubledTruth = TruthValue.FALSE;
-		truth = process(originalTruth, doubledTruth);
+		Map<List<Term>, TruthValue> doubAnss = xsbDatabase
+			.queryAll(query.getDouble());
+		TruthValue doubTruth = doubAnss.get(vals);
+		if (doubTruth == null)
+		    doubTruth = TruthValue.FALSE;
+		truth = process(origTruth, doubTruth);
 	    }
 	    if (truth != TruthValue.FALSE)
-		result.add(Model.ans(query, truth, vals, varsIdx));
+		result.add(ans(query, truth, vals, varsIdx));
 	}
 	return result;
     }

@@ -95,7 +95,7 @@ public class QueryTest extends Object {
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    Answer ans = result.iterator().next();
 	    assertFalse("sould be consistent",
-		    ans.getValuation() == TruthValue.INCONSITENT);
+		    ans.getValuation() == TruthValue.INCONSISTENT);
 	} catch (IOException e) {
 	    fail(e.getMessage());
 	} catch (PrologParserException e) {
@@ -121,7 +121,7 @@ public class QueryTest extends Object {
 	    assertEquals("should have exactly one answer", result.size(), 1);
 	    Answer ans = result.iterator().next();
 	    assertEquals("sould be inconsistent", ans.getValuation(),
-		    TruthValue.INCONSITENT);
+		    TruthValue.INCONSISTENT);
 	} catch (IOException e) {
 	    fail(e.getMessage());
 	} catch (PrologParserException e) {

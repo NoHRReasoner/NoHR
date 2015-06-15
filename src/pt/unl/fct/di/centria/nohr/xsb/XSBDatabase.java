@@ -19,7 +19,6 @@ import java.util.TreeMap;
 
 import other.Utils;
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.AnswersIterable;
 import pt.unl.fct.di.centria.nohr.model.Config;
 import pt.unl.fct.di.centria.nohr.model.ModelException;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -55,13 +54,15 @@ public class XSBDatabase implements Collection<Rule> {
     /** The is engine started. */
     private boolean isEngineStarted = false;
 
+    private SolutionIterator lastSolutionsIterator;
+
     /**
      * Instantiates a new query engine
      *
      * @throws Exception
      *             the exception
      */
-    public XSBDatabase(Path xsbPath) throws Exception, IPException {
+    public XSBDatabase(Path xsbPath) throws IPException {
 
 	this.xsbPath = xsbPath;
 
@@ -108,7 +109,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#addAll(java.util.Collection)
      */
     @Override
@@ -164,13 +165,20 @@ public class XSBDatabase implements Collection<Rule> {
 	// engine.deterministicGoal("retractall(call(X))");
     }
 
+    private void clearSolutionIterator() {
+	if (lastSolutionsIterator != null) {
+	    lastSolutionsIterator.cancel();
+	    lastSolutionsIterator = null;
+	}
+    }
+
     public boolean command(String command) {
 	return engine.deterministicGoal(command);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#contains(java.lang.Object)
      */
     @Override
@@ -185,7 +193,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
     @Override
@@ -219,7 +227,6 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     private void flush() {
-	Tracer.start("xsb loading");
 	StringBuilder goal = new StringBuilder();
 	String sep = "";
 	int c = 0;
@@ -240,7 +247,6 @@ public class XSBDatabase implements Collection<Rule> {
 		goal = new StringBuilder();
 	    }
 	}
-	Tracer.stop("xsb loading", "loading");
     }
 
     public boolean hasAnswers(Query query) {
@@ -248,7 +254,9 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     public boolean hasAnswers(Query query, Boolean trueAnswers) {
+	Tracer.log("hasAnswers( " + query + ", " + trueAnswers + ")");
 	flush();
+	Tracer.log("flushed");
 	String goal;
 	if (trueAnswers == null)
 	    goal = query.toString();
@@ -256,12 +264,13 @@ public class XSBDatabase implements Collection<Rule> {
 	    String truth = trueAnswers ? "true" : "undefined";
 	    goal = String.format("call_tv(%s,%s)", query, truth);
 	}
+	Tracer.log("goal=" + goal);
 	return engine.deterministicGoal(goal);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#isEmpty()
      */
     @Override
@@ -280,7 +289,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#iterator()
      */
     @Override
@@ -288,11 +297,15 @@ public class XSBDatabase implements Collection<Rule> {
 	return rules.iterator();
     }
 
-    public AnswersIterable lazilyQueryAll(Query query) {
-	return lazilyQueryAll(query, null);
+    public Iterable<Answer> lazilyQuery(Query query) {
+	return lazilyQuery(query, null);
     }
 
-    public AnswersIterable lazilyQueryAll(final Query query, Boolean trueAnswers) {
+    public Iterable<Answer> lazilyQuery(final Query query, Boolean trueAnswers) {
+	if (lastSolutionsIterator != null) {
+	    lastSolutionsIterator.cancel();
+	    lastSolutionsIterator = null;
+	}
 	flush();
 	String vars = Utils.concat(",", query.getVariables());
 	String goal;
@@ -306,27 +319,31 @@ public class XSBDatabase implements Collection<Rule> {
 	final Map<Variable, Integer> varsIdx = variablesIndex(query
 		.getVariables());
 	final SolutionIterator solutions = engine.goal(goal, "[TM]");
-	return new AnswersIterable() {
-
-	    @Override
-	    public void cancel() {
-		solutions.cancel();
-	    }
+	lastSolutionsIterator = solutions;
+	final XSBDatabase xsbDatabase = this;
+	return new Iterable<Answer>() {
 
 	    @Override
 	    public Iterator<Answer> iterator() {
 		return new Iterator<Answer>() {
+
+		    private boolean canceled;
+
 		    @Override
 		    public boolean hasNext() {
-			boolean hasNext = solutions.hasNext();
-			if (!hasNext)
-			    solutions.cancel();
-			return hasNext;
+			if (canceled)
+			    return false;
+			return solutions.hasNext();
 		    }
 
 		    @Override
 		    public Answer next() {
 			Object[] bindings = solutions.next();
+			if (!solutions.hasNext()) {
+			    solutions.cancel();
+			    canceled = true;
+			    xsbDatabase.lastSolutionsIterator = null;
+			}
 			TermModel valuesList = (TermModel) bindings[0];
 			return answer(query, varsIdx, valuesList);
 		    }
@@ -391,6 +408,7 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     public Map<List<Term>, TruthValue> queryAll(Query query, Boolean trueAnswers) {
+	clearSolutionIterator();
 	flush();
 	Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
 	String vars = Utils.concat(",", query.getVariables());
@@ -413,7 +431,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#remove(java.lang.Object)
      */
     @Override
@@ -432,7 +450,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
     @Override
@@ -445,7 +463,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
     @Override
@@ -462,7 +480,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#size()
      */
     @Override
@@ -478,7 +496,10 @@ public class XSBDatabase implements Collection<Rule> {
      * @throws Exception
      *             the exception
      */
-    private void startEngine(String xsbBin) throws Exception, IPException {
+    public void startEngine(String xsbBin) throws IPException {
+	if (xsbBin == null)
+	    xsbBin = xsbPath.toAbsolutePath().toString();
+
 	if (engine != null) {
 
 	    engine.shutdown();
@@ -486,25 +507,17 @@ public class XSBDatabase implements Collection<Rule> {
 	}
 
 	isEngineStarted = true;
-	try {
-	    engine = new XSBSubprocessEngine(xsbBin);
-	    // _engine.addPrologOutputListener(this);
-	    printLog("Engine started" + Config.NL);
 
-	    engine.deterministicGoal("assert((detGoal(Vars,G,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
-	    engine.deterministicGoal("assert((detGoal(Vars,G,TV,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
-	    engine.deterministicGoal("assert((nonDetGoal(Vars,G,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
-	    engine.deterministicGoal("assert((nonDetGoal(Vars,G,TV,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
+	engine = new XSBSubprocessEngine(xsbBin);
 
-	} catch (IPException e) {
-	    isEngineStarted = false;
-	    throw new Exception(e.getMessage());
+	// _engine.addPrologOutputListener(this);
+	printLog("Engine started" + Config.NL);
 
-	} catch (Exception e) {
-	    isEngineStarted = false;
-	    throw new Exception("Query Engine was not started" + Config.NL
-		    + e.toString() + Config.NL);
-	}
+	engine.deterministicGoal("assert((detGoal(Vars,G,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
+	engine.deterministicGoal("assert((detGoal(Vars,G,TV,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
+	engine.deterministicGoal("assert((nonDetGoal(Vars,G,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
+	engine.deterministicGoal("assert((nonDetGoal(Vars,G,TV,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
+
     }
 
     public boolean table(String pred) {
@@ -513,7 +526,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#toArray()
      */
     @Override
@@ -523,7 +536,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)format
-     *
+     * 
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
     @Override

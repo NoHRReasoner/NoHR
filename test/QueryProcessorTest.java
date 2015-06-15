@@ -93,79 +93,90 @@ public class QueryProcessorTest extends QueryProcessor {
     @Test
     public final void testQuery() {
 	Variable var = var("X");
-
+	// true true
 	Query q = Model.query(posLiteral("p", var));
 	xsbDatabase.add("ap(a)");
 	xsbDatabase.add("dp(a)");
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("a"))), query(q));
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("a"))),
-		query(q, TruthValue.TRUE, true));
-	assertNull(query(q, TruthValue.UNDEFINED, true));
-	assertNull(query(q, TruthValue.INCONSITENT, true));
-
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("a"))), query(q, false));
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("a"))),
-		query(q, TruthValue.TRUE, false));
-	assertNull(query(q, TruthValue.UNDEFINED, false));
-
+	Answer ans = ans(q, TruthValue.TRUE, l(cons("a")));
+	assertEquals(ans, query(q));
+	assertEquals(ans, query(q, true, true, false, false));
+	assertNull(query(q, true, false, true, false));
+	assertNull(query(q, true, false, false, true));
+	assertEquals(ans, query(q, false));
+	assertEquals(ans, query(q, false, true, false, false));
+	assertNull(query(q, false, false, true, false));
+	// true undefined
 	q = Model.query(posLiteral("q", var));
-	xsbDatabase.command("assert(aq(b))");
-	xsbDatabase.command("table(dq/1),assert((dq(b):-tnot(dq(b))))");
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("b"))), query(q));
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("b"))),
-		query(q, TruthValue.TRUE, true));
-	assertNull(query(q, TruthValue.UNDEFINED, true));
-	// XSBDatabase.hasAnswers() don't return
-	// assertNull(query(q, TruthValue.INCONSITENT, true));
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("b"))), query(q, false));
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("b"))),
-		query(q, TruthValue.TRUE, false));
-	assertNull(query(q, TruthValue.UNDEFINED, false));
-	// XSBDatabase.hasAnswers() don't return
-	// assertNull(query(q, TruthValue.INCONSITENT, true));
-
+	xsbDatabase.add("aq(b)");
+	xsbDatabase.table("dq/1");
+	xsbDatabase.add("dq(b):-tnot(dq(b))");
+	ans = ans(q, TruthValue.TRUE, l(cons("b")));
+	assertEquals(ans, query(q));
+	assertEquals(ans, query(q, true, true, false, false));
+	assertNull(query(q, true, false, true, false));
+	assertNull(query(q, true, false, false, true));
+	assertEquals(ans, query(q, false));
+	assertEquals(ans, query(q, false, true, false, false));
+	assertNull(query(q, false, false, true, false));
+	// true false
 	q = Model.query(posLiteral("r", var));
 	xsbDatabase.add("ar(c)");
 	xsbDatabase.add("dr(o)");
-	assertEquals(ans(q, TruthValue.INCONSITENT, l(cons("c"))), query(q));
-	// assertEquals(ans(q, TruthValue.INCONSITENT, l(cons("c"))),
-	// query(q, TruthValue.INCONSITENT, true));
-	assertNull(query(q, TruthValue.TRUE, true));
-	assertNull(query(q, TruthValue.UNDEFINED, true));
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("c"))), query(q, false));
-	assertEquals(ans(q, TruthValue.TRUE, l(cons("c"))),
-		query(q, TruthValue.TRUE, false));
-	assertNull(query(q, TruthValue.UNDEFINED, false));
-
+	ans = ans(q, TruthValue.INCONSISTENT, l(cons("c")));
+	assertEquals(ans, query(q));
+	assertNull(query(q, true, true, false, false));
+	assertNull(query(q, true, false, true, false));
+	assertEquals(ans, query(q, true, false, false, true));
+	ans = ans(q, TruthValue.TRUE, l(cons("c")));
+	assertEquals(ans, query(q, false));
+	assertEquals(ans, query(q, false, true, false, false));
+	assertNull(query(q, false, false, true, false));
+	// undefined true
 	q = Model.query(posLiteral("s", var));
-	xsbDatabase.command("table(as/1),assert((as(d):-tnot(as(d))))");
+	xsbDatabase.table("as/1");
+	xsbDatabase.add("as(d):-tnot(as(d))");
 	xsbDatabase.add("ds(d)");
-	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("d"))), query(q));
-	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("d"))),
-		query(q, TruthValue.UNDEFINED, true));
-	assertNull(query(q, TruthValue.TRUE, true));
-	assertNull(query(q, TruthValue.INCONSITENT, true));
-	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("d"))),
-		query(q, false));
-	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("d"))),
-		query(q, TruthValue.UNDEFINED, false));
-	assertNull(query(q, TruthValue.TRUE, false));
-
+	ans = ans(q, TruthValue.TRUE, l(cons("d")));
+	assertEquals(ans, query(q));
+	assertEquals(ans, query(q, true, true, false, false));
+	assertNull(query(q, true, false, true, false));
+	assertNull(query(q, true, false, false, true));
+	ans = ans(q, TruthValue.UNDEFINED, l(cons("d")));
+	assertEquals(ans, query(q, false));
+	assertNull(query(q, false, true, false, false));
+	assertEquals(ans, query(q, false, false, true, false));
+	// undefined undefined
 	q = Model.query(posLiteral("t", var));
 	xsbDatabase.table("at/1");
-	xsbDatabase.table("dt/1");
 	xsbDatabase.add("at(e):-tnot(at(e))");
+	xsbDatabase.table("dt/1");
 	xsbDatabase.add("dt(e):-tnot(at(e))");
-	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("e"))), query(q));
-	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("e"))),
-		query(q, TruthValue.UNDEFINED, true));
-	assertNull(query(q, TruthValue.TRUE, true));
-	assertNull(query(q, TruthValue.INCONSITENT, true));
-	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("e"))),
-		query(q, false));
-	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("e"))),
-		query(q, TruthValue.UNDEFINED, false));
-	assertNull(query(q, TruthValue.TRUE, false));
+	ans = ans(q, TruthValue.UNDEFINED, l(cons("e")));
+	assertEquals(ans, query(q));
+	assertNull(query(q, true, true, false, false));
+	assertEquals(ans, query(q, true, false, true, false));
+	assertNull(query(q, true, false, false, true));
+	assertEquals(ans, query(q, false));
+	assertNull(query(q, false, true, false, false));
+	assertEquals(ans, query(q, false, false, true, false));
+	// undefined false
+	q = Model.query(posLiteral("u", var));
+	xsbDatabase.table("au/1");
+	xsbDatabase.add("au(f):-tnot(au(f))");
+	xsbDatabase.add("du(o)");
+	assertNull(query(q));
+	assertNull(query(q, true, true, false, false));
+	assertNull(query(q, true, false, true, false));
+	assertNull(query(q, true, false, false, true));
+	ans = ans(q, TruthValue.UNDEFINED, l(cons("f")));
+	assertEquals(ans, query(q, false));
+	assertNull(query(q, false, true, false, false));
+	assertEquals(ans, query(q, false, false, true, false));
+	// false false
+	q = Model.query(posLiteral("v", var));
+	xsbDatabase.add("av(o)");
+	xsbDatabase.add("dv(l)");
+	assertNull(query(q, true, true, true, false));
     }
 
     /**
@@ -205,7 +216,7 @@ public class QueryProcessorTest extends QueryProcessor {
 
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSITENT,
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
 		l(cons("c")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
 		l(cons("d")))));

@@ -1,3 +1,4 @@
+import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.posLiteral;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
@@ -18,7 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.AnswersIterable;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -115,7 +115,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 	engine.deterministicGoal("assert((p(d):-tnot(p(d))))");
 	engine.deterministicGoal("assert((p(e):-tnot(p(e))))");
 	engine.deterministicGoal("assert((p(f):-tnot(p(f))))");
-	AnswersIterable answers = lazilyQueryAll(query);
+	Iterable<Answer> answers = lazilyQuery(query);
 	Iterator<Answer> answersIt = answers.iterator();
 	for (String expecteAns : list("p(f)", "p(e)", "p(d)", "p(c)", "p(b)",
 		"p(a)")) {
@@ -125,7 +125,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 		    .toString());
 	}
 	Assert.assertFalse(answersIt.hasNext());
-	answers = lazilyQueryAll(query, true);
+	answers = lazilyQuery(query, true);
 	answersIt = answers.iterator();
 	for (String expecteAns : list("p(c)", "p(b)", "p(a)")) {
 	    Assert.assertTrue(answersIt.hasNext());
@@ -134,7 +134,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 		    .toString());
 	}
 	Assert.assertFalse(answersIt.hasNext());
-	answers = lazilyQueryAll(query, false);
+	answers = lazilyQuery(query, false);
 	answersIt = answers.iterator();
 	for (String expecteAns : list("p(f)", "p(e)", "p(d)")) {
 	    Assert.assertTrue(answersIt.hasNext());
@@ -143,6 +143,30 @@ public class XSBDatabaseTest extends XSBDatabase {
 		    .toString());
 	}
 	Assert.assertFalse(answersIt.hasNext());
+    }
+
+    @Test
+    public void testQueriesInLazelyQueryIteration() {
+	add("u(a)");
+	add("u(b)");
+	add("u(c)");
+	Query q1 = Model.query(posLiteral("u", var("X")));
+	Query q2 = Model.query(posLiteral("u", cons("e")));
+	int i = 0;
+	System.out.println();
+	for (Answer ans : lazilyQuery(q1)) {
+	    System.out.println(hasAnswers(q2));
+	    if (i++ >= 1)
+		break;
+	}
+	System.out.println();
+	for (Answer ans : lazilyQuery(q1))
+	    System.out.println(hasAnswers(q2));
+	// for (Answer ans1 : lazilyQuery(q1)) {
+	// System.out.println(ans1);
+	// for (Answer ans2 : lazilyQuery(q2))
+	// System.out.println(ans2);
+	// }
     }
 
     @Test
