@@ -21,7 +21,11 @@ public interface Query {
     @Override
     public boolean equals(Object obj);
 
+    public Query getDouble();
+
     public List<Literal> getLiterals();
+
+    public Query getOriginal();
 
     public List<Variable> getVariables();
 

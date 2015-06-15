@@ -2,6 +2,8 @@
  *
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.posLiteral;
@@ -88,6 +90,84 @@ public class QueryProcessorTest extends QueryProcessor {
     // fail("Not yet implemented"); // TODO
     // }
 
+    @Test
+    public final void testQuery() {
+	Variable var = var("X");
+
+	Query q = Model.query(posLiteral("p", var));
+	xsbDatabase.add("ap(a)");
+	xsbDatabase.add("dp(a)");
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("a"))), query(q));
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("a"))),
+		query(q, TruthValue.TRUE, true));
+	assertNull(query(q, TruthValue.UNDEFINED, true));
+	assertNull(query(q, TruthValue.INCONSITENT, true));
+
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("a"))), query(q, false));
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("a"))),
+		query(q, TruthValue.TRUE, false));
+	assertNull(query(q, TruthValue.UNDEFINED, false));
+
+	q = Model.query(posLiteral("q", var));
+	xsbDatabase.command("assert(aq(b))");
+	xsbDatabase.command("table(dq/1),assert((dq(b):-tnot(dq(b))))");
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("b"))), query(q));
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("b"))),
+		query(q, TruthValue.TRUE, true));
+	assertNull(query(q, TruthValue.UNDEFINED, true));
+	// XSBDatabase.hasAnswers() don't return
+	// assertNull(query(q, TruthValue.INCONSITENT, true));
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("b"))), query(q, false));
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("b"))),
+		query(q, TruthValue.TRUE, false));
+	assertNull(query(q, TruthValue.UNDEFINED, false));
+	// XSBDatabase.hasAnswers() don't return
+	// assertNull(query(q, TruthValue.INCONSITENT, true));
+
+	q = Model.query(posLiteral("r", var));
+	xsbDatabase.add("ar(c)");
+	xsbDatabase.add("dr(o)");
+	assertEquals(ans(q, TruthValue.INCONSITENT, l(cons("c"))), query(q));
+	// assertEquals(ans(q, TruthValue.INCONSITENT, l(cons("c"))),
+	// query(q, TruthValue.INCONSITENT, true));
+	assertNull(query(q, TruthValue.TRUE, true));
+	assertNull(query(q, TruthValue.UNDEFINED, true));
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("c"))), query(q, false));
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("c"))),
+		query(q, TruthValue.TRUE, false));
+	assertNull(query(q, TruthValue.UNDEFINED, false));
+
+	q = Model.query(posLiteral("s", var));
+	xsbDatabase.command("table(as/1),assert((as(d):-tnot(as(d))))");
+	xsbDatabase.add("ds(d)");
+	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("d"))), query(q));
+	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("d"))),
+		query(q, TruthValue.UNDEFINED, true));
+	assertNull(query(q, TruthValue.TRUE, true));
+	assertNull(query(q, TruthValue.INCONSITENT, true));
+	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("d"))),
+		query(q, false));
+	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("d"))),
+		query(q, TruthValue.UNDEFINED, false));
+	assertNull(query(q, TruthValue.TRUE, false));
+
+	q = Model.query(posLiteral("t", var));
+	xsbDatabase.table("at/1");
+	xsbDatabase.table("dt/1");
+	xsbDatabase.add("at(e):-tnot(at(e))");
+	xsbDatabase.add("dt(e):-tnot(at(e))");
+	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("e"))), query(q));
+	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("e"))),
+		query(q, TruthValue.UNDEFINED, true));
+	assertNull(query(q, TruthValue.TRUE, true));
+	assertNull(query(q, TruthValue.INCONSITENT, true));
+	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("e"))),
+		query(q, false));
+	assertEquals(ans(q, TruthValue.UNDEFINED, l(cons("e"))),
+		query(q, TruthValue.UNDEFINED, false));
+	assertNull(query(q, TruthValue.TRUE, false));
+    }
+
     /**
      * Test method for
      * {@link nohr.reasoner.QueryProcessor#queryAll(pt.unl.fct.di.centria.nohr.model.Query)}
@@ -127,9 +207,9 @@ public class QueryProcessorTest extends QueryProcessor {
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSITENT,
 		l(cons("c")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDIFINED,
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
 		l(cons("d")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDIFINED,
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
 		l(cons("e")))));
 	Assert.assertTrue(ans.size() == 5);
     }

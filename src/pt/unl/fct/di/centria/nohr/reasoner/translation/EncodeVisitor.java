@@ -66,9 +66,9 @@ public class EncodeVisitor implements Visitor {
     @Override
     public Constant visit(Constant constant) {
 	if (constant.isNumber())
-	    return cons(CONSTANT_PREFIX + constant.asNumber().toString());
+	    return cons(constant.asNumber().toString());
 	else
-	    return cons(CONSTANT_PREFIX + constant.asString());
+	    return cons(constant.asString());
     }
 
     @Override
