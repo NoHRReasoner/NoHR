@@ -4,10 +4,12 @@ import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -36,6 +38,103 @@ public class QueryProcessor {
 	default:
 	    return false;
 	}
+    }
+
+    public Iterable<Answer> lazilyQuery(final Query query,
+	    final boolean hasDoubled, final boolean trueAnswers,
+	    final boolean undefinedAnswers, final boolean inconsistentAnswers) {
+	xsbDatabase.cancelLastIterator();
+	if (inconsistentAnswers && hasDoubled == false)
+	    throw new IllegalArgumentException(
+		    "can't be inconsistent if there is no doubled rules");
+	if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
+	    throw new IllegalArgumentException(
+		    "must have at least one truth value enabled");
+	final Iterable<Answer> origAnss;
+	if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
+	    origAnss = xsbDatabase.lazilyQuery(query.getOriginal(), false);
+	else if (inconsistentAnswers && !trueAnswers && !undefinedAnswers)
+	    origAnss = xsbDatabase.lazilyQuery(query.getOriginal(), true);
+	else
+	    origAnss = xsbDatabase.lazilyQuery(query.getOriginal());
+	return new Iterable<Answer>() {
+
+	    @Override
+	    public Iterator<Answer> iterator() {
+
+		final Iterator<Answer> origAnssIt = origAnss.iterator();
+
+		return new Iterator<Answer>() {
+
+		    private Answer next;
+
+		    @Override
+		    public boolean hasNext() {
+			if (next == null)
+			    searchNext();
+			return next != null;
+		    }
+
+		    @Override
+		    public Answer next() {
+			Answer result = next;
+			if (result == null)
+			    result = nextAnswer();
+			if (result == null)
+			    throw new NoSuchElementException();
+			next = null;
+			return result;
+		    }
+
+		    private Answer nextAnswer() {
+			while (origAnssIt.hasNext()) {
+			    Answer origAns = origAnssIt.next();
+			    Query doubQuery = query.getDouble().apply(
+				    origAns.getValues());
+			    TruthValue origTruth = origAns.getValuation();
+			    if (!hasDoubled
+				    && isRequiredTruth(origTruth, trueAnswers,
+					    undefinedAnswers,
+					    inconsistentAnswers))
+				return origAns;
+			    if (origTruth == TruthValue.TRUE) {
+				boolean hasDoubAns = xsbDatabase
+					.hasAnswers(doubQuery);
+				if (trueAnswers && hasDoubAns)
+				    return ans(query, TruthValue.TRUE,
+					    origAns.getValues());
+				else if (inconsistentAnswers && !hasDoubAns)
+				    return ans(query, TruthValue.INCONSISTENT,
+					    origAns.getValues());
+			    } else if (origTruth == TruthValue.UNDEFINED) {
+				if (undefinedAnswers)
+				    if (xsbDatabase
+					    .hasAnswers(doubQuery, false))
+					return ans(query, TruthValue.UNDEFINED,
+						origAns.getValues());
+				if (trueAnswers)
+				    if (xsbDatabase.hasAnswers(doubQuery, true))
+					return ans(query, TruthValue.TRUE,
+						origAns.getValues());
+			    }
+			}
+			return null;
+		    }
+
+		    @Override
+		    public void remove() {
+			throw new UnsupportedOperationException();
+
+		    }
+
+		    private void searchNext() {
+			next = nextAnswer();
+		    }
+
+		};
+
+	    }
+	};
     }
 
     private TruthValue process(TruthValue originalTruth, TruthValue doubledTruth) {
@@ -143,6 +242,8 @@ public class QueryProcessor {
 	Map<List<Term>, TruthValue> origAnss;
 	if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
 	    origAnss = xsbDatabase.queryAll(query.getOriginal(), false);
+	else if (inconsistentAnswers && !trueAnswers && !undefinedAnswers)
+	    origAnss = xsbDatabase.queryAll(query.getOriginal(), true);
 	else
 	    origAnss = xsbDatabase.queryAll(query.getOriginal());
 	Map<List<Term>, TruthValue> doubAnss = new HashMap<List<Term>, TruthValue>();

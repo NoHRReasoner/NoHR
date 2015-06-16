@@ -3,7 +3,9 @@
  */
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.posLiteral;
@@ -12,6 +14,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import java.nio.file.FileSystems;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -78,6 +81,122 @@ public class QueryProcessorTest extends QueryProcessor {
      */
     @After
     public void tearDown() throws Exception {
+    }
+
+    /**
+     * Test method for
+     * {@link nohr.reasoner.QueryProcessor#lazilyQuery(pt.unl.fct.di.centria.nohr.model.Query)}
+     * .
+     */
+    // TODO fix QueryProcessor.lazilyQuery()
+    // wrong when original answer is UNDEFINED and the doubled answer is TRUE
+    @Test
+    public final void testLazilyQuery() {
+
+	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(
+		System.getenv("XSB_BIN_DIRECTORY")));
+
+	xsbDatabase.table("ap/1");
+	xsbDatabase.table("dp/1");
+
+	xsbDatabase
+	.command("table(az/1),assert((az(j):-tnot(az(j)))), assert(dz(j))");
+	Query qt = Model.query(posLiteral("dz", cons("j")));
+
+	assertTrue(xsbDatabase.hasAnswers(qt));
+	assertTrue(xsbDatabase.hasAnswers(qt, true));
+	assertFalse(xsbDatabase.hasAnswers(qt, false));
+
+	xsbDatabase.add("dp(h):-tnot(dp(h))");
+
+	xsbDatabase.add("dp(g)");
+
+	xsbDatabase.add("ap(f):-tnot(ap(f))");
+
+	xsbDatabase.add("ap(e):-tnot(ap(e))");
+	xsbDatabase.add("dp(e):-tnot(ap(e))");
+
+	xsbDatabase.add("dp(i)");
+	xsbDatabase.add("ap(i):-tnot(ap(i))");
+
+	xsbDatabase.add("ap(c)");
+
+	xsbDatabase.add("ap(b)");
+	xsbDatabase.add("dp(b):-tnot(dp(b))");
+
+	xsbDatabase.add("ap(a)");
+	xsbDatabase.add("dp(a)");
+
+	assertTrue(xsbDatabase.hasAnswers(qt));
+	assertFalse(xsbDatabase.hasAnswers(qt, false));
+	assertTrue(xsbDatabase.hasAnswers(qt, true));
+
+	Variable var = var("X");
+	Query q = Model.query(posLiteral("p", var));
+
+	Iterator<Answer> ans = lazilyQuery(q, true, true, true, true)
+		.iterator();
+	assertTrue(ans.hasNext());
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("a"))));
+	assertTrue(ans.hasNext());
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("b"))));
+	assertTrue(ans.hasNext());
+	assertEquals(ans.next(), ans(q, TruthValue.INCONSISTENT, l(cons("c"))));
+
+	assertTrue(xsbDatabase.hasAnswers(qt));
+
+	// if XSBDatabase.lastSolutionsIterator isn't cancelled then the
+	// following happens:
+	// XSBDatabase.hasAnswers(q, true) return true iff there is undefined
+	// answers and XSBDatabase.hasAnswers(q, false) return true iff there is
+	// true answers
+	// xsbDatabase.cancelLastIterator();
+
+	assertFalse(xsbDatabase.hasAnswers(qt, false));
+	assertTrue(xsbDatabase.hasAnswers(qt, true));
+
+	assertTrue(ans.hasNext());
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("i"))));
+	assertTrue(ans.hasNext());
+	assertTrue(ans.hasNext());
+	assertEquals(ans.next(), ans(q, TruthValue.UNDEFINED, l(cons("e"))));
+	assertFalse(ans.hasNext());
+
+	ans = lazilyQuery(q, true, true, true, false).iterator();
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("a"))));
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("b"))));
+	assertEquals(ans(q, TruthValue.TRUE, l(cons("d"))), ans.next());
+	assertEquals(ans.next(), ans(q, TruthValue.UNDEFINED, l(cons("e"))));
+	assertFalse(ans.hasNext());
+
+	ans = lazilyQuery(q, true, true, false, true).iterator();
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("a"))));
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("b"))));
+	assertEquals(ans.next(), ans(q, TruthValue.INCONSISTENT, l(cons("c"))));
+	// assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("d"))));
+	assertFalse(ans.hasNext());
+
+	ans = lazilyQuery(q, true, false, true, true).iterator();
+	assertEquals(ans.next(), ans(q, TruthValue.INCONSISTENT, l(cons("c"))));
+	ans.next();
+	assertEquals(ans.next(), ans(q, TruthValue.UNDEFINED, l(cons("e"))));
+	assertFalse(ans.hasNext());
+
+	ans = lazilyQuery(q, true, true, false, false).iterator();
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("a"))));
+	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("b"))));
+	// assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("d"))));
+	assertFalse(ans.hasNext());
+
+	ans = lazilyQuery(q, true, false, true, false).iterator();
+	ans.next();
+	assertEquals(ans.next(), ans(q, TruthValue.UNDEFINED, l(cons("e"))));
+	assertFalse(ans.hasNext());
+
+	ans = lazilyQuery(q, true, false, false, true).iterator();
+	assertEquals(ans.next(), ans(q, TruthValue.INCONSISTENT, l(cons("c"))));
+	assertFalse(ans.hasNext());
+
     }
 
     /**

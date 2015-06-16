@@ -1,3 +1,5 @@
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.posLiteral;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
@@ -147,26 +149,40 @@ public class XSBDatabaseTest extends XSBDatabase {
 
     @Test
     public void testQueriesInLazelyQueryIteration() {
+	table("u/1");
 	add("u(a)");
 	add("u(b)");
 	add("u(c)");
+	add("u(d):-tnot(u(d))");
+
 	Query q1 = Model.query(posLiteral("u", var("X")));
-	Query q2 = Model.query(posLiteral("u", cons("e")));
+	Query q2 = Model.query(posLiteral("u", cons("a")));
+	Query q3 = Model.query(posLiteral("u", cons("d")));
+	Query q4 = Model.query(posLiteral("u", cons("e")));
+
 	int i = 0;
-	System.out.println();
-	for (Answer ans : lazilyQuery(q1)) {
-	    System.out.println(hasAnswers(q2));
+	for (Answer ans : lazilyQuery(q1))
 	    if (i++ >= 1)
 		break;
+
+	for (Answer ans : lazilyQuery(q1)) {
+	    assertTrue(hasAnswers(q2));
+	    assertTrue(hasAnswers(q2, true));
+	    assertFalse(hasAnswers(q2, false));
 	}
-	System.out.println();
-	for (Answer ans : lazilyQuery(q1))
-	    System.out.println(hasAnswers(q2));
-	// for (Answer ans1 : lazilyQuery(q1)) {
-	// System.out.println(ans1);
-	// for (Answer ans2 : lazilyQuery(q2))
-	// System.out.println(ans2);
-	// }
+
+	for (Answer ans : lazilyQuery(q1)) {
+	    assertTrue(hasAnswers(q3));
+	    assertFalse(hasAnswers(q3, true));
+	    assertTrue(hasAnswers(q3, false));
+	}
+
+	for (Answer ans : lazilyQuery(q1)) {
+	    assertFalse(hasAnswers(q4));
+	    assertFalse(hasAnswers(q4, true));
+	    assertFalse(hasAnswers(q4, false));
+	}
+
     }
 
     @Test

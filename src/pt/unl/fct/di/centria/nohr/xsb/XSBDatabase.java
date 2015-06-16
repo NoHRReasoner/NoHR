@@ -109,7 +109,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#addAll(java.util.Collection)
      */
     @Override
@@ -151,6 +151,12 @@ public class XSBDatabase implements Collection<Rule> {
 	}
     }
 
+    public void cancelLastIterator() {
+	if (lastSolutionsIterator != null)
+	    lastSolutionsIterator.cancel();
+	lastSolutionsIterator = null;
+    }
+
     /**
      *
      */
@@ -178,7 +184,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#contains(java.lang.Object)
      */
     @Override
@@ -193,7 +199,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
     @Override
@@ -260,14 +266,14 @@ public class XSBDatabase implements Collection<Rule> {
 	    goal = query.toString();
 	else {
 	    String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("call_tv(%s,%s)", query, truth);
+	    goal = String.format("call_tv((%s),%s)", query, truth);
 	}
 	return engine.deterministicGoal(goal);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#isEmpty()
      */
     @Override
@@ -286,7 +292,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#iterator()
      */
     @Override
@@ -427,7 +433,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#remove(java.lang.Object)
      */
     @Override
@@ -446,7 +452,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
     @Override
@@ -459,7 +465,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
     @Override
@@ -476,7 +482,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#size()
      */
     @Override
@@ -522,7 +528,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#toArray()
      */
     @Override
@@ -532,7 +538,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)format
-     * 
+     *
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
     @Override
