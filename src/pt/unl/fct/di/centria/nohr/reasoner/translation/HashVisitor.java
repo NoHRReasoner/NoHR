@@ -32,9 +32,9 @@ public class HashVisitor implements Visitor {
     @Override
     public Constant visit(Constant constant) {
 	if (constant.isNumber())
-	    return cons(cm.getHashedLabel(constant.toString()));
+	    return cons("c" + cm.getHashedLabel(constant.toString()));
 	else
-	    return cons(cm.getHashedLabel(constant.asString()));
+	    return cons("c" + cm.getHashedLabel(constant.asString()));
 
     }
 

@@ -35,7 +35,6 @@ public class DeHashVisitor implements Visitor {
 	    return cons(cm.getLabelByHash(constant.toString()));
 	else
 	    return cons(cm.getLabelByHash(constant.asString()));
-
     }
 
     @Override

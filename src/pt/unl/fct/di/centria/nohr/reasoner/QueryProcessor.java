@@ -225,6 +225,14 @@ public class QueryProcessor {
 	return null;
     }
 
+    public Collection<Answer> queryAll(Query query) {
+	return queryAll(query, true);
+    }
+
+    public Collection<Answer> queryAll(Query query, boolean hasDoubled) {
+	return queryAll(query, hasDoubled, true, true, hasDoubled);
+    }
+
     public Collection<Answer> queryAll(Query query, boolean hasDoubled,
 	    boolean trueAnswers, boolean undefinedAnswers,
 	    boolean inconsistentAnswers) {
@@ -255,11 +263,14 @@ public class QueryProcessor {
 	for (Entry<List<Term>, TruthValue> origEntry : origAnss.entrySet()) {
 	    List<Term> vals = origEntry.getKey();
 	    TruthValue origTruth = origEntry.getValue();
-	    TruthValue truth = origTruth;
-	    TruthValue doubTruth = doubAnss.get(vals);
-	    if (doubTruth == null)
-		doubTruth = TruthValue.FALSE;
-	    truth = process(origTruth, doubTruth);
+	    TruthValue truth;
+	    if (hasDoubled) {
+		TruthValue doubTruth = doubAnss.get(vals);
+		if (doubTruth == null)
+		    doubTruth = TruthValue.FALSE;
+		truth = process(origTruth, doubTruth);
+	    } else
+		truth = origTruth;
 	    if (isRequiredTruth(truth, trueAnswers, undefinedAnswers,
 		    inconsistentAnswers))
 		result.add(ans(query, truth, vals, varsIdx));
