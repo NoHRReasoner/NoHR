@@ -63,7 +63,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    Collection<Answer> result = new HybridKB(kb.getOntology())
-		    .queryAll(parser.parseQuery(query));
+	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
 	    assertEquals("should have exactly one answer", result.size(), 1);
 	    Answer ans = result.iterator().next();
@@ -90,7 +90,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    Collection<Answer> result = new HybridKB(kb.getOntology())
-		    .queryAll(parser.parseQuery(query));
+	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should't be null", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    Answer ans = result.iterator().next();
@@ -116,7 +116,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    Collection<Answer> result = new HybridKB(kb.getOntology())
-		    .queryAll(parser.parseQuery(query));
+	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
 	    assertEquals("should have exactly one answer", result.size(), 1);
 	    Answer ans = result.iterator().next();
@@ -695,12 +695,18 @@ public class QueryTest extends Object {
 	OWLClass a1 = kb.getConcept("a1");
 	OWLClass a2 = kb.getConcept("a2");
 	OWLClass a3 = kb.getConcept("a3");
+	OWLObjectProperty p4 = kb.getRole("p4");
+	OWLObjectProperty p5 = kb.getRole("p5");
+	OWLClass a6 = kb.getConcept("a6");
 	OWLIndividual a = kb.getIndividual("a");
 	OWLDataFactory df = kb.getDataFactory();
 	kb.addAssertion(a1, a);
 	kb.addAssertion(a2, a);
 	kb.addSubsumption(df.getOWLObjectIntersectionOf(a1, a2), a3);
-	assertAnswer("a3(X)", new String[] { "a" });
+	kb.addSubsumption(a3, kb.getExistential(p4));
+	kb.addSubsumption(p4, p5);
+	kb.addSubsumption(kb.getExistential(p5), a6);
+	assertAnswer("a6(X)", new String[] { "a" });
 	Config.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
     }
 

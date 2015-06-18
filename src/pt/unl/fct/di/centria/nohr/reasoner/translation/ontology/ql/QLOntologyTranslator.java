@@ -1,5 +1,6 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +14,10 @@ import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -21,32 +25,34 @@ import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.AbstractOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.xsb.Rule;
+import utils.Tracer;
 
-public class QLOntologyTranslator implements OntologyTranslator {
+public class QLOntologyTranslator extends AbstractOntologyTranslator {
 
     private TBoxGraph graph;
-
-    private OWLOntologyManager om;
 
     private INormalizedOntology normalizedOntology;
 
     private QLAxiomsTranslator ruleCreatorQL;
 
-    private static final String X = "X";
-    private static final String Y = "Y";
-
-    public QLOntologyTranslator(INormalizedOntology normalizedOntology,
+    public QLOntologyTranslator(OWLOntology ontology,
 	    OWLDataFactory dataFactory, OWLOntologyManager ontologyManager,
-	    OntologyLabel ol) {
-	om = ontologyManager;
-	this.normalizedOntology = normalizedOntology;
+	    OntologyLabel ol) throws OWLOntologyCreationException,
+	    OWLOntologyStorageException, IOException,
+	    CloneNotSupportedException, UnsupportedOWLProfile {
+	super(ontologyManager, ontology);
+	Tracer.start("normalize ontology");
+	normalizedOntology = new Normalizer(ontology);
+	Tracer.stop("normalize ontology", "loading");
 	graph = new BasicTBoxGraph(normalizedOntology, dataFactory);
 	ruleCreatorQL = new QLAxiomsTranslator(ol, normalizedOntology,
 		ontologyManager, normalizedOntology.hasDisjointStatement(),
 		graph);
+	hasDisjunctions = normalizedOntology.hasDisjointStatement();
     }
 
     private void addAll(Set<Rule> source, Set<String> target) {
@@ -76,26 +82,6 @@ public class QLOntologyTranslator implements OntologyTranslator {
     @Override
     public Set<String> getTabledPredicates() {
 	return ruleCreatorQL.getTabledPredicates();
-    }
-
-    @Override
-    public boolean proceed(Set<String> translationContainer) {
-	boolean hasDisjunctions = normalizedOntology.hasDisjointStatement();
-	ruleCreatorQL.computeNegHeads();
-	utils.Tracer.start("ontology translation");
-	utils.Tracer.info("ruleCreatorQL.translate");
-	addAll(translate(), translationContainer);
-	utils.Tracer.stop("ontology translation", "loading");
-	utils.Tracer.start("ontology classification");
-	for (OWLEntity e : graph.getUnsatisfiableEntities())
-	    if (e instanceof OWLClass)
-		addAll(ruleCreatorQL.i1((OWLClass) e), translationContainer);
-	    else if (e instanceof OWLProperty)
-		addAll(ruleCreatorQL.i2((OWLProperty) e), translationContainer);
-	for (OWLObjectProperty p : graph.getIrreflexiveRoles())
-	    addAll(ruleCreatorQL.ir(p), translationContainer);
-	utils.Tracer.stop("ontology classification", "loading");
-	return hasDisjunctions;
     }
 
     private Set<Rule> translate() {
@@ -131,6 +117,25 @@ public class QLOntologyTranslator implements OntologyTranslator {
 			.getNamedProperty()));
 
 	return tr;
+    }
+
+    @Override
+    public void translate(Set<String> translationContainer) {
+	boolean hasDisjunctions = normalizedOntology.hasDisjointStatement();
+	ruleCreatorQL.computeNegHeads();
+	utils.Tracer.start("ontology translation");
+	utils.Tracer.info("ruleCreatorQL.translate");
+	addAll(translate(), translationContainer);
+	utils.Tracer.stop("ontology translation", "loading");
+	utils.Tracer.start("ontology classification");
+	for (OWLEntity e : graph.getUnsatisfiableEntities())
+	    if (e instanceof OWLClass)
+		addAll(ruleCreatorQL.i1((OWLClass) e), translationContainer);
+	    else if (e instanceof OWLProperty)
+		addAll(ruleCreatorQL.i2((OWLProperty) e), translationContainer);
+	for (OWLObjectProperty p : graph.getIrreflexiveRoles())
+	    addAll(ruleCreatorQL.ir(p), translationContainer);
+	utils.Tracer.stop("ontology classification", "loading");
     }
 
 }

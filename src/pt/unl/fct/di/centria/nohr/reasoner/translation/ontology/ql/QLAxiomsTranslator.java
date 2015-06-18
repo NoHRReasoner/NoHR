@@ -102,7 +102,7 @@ public class QLAxiomsTranslator {
 	return result;
     }
 
-    public Set<Rule> a2(OWLObjectPropertyAssertionAxiom propAssertion) {
+    private Set<Rule> a2(OWLObjectPropertyAssertionAxiom propAssertion) {
 	return a2((OWLObjectProperty) propAssertion.getProperty(),
 		propAssertion.getSubject(), propAssertion.getObject());
     }
@@ -409,7 +409,7 @@ public class QLAxiomsTranslator {
 	return s2(q1, q2);
     }
 
-    public Set<Rule> translateDataPropertyAssertion(
+    private Set<Rule> translateDataPropertyAssertion(
 	    OWLDataProperty dataProperty, OWLIndividual individual,
 	    OWLLiteral value) {
 	Set<Rule> result = new HashSet<Rule>();
