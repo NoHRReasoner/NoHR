@@ -14,14 +14,11 @@ import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateImpl;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.CollectionsManager;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
 
 public class HashVisitor implements Visitor {
 
-    private CollectionsManager cm;
-
-    public HashVisitor(CollectionsManager cm) {
-	this.cm = cm;
+    public HashVisitor() {
     }
 
     @Override
@@ -32,9 +29,9 @@ public class HashVisitor implements Visitor {
     @Override
     public Constant visit(Constant constant) {
 	if (constant.isNumber())
-	    return cons("c" + cm.getHashedLabel(constant.toString()));
+	    return cons(OntologyLabel.escapeAtom(constant.toString()));
 	else
-	    return cons("c" + cm.getHashedLabel(constant.asString()));
+	    return cons(OntologyLabel.escapeAtom(constant.asString()));
 
     }
 
@@ -60,7 +57,7 @@ public class HashVisitor implements Visitor {
 
     @Override
     public Predicate visit(Predicate pred) {
-	return new PredicateImpl(cm.getHashedLabel(pred.getSymbol()),
+	return new PredicateImpl(OntologyLabel.escapeAtom(pred.getSymbol()),
 		pred.getArity());
     }
 

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.ParserException;
@@ -27,7 +28,8 @@ import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.DeHashVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.HashVisitor;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.Translator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorFactory;
+import pt.unl.fct.di.centria.nohr.xsb.Rule;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
 import utils.Tracer;
 
@@ -37,7 +39,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private boolean isOntologyChanged;
 
-    private static Translator translator;
+    private static OntologyTranslatorFactory translator;
 
     private boolean hasDisjunction;
 
@@ -57,6 +59,10 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private File xsbFile;
 
+    private Set<Rule> originalTranslation;
+    private Set<Rule> doubledTranslation;
+    private Set<Rule> programTranslation;
+
     public HybridKB(OWLOntology ontology) throws IPException {
 	try {
 	    om = OWLManager.createOWLOntologyManager();
@@ -68,7 +74,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 
 	    queryProcessor = new QueryProcessor(xsbDatabase);
 
-	    translator = new Translator(ontology, xsbDatabase);
+	    translator = new OntologyTranslatorFactory(ontology, xsbDatabase);
 
 	    queryCount = 1;
 
@@ -91,7 +97,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 
 	queryProcessor = new QueryProcessor(xsbDatabase);
 
-	translator = new Translator(ontology, xsbDatabase);
+	translator = new OntologyTranslatorFactory(ontology, xsbDatabase);
 
 	queryCount = 1;
     }
@@ -126,7 +132,8 @@ public class HybridKB implements OWLOntologyChangeListener {
     public void ontologiesChanged(List<? extends OWLOntologyChange> changes)
 	    throws OWLException {
 	try {
-	    translator = new Translator(om, ontology, xsbDatabase);
+	    translator = new OntologyTranslatorFactory(om, ontology,
+		    xsbDatabase);
 	    for (final OWLOntologyChange change : changes)
 		if (change.getOntology() == ontology) {
 		    isOntologyChanged = true;
@@ -165,9 +172,6 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    isOntologyChanged = false;
 	    Rules.isRulesOntologyChanged = false;
 	    hasDisjunction = translator.isAnyDisjointWithStatement();
-	    translator.getCollectionsManager().getLabels();
-	    new Query(translator.getCollectionsManager());
-
 	} catch (final OWLOntologyCreationException e) {
 	    e.printStackTrace();
 	} catch (final OWLOntologyStorageException e) {
@@ -188,10 +192,8 @@ public class HybridKB implements OWLOntologyChangeListener {
 	Tracer.info("query: " + query.toString());
 	if (isOntologyChanged || Rules.isRulesOntologyChanged)
 	    preprocessKB();
-	final Visitor hashVisitor = new HashVisitor(
-		translator.getCollectionsManager());
-	final Visitor deHashVisitor = new DeHashVisitor(
-		translator.getCollectionsManager());
+	final Visitor hashVisitor = new HashVisitor();
+	final Visitor deHashVisitor = new DeHashVisitor();
 	Tracer.start("query" + queryCount);
 	final Collection<Answer> answers = queryProcessor.queryAll(
 		query.acept(hashVisitor), hasDisjunction);

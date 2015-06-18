@@ -30,21 +30,17 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import other.Utils;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.CollectionsManager;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
 import uk.ac.manchester.cs.owl.owlapi.OWLEquivalentClassesAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 import utils.Tracer;
 
 public class ELOntologyTranslator implements OntologyTranslator {
-    protected CollectionsManager cm;
     protected List<OWLOntology> ontologies = new ArrayList<OWLOntology>();
     protected ELAxiomsTranslator ruleCreator;
     private OWLDataFactory owlDataFactory;
 
-    public ELOntologyTranslator(CollectionsManager _cm,
-	    ELAxiomsTranslator _ruleCreator) {
-	cm = _cm;
+    public ELOntologyTranslator(ELAxiomsTranslator _ruleCreator) {
 	ruleCreator = _ruleCreator;
     }
 
@@ -65,10 +61,10 @@ public class ELOntologyTranslator implements OntologyTranslator {
     /**
      * Going throw all ontologies and preprocess them.
      */
-    protected void fillExistsOntologiesAndRules() {
+    protected boolean fillExistsOntologiesAndRules() {
 	boolean isTopClass;
+	boolean hasDisjunctions = false;
 	ClassExpressionType expressionType;
-	cm.setIsAnyDisjointStatement(false);
 
 	for (OWLOntology ont : ontologies) {
 	    for (OWLClass owlClass : ont.getClassesInSignature()) {
@@ -78,7 +74,7 @@ public class ELOntologyTranslator implements OntologyTranslator {
 		// Going into loop throw all Disjoint classes
 		for (OWLClassExpression owlClassExpression : owlClass
 			.getDisjointClasses(ont)) {
-		    cm.setIsAnyDisjointStatement(true);
+		    hasDisjunctions = true;
 		    expressionType = owlClassExpression
 			    .getClassExpressionType();
 		    if (expressionType == ClassExpressionType.OWL_CLASS
@@ -102,12 +98,37 @@ public class ELOntologyTranslator implements OntologyTranslator {
 
 	    for (OWLClassAxiom owlClassAxiom : ont.getGeneralClassAxioms())
 		if (owlClassAxiom.getAxiomType() == AxiomType.DISJOINT_CLASSES) {
-		    cm.setIsAnyDisjointStatement(true);
+		    hasDisjunctions = true;
 		    ruleCreator
-			    .writeGeneralClassAxiomsWithComplexAssertions(owlClassAxiom);
+		    .writeGeneralClassAxiomsWithComplexAssertions(owlClassAxiom);
 		}
 	}
+	return hasDisjunctions;
 
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator
+     * #getNegatedPredicates()
+     */
+    @Override
+    public Set<String> getNegatedPredicates() {
+	return new HashSet<String>();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator
+     * #getTabledPredicates()
+     */
+    @Override
+    public Set<String> getTabledPredicates() {
+	return ruleCreator.getTabledPredicates();
     }
 
     private boolean hasOwlClassExpressionAnyExists(
@@ -122,7 +143,7 @@ public class ELOntologyTranslator implements OntologyTranslator {
 	    break;
 	case OBJECT_INTERSECTION_OF:
 	    List<OWLClassExpression> operands = ((OWLObjectIntersectionOf) owlClassExpression)
-		    .getOperandsAsList();
+	    .getOperandsAsList();
 	    for (OWLClassExpression operand : operands) {
 		hasAnyExists = hasOwlClassExpressionAnyExists(operand);
 		if (hasAnyExists == true)
@@ -155,7 +176,7 @@ public class ELOntologyTranslator implements OntologyTranslator {
     /**
      * Going into loop of all classes.
      */
-     private void loopThrowAllClasses() {
+    private void loopThrowAllClasses() {
 	boolean isTopClass;
 	OWLClassExpression rightPartOfRule;
 	List<OWLClassExpression> equivalentClasses;
@@ -207,33 +228,33 @@ public class ELOntologyTranslator implements OntologyTranslator {
 	    for (OWLClassAxiom owlClassAxiom : ont.getGeneralClassAxioms()) {
 		if (owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF)
 		    ruleCreator
-			    .writeGeneralClassAxiomsSubClasses(owlClassAxiom);
+		    .writeGeneralClassAxiomsSubClasses(owlClassAxiom);
 		if (owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES)
 		    ruleCreator
-			    .writeGeneralClassAxiomsEquivClasses(owlClassAxiom);
+		    .writeGeneralClassAxiomsEquivClasses(owlClassAxiom);
 	    }
 	}
-     }
+    }
 
-     /**
-      * Loop throw all properties.
-      */
-     private void loopThrowAllProperties() {
+    /**
+     * Loop throw all properties.
+     */
+    private void loopThrowAllProperties() {
 	for (OWLOntology ont : ontologies) {
 	    for (OWLObjectProperty objectProperty : ont
 		    .getObjectPropertiesInSignature()) {
 
 		for (OWLAxiom axiom : objectProperty.getReferencingAxioms(ont))
-		     if (axiom.getAxiomType() == AxiomType.OBJECT_PROPERTY_ASSERTION)
-			 ruleCreator.writeRuleA2(axiom);
+		    if (axiom.getAxiomType() == AxiomType.OBJECT_PROPERTY_ASSERTION)
+			ruleCreator.writeRuleA2(axiom);
 		for (OWLObjectPropertyExpression objectPropertyExpression : objectProperty
 			.getSubProperties(ont))
-		     ruleCreator.writeRuleR1(objectPropertyExpression,
+		    ruleCreator.writeRuleR1(objectPropertyExpression,
 			    objectProperty);
 	    }
 	    for (OWLAxiom axiom : ont
 		    .getAxioms(AxiomType.SUB_PROPERTY_CHAIN_OF))
-		 ruleCreator.writeRuleR2(axiom);
+		ruleCreator.writeRuleR2(axiom);
 
 	    /**
 	     * Translate all data property assertions by looping through all
@@ -243,20 +264,20 @@ public class ELOntologyTranslator implements OntologyTranslator {
 	     */
 	    for (OWLNamedIndividual individual : ont
 		    .getIndividualsInSignature())
-		 for (OWLDataProperty dataProperty : ont
+		for (OWLDataProperty dataProperty : ont
 			.getDataPropertiesInSignature())
-		     for (OWLLiteral literal : individual.getDataPropertyValues(
+		    for (OWLLiteral literal : individual.getDataPropertyValues(
 			    dataProperty, ont))
-			 ruleCreator.translateDataPropertyAssertion(
+			ruleCreator.translateDataPropertyAssertion(
 				dataProperty, individual, literal);
 	}
-     }
+    }
 
     public OWLOntology normalizeOntology(OWLOntology ontology,
 	    OWLOntologyManager owlOntologyManager)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException {
+		    throws OWLOntologyCreationException, OWLOntologyStorageException {
 	if (owlOntologyManager == null)
-	     owlOntologyManager = OWLManager.createOWLOntologyManager();
+	    owlOntologyManager = OWLManager.createOWLOntologyManager();
 	Set<OWLOntology> _onts = new HashSet<OWLOntology>();
 	_onts.add(ontology);
 	OWLOntology owlOntology = owlOntologyManager.createOntology(
@@ -269,10 +290,10 @@ public class ELOntologyTranslator implements OntologyTranslator {
 	for (OWLClassAxiom owlClassAxiom : owlOntology.getGeneralClassAxioms()) {
 	    axiomsToBeAdded = new HashSet<OWLAxiom>();
 	    if (owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF)
-		 axiomsToBeAdded.addAll(createNormalizedAxioms(
+		axiomsToBeAdded.addAll(createNormalizedAxioms(
 			((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass(),
 			((OWLSubClassOfAxiomImpl) owlClassAxiom)
-				.getSuperClass()));
+			.getSuperClass()));
 	    if (owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES) {
 		equivalentClassExpressions = ((OWLEquivalentClassesAxiomImpl) owlClassAxiom)
 			.getClassExpressionsAsList();
@@ -287,24 +308,29 @@ public class ELOntologyTranslator implements OntologyTranslator {
 	    }
 	    if (axiomsToBeAdded.size() > 0) {
 		for (OWLAxiom axiom : axiomsToBeAdded)
-		     owlOntologyManager.addAxiom(owlOntology, axiom);
+		    owlOntologyManager.addAxiom(owlOntology, axiom);
 		owlOntologyManager.removeAxiom(owlOntology, owlClassAxiom);
 	    }
 	}
 	return owlOntology;
-     }
+    }
 
-     /**
-      * Main function.
-      *
-      * @throws org.semanticweb.owlapi.expression.ParserException
+    /**
+     * Main function.
+     *
+     * @throws org.semanticweb.owlapi.expression.ParserException
      *             the parser exception
-      */
-     public void proceed() throws ParserException {
+     */
+    @Override
+    public boolean proceed(Set<String> translationContainer)
+	    throws ParserException {
+
+	ruleCreator.setTranslationContainer(translationContainer);
+
 	Tracer.start("ontology translation");
 	Date date1 = new Date();
 	// setProgressLabelText("Rule translation");
-	fillExistsOntologiesAndRules();
+	boolean hasDisjunctions = fillExistsOntologiesAndRules();
 	// Utils.getDiffTime(date1, "Preprocessing DisjointWith axioms: ");
 	date1 = new Date();
 	loopThrowAllClasses();
@@ -313,9 +339,11 @@ public class ELOntologyTranslator implements OntologyTranslator {
 	loopThrowAllProperties();
 	// Utils.getDiffTime(date1, "Processing properties: ");
 	Tracer.stop("ontology translation", "loading");
-     }
 
-     public void setOntologiesToProceed(List<OWLOntology> _ontologies) {
+	return hasDisjunctions;
+    }
+
+    public void setOntologiesToProceed(List<OWLOntology> _ontologies) {
 	ontologies = _ontologies;
-     }
+    }
 }

@@ -10,10 +10,10 @@ import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -38,10 +38,8 @@ import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import other.Config;
-import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.reasoner.Query;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.CollectionsManager;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
@@ -49,7 +47,6 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.ELAxiomsTrans
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.ELOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.INormalizedOntology;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.Normalizer;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
 import utils.Tracer;
@@ -59,7 +56,7 @@ import utils.Tracer;
 /**
  * The Class local.translate.Translate. The entrance to core of magic.
  */
-public class Translator {
+public class OntologyTranslatorFactory {
 
     private INormalizedOntology normalizedOntology;
 
@@ -83,9 +80,6 @@ public class Translator {
 
     private XSBDatabase xsbDatabase;
 
-    /** The collections manager. */
-    public static CollectionsManager collectionsManager;
-
     /** The prolog commands. */
     private final List<String> prologCommands = Arrays.asList(
 	    ":- abolish_all_tables.", ":- set_prolog_flag(unknown,fail).");
@@ -107,9 +101,6 @@ public class Translator {
     /** The rule translator. */
     private RuleTranslator ruleTranslator;
 
-    /** The cm. */
-    private CollectionsManager cm;
-
     /** The query. */
     private Query query;
     /**
@@ -117,21 +108,25 @@ public class Translator {
      */
     private OntologyTranslator ontologyProceeder;
 
-    private Collection<Rule> translationContainer;
-
     private boolean isOwl2elProfile;
 
     private boolean isOwl2qlProfile;
 
-    public Translator(OWLOntology owlOntology, XSBDatabase xsbDatabase)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile {
+    private Set<String> translation;
+
+    private Set<String> rules;
+
+    private boolean hasDisjunctions;
+
+    private Set<String> negatedPredicates;
+
+    public OntologyTranslatorFactory(OWLOntology owlOntology,
+	    XSBDatabase xsbDatabase) throws OWLOntologyCreationException,
+	    OWLOntologyStorageException, UnsupportedOWLProfile {
 	this.xsbDatabase = xsbDatabase;
 	ontologyManager = OWLManager.createOWLOntologyManager();
 	ontology = owlOntology;
-	// checkOwlProfile();
-	// initCollections();
-	// initELK();
+	ruleTranslator = new RuleTranslator();
     }
 
     /**
@@ -149,18 +144,15 @@ public class Translator {
      *             the clone not supported exception
      * @throws UnsupportedOWLProfile
      */
-    public Translator(OWLOntologyManager owlModelManager, OWLOntology ontology,
-	    XSBDatabase xsbDatabase) throws IOException,
+    public OntologyTranslatorFactory(OWLOntologyManager owlModelManager,
+	    OWLOntology ontology, XSBDatabase xsbDatabase) throws IOException,
 	    OWLOntologyCreationException, OWLOntologyStorageException,
 	    CloneNotSupportedException, UnsupportedOWLProfile {
 	ontologyManager = owlModelManager;
 	this.xsbDatabase = xsbDatabase;
 	this.ontology = ontology;
 	tempDir = System.getProperty(tempDirProp);
-	// checkOwlProfile();
-	// initCollections();
-	// if (getTranslationAlgorithm() == TranslationAlgorithm.EL)
-	// getInferredDataFromReasoner(owlReasoner);
+	ruleTranslator = new RuleTranslator();
     }
 
     /**
@@ -176,8 +168,9 @@ public class Translator {
      *             the oWL ontology storage exception
      * @throws UnsupportedOWLProfile
      */
-    public Translator(String filePath) throws OWLOntologyCreationException,
-	    IOException, OWLOntologyStorageException, UnsupportedOWLProfile {
+    public OntologyTranslatorFactory(String filePath)
+	    throws OWLOntologyCreationException, IOException,
+	    OWLOntologyStorageException, UnsupportedOWLProfile {
 	/** Initializing a OntologyManager */
 	// Date dateStart = new Date();
 	ontologyManager = OWLManager.createOWLOntologyManager();
@@ -187,10 +180,7 @@ public class Translator {
 	    ontologyFile.createNewFile();
 	ontology = ontologyManager
 		.loadOntologyFromOntologyDocument(ontologyFile);
-	// Utils.getDiffTime(dateStart, "Initializing is done, it took:");
-	// checkOwlProfile();
-	// initCollections();
-	// initELK();
+	ruleTranslator = new RuleTranslator();
     }
 
     /**
@@ -202,10 +192,11 @@ public class Translator {
      *             the exception
      */
     public void appendRules(ArrayList<String> _rules) throws Exception {
-	cm.clearRules();
-	ruleTranslator = new RuleTranslator(cm);
+	rules = new HashSet<String>();
+	ruleTranslator.reset();
 	for (String rule : _rules)
-	    ruleTranslator.proceedRule(rule);
+	    rules.addAll(ruleTranslator.proceedRule(rule, hasDisjunctions,
+		    ontologyProceeder.getNegatedPredicates()));
     }
 
     /**
@@ -217,7 +208,8 @@ public class Translator {
      *             the exception
      */
     public void appendRules(String filePath) throws Exception {
-	ruleTranslator = new RuleTranslator(cm);
+	ruleTranslator.reset();
+	rules = new HashSet<String>();
 	File rules = new File(filePath);
 	if (rules != null) {
 	    FileInputStream fstream = new FileInputStream(rules);
@@ -227,7 +219,9 @@ public class Translator {
 	    // Read File Line By Line
 	    while ((strLine = br.readLine()) != null)
 		if (strLine.length() > 0)
-		    ruleTranslator.proceedRule(strLine);
+		    this.rules.addAll(ruleTranslator.proceedRule(strLine,
+			    hasDisjunctions,
+			    ontologyProceeder.getNegatedPredicates()));
 	    in.close();
 	}
     }
@@ -267,8 +261,6 @@ public class Translator {
     public void clear() {
 	// owlClasses = new HashSet<OWLClass>();
 	// objectProperties = new HashSet<OWLObjectProperty>();
-	if (cm != null)
-	    cm.clear();
 	if (reasoner != null)
 	    reasoner.dispose();
     }
@@ -286,24 +278,20 @@ public class Translator {
 		.toAbsolutePath().toFile();
 	FileWriter writer = new FileWriter(file);
 	HashSet<String> tabled = new HashSet<String>();
-	tabled.addAll(cm.getAllTabledPredicateOntology());
-	tabled.addAll(cm.getAllTabledPredicateRule());
+	tabled.addAll(ontologyProceeder.getTabledPredicates());
+	tabled.addAll(ruleTranslator.getTabledPredicates());
 	for (String str : prologCommands)
 	    writer.write(str + "\n");
 	for (String str : tabled)
 	    writer.write(":- table " + str + ".\n");
-	for (String str : cm.getTranslatedOntologies())
-	    writer.write(str + "\n");
-	for (String str : cm.getTranslatedRules())
+	for (String rule : translation)
+	    writer.write(rule + "\n");
+	for (String str : rules)
 	    writer.write(str + "\n");
 	writer.close();
 
 	// Utils.getDiffTime(dateStart, "Writing XSB file: ");
 	return file;
-    }
-
-    public CollectionsManager getCollectionsManager() {
-	return collectionsManager;
     }
 
     /**
@@ -368,17 +356,6 @@ public class Translator {
 
     }
 
-    /**
-     * Gets the label by hash.
-     *
-     * @param hash
-     *            the hash
-     * @return the label by hash
-     */
-    public String getLabelByHash(String hash) {
-	return cm.getLabelByHash(hash);
-    }
-
     public TranslationAlgorithm getTranslationAlgorithm() {
 	if (Config.translationAlgorithm != null)
 	    return Config.translationAlgorithm;
@@ -396,27 +373,24 @@ public class Translator {
 	    OWLOntologyStorageException {
 	_ontologyLabel = ontologyManager.getOWLDataFactory()
 		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
-	cm = new CollectionsManager();
-	collectionsManager = cm;
-	ontologyLabel = new OntologyLabel(ontology, _ontologyLabel, cm);
-	query = new Query(cm);
+	ontologyLabel = new OntologyLabel(ontology, _ontologyLabel);
 	switch (getTranslationAlgorithm()) {
 	case DL_LITE_R:
 	    utils.Tracer.start("ontology normalization");
 	    normalizedOntology = new Normalizer(ontology);
 	    utils.Tracer.stop("ontology normalization", "loading");
-	    QLAxiomsTranslator ruleCreatorQL = new QLAxiomsTranslator(cm,
-		    ontologyLabel, normalizedOntology, ontologyManager);
-	    ontologyProceeder = new QLOntologyTranslator(cm, ruleCreatorQL,
-		    normalizedOntology, ontologyManager.getOWLDataFactory(),
-		    ontologyManager);
+	    ontologyProceeder = new QLOntologyTranslator(normalizedOntology,
+		    ontologyManager.getOWLDataFactory(), ontologyManager,
+		    ontologyLabel);
 	    break;
 	case EL:
-	    ELAxiomsTranslator ruleCreator = new ELAxiomsTranslator(cm,
-		    ontologyLabel);
-	    ontologyProceeder = new ELOntologyTranslator(cm, ruleCreator);
+	    ELAxiomsTranslator ruleCreator = new ELAxiomsTranslator(
+		    ontologyLabel, hasDisjunctions);
+	    ontologyProceeder = new ELOntologyTranslator(ruleCreator);
 	    checkAndPartiallyNormalizeOntology();
 	}
+	query = new Query(ontologyProceeder.getTabledPredicates(),
+		ruleTranslator.getTabledPredicates());
     }
 
     /**
@@ -447,58 +421,16 @@ public class Translator {
      * @return true, if is any disjoint with statement
      */
     public boolean isAnyDisjointWithStatement() {
-	return cm.isAnyDisjointStatement();
-    }
-
-    /**
-     * Prepare for translating.
-     *
-     * @return true, if successful
-     * @throws OWLOntologyCreationException
-     *             the oWL ontology creation exception
-     * @throws OWLOntologyStorageException
-     *             the oWL ontology storage exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     * @throws UnsupportedOWLProfile
-     */
-    public boolean PrepareForTranslating() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, IOException, UnsupportedOWLProfile {
-	checkOwlProfile();
-	initELK();
-	// TODO normalize and initialize graph
-	cm.clearOntology();
-	return true;
-    }
-
-    /**
-     * Prepare query.
-     *
-     * @param q
-     *            the q
-     * @return the string
-     */
-    public String prepareQuery(String q) {
-	return query.prepareQuery(q, isAnyDisjointWithStatement());
+	return hasDisjunctions;
     }
 
     public void proceed() throws ParserException, UnsupportedOWLProfile,
-	    OWLOntologyCreationException, OWLOntologyStorageException {
+    OWLOntologyCreationException, OWLOntologyStorageException {
 	checkOwlProfile();
 	initCollections();
 	if (getTranslationAlgorithm() == TranslationAlgorithm.EL)
 	    initELK();
-	cm.clearOntology();
-	ontologyProceeder.proceed();
-    }
-
-    /**
-     * Sets the result file name.
-     *
-     * @param path
-     *            the new result file name
-     */
-    public void setResultFileName(String path) {
-	resultFileName = path;
+	translation = new HashSet<String>();
+	hasDisjunctions = ontologyProceeder.proceed(translation);
     }
 }

@@ -9,6 +9,4 @@ package pt.unl.fct.di.centria.nohr.model;
  */
 public interface AnswersIterable extends Iterable<Answer> {
 
-    public void cancel();
-
 }
