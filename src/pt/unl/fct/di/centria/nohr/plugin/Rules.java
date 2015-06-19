@@ -36,7 +36,7 @@ public class Rules {
 
 	    private void warn() {
 		isRulesChanged = true;
-		isRulesOntologyChanged = true;
+		hasChanges = true;
 		_currentTextArea = textarea;
 	    }
 	});
@@ -53,7 +53,7 @@ public class Rules {
 
     public static void addRule(String rule) {
 	isRulesChanged = true;
-	isRulesOntologyChanged = true;
+	hasChanges = true;
 	_rules.add(rule);
 	for (JTextArea textArea : _listners)
 	    textArea.append(rule + Config.NL);
@@ -96,7 +96,7 @@ public class Rules {
     public static void recollectRules(boolean isRePrint) {
 	if (isRulesChanged && _currentTextArea != null) {
 	    isRulesChanged = false;
-	    isRulesOntologyChanged = true;
+	    hasChanges = true;
 	    StringReader sr = new StringReader(_currentTextArea.getText());
 	    BufferedReader br = new BufferedReader(sr);
 	    String nextLine = "";
@@ -120,7 +120,7 @@ public class Rules {
     public static void resetRules() {
 	if (!_rules.isEmpty()) {
 	    isRulesChanged = true;
-	    isRulesOntologyChanged = true;
+	    hasChanges = true;
 	}
 	_rules = new ArrayList<String>();
     }
@@ -135,7 +135,7 @@ public class Rules {
 
     public static boolean isRulesChanged;
 
-    public static boolean isRulesOntologyChanged;
+    public static boolean hasChanges;
 
     private static JTextArea _currentTextArea;
 

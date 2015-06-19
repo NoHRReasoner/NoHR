@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,141 +22,96 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AbstractOntologyTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.DeHashVisitor;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.HashVisitor;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.UnescapeVisitor;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.EscapeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.RuleTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
 import utils.Tracer;
 
-import com.declarativa.interprolog.util.IPException;
-
 public class HybridKB implements OWLOntologyChangeListener {
 
-    private boolean isOntologyChanged;
+    private static final String TRANSLATION_FILE_NAME = "nohrtr.P";
 
-    private static OntologyTranslator translator;
+    private OntologyTranslator ontologyTranslator;
 
-    private boolean hasDisjunction;
+    private boolean hasChanges;
 
-    private OWLOntologyManager ontologyManager;
+    private boolean hasDisjunctions;
 
-    private OWLOntology ontology;
+    private final OWLOntology ontology;
+
+    private final OWLOntologyManager ontologyManager;
 
     private int queryCount;
 
-    private QueryProcessor queryProcessor;
+    private final QueryProcessor queryProcessor;
 
-    private XSBDatabase xsbDatabase;
+    private Set<String> rulesTranslation;
 
-    public OWLReasoner reasoner;
+    private final RuleTranslator ruleTranslator;
 
-    private final ArrayList<String> variablesList = new ArrayList<String>();
+    private Set<String> ontologyTranslation;
 
-    private File xsbFile;
+    private final XSBDatabase xsbDatabase;
 
-    private Set<String> translation;
-
-    private Set<String> rules;
-
-    private RuleTranslator ruleTranslator;
-
-    private final List<String> prologCommands = Arrays.asList(
-	    ":- abolish_all_tables.", ":- set_prolog_flag(unknown,fail).");
-
-    private String resultFileName = "nohrtr.P";
-
-    public HybridKB(OWLOntology ontology) throws OWLOntologyCreationException,
-    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-    CloneNotSupportedException {
+    public HybridKB(final OWLOntology ontology)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException {
 	this(OWLManager.createOWLOntologyManager(), ontology);
     }
 
-    public HybridKB(OWLOntologyManager ontologyManager, OWLOntology ontology)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException {
-	this.ontologyManager = ontologyManager;
+    public HybridKB(final OWLOntologyManager ontologyManager,
+	    final OWLOntology ontology) throws OWLOntologyCreationException,
+	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException {
+	hasChanges = true;
 	this.ontology = ontology;
-	xsbDatabase = xsbDatabase();
-	isOntologyChanged = true;
-	translator = AbstractOntologyTranslator.createOntologyTranslator(
-		ontologyManager, ontology);
-	ruleTranslator = new RuleTranslator();
-	queryProcessor = new QueryProcessor(xsbDatabase);
-	this.ontologyManager.addOntologyChangeListener(this);
-	Rules.isRulesOntologyChanged = true;
+	this.ontologyManager = ontologyManager;
+	ontologyTranslation = new HashSet<String>();
+	ontologyTranslator = AbstractOntologyTranslator
+		.createOntologyTranslator(ontologyManager, ontology);
 	queryCount = 1;
+	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(
+		System.getenv("XSB_BIN_DIRECTORY"), "xsb"));
+	queryProcessor = new QueryProcessor(xsbDatabase);
+	rulesTranslation = new HashSet<String>();
+	ruleTranslator = new RuleTranslator();
+	this.ontologyManager.addOntologyChangeListener(this);
+	Rules.hasChanges = true;
     }
 
-    public void appendRules(ArrayList<String> _rules) throws Exception {
-	rules = new HashSet<String>();
-	ruleTranslator.reset();
-	for (String rule : _rules)
-	    rules.addAll(ruleTranslator.proceedRule(rule,
-		    translator.hasDisjunctions(),
-		    translator.getNegatedPredicates()));
-    }
-
-    public File Finish() throws IOException {
-	File file = FileSystems.getDefault().getPath(resultFileName)
+    private File generateTranslationFile() throws IOException {
+	File file = FileSystems.getDefault().getPath(TRANSLATION_FILE_NAME)
 		.toAbsolutePath().toFile();
 	FileWriter writer = new FileWriter(file);
-	HashSet<String> tabled = new HashSet<String>();
-	tabled.addAll(translator.getTabledPredicates());
-	tabled.addAll(ruleTranslator.getTabledPredicates());
-	for (String str : prologCommands)
-	    writer.write(str + "\n");
-	for (String str : tabled)
-	    writer.write(":- table " + str + ".\n");
-	for (String rule : translation)
+	for (String predicate : ontologyTranslator.getTabledPredicates())
+	    writer.write(":- table " + predicate + ".\n");
+	for (String predicate : ruleTranslator.getTabledPredicates())
+	    writer.write(":- table " + predicate + ".\n");
+	for (String rule : ontologyTranslation)
 	    writer.write(rule + "\n");
-	for (String str : rules)
-	    writer.write(str + "\n");
+	for (String rule : rulesTranslation)
+	    writer.write(rule + "\n");
 	writer.close();
 	return file;
-    }
-
-    // TODO remove
-    private String generateDetermenisticGoal(String command) {
-	String detGoal = "findall(myTuple(TV";
-	if (variablesList.size() > 0) {
-	    detGoal += ", ";
-	    detGoal += variablesList.toString().replace("[", "")
-		    .replace("]", "");
-	}
-	// detGoal+="), call_tv(("+command+"), TV), List), buildTermModel(List,TM)";
-	detGoal += "), call_tv((" + command
-		+ "), TV), List), buildInitiallyFlatTermModel(List,TM)";
-	return detGoal;
-    }
-
-    private void loadRulesInXSB(File file) throws IPException, Exception {
-	utils.Tracer.start("xsb loading");
-	xsbDatabase.clear();
-	// boolean loaded =
-	xsbDatabase.load(file);
-	// if (!loaded)
-	// throw new IPException("unsuccessful XSB loading");
-	// initQuery???
-	xsbDatabase.deterministicGoal(generateDetermenisticGoal("initQuery"));
-	utils.Tracer.stop("xsb loading", "loading");
     }
 
     @Override
     public void ontologiesChanged(List<? extends OWLOntologyChange> changes)
 	    throws OWLException {
 	try {
-	    translator = AbstractOntologyTranslator.createOntologyTranslator(
-		    ontologyManager, ontology);
+	    ontologyTranslator = AbstractOntologyTranslator
+		    .createOntologyTranslator(ontologyManager, ontology);
 	    for (final OWLOntologyChange change : changes)
 		if (change.getOntology() == ontology) {
-		    isOntologyChanged = true;
+		    hasChanges = true;
 		    Rules.dispose();
 		    break;
 		}
@@ -168,65 +121,52 @@ public class HybridKB implements OWLOntologyChangeListener {
 	}
     }
 
-    private void preprocessKB() throws Exception {
-	try {
-	    final boolean hasDisjunctions = hasDisjunction;
-	    utils.Tracer.start("translator initialization");
-	    utils.Tracer.stop("translator initialization", "loading");
-	    if (isOntologyChanged) {
-		utils.Tracer.start("ontology proceeding");
-		translation = new HashSet<String>();
-		translator.translate(translation);
-		utils.Tracer.stop("ontology proceeding", "loading");
-	    }
-	    if (Rules.isRulesOntologyChanged
-		    || translator.hasDisjunctions() != hasDisjunctions) {
-		utils.Tracer.start("rules parsing");
-		appendRules(Rules.getRules());
-		utils.Tracer.stop("rules parsing", "loading");
-		Rules.isRulesOntologyChanged = false;
-	    }
-	    utils.Tracer.start("file writing");
-	    xsbFile = Finish();
-	    utils.Tracer.stop("file writing", "loading");
-	    loadRulesInXSB(xsbFile);
-	    isOntologyChanged = false;
-	    Rules.isRulesOntologyChanged = false;
-	    hasDisjunction = translator.hasDisjunctions();
-	} catch (final OWLOntologyCreationException e) {
-	    e.printStackTrace();
-	} catch (final OWLOntologyStorageException e) {
-	    e.printStackTrace();
-	} catch (final IOException e) {
-	    e.printStackTrace();
-	} catch (final ParserException e) {
-	    e.printStackTrace();
-	} catch (final Exception e) {
-	    e.printStackTrace();
-	} finally {
-
+    private void preprocess() throws OWLOntologyCreationException,
+	    OWLOntologyStorageException, ParserException,
+	    UnsupportedOWLProfile, IOException {
+	if (hasChanges) {
+	    utils.Tracer.start("ontology proceeding");
+	    ontologyTranslation = new HashSet<String>();
+	    ontologyTranslator.translate(ontologyTranslation);
+	    utils.Tracer.stop("ontology proceeding", "loading");
 	}
+	if (Rules.hasChanges
+		|| ontologyTranslator.hasDisjunctions() != hasDisjunctions) {
+	    utils.Tracer.start("rules parsing");
+	    rulesTranslation = new HashSet<String>();
+	    ruleTranslator.reset();
+	    for (String rule : Rules.getRules())
+		rulesTranslation.addAll(ruleTranslator.proceedRule(rule,
+			ontologyTranslator.hasDisjunctions(),
+			ontologyTranslator.getNegatedPredicates()));
+	    utils.Tracer.stop("rules parsing", "loading");
+	    Rules.hasChanges = false;
+	}
+	utils.Tracer.start("file writing");
+	File xsbFile = generateTranslationFile();
+	utils.Tracer.stop("file writing", "loading");
+	utils.Tracer.start("xsb loading");
+	xsbDatabase.clear();
+	xsbDatabase.load(xsbFile);
+	utils.Tracer.stop("xsb loading", "loading");
+	hasChanges = false;
+	hasDisjunctions = ontologyTranslator.hasDisjunctions();
     }
 
-    public Collection<Answer> queryAll(
-	    pt.unl.fct.di.centria.nohr.model.Query query) throws Exception {
-	Tracer.info("query: " + query.toString());
-	if (isOntologyChanged || Rules.isRulesOntologyChanged)
-	    preprocessKB();
-	final Visitor hashVisitor = new HashVisitor();
-	final Visitor deHashVisitor = new DeHashVisitor();
+    public Collection<Answer> queryAll(Query query)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    ParserException, UnsupportedOWLProfile, IOException {
+	if (hasChanges || Rules.hasChanges)
+	    preprocess();
+	final Visitor escapeVisitor = new EscapeVisitor();
+	final Visitor unescapeVisitor = new UnescapeVisitor();
 	Tracer.start("query" + queryCount);
 	final Collection<Answer> answers = queryProcessor.queryAll(
-		query.acept(hashVisitor), hasDisjunction);
+		query.acept(escapeVisitor), hasDisjunctions);
 	Tracer.stop("query" + queryCount++, "queries");
-	final Collection<Answer> res = new LinkedList<Answer>();
+	final Collection<Answer> result = new LinkedList<Answer>();
 	for (final Answer ans : answers)
-	    res.add(ans.acept(deHashVisitor));
-	return res;
-    }
-
-    private XSBDatabase xsbDatabase() {
-	return new XSBDatabase(FileSystems.getDefault().getPath(
-		System.getenv("XSB_BIN_DIRECTORY"), "xsb"));
+	    result.add(ans.acept(unescapeVisitor));
+	return result;
     }
 }

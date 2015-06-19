@@ -66,7 +66,7 @@ public class RuleTranslator {
      *             the exception
      */
     public Set<String> proceedRule(String rule, boolean hasDisjunctions,
-	    Set<String> negatedPredicates) throws Exception {
+	    Set<String> negatedPredicates) {
 	rules = new HashSet<String>();
 	if (rule.startsWith(Config.eq))
 	    return rules;

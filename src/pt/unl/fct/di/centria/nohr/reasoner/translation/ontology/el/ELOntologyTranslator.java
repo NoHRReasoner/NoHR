@@ -191,7 +191,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 	return hasAnyExists;
     }
 
-    public boolean isOntologyNeedToBeNormalized(OWLOntology ontology) {
+    private boolean isOntologyNeedToBeNormalized(OWLOntology ontology) {
 	boolean isOntologyNeedToBeNormalized = false;
 	for (OWLClassAxiom owlClassAxiom : ontology.getGeneralClassAxioms()) {
 	    if (owlClassAxiom.getAxiomType() == AxiomType.SUBCLASS_OF) {
@@ -298,7 +298,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 			    individual, literal);
     }
 
-    public OWLOntology normalizeOntology(OWLOntology ontology,
+    private OWLOntology normalizeOntology(OWLOntology ontology,
 	    OWLOntologyManager owlOntologyManager)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException {
 	if (owlOntologyManager == null)

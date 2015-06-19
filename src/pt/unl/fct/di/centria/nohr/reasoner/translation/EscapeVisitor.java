@@ -16,9 +16,9 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
 
-public class DeHashVisitor implements Visitor {
+public class EscapeVisitor implements Visitor {
 
-    public DeHashVisitor() {
+    public EscapeVisitor() {
     }
 
     @Override
@@ -29,9 +29,10 @@ public class DeHashVisitor implements Visitor {
     @Override
     public Constant visit(Constant constant) {
 	if (constant.isNumber())
-	    return cons(OntologyLabel.unescapeAtom(constant.toString()));
+	    return cons(OntologyLabel.escapeAtom(constant.toString()));
 	else
-	    return cons(OntologyLabel.unescapeAtom(constant.asString()));
+	    return cons(OntologyLabel.escapeAtom(constant.asString()));
+
     }
 
     @Override
@@ -56,7 +57,7 @@ public class DeHashVisitor implements Visitor {
 
     @Override
     public Predicate visit(Predicate pred) {
-	return new PredicateImpl(OntologyLabel.unescapeAtom(pred.getSymbol()),
+	return new PredicateImpl(OntologyLabel.escapeAtom(pred.getSymbol()),
 		pred.getArity());
     }
 

@@ -5,6 +5,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,6 +56,9 @@ public class XSBDatabase implements Collection<Rule> {
     private boolean isEngineStarted = false;
 
     private SolutionIterator lastSolutionsIterator;
+
+    private final List<String> prologCommands = Arrays.asList(
+	    "abolish_all_tables", "set_prolog_flag(unknown,fail)");
 
     /**
      * Instantiates a new query engine
@@ -109,7 +113,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#addAll(java.util.Collection)
      */
     @Override
@@ -184,7 +188,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#contains(java.lang.Object)
      */
     @Override
@@ -199,7 +203,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
     @Override
@@ -273,7 +277,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#isEmpty()
      */
     @Override
@@ -292,7 +296,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#iterator()
      */
     @Override
@@ -433,7 +437,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#remove(java.lang.Object)
      */
     @Override
@@ -452,7 +456,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
     @Override
@@ -465,7 +469,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
     @Override
@@ -482,7 +486,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#size()
      */
     @Override
@@ -515,6 +519,8 @@ public class XSBDatabase implements Collection<Rule> {
 	// _engine.addPrologOutputListener(this);
 	printLog("Engine started" + Config.NL);
 
+	for (String command : prologCommands)
+	    engine.deterministicGoal(command);
 	engine.deterministicGoal("assert((detGoal(Vars,G,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
 	engine.deterministicGoal("assert((detGoal(Vars,G,TV,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
 	engine.deterministicGoal("assert((nonDetGoal(Vars,G,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
@@ -528,7 +534,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.util.Collection#toArray()
      */
     @Override
@@ -538,7 +544,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)format
-     *
+     * 
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
     @Override
