@@ -18,7 +18,7 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import other.Config;
 import other.Utils;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.EquivalentClass;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import uk.ac.manchester.cs.owl.owlapi.OWLDisjointClassesAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLEquivalentClassesAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectIntersectionOfImpl;
@@ -30,7 +30,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 public class ELAxiomsTranslator {
 
     /** The ontology label. */
-    protected final OntologyLabel ontologyLabel;
+    protected final OntologyLabeler ontologyLabel;
     /** The current rule. */
     private String currentRule;
 
@@ -49,7 +49,7 @@ public class ELAxiomsTranslator {
      * @param ol
      *            the ontology label
      */
-    public ELAxiomsTranslator(OntologyLabel ol, boolean hasDisjunctions) {
+    public ELAxiomsTranslator(OntologyLabeler ol, boolean hasDisjunctions) {
 	ontologyLabel = ol;
 	this.hasDisjunctions = hasDisjunctions;
 	negatedPredicates = new HashSet<String>();
@@ -120,7 +120,7 @@ public class ELAxiomsTranslator {
 	    OWLIndividual individual, OWLLiteral value) {
 	String Predicate = ontologyLabel.getLabel(dataProperty, 1);
 	String Individual = ontologyLabel.getLabel(individual, 1);
-	String Value = OntologyLabel.escapeAtom(value.getLiteral());
+	String Value = OntologyLabeler.escapeAtom(value.getLiteral());
 	addRule("a" + Predicate + "(" + Individual + "," + Value + ").");
 	tabledPredicates.add("a" + Predicate + "/2");
 	if (hasDisjunctions) {

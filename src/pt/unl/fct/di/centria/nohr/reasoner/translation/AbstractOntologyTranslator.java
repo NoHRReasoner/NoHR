@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import other.Config;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.ELOntologyTranslator;
@@ -31,7 +31,7 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 	OWLAnnotationProperty labelAnnotation = ontologyManager
 		.getOWLDataFactory().getOWLAnnotationProperty(
 			OWLRDFVocabulary.RDFS_LABEL.getIRI());
-	OntologyLabel ontologyLabel = new OntologyLabel(ontology,
+	OntologyLabeler ontologyLabel = new OntologyLabeler(ontology,
 		labelAnnotation);
 	switch (getTranslationAlgorithm(ontology)) {
 	case DL_LITE_R:

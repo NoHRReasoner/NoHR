@@ -6,7 +6,6 @@ import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.ListTermImpl;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.centria.nohr.model.PositiveLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
@@ -14,7 +13,7 @@ import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateImpl;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 
 public class EscapeVisitor implements Visitor {
 
@@ -29,9 +28,9 @@ public class EscapeVisitor implements Visitor {
     @Override
     public Constant visit(Constant constant) {
 	if (constant.isNumber())
-	    return cons(OntologyLabel.escapeAtom(constant.toString()));
+	    return cons(OntologyLabeler.escapeAtom(constant.toString()));
 	else
-	    return cons(OntologyLabel.escapeAtom(constant.asString()));
+	    return cons(OntologyLabeler.escapeAtom(constant.asString()));
 
     }
 
@@ -51,13 +50,8 @@ public class EscapeVisitor implements Visitor {
     }
 
     @Override
-    public PositiveLiteral visit(PositiveLiteral literal) {
-	return literal.acept(this);
-    }
-
-    @Override
     public Predicate visit(Predicate pred) {
-	return new PredicateImpl(OntologyLabel.escapeAtom(pred.getSymbol()),
+	return new PredicateImpl(OntologyLabeler.escapeAtom(pred.getSymbol()),
 		pred.getArity());
     }
 

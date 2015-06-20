@@ -14,7 +14,7 @@ public interface Rule {
 
     public List<Literal> getBody();
 
-    public PositiveLiteral getHead();
+    public Atom getHead();
 
     public Set<Predicate> getPredicates();
 

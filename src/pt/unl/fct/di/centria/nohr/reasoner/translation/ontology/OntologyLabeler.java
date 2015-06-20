@@ -28,7 +28,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
 /**
  * The Class OntologyLabel. Parsing the properties to get label
  */
-public class OntologyLabel {
+public class OntologyLabeler {
     public static String escapeAtom(String atom) {
 	return atom.replaceAll("'", "''");
     }
@@ -55,7 +55,7 @@ public class OntologyLabel {
      * @param manager
      *            the manager
      */
-    public OntologyLabel(OWLOntology ont,
+    public OntologyLabeler(OWLOntology ont,
 	    OWLAnnotationProperty annotationProperty) {
 	ontology = ont;
 	ontologyLabel = annotationProperty;

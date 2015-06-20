@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import other.Utils;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypes;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.EncodeVisitor;
 
 public class QueryImpl implements Query {
@@ -73,7 +73,7 @@ public class QueryImpl implements Query {
 	return new QueryImpl(lits, args);
     }
 
-    private Query encode(PredicateTypes predicateType) {
+    private Query encode(PredicateType predicateType) {
 	Visitor encoder = new EncodeVisitor(predicateType);
 	return acept(encoder);
     }
@@ -112,7 +112,7 @@ public class QueryImpl implements Query {
      */
     @Override
     public Query getDouble() {
-	return encode(PredicateTypes.DOUBLED);
+	return encode(PredicateType.DOUBLE);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class QueryImpl implements Query {
      */
     @Override
     public Query getOriginal() {
-	return encode(PredicateTypes.ORIGINAL);
+	return encode(PredicateType.ORIGINAL);
     }
 
     @Override

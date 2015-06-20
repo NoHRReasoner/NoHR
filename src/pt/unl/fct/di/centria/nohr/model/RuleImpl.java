@@ -10,19 +10,19 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public class RuleImpl implements Rule {
 
-    private PositiveLiteral head;
+    private final List<Literal> body;
 
-    private List<Literal> body;
+    private final Atom head;
 
-    RuleImpl(PositiveLiteral head, List<Literal> body) {
+    RuleImpl(Atom head, List<Literal> body) {
 	this.head = head;
 	this.body = body;
     }
 
     @Override
     public Rule acept(Visitor visitor) {
-	List<Literal> body = new LinkedList<Literal>();
-	for (Literal literal : this.body)
+	final List<Literal> body = new LinkedList<Literal>();
+	for (final Literal literal : this.body)
 	    body.add(visitor.visit(literal));
 	return new RuleImpl(visitor.visit(head), body);
     }
@@ -40,7 +40,7 @@ public class RuleImpl implements Rule {
 	    return false;
 	if (!(obj instanceof RuleImpl))
 	    return false;
-	RuleImpl other = (RuleImpl) obj;
+	final RuleImpl other = (RuleImpl) obj;
 	if (body == null) {
 	    if (other.body != null)
 		return false;
@@ -60,7 +60,7 @@ public class RuleImpl implements Rule {
     }
 
     @Override
-    public PositiveLiteral getHead() {
+    public Atom getHead() {
 	return head;
     }
 
@@ -71,9 +71,9 @@ public class RuleImpl implements Rule {
      */
     @Override
     public Set<Predicate> getPredicates() {
-	Set<Predicate> predicates = new HashSet<Predicate>();
+	final Set<Predicate> predicates = new HashSet<Predicate>();
 	predicates.add(head.getAtom().getPredicate());
-	for (Literal literal : body)
+	for (final Literal literal : body)
 	    predicates.add(literal.getAtom().getPredicate());
 	return predicates;
     }

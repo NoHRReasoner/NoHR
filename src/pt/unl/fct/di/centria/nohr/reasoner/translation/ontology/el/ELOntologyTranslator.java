@@ -42,7 +42,7 @@ import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 import other.Utils;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AbstractOntologyTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import uk.ac.manchester.cs.owl.owlapi.OWLEquivalentClassesAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
 import utils.Tracer;
@@ -53,7 +53,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
     private OWLDataFactory owlDataFactory;
 
     public ELOntologyTranslator(OWLOntologyManager ontologyManager,
-	    OWLOntology ontology, OntologyLabel ontologyLabel)
+	    OWLOntology ontology, OntologyLabeler ontologyLabel)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
 		    IOException, CloneNotSupportedException, UnsupportedOWLProfile {
 	super(ontologyManager, ontology);

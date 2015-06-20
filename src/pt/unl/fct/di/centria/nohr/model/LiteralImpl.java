@@ -11,10 +11,10 @@ public abstract class LiteralImpl implements Literal {
     }
 
     @Override
-    public abstract NegativeLiteral asNegativeLiteral() throws ModelException;
+    public abstract NegativeLiteral asNegativeLiteral();
 
     @Override
-    public abstract PositiveLiteral asPositiveLiteral() throws ModelException;
+    public abstract Atom asPositiveLiteral();
 
     @Override
     public Atom getAtom() {

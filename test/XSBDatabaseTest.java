@@ -1,7 +1,7 @@
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.posLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
 import java.nio.file.FileSystems;
@@ -47,13 +47,13 @@ public class XSBDatabaseTest extends XSBDatabase {
     }
 
     public <E> List<E> list(E... elems) {
-	List<E> list = new LinkedList<E>();
+	final List<E> list = new LinkedList<E>();
 	Collections.addAll(list, elems);
 	return list;
     }
 
     public <E> Set<E> set(E... elems) {
-	Set<E> set = new HashSet<E>();
+	final Set<E> set = new HashSet<E>();
 	Collections.addAll(set, elems);
 	return set;
     }
@@ -69,8 +69,8 @@ public class XSBDatabaseTest extends XSBDatabase {
     @Test
     public final void testHasAnswers() {
 	Predicate p = new PredicateImpl("p", 1);
-	Variable x = var("X");
-	Literal l = posLiteral(p, x);
+	final Variable x = var("X");
+	Literal l = atom(p, x);
 	Query q = Model.query(l);
 	engine.deterministicGoal("table(p/1)");
 	engine.deterministicGoal("assert((p(a)))");
@@ -80,7 +80,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 	Assert.assertTrue(hasAnswers(q, false));
 
 	p = new PredicateImpl("q", 1);
-	l = posLiteral(p, x);
+	l = atom(p, x);
 	q = Model.query(l);
 	engine.deterministicGoal("dynamic(q/1)");
 	Assert.assertFalse(hasAnswers(q));
@@ -88,7 +88,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 	Assert.assertFalse(hasAnswers(q, false));
 
 	p = new PredicateImpl("r", 1);
-	l = posLiteral(p, x);
+	l = atom(p, x);
 	q = Model.query(l);
 	engine.deterministicGoal("assert(r(a))");
 	Assert.assertTrue(hasAnswers(q));
@@ -96,7 +96,7 @@ public class XSBDatabaseTest extends XSBDatabase {
 	Assert.assertFalse(hasAnswers(q, false));
 
 	p = new PredicateImpl("s", 1);
-	l = posLiteral(p, x);
+	l = atom(p, x);
 	q = Model.query(l);
 	engine.deterministicGoal("table(s/1),assert((s(b):-tnot(s(b))))");
 	Assert.assertTrue(hasAnswers(q));
@@ -106,10 +106,10 @@ public class XSBDatabaseTest extends XSBDatabase {
 
     @Test
     public final void testlazlyQueryAll() {
-	Predicate p = new PredicateImpl("p", 1);
-	Variable x = var("X");
-	Literal l = posLiteral(p, x);
-	Query query = Model.query(l);
+	final Predicate p = new PredicateImpl("p", 1);
+	final Variable x = var("X");
+	final Literal l = atom(p, x);
+	final Query query = Model.query(l);
 	engine.deterministicGoal("table p/1");
 	engine.deterministicGoal("assert((p(a)))");
 	engine.deterministicGoal("assert((p(b)))");
@@ -119,28 +119,28 @@ public class XSBDatabaseTest extends XSBDatabase {
 	engine.deterministicGoal("assert((p(f):-tnot(p(f))))");
 	Iterable<Answer> answers = lazilyQuery(query);
 	Iterator<Answer> answersIt = answers.iterator();
-	for (String expecteAns : list("p(f)", "p(e)", "p(d)", "p(c)", "p(b)",
+	for (final String expecteAns : list("p(f)", "p(e)", "p(d)", "p(c)", "p(b)",
 		"p(a)")) {
 	    Assert.assertTrue(answersIt.hasNext());
-	    Answer ans = answersIt.next();
+	    final Answer ans = answersIt.next();
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
 	Assert.assertFalse(answersIt.hasNext());
 	answers = lazilyQuery(query, true);
 	answersIt = answers.iterator();
-	for (String expecteAns : list("p(c)", "p(b)", "p(a)")) {
+	for (final String expecteAns : list("p(c)", "p(b)", "p(a)")) {
 	    Assert.assertTrue(answersIt.hasNext());
-	    Answer ans = answersIt.next();
+	    final Answer ans = answersIt.next();
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
 	Assert.assertFalse(answersIt.hasNext());
 	answers = lazilyQuery(query, false);
 	answersIt = answers.iterator();
-	for (String expecteAns : list("p(f)", "p(e)", "p(d)")) {
+	for (final String expecteAns : list("p(f)", "p(e)", "p(d)")) {
 	    Assert.assertTrue(answersIt.hasNext());
-	    Answer ans = answersIt.next();
+	    final Answer ans = answersIt.next();
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
 		    .toString());
 	}
@@ -155,29 +155,29 @@ public class XSBDatabaseTest extends XSBDatabase {
 	add("u(c)");
 	add("u(d):-tnot(u(d))");
 
-	Query q1 = Model.query(posLiteral("u", var("X")));
-	Query q2 = Model.query(posLiteral("u", cons("a")));
-	Query q3 = Model.query(posLiteral("u", cons("d")));
-	Query q4 = Model.query(posLiteral("u", cons("e")));
+	final Query q1 = Model.query(atom("u", var("X")));
+	final Query q2 = Model.query(atom("u", cons("a")));
+	final Query q3 = Model.query(atom("u", cons("d")));
+	final Query q4 = Model.query(atom("u", cons("e")));
 
 	int i = 0;
-	for (Answer ans : lazilyQuery(q1))
+	for (final Answer ans : lazilyQuery(q1))
 	    if (i++ >= 1)
 		break;
 
-	for (Answer ans : lazilyQuery(q1)) {
+	for (final Answer ans : lazilyQuery(q1)) {
 	    assertTrue(hasAnswers(q2));
 	    assertTrue(hasAnswers(q2, true));
 	    assertFalse(hasAnswers(q2, false));
 	}
 
-	for (Answer ans : lazilyQuery(q1)) {
+	for (final Answer ans : lazilyQuery(q1)) {
 	    assertTrue(hasAnswers(q3));
 	    assertFalse(hasAnswers(q3, true));
 	    assertTrue(hasAnswers(q3, false));
 	}
 
-	for (Answer ans : lazilyQuery(q1)) {
+	for (final Answer ans : lazilyQuery(q1)) {
 	    assertFalse(hasAnswers(q4));
 	    assertFalse(hasAnswers(q4, true));
 	    assertFalse(hasAnswers(q4, false));
@@ -187,10 +187,10 @@ public class XSBDatabaseTest extends XSBDatabase {
 
     @Test
     public final void testQuery() {
-	Predicate p = new PredicateImpl("p", 1);
-	Variable x = var("X");
-	Literal l = posLiteral(p, x);
-	Query q = Model.query(l);
+	final Predicate p = new PredicateImpl("p", 1);
+	final Variable x = var("X");
+	final Literal l = atom(p, x);
+	final Query q = Model.query(l);
 	engine.deterministicGoal("table p/1");
 	engine.deterministicGoal("assert((p(a))),assert((p(b):-tnot(p(b))))");
 	Assert.assertEquals("incorrect answer", "p(b)", query(q).toString());
@@ -202,10 +202,10 @@ public class XSBDatabaseTest extends XSBDatabase {
 
     @Test
     public final void testQueryAll() {
-	Predicate p = new PredicateImpl("p", 1);
-	Variable x = var("X");
-	Literal l = posLiteral(p, x);
-	Query query = Model.query(l);
+	final Predicate p = new PredicateImpl("p", 1);
+	final Variable x = var("X");
+	final Literal l = atom(p, x);
+	final Query query = Model.query(l);
 	engine.deterministicGoal("table p/1");
 	engine.deterministicGoal("assert((p(a)))");
 	engine.deterministicGoal("assert((p(b)))");
@@ -215,19 +215,19 @@ public class XSBDatabaseTest extends XSBDatabase {
 	engine.deterministicGoal("assert((p(f):-tnot(p(f))))");
 	Map<List<Term>, TruthValue> answers = queryAll(query);
 	Set<String> result = new HashSet<String>();
-	for (List<Term> list : answers.keySet())
+	for (final List<Term> list : answers.keySet())
 	    result.add(query.apply(list).toString());
 	Assert.assertEquals("incorrect answers",
 		set("p(a)", "p(b)", "p(c)", "p(d)", "p(e)", "p(f)"), result);
 	answers = queryAll(query, true);
 	result = new HashSet<String>();
-	for (List<Term> list : answers.keySet())
+	for (final List<Term> list : answers.keySet())
 	    result.add(query.apply(list).toString());
 	Assert.assertEquals("incorrect answers", set("p(a)", "p(b)", "p(c)"),
 		result);
 	answers = queryAll(query, false);
 	result = new HashSet<String>();
-	for (List<Term> list : answers.keySet())
+	for (final List<Term> list : answers.keySet())
 	    result.add(query.apply(list).toString());
 	Assert.assertEquals("incorrect answers", set("p(d)", "p(e)", "p(f)"),
 		result);

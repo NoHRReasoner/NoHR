@@ -27,8 +27,8 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AbstractOntologyTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
-import pt.unl.fct.di.centria.nohr.xsb.Rule;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
+import pt.unl.fct.di.centria.nohr.xsb.XsbRule;
 import utils.Tracer;
 
 public class QLOntologyTranslator extends AbstractOntologyTranslator {
@@ -41,7 +41,7 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 
     public QLOntologyTranslator(OWLOntology ontology,
 	    OWLDataFactory dataFactory, OWLOntologyManager ontologyManager,
-	    OntologyLabel ol) throws OWLOntologyCreationException,
+	    OntologyLabeler ol) throws OWLOntologyCreationException,
 	    OWLOntologyStorageException, IOException,
 	    CloneNotSupportedException, UnsupportedOWLProfile {
 	super(ontologyManager, ontology);
@@ -55,8 +55,8 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 	hasDisjunctions = normalizedOntology.hasDisjointStatement();
     }
 
-    private void addAll(Set<Rule> source, Set<String> target) {
-	for (Rule rule : source)
+    private void addAll(Set<XsbRule> source, Set<String> target) {
+	for (XsbRule rule : source)
 	    target.add(rule.toString());
     }
 
@@ -84,8 +84,8 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 	return ruleCreatorQL.getTabledPredicates();
     }
 
-    private Set<Rule> translate() {
-	Set<Rule> tr = new HashSet<Rule>();
+    private Set<XsbRule> translate() {
+	Set<XsbRule> tr = new HashSet<XsbRule>();
 	for (OWLClassAssertionAxiom f : normalizedOntology
 		.getConceptAssertions())
 	    tr.addAll(ruleCreatorQL.translate(f));

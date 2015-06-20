@@ -1,5 +1,5 @@
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.posLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.query;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
@@ -65,26 +65,23 @@ public class ParserTest {
     @Test
     public final void testParseQuery() {
 	try {
-	    Variable X = var("X");
-	    Assert.assertEquals(parser.parseQuery("p(X)."),
-		    query(posLiteral("p", X)));
+	    final Variable X = var("X");
+	    Assert.assertEquals(parser.parseQuery("p(X)."), query(atom("p", X)));
 	    Assert.assertEquals(parser.parseQuery("p(a)."),
-		    query(posLiteral("p", cons("a"))));
-	    Assert.assertEquals(
-		    parser.parseQuery("p(X), q(X), r(X)."),
-		    query(posLiteral("p", X), posLiteral("q", X),
-			    posLiteral("r", X)));
+		    query(atom("p", cons("a"))));
+	    Assert.assertEquals(parser.parseQuery("p(X), q(X), r(X)."),
+		    query(atom("p", X), atom("q", X), atom("r", X)));
 	    Assert.assertEquals(parser.parseQuery("p(a, b, c)."),
-		    query(posLiteral("p", cons("a"), cons("b"), cons("c"))));
+		    query(atom("p", cons("a"), cons("b"), cons("c"))));
 	    Assert.assertEquals(parser.parseQuery("p(1)."),
-		    query(posLiteral("p", cons(1))));
+		    query(atom("p", cons(1))));
 	    Assert.assertEquals(parser.parseQuery("p(1.1)."),
-		    query(posLiteral("p", cons(1.1))));
+		    query(atom("p", cons(1.1))));
 
-	} catch (PrologParserException e) {
+	} catch (final PrologParserException e) {
 	    Assert.fail(e.getLocalizedMessage());
 	    e.printStackTrace();
-	} catch (IOException e) {
+	} catch (final IOException e) {
 	    Assert.fail(e.getLocalizedMessage());
 	    e.printStackTrace();
 	}

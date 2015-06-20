@@ -10,9 +10,9 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public class AtomImpl implements Atom {
 
-    private List<Term> arguments;
+    private final List<Term> arguments;
 
-    private Predicate predicate;
+    private final Predicate predicate;
 
     AtomImpl(Predicate predicate, List<Term> arguments) {
 	this.predicate = predicate;
@@ -21,19 +21,19 @@ public class AtomImpl implements Atom {
 
     @Override
     public Atom acept(Visitor visitor) {
-	Predicate pred = predicate.acept(visitor);
-	List<Term> args = new LinkedList<Term>();
-	for (Term term : arguments)
+	final Predicate pred = predicate.acept(visitor);
+	final List<Term> args = new LinkedList<Term>();
+	for (final Term term : arguments)
 	    args.add(term.acept(visitor));
 	return new AtomImpl(pred, args);
     }
 
     @Override
     public Atom apply(Map<Variable, Term> substitution) {
-	List<Term> args = new LinkedList<Term>(arguments);
-	ListIterator<Term> argsIt = args.listIterator();
+	final List<Term> args = new LinkedList<Term>(arguments);
+	final ListIterator<Term> argsIt = args.listIterator();
 	while (argsIt.hasNext()) {
-	    Term t = argsIt.next();
+	    final Term t = argsIt.next();
 	    if (substitution.containsKey(t)) {
 		argsIt.remove();
 		argsIt.add(substitution.get(t));
@@ -49,10 +49,10 @@ public class AtomImpl implements Atom {
      */
     @Override
     public Atom apply(Substitution sub) {
-	List<Term> args = new LinkedList<Term>(arguments);
-	ListIterator<Term> argsIt = args.listIterator();
+	final List<Term> args = new LinkedList<Term>(arguments);
+	final ListIterator<Term> argsIt = args.listIterator();
 	while (argsIt.hasNext()) {
-	    Term t = argsIt.next();
+	    final Term t = argsIt.next();
 	    if (sub.getVariables().contains(t)) {
 		argsIt.remove();
 		argsIt.add(sub.getValue((Variable) t));
@@ -63,10 +63,10 @@ public class AtomImpl implements Atom {
 
     @Override
     public Atom apply(Variable var, Term term) {
-	List<Term> args = new LinkedList<Term>(arguments);
-	ListIterator<Term> argsIt = args.listIterator();
+	final List<Term> args = new LinkedList<Term>(arguments);
+	final ListIterator<Term> argsIt = args.listIterator();
 	while (argsIt.hasNext()) {
-	    Term t = argsIt.next();
+	    final Term t = argsIt.next();
 	    if (t.equals(var)) {
 		argsIt.remove();
 		argsIt.add(term);
@@ -75,11 +75,16 @@ public class AtomImpl implements Atom {
 	return new AtomImpl(predicate, args);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    @Override
+    public NegativeLiteral asNegativeLiteral() {
+	throw new ClassCastException();
+    }
+
+    @Override
+    public Atom asPositiveLiteral() {
+	return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
 	if (this == obj)
@@ -88,7 +93,7 @@ public class AtomImpl implements Atom {
 	    return false;
 	if (!(obj instanceof AtomImpl))
 	    return false;
-	AtomImpl other = (AtomImpl) obj;
+	final AtomImpl other = (AtomImpl) obj;
 	if (arguments == null) {
 	    if (other.arguments != null)
 		return false;
@@ -113,6 +118,11 @@ public class AtomImpl implements Atom {
     }
 
     @Override
+    public Atom getAtom() {
+	return this;
+    }
+
+    @Override
     public Predicate getPredicate() {
 	return predicate;
     }
@@ -124,8 +134,8 @@ public class AtomImpl implements Atom {
      */
     @Override
     public List<Variable> getVariables() {
-	List<Variable> result = new LinkedList<Variable>();
-	for (Term arg : arguments)
+	final List<Variable> result = new LinkedList<Variable>();
+	for (final Term arg : arguments)
 	    if (arg.isVariable() && !result.contains(arg))
 		result.add(arg.asVariable());
 	return result;
@@ -149,9 +159,19 @@ public class AtomImpl implements Atom {
 
     @Override
     public boolean isGrounded() {
-	for (Term term : arguments)
+	for (final Term term : arguments)
 	    if (term.isVariable())
 		return false;
+	return true;
+    }
+
+    @Override
+    public boolean isNegative() {
+	return false;
+    }
+
+    @Override
+    public boolean isPositive() {
 	return true;
     }
 

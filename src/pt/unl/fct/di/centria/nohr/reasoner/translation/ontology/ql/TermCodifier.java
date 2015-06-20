@@ -5,7 +5,7 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLProperty;
 
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 
 import com.declarativa.interprolog.TermModel;
 
@@ -22,9 +22,9 @@ public class TermCodifier {
     protected static final String CLASSICAL_NEGATION_PREFIX = "n";
     private static final String CONSTANT_PREFIX = "c";
 
-    private OntologyLabel ontologyLabel;
+    private OntologyLabeler ontologyLabel;
 
-    public TermCodifier(OntologyLabel ontologyLabel) {
+    public TermCodifier(OntologyLabeler ontologyLabel) {
 	this.ontologyLabel = ontologyLabel;
     }
 
@@ -33,7 +33,7 @@ public class TermCodifier {
     }
 
     public TermModel getConstant(OWLLiteral value) {
-	return new TermModel(OntologyLabel.escapeAtom(value.getLiteral()));
+	return new TermModel(OntologyLabeler.escapeAtom(value.getLiteral()));
     }
 
     public TermModel getExistPredicate(OWLProperty<?, ?> prop, boolean inverse,

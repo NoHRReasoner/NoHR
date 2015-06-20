@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 
 //TODO remove
 
@@ -72,7 +72,7 @@ public class Utils {
 	// String result = DigestUtils.md5Hex(s);
 	// for(int i=0;i<10;i++) result = result.replace(Integer.toString(i),
 	// letters.get(i));
-	return OntologyLabel.escapeAtom(s);
+	return OntologyLabeler.escapeAtom(s);
     }
 
     /**

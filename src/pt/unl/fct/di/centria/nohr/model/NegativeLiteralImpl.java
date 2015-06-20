@@ -20,7 +20,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nohr.model.Literal#apply(nohr.model.Substitution)
      */
     @Override
@@ -34,18 +34,18 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
     }
 
     @Override
-    public NegativeLiteral asNegativeLiteral() throws ModelException {
+    public NegativeLiteral asNegativeLiteral() {
 	return this;
     }
 
     @Override
-    public PositiveLiteral asPositiveLiteral() throws ModelException {
-	throw new ModelException();
+    public Atom asPositiveLiteral() {
+	throw new ClassCastException();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -56,7 +56,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 	    return false;
 	if (!(obj instanceof NegativeLiteralImpl))
 	    return false;
-	NegativeLiteralImpl other = (NegativeLiteralImpl) obj;
+	final NegativeLiteralImpl other = (NegativeLiteralImpl) obj;
 	if (atom == null) {
 	    if (other.atom != null)
 		return false;
@@ -67,7 +67,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

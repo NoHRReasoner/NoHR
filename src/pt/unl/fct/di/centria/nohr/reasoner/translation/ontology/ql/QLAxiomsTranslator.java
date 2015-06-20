@@ -28,9 +28,9 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import pt.unl.fct.di.centria.nohr.xsb.NotTerm;
-import pt.unl.fct.di.centria.nohr.xsb.Rule;
+import pt.unl.fct.di.centria.nohr.xsb.XsbRule;
 
 import com.declarativa.interprolog.TermModel;
 
@@ -42,7 +42,7 @@ public class QLAxiomsTranslator {
     protected final String Y = "Y";
     protected final String ANNON_VAR = "_";
 
-    protected OntologyLabel ol;
+    protected OntologyLabeler ol;
     protected INormalizedOntology normOnt;
 
     protected TermCodifier tc;
@@ -57,7 +57,7 @@ public class QLAxiomsTranslator {
 
     private Set<String> tabledPredicates;
 
-    public QLAxiomsTranslator(OntologyLabel ol,
+    public QLAxiomsTranslator(OntologyLabeler ol,
 	    INormalizedOntology normalizedOntology, OWLOntologyManager om,
 	    boolean hasDisjunctions, TBoxGraph graph) {
 	this.ol = ol;
@@ -69,40 +69,40 @@ public class QLAxiomsTranslator {
 	tabledPredicates = new HashSet<String>();
     }
 
-    protected Set<Rule> a1(OWLClass a, OWLIndividual c) {
-	Set<Rule> result = new HashSet<Rule>();
+    protected Set<XsbRule> a1(OWLClass a, OWLIndividual c) {
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel o = trAssertion(a, c, false);
-	result.add(new Rule(o));
+	result.add(new XsbRule(o));
 	if (hasDisjunctions) {
 	    TermModel d = trAssertion(a, c, true);
 	    TermModel n = trNegAssertion(a, c);
 	    if (isNegated(n)) {
-		result.add(new Rule(d, new NotTerm(n)));
+		result.add(new XsbRule(d, new NotTerm(n)));
 		addTabled(n);
 	    } else
-		result.add(new Rule(d));
+		result.add(new XsbRule(d));
 	}
 	return result;
     }
 
-    protected Set<Rule> a2(OWLObjectProperty p, OWLIndividual c1,
+    protected Set<XsbRule> a2(OWLObjectProperty p, OWLIndividual c1,
 	    OWLIndividual c2) {
-	Set<Rule> result = new HashSet<Rule>();
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel o = trAssertion(p, c1, c2, false);
-	result.add(new Rule(o));
+	result.add(new XsbRule(o));
 	if (hasDisjunctions) {
 	    TermModel d = trAssertion(p, c1, c2, true);
 	    TermModel n = trNegAssertion(p, c1, c2);
 	    if (isNegated(n)) {
-		result.add(new Rule(d, new NotTerm(n)));
+		result.add(new XsbRule(d, new NotTerm(n)));
 		addTabled(n);
 	    } else
-		result.add(new Rule(d));
+		result.add(new XsbRule(d));
 	}
 	return result;
     }
 
-    private Set<Rule> a2(OWLObjectPropertyAssertionAxiom propAssertion) {
+    private Set<XsbRule> a2(OWLObjectPropertyAssertionAxiom propAssertion) {
 	return a2((OWLObjectProperty) propAssertion.getProperty(),
 		propAssertion.getSubject(), propAssertion.getObject());
     }
@@ -134,27 +134,27 @@ public class QLAxiomsTranslator {
 	    addNegated(trNeg(p, X, Y));
     }
 
-    protected Set<Rule> e(OWLObjectProperty p) {
-	Set<Rule> result = new HashSet<Rule>();
+    protected Set<XsbRule> e(OWLObjectProperty p) {
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	boolean hasSome = normOnt.getSubConcepts().contains(some(p));
 	boolean hasInvSome = normOnt.getSubConcepts().contains(
 		some(p.getInverseProperty()));
 	if (hasSome) {
 	    TermModel e = trExistential(p, X, false, false);
-	    result.add(new Rule(e, tr(p, X, ANNON_VAR, false)));
+	    result.add(new XsbRule(e, tr(p, X, ANNON_VAR, false)));
 	}
 	if (hasInvSome) {
 	    TermModel f = trExistential(p, X, true, false);
-	    result.add(new Rule(f, tr(p, ANNON_VAR, X, false)));
+	    result.add(new XsbRule(f, tr(p, ANNON_VAR, X, false)));
 	}
 	if (hasDisjunctions) {
 	    if (hasSome) {
 		TermModel g = trExistential(p, X, false, true);
-		result.add(new Rule(g, tr(p, X, ANNON_VAR, false)));
+		result.add(new XsbRule(g, tr(p, X, ANNON_VAR, false)));
 	    }
 	    if (hasInvSome) {
 		TermModel h = trExistential(p, X, true, true);
-		result.add(new Rule(h, tr(p, ANNON_VAR, X, false)));
+		result.add(new XsbRule(h, tr(p, ANNON_VAR, X, false)));
 	    }
 	}
 
@@ -169,26 +169,26 @@ public class QLAxiomsTranslator {
 	return tabledPredicates;
     }
 
-    protected Set<Rule> i1(OWLClass c) {
-	Set<Rule> result = new HashSet<Rule>();
+    protected Set<XsbRule> i1(OWLClass c) {
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel n = trNeg(c, X);
-	result.add(new Rule(n));
+	result.add(new XsbRule(n));
 	addTabled(n);
 
 	return result;
     }
 
-    protected Set<Rule> i2(OWLProperty<?, ?> p) {
-	Set<Rule> result = new HashSet<Rule>();
+    protected Set<XsbRule> i2(OWLProperty<?, ?> p) {
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel n = trNeg(p, X, Y);
-	result.add(new Rule(n));
+	result.add(new XsbRule(n));
 	addTabled(n);
 
 	return result;
     }
 
-    protected Set<Rule> ir(OWLObjectProperty p) {
-	Set<Rule> result = new HashSet<Rule>();
+    protected Set<XsbRule> ir(OWLObjectProperty p) {
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel n = trNeg(p, X, X);
 	addTabled(n);
 
@@ -199,48 +199,48 @@ public class QLAxiomsTranslator {
 	return negatedPredicates.contains(tm.getFunctorArity());
     }
 
-    protected Set<Rule> n1(OWLClassExpression b1, OWLClassExpression b2) {
-	Set<Rule> result = new HashSet<Rule>();
+    protected Set<XsbRule> n1(OWLClassExpression b1, OWLClassExpression b2) {
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel n1 = trNeg(b1, X);
 	TermModel n2 = trNeg(b2, X);
-	result.add(new Rule(n1, tr(b2, X, false)));
-	result.add(new Rule(n2, tr(b1, X, false)));
+	result.add(new XsbRule(n1, tr(b2, X, false)));
+	result.add(new XsbRule(n2, tr(b1, X, false)));
 	addTabled(n1);
 	addTabled(n2);
 
 	return result;
     }
 
-    protected Set<Rule> n2(OWLPropertyExpression<?, ?> q1,
+    protected Set<XsbRule> n2(OWLPropertyExpression<?, ?> q1,
 	    OWLPropertyExpression<?, ?> q2) {
-	Set<Rule> result = new HashSet<Rule>();
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel n1 = trNeg(q1, X, Y);
 	TermModel n2 = trNeg(q2, X, Y);
-	result.add(new Rule(n1, tr(q2, X, Y, false)));
-	result.add(new Rule(n2, tr(q1, X, Y, false)));
+	result.add(new XsbRule(n1, tr(q2, X, Y, false)));
+	result.add(new XsbRule(n2, tr(q1, X, Y, false)));
 	addTabled(n1);
 	addTabled(n2);
 
 	return result;
     }
 
-    protected Set<Rule> s1(OWLClassExpression b1, OWLClassExpression b2) {
-	Set<Rule> result = new HashSet<Rule>();
+    protected Set<XsbRule> s1(OWLClassExpression b1, OWLClassExpression b2) {
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel o1 = tr(b1, X, false);
 	TermModel o2 = tr(b2, X, false);
 	// boolean table = normOnt.getSubConcepts().contains(b2);
-	result.add(new Rule(o2, o1));
+	result.add(new XsbRule(o2, o1));
 	if (hasDisjunctions) {
 	    TermModel d1 = tr(b1, X, true);
 	    TermModel d2 = tr(b2, X, true);
 	    TermModel n1 = trNeg(b1, X);
 	    TermModel n2 = trNeg(b2, X);
 	    if (isNegated(n2)) {
-		result.add(new Rule(d2, d1, new NotTerm(n2)));
+		result.add(new XsbRule(d2, d1, new NotTerm(n2)));
 		addTabled(n2);
 	    } else
-		result.add(new Rule(d2, d1));
-	    result.add(new Rule(n1, n2));
+		result.add(new XsbRule(d2, d1));
+	    result.add(new XsbRule(n1, n2));
 	    // if (table)
 	    addTabled(d2);
 	    addTabled(n1);
@@ -251,9 +251,9 @@ public class QLAxiomsTranslator {
 	return result;
     }
 
-    protected Set<Rule> s2(OWLPropertyExpression<?, ?> q1,
+    protected Set<XsbRule> s2(OWLPropertyExpression<?, ?> q1,
 	    OWLPropertyExpression<?, ?> q2) {
-	Set<Rule> result = new HashSet<Rule>();
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	boolean table = true; // normOnt.getSubRoles().contains(DLUtils.getRoleName(q2));
 	boolean s = false;
 	boolean si = false;
@@ -271,19 +271,19 @@ public class QLAxiomsTranslator {
 	}
 	TermModel o1 = tr(q1, X, Y, false);
 	TermModel o2 = tr(q2, X, Y, false);
-	result.add(new Rule(o2, o1));
+	result.add(new XsbRule(o2, o1));
 	if (table)
 	    addTabled(o2);
 	if (s) {
 	    TermModel e1 = trExistential(q1, X, false, false);
 	    TermModel e2 = trExistential(q2, X, false, false);
-	    result.add(new Rule(e2, e1));
+	    result.add(new XsbRule(e2, e1));
 	    addTabled(e2);
 	}
 	if (si) {
 	    TermModel f1 = trExistential(q1, X, true, false);
 	    TermModel f2 = trExistential(q2, X, true, false);
-	    result.add(new Rule(f2, f1));
+	    result.add(new XsbRule(f2, f1));
 	    addTabled(f2);
 	}
 	if (hasDisjunctions) {
@@ -292,29 +292,29 @@ public class QLAxiomsTranslator {
 	    TermModel n1 = trNeg(q1, X, Y);
 	    TermModel n2 = trNeg(q2, X, Y);
 	    if (isNegated(n2)) {
-		result.add(new Rule(d2, d1, new NotTerm(n2)));
+		result.add(new XsbRule(d2, d1, new NotTerm(n2)));
 		addTabled(n2);
 	    } else
-		result.add(new Rule(d2, d1));
+		result.add(new XsbRule(d2, d1));
 	    if (s) {
 		TermModel g1 = trExistential(q1, X, false, true);
 		TermModel g2 = trExistential(q2, X, false, true);
 		if (isNegated(n2))
-		    result.add(new Rule(g2, g1, new NotTerm(n2)));
+		    result.add(new XsbRule(g2, g1, new NotTerm(n2)));
 		else
-		    result.add(new Rule(g2, g1));
+		    result.add(new XsbRule(g2, g1));
 		addTabled(g2);
 	    }
 	    if (si) {
 		TermModel h1 = trExistential(q1, X, true, true);
 		TermModel h2 = trExistential(q2, X, true, true);
 		if (isNegated(n2))
-		    result.add(new Rule(h2, h1, new NotTerm(trNeg(q2, Y, X))));
+		    result.add(new XsbRule(h2, h1, new NotTerm(trNeg(q2, Y, X))));
 		else
-		    result.add(new Rule(h2, h1));
+		    result.add(new XsbRule(h2, h1));
 		addTabled(h2);
 	    }
-	    result.add(new Rule(n1, n2));
+	    result.add(new XsbRule(n1, n2));
 	    addTabled(n1);
 	    if (table)
 		addTabled(d2);
@@ -354,7 +354,7 @@ public class QLAxiomsTranslator {
 		    d);
     }
 
-    Set<Rule> translate(OWLClassAssertionAxiom f) {
+    Set<XsbRule> translate(OWLClassAssertionAxiom f) {
 	OWLClass a = f.getClassExpression().asOWLClass();
 	if (a.isOWLThing() || a.isOWLNothing())
 	    return null;
@@ -362,7 +362,7 @@ public class QLAxiomsTranslator {
 	return a1(a, i);
     }
 
-    Set<Rule> translate(OWLDataPropertyAssertionAxiom f) {
+    Set<XsbRule> translate(OWLDataPropertyAssertionAxiom f) {
 	OWLDataProperty dataProperty = (OWLDataProperty) f.getProperty();
 	if (dataProperty.isOWLTopDataProperty()
 		|| dataProperty.isOWLBottomDataProperty())
@@ -372,57 +372,57 @@ public class QLAxiomsTranslator {
 	return translateDataPropertyAssertion(dataProperty, individual, value);
     }
 
-    Set<Rule> translate(OWLDisjointClassesAxiom alpha) {
+    Set<XsbRule> translate(OWLDisjointClassesAxiom alpha) {
 	List<OWLClassExpression> cls = alpha.getClassExpressionsAsList();
 	return n1(cls.get(0), cls.get(1));
     }
 
-    Set<Rule> translate(OWLNaryPropertyAxiom d) {
+    Set<XsbRule> translate(OWLNaryPropertyAxiom d) {
 	Iterator<OWLPropertyExpression> dIt = d.getProperties().iterator();
 	OWLPropertyExpression<?, ?> p1 = dIt.next();
 	OWLPropertyExpression<?, ?> p2 = dIt.next();
 	return n2(p1, p2);
     }
 
-    Set<Rule> translate(OWLObjectPropertyAssertionAxiom f) {
+    Set<XsbRule> translate(OWLObjectPropertyAssertionAxiom f) {
 	OWLObjectPropertyExpression q = f.getProperty();
 	if (q.isOWLBottomObjectProperty() || q.isOWLTopObjectProperty())
 	    return null;
 	return a2(f);
     }
 
-    Set<Rule> translate(OWLSubClassOfAxiom alpha) {
+    Set<XsbRule> translate(OWLSubClassOfAxiom alpha) {
 	OWLClassExpression b = alpha.getSubClass();
 	OWLClassExpression c = alpha.getSuperClass();
 	return s1(b, c);
     }
 
-    Set<Rule> translate(OWLSubDataPropertyOfAxiom alpha) {
+    Set<XsbRule> translate(OWLSubDataPropertyOfAxiom alpha) {
 	OWLDataPropertyExpression q1 = alpha.getSubProperty();
 	OWLDataPropertyExpression q2 = alpha.getSuperProperty();
 	return s2(q1, q2);
     }
 
-    Set<Rule> translate(OWLSubObjectPropertyOfAxiom alpha) {
+    Set<XsbRule> translate(OWLSubObjectPropertyOfAxiom alpha) {
 	OWLObjectPropertyExpression q1 = alpha.getSubProperty();
 	OWLObjectPropertyExpression q2 = alpha.getSuperProperty();
 	return s2(q1, q2);
     }
 
-    private Set<Rule> translateDataPropertyAssertion(
+    private Set<XsbRule> translateDataPropertyAssertion(
 	    OWLDataProperty dataProperty, OWLIndividual individual,
 	    OWLLiteral value) {
-	Set<Rule> result = new HashSet<Rule>();
+	Set<XsbRule> result = new HashSet<XsbRule>();
 	TermModel o = trAssertion(dataProperty, individual, value, false);
-	result.add(new Rule(o));
+	result.add(new XsbRule(o));
 	if (hasDisjunctions) {
 	    TermModel d = trAssertion(dataProperty, individual, value, true);
 	    TermModel n = trNegAssertion(dataProperty, individual, value);
 	    if (isNegated(n)) {
-		result.add(new Rule(d, new NotTerm(n)));
+		result.add(new XsbRule(d, new NotTerm(n)));
 		addTabled(n);
 	    } else
-		result.add(new Rule(d));
+		result.add(new XsbRule(d));
 	}
 
 	return result;

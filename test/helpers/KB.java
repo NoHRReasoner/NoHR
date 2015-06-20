@@ -27,7 +27,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import other.Utils;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabel;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.INormalizedOntology;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.Normalizer;
 
@@ -41,7 +41,7 @@ public class KB {
 
     private Map<String, OWLIndividual> individuals;
 
-    private OntologyLabel ol;
+    private OntologyLabeler ol;
 
     private OWLOntologyManager om;
 
@@ -55,7 +55,7 @@ public class KB {
 	ont = om.createOntology(IRI.generateDocumentIRI());
 	OWLAnnotationProperty lblAnnotProp = om.getOWLDataFactory()
 		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
-	ol = new OntologyLabel(om.createOntology(), lblAnnotProp);
+	ol = new OntologyLabeler(om.createOntology(), lblAnnotProp);
 	concepts = new HashMap<String, OWLClass>();
 	roles = new HashMap<String, OWLObjectProperty>();
 	dataRoles = new HashMap<String, OWLDataProperty>();
@@ -222,7 +222,7 @@ public class KB {
 	return ont;
     }
 
-    public OntologyLabel getOntologyLabel() {
+    public OntologyLabeler getOntologyLabel() {
 	return ol;
     }
 

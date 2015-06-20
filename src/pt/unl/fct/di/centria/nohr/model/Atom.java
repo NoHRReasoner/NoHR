@@ -5,18 +5,22 @@ import java.util.Map;
 
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
-public interface Atom {
+public interface Atom extends Literal {
 
+    @Override
     public Atom acept(Visitor visitor);
 
+    @Override
     public Atom apply(Map<Variable, Term> substitution);
 
     /**
      * @param sub
      * @return
      */
+    @Override
     public Atom apply(Substitution sub);
 
+    @Override
     public Atom apply(Variable var, Term term);
 
     @Override
@@ -32,8 +36,10 @@ public interface Atom {
      * @return
      *
      */
+    @Override
     public List<Variable> getVariables();
 
+    @Override
     public boolean isGrounded();
 
     @Override

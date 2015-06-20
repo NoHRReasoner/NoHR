@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.posLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
 import java.nio.file.FileSystems;
@@ -64,7 +64,7 @@ public class QueryProcessorTest extends QueryProcessor {
     }
 
     private List<Term> l(Term... elems) {
-	List<Term> res = new LinkedList<Term>();
+	final List<Term> res = new LinkedList<Term>();
 	Collections.addAll(res, elems);
 	return res;
     }
@@ -100,8 +100,8 @@ public class QueryProcessorTest extends QueryProcessor {
 	xsbDatabase.table("dp/1");
 
 	xsbDatabase
-	.command("table(az/1),assert((az(j):-tnot(az(j)))), assert(dz(j))");
-	Query qt = Model.query(posLiteral("dz", cons("j")));
+		.command("table(az/1),assert((az(j):-tnot(az(j)))), assert(dz(j))");
+	final Query qt = Model.query(atom("dz", cons("j")));
 
 	assertTrue(xsbDatabase.hasAnswers(qt));
 	assertTrue(xsbDatabase.hasAnswers(qt, true));
@@ -131,8 +131,8 @@ public class QueryProcessorTest extends QueryProcessor {
 	assertFalse(xsbDatabase.hasAnswers(qt, false));
 	assertTrue(xsbDatabase.hasAnswers(qt, true));
 
-	Variable var = var("X");
-	Query q = Model.query(posLiteral("p", var));
+	final Variable var = var("X");
+	final Query q = Model.query(atom("p", var));
 
 	Iterator<Answer> ans = lazilyQuery(q, true, true, true, true)
 		.iterator();
@@ -211,9 +211,9 @@ public class QueryProcessorTest extends QueryProcessor {
 
     @Test
     public final void testQuery() {
-	Variable var = var("X");
+	final Variable var = var("X");
 	// true true
-	Query q = Model.query(posLiteral("p", var));
+	Query q = Model.query(atom("p", var));
 	xsbDatabase.add("ap(a)");
 	xsbDatabase.add("dp(a)");
 	Answer ans = ans(q, TruthValue.TRUE, l(cons("a")));
@@ -225,7 +225,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	assertEquals(ans, query(q, false, true, false, false));
 	assertNull(query(q, false, false, true, false));
 	// true undefined
-	q = Model.query(posLiteral("q", var));
+	q = Model.query(atom("q", var));
 	xsbDatabase.add("aq(b)");
 	xsbDatabase.table("dq/1");
 	xsbDatabase.add("dq(b):-tnot(dq(b))");
@@ -238,7 +238,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	assertEquals(ans, query(q, false, true, false, false));
 	assertNull(query(q, false, false, true, false));
 	// true false
-	q = Model.query(posLiteral("r", var));
+	q = Model.query(atom("r", var));
 	xsbDatabase.add("ar(c)");
 	xsbDatabase.add("dr(o)");
 	ans = ans(q, TruthValue.INCONSISTENT, l(cons("c")));
@@ -251,7 +251,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	assertEquals(ans, query(q, false, true, false, false));
 	assertNull(query(q, false, false, true, false));
 	// undefined true
-	q = Model.query(posLiteral("s", var));
+	q = Model.query(atom("s", var));
 	xsbDatabase.table("as/1");
 	xsbDatabase.add("as(d):-tnot(as(d))");
 	xsbDatabase.add("ds(d)");
@@ -265,7 +265,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	assertNull(query(q, false, true, false, false));
 	assertEquals(ans, query(q, false, false, true, false));
 	// undefined undefined
-	q = Model.query(posLiteral("t", var));
+	q = Model.query(atom("t", var));
 	xsbDatabase.table("at/1");
 	xsbDatabase.add("at(e):-tnot(at(e))");
 	xsbDatabase.table("dt/1");
@@ -279,7 +279,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	assertNull(query(q, false, true, false, false));
 	assertEquals(ans, query(q, false, false, true, false));
 	// undefined false
-	q = Model.query(posLiteral("u", var));
+	q = Model.query(atom("u", var));
 	xsbDatabase.table("au/1");
 	xsbDatabase.add("au(f):-tnot(au(f))");
 	xsbDatabase.add("du(o)");
@@ -292,7 +292,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	assertNull(query(q, false, true, false, false));
 	assertEquals(ans, query(q, false, false, true, false));
 	// false false
-	q = Model.query(posLiteral("v", var));
+	q = Model.query(atom("v", var));
 	xsbDatabase.add("av(o)");
 	xsbDatabase.add("dv(l)");
 	assertNull(query(q, true, true, true, false));
@@ -329,8 +329,8 @@ public class QueryProcessorTest extends QueryProcessor {
 
 	xsbDatabase.add("dp(h):-tnot(dp(h))");
 
-	Variable var = var("X");
-	Query q = Model.query(posLiteral("p", var));
+	final Variable var = var("X");
+	final Query q = Model.query(atom("p", var));
 
 	Collection<Answer> ans = queryAll(q, true, true, true, true);
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));

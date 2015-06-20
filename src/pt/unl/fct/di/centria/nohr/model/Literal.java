@@ -17,9 +17,9 @@ public interface Literal {
 
     public Literal apply(Variable var, Term term);
 
-    public NegativeLiteral asNegativeLiteral() throws ModelException;
+    public NegativeLiteral asNegativeLiteral();
 
-    public PositiveLiteral asPositiveLiteral() throws ModelException;
+    public Atom asPositiveLiteral();
 
     @Override
     public boolean equals(Object obj);
