@@ -25,7 +25,9 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AbstractOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.UnescapeVisitor;
@@ -39,8 +41,6 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private static final String TRANSLATION_FILE_NAME = "nohrtr.P";
 
-    private OntologyTranslator ontologyTranslator;
-
     private boolean hasChanges;
 
     private boolean hasDisjunctions;
@@ -49,6 +49,10 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private final OWLOntologyManager ontologyManager;
 
+    private Set<String> ontologyTranslation;
+
+    private OntologyTranslator ontologyTranslator;
+
     private int queryCount;
 
     private final QueryProcessor queryProcessor;
@@ -56,8 +60,6 @@ public class HybridKB implements OWLOntologyChangeListener {
     private Set<String> rulesTranslation;
 
     private final RuleTranslator ruleTranslator;
-
-    private Set<String> ontologyTranslation;
 
     private final XSBDatabase xsbDatabase;
 
@@ -88,17 +90,23 @@ public class HybridKB implements OWLOntologyChangeListener {
     }
 
     private File generateTranslationFile() throws IOException {
-	File file = FileSystems.getDefault().getPath(TRANSLATION_FILE_NAME)
-		.toAbsolutePath().toFile();
-	FileWriter writer = new FileWriter(file);
-	for (String predicate : ontologyTranslator.getTabledPredicates())
+	final File file = FileSystems.getDefault()
+		.getPath(TRANSLATION_FILE_NAME).toAbsolutePath().toFile();
+	final FileWriter writer = new FileWriter(file);
+	for (final String predicate : ontologyTranslator.getTabledPredicates())
 	    writer.write(":- table " + predicate + ".\n");
-	for (String predicate : ruleTranslator.getTabledPredicates())
+	for (final String predicate : ruleTranslator.getTabledPredicates())
 	    writer.write(":- table " + predicate + ".\n");
-	for (String rule : ontologyTranslation)
+	for (String rule : ontologyTranslation) {
+	    if (!rule.endsWith("."))
+		rule += ".";
 	    writer.write(rule + "\n");
-	for (String rule : rulesTranslation)
+	}
+	for (String rule : rulesTranslation) {
+	    if (!rule.endsWith("."))
+		rule += ".";
 	    writer.write(rule + "\n");
+	}
 	writer.close();
 	return file;
     }
@@ -135,7 +143,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    utils.Tracer.start("rules parsing");
 	    rulesTranslation = new HashSet<String>();
 	    ruleTranslator.reset();
-	    for (String rule : Rules.getRules())
+	    for (final String rule : Rules.getRules())
 		rulesTranslation.addAll(ruleTranslator.proceedRule(rule,
 			ontologyTranslator.hasDisjunctions(),
 			ontologyTranslator.getNegatedPredicates()));
@@ -143,7 +151,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    Rules.hasChanges = false;
 	}
 	utils.Tracer.start("file writing");
-	File xsbFile = generateTranslationFile();
+	final File xsbFile = generateTranslationFile();
 	utils.Tracer.stop("file writing", "loading");
 	utils.Tracer.start("xsb loading");
 	xsbDatabase.clear();

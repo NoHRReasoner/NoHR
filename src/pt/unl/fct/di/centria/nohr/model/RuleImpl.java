@@ -64,6 +64,15 @@ public class RuleImpl implements Rule {
 	return head;
     }
 
+    @Override
+    public Set<Literal> getNegativeBody() {
+	final Set<Literal> result = new HashSet<Literal>();
+	for (final Literal literal : body)
+	    if (literal instanceof NegativeLiteral)
+		result.add(literal);
+	return result;
+    }
+
     /*
      * (non-Javadoc)
      * 

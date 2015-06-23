@@ -4,9 +4,9 @@ import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 public class PredicateImpl implements Predicate {
 
-    String symbol;
+    protected final int arity;
 
-    int arity;
+    protected final String symbol;
 
     public PredicateImpl(String symbol, int arity) {
 	this.symbol = symbol;
@@ -31,7 +31,7 @@ public class PredicateImpl implements Predicate {
 	    return false;
 	if (!(obj instanceof PredicateImpl))
 	    return false;
-	PredicateImpl other = (PredicateImpl) obj;
+	final PredicateImpl other = (PredicateImpl) obj;
 	if (arity != other.arity)
 	    return false;
 	if (symbol == null) {

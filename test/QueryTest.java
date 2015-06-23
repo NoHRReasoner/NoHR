@@ -62,24 +62,24 @@ public class QueryTest extends Object {
 	try {
 	    if (!query.endsWith("."))
 		query = query + ".";
-	    Collection<Answer> result = new HybridKB(kb.getOntology())
+	    final Collection<Answer> result = new HybridKB(kb.getOntology())
 	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
 	    assertEquals("should have exactly one answer", result.size(), 1);
-	    Answer ans = result.iterator().next();
+	    final Answer ans = result.iterator().next();
 	    int i = 0;
-	    for (Term val : ans.getValues())
+	    for (final Term val : ans.getValues())
 		assertEquals("sould be the expected constant", val,
 			cons(expectedAns[i++]));
-	} catch (IOException e) {
+	} catch (final IOException e) {
 	    fail(e.getMessage());
-	} catch (PrologParserException e) {
+	} catch (final PrologParserException e) {
 	    fail(e.getMessage());
-	} catch (UnsupportedOWLProfile e) {
+	} catch (final UnsupportedOWLProfile e) {
 	    fail("ontology is not QL nor EL!\n" + e.getMessage());
-	} catch (InconsistentOntologyException e) {
+	} catch (final InconsistentOntologyException e) {
 	    fail("inconsistent ontology");
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    e.printStackTrace();
 	    fail(e.toString());
 	}
@@ -89,22 +89,22 @@ public class QueryTest extends Object {
 	try {
 	    if (!query.endsWith("."))
 		query = query + ".";
-	    Collection<Answer> result = new HybridKB(kb.getOntology())
+	    final Collection<Answer> result = new HybridKB(kb.getOntology())
 	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should't be null", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
-	    Answer ans = result.iterator().next();
+	    final Answer ans = result.iterator().next();
 	    assertFalse("sould be consistent",
 		    ans.getValuation() == TruthValue.INCONSISTENT);
-	} catch (IOException e) {
+	} catch (final IOException e) {
 	    fail(e.getMessage());
-	} catch (PrologParserException e) {
+	} catch (final PrologParserException e) {
 	    fail(e.getMessage());
-	} catch (UnsupportedOWLProfile e) {
+	} catch (final UnsupportedOWLProfile e) {
 	    fail("ontology is not QL nor EL!\n" + e.getMessage());
-	} catch (InconsistentOntologyException e) {
+	} catch (final InconsistentOntologyException e) {
 	    fail("inconsistent ontology");
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    e.printStackTrace();
 	    fail(e.toString());
 	}
@@ -115,22 +115,22 @@ public class QueryTest extends Object {
 	try {
 	    if (!query.endsWith("."))
 		query = query + ".";
-	    Collection<Answer> result = new HybridKB(kb.getOntology())
+	    final Collection<Answer> result = new HybridKB(kb.getOntology())
 	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
-	    assertEquals("should have exactly one answer", result.size(), 1);
-	    Answer ans = result.iterator().next();
-	    assertEquals("sould be inconsistent", ans.getValuation(),
-		    TruthValue.INCONSISTENT);
-	} catch (IOException e) {
+	    assertEquals("should have exactly one answer", 1, result.size());
+	    final Answer ans = result.iterator().next();
+	    assertEquals("sould be inconsistent", TruthValue.INCONSISTENT,
+		    ans.getValuation());
+	} catch (final IOException e) {
 	    fail(e.getMessage());
-	} catch (PrologParserException e) {
+	} catch (final PrologParserException e) {
 	    fail(e.getMessage());
-	} catch (UnsupportedOWLProfile e) {
+	} catch (final UnsupportedOWLProfile e) {
 	    fail("ontology is not QL nor EL!\n" + e.getMessage());
-	} catch (InconsistentOntologyException e) {
+	} catch (final InconsistentOntologyException e) {
 	    fail("inconsistent ontology");
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    e.printStackTrace();
 	    fail(e.toString());
 	}
@@ -144,10 +144,10 @@ public class QueryTest extends Object {
     @Test
     public final void cln2() throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLClass a3 = kb.getConcept("a3");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLClass a3 = kb.getConcept("a3");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addRule("a3(X):-a1(X)");
 	assertConsistent("a3(X)");
@@ -165,11 +165,11 @@ public class QueryTest extends Object {
     @Test
     public final void cln3() throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLClass A = kb.getConcept("A");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLClass A = kb.getConcept("A");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(A, a);
 	kb.addAssertion(p1, a, b);
 	kb.addRule("p2(X,Y):-p1(X,Y)");
@@ -188,11 +188,11 @@ public class QueryTest extends Object {
     @Test
     public final void cln4() throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLClass A = kb.getConcept("A");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLClass A = kb.getConcept("A");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(A, b);
 	kb.addAssertion(p1, a, b);
 	kb.addRule("p2(X,Y):-p1(X,Y)");
@@ -211,11 +211,11 @@ public class QueryTest extends Object {
     @Test
     public final void cln5() throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addRule("p3(X,Y):-p1(X,Y)");
 	assertConsistent("p3(X,Y)");
@@ -234,9 +234,9 @@ public class QueryTest extends Object {
     public final void disjointWithAtomicConcepts()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addRule("a2(X):-a1(X)");
 	assertConsistent("a2(X)");
@@ -248,32 +248,32 @@ public class QueryTest extends Object {
     public final void disjointWithAtomicConceptsToExistRoleExist()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLObjectProperty P4 = kb.getRole("p");
-	OWLClass A5 = kb.getConcept("a");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLObjectProperty p4 = kb.getRole("p4");
+	final OWLClass a5 = kb.getConcept("a5");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addRule("a2(X):-a1(X)");
 	assertConsistent("a2(X)");
 	kb.addDisjunction(a1, a2);
 	kb.addSubsumption(a2, kb.getExistential(p3));
-	kb.addSubsumption(p3, P4);
-	kb.addSubsumption(kb.getExistential(P4), A5);
-	assertInconsistent("a(X)");
+	kb.addSubsumption(p3, p4);
+	kb.addSubsumption(kb.getExistential(p4), a5);
+	assertInconsistent("a5(X)");
     }
 
     @Test
     public final void disjointWithAtomicConceptsToExistRoleExist2()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLObjectProperty P4 = kb.getRole("p4");
-	OWLClass A5 = kb.getConcept("a5");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLObjectProperty P4 = kb.getRole("p4");
+	final OWLClass A5 = kb.getConcept("a5");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addRule("a2(X):-a1(X)");
 	assertConsistent("a2(X)");
@@ -288,12 +288,12 @@ public class QueryTest extends Object {
     public final void disjointWithAtomicConceptsToExistRoleExist3()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLObjectProperty P4 = kb.getRole("p4");
-	OWLClass A5 = kb.getConcept("a5");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLObjectProperty P4 = kb.getRole("p4");
+	final OWLClass A5 = kb.getConcept("a5");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addRule("a2(X):-a1(X)");
 	assertConsistent("a2(X)");
@@ -308,12 +308,12 @@ public class QueryTest extends Object {
     public final void disjointWithAtomicConceptsToExistRoleExist4()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLObjectProperty P4 = kb.getRole("p4");
-	OWLClass A5 = kb.getConcept("a5");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLObjectProperty P4 = kb.getRole("p4");
+	final OWLClass A5 = kb.getConcept("a5");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addRule("a2(X):-a1(X)");
 	assertConsistent("a2(X)");
@@ -333,10 +333,10 @@ public class QueryTest extends Object {
     public final void disjointWithAtomicRoles()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addRule("p2(X,Y):-p1(X,Y).");
 	assertConsistent("p2(X,Y)");
@@ -353,10 +353,10 @@ public class QueryTest extends Object {
     public final void disjointWithExistentialsOnTheLeft()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addRule("a2(X):-p1(X,_)");
 	assertConsistent("a2(X)");
@@ -368,11 +368,11 @@ public class QueryTest extends Object {
     public final void disjunctionExistRoleExist1()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLClass A4 = kb.getConcept("a4");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLClass A4 = kb.getConcept("a4");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(p2));
 	kb.addSubsumption(p2, p3);
@@ -386,11 +386,11 @@ public class QueryTest extends Object {
     public final void disjunctionExistRoleExist2()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLClass A4 = kb.getConcept("a4");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLClass A4 = kb.getConcept("a4");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(kb.getInverse(p2)));
 	kb.addSubsumption(kb.getInverse(p2), p3);
@@ -404,19 +404,19 @@ public class QueryTest extends Object {
     public final void flounderingInS1() throws OWLOntologyCreationException {
 	kb.clear();
 	// originate the doubled rules
-	OWLClass ad1 = kb.getConcept("ad1");
-	OWLClass ad2 = kb.getConcept("ad2");
+	final OWLClass ad1 = kb.getConcept("ad1");
+	final OWLClass ad2 = kb.getConcept("ad2");
 	kb.addDisjunction(ad1, ad2);
 
 	// originate (s1) case
-	OWLClass a1 = kb.getConcept("a1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(p2));
 
 	// to check an answer
-	OWLClass a3 = kb.getConcept("a3");
+	final OWLClass a3 = kb.getConcept("a3");
 	kb.addSubsumption(kb.getExistential(p2), a3);
 	assertAnswer("a3(X).", "a");
     }
@@ -424,9 +424,9 @@ public class QueryTest extends Object {
     @Test
     public final void inconsistentRule() throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addDisjunction(a2, a1);
 	kb.addRule("a2(X):-a1(X)");
@@ -445,10 +445,10 @@ public class QueryTest extends Object {
     public final void irreflexiveRolesFromConceptDisjunction()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(p1, a, a);
 	kb.addSubsumption(kb.getExistential(p1), a1);
 	kb.addSubsumption(kb.getExistential(kb.getInverse(p1)), a2);
@@ -465,10 +465,10 @@ public class QueryTest extends Object {
     public final void irreflexiveRolesFromRoleDisjunction()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(p1, a, a);
 	kb.addSubsumption(p1, p2);
 	kb.addSubsumption(kb.getInverse(p1), p3);
@@ -476,12 +476,11 @@ public class QueryTest extends Object {
 	assertInconsistent("p1(X,X)");
     }
 
-    @Test
     public final void roleCycle() throws OWLOntologyCreationException {
 	kb.clear();
 	kb.getConcept("A");
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
 	// kb.addSubsumption(kb.getExistential(p1), A);
 	// kb.addSubsumption(kb.getExistential(kb.getInverse(p2)), A);
 	kb.addSubsumption(p1, kb.getInverse(p2));
@@ -489,11 +488,11 @@ public class QueryTest extends Object {
 	try {
 	    new HybridKB(kb.getOntology()).queryAll(parser
 		    .parseQuery("p1(X,Y)."));
-	} catch (IOException e) {
+	} catch (final IOException e) {
 	    fail(e.getMessage());
-	} catch (PrologParserException e) {
+	} catch (final PrologParserException e) {
 	    fail(e.getMessage());
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    fail(e.getMessage());
 	}
     }
@@ -511,11 +510,11 @@ public class QueryTest extends Object {
     public final void subsumptionsExistRoleExist1()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLClass A4 = kb.getConcept("a4");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLClass A4 = kb.getConcept("a4");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(p2));
 	kb.addSubsumption(p2, p3);
@@ -527,11 +526,11 @@ public class QueryTest extends Object {
     public final void subsumptionsExistRoleExist2()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLClass A4 = kb.getConcept("a4");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLClass A4 = kb.getConcept("a4");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(p2));
 	kb.addSubsumption(p2, kb.getInverse(p3));
@@ -543,11 +542,11 @@ public class QueryTest extends Object {
     public final void subsumptionsExistRoleExist3()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLClass A4 = kb.getConcept("a4");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLClass A4 = kb.getConcept("a4");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(kb.getInverse(p2)));
 	kb.addSubsumption(kb.getInverse(p2), p3);
@@ -559,11 +558,11 @@ public class QueryTest extends Object {
     public final void subsumptionsExistRoleExist4()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLClass A4 = kb.getConcept("a4");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLClass A4 = kb.getConcept("a4");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(kb.getInverse(p2)));
 	kb.addSubsumption(kb.getInverse(p2), kb.getInverse(p3));
@@ -580,11 +579,11 @@ public class QueryTest extends Object {
     public final void subsumptionsWithAtomicAndInverseRoles()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(p1, kb.getInverse(p2));
 	kb.addSubsumption(p2, p3);
@@ -600,9 +599,9 @@ public class QueryTest extends Object {
     public final void subsumptionWithAtomicConcepts()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, a2);
 	assertAnswer("a2(X)", new String[] { "a" });
@@ -617,10 +616,10 @@ public class QueryTest extends Object {
     public final void subsumptionWithAtomicRoles()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(p1, p2);
 	assertAnswer("p2(X,Y)", new String[] { "a", "b" });
@@ -635,10 +634,10 @@ public class QueryTest extends Object {
     public final void subsumptionWithExistentialsOnTheLeft()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(kb.getExistential(p1), a2);
 	assertAnswer("a2(X)", new String[] { "a" });
@@ -653,10 +652,10 @@ public class QueryTest extends Object {
     public final void subsumptionWithExistentialsOnTheRight()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLClass a3 = kb.getConcept("a3");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLClass a3 = kb.getConcept("a3");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(p2));
 	kb.addSubsumption(kb.getExistential(p2), a3);
@@ -672,10 +671,10 @@ public class QueryTest extends Object {
     public final void subsumptionWithInverseRoles()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(p1, kb.getInverse(p2));
 	assertAnswer("p2(X,Y)", new String[] { "b", "a" });
@@ -692,14 +691,14 @@ public class QueryTest extends Object {
     public final void testEL() throws OWLOntologyCreationException {
 	Config.translationAlgorithm = null;
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLClass a3 = kb.getConcept("a3");
-	OWLObjectProperty p4 = kb.getRole("p4");
-	OWLObjectProperty p5 = kb.getRole("p5");
-	OWLClass a6 = kb.getConcept("a6");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLDataFactory df = kb.getDataFactory();
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLClass a3 = kb.getConcept("a3");
+	final OWLObjectProperty p4 = kb.getRole("p4");
+	final OWLObjectProperty p5 = kb.getRole("p5");
+	final OWLClass a6 = kb.getConcept("a6");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLDataFactory df = kb.getDataFactory();
 	kb.addAssertion(a1, a);
 	kb.addAssertion(a2, a);
 	kb.addSubsumption(df.getOWLObjectIntersectionOf(a1, a2), a3);
@@ -719,10 +718,10 @@ public class QueryTest extends Object {
     public final void unsatisfiableConcepts()
 	    throws OWLOntologyCreationException {
 	kb.clear();
-	OWLClass a1 = kb.getConcept("a1");
-	OWLClass a2 = kb.getConcept("a2");
-	OWLClass a3 = kb.getConcept("a3");
-	OWLIndividual a = kb.getIndividual("a");
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLClass a3 = kb.getConcept("a3");
+	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, a2);
 	kb.addSubsumption(a2, a1);
@@ -740,11 +739,11 @@ public class QueryTest extends Object {
     @Test
     public final void unsatisfiableRoles() throws OWLOntologyCreationException {
 	kb.clear();
-	OWLObjectProperty p1 = kb.getRole("p1");
-	OWLObjectProperty p2 = kb.getRole("p2");
-	OWLObjectProperty p3 = kb.getRole("p3");
-	OWLIndividual a = kb.getIndividual("a");
-	OWLIndividual b = kb.getIndividual("b");
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLObjectProperty p2 = kb.getRole("p2");
+	final OWLObjectProperty p3 = kb.getRole("p3");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(p1, p2);
 	kb.addSubsumption(p2, p1);

@@ -9,12 +9,8 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  */
 public class OriginalPredicate extends MetaPredicateImpl {
 
-    {
-	prefix = 'a';
-    }
-
     public OriginalPredicate(String symbol, int arity) {
-	super(symbol, arity, PredicateType.ORIGINAL);
+	super(symbol, arity, PredicateType.ORIGINAL, 'a');
     }
 
 }

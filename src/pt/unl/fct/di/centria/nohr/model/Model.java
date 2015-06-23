@@ -90,7 +90,7 @@ public class Model {
 
     public static NegativeLiteral negLiteral(Predicate pred, Term... args) {
 	final List<Term> argsList = new LinkedList<Term>();
-	Collections.addAll(argsList);
+	Collections.addAll(argsList, args);
 	return new NegativeLiteralImpl(new AtomImpl(pred, argsList));
     }
 

@@ -9,12 +9,8 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  */
 public class DoubleRangePredicate extends MetaPredicateImpl {
 
-    {
-	prefix = 'h';
-    }
-
     public DoubleRangePredicate(String symbol) {
-	super(symbol, 1, PredicateType.DOUBLED_RANGE);
+	super(symbol, 1, PredicateType.DOUBLED_RANGE, 'h');
     }
 
 }

@@ -25,6 +25,8 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
+import com.google.common.base.Optional;
+
 import other.Utils;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
@@ -33,27 +35,27 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.Normalizer;
 
 public class KB {
 
-    private Map<String, OWLClass> concepts;
+    private final Map<String, OWLClass> concepts;
 
-    private Map<String, OWLDataProperty> dataRoles;
+    private final Map<String, OWLDataProperty> dataRoles;
 
-    private OWLDataFactory df;
+    private final OWLDataFactory df;
 
-    private Map<String, OWLIndividual> individuals;
+    private final Map<String, OWLIndividual> individuals;
 
-    private OntologyLabeler ol;
+    private final OntologyLabeler ol;
 
-    private OWLOntologyManager om;
+    private final OWLOntologyManager om;
 
-    private OWLOntology ont;
+    private final OWLOntology ont;
 
-    private Map<String, OWLObjectProperty> roles;
+    private final Map<String, OWLObjectProperty> roles;
 
     public KB() throws OWLOntologyCreationException {
 	om = OWLManager.createOWLOntologyManager();
 	df = om.getOWLDataFactory();
 	ont = om.createOntology(IRI.generateDocumentIRI());
-	OWLAnnotationProperty lblAnnotProp = om.getOWLDataFactory()
+	final OWLAnnotationProperty lblAnnotProp = om.getOWLDataFactory()
 		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
 	ol = new OntologyLabeler(om.createOntology(), lblAnnotProp);
 	concepts = new HashMap<String, OWLClass>();
@@ -63,7 +65,7 @@ public class KB {
     }
 
     public void add(OWLAxiom... axioms) {
-	for (OWLAxiom a : axioms)
+	for (final OWLAxiom a : axioms)
 	    om.addAxiom(ont, a);
     }
 
@@ -104,7 +106,7 @@ public class KB {
     }
 
     public void clear() throws OWLOntologyCreationException {
-	Set<OWLDeclarationAxiom> declarationAxioms = ont
+	final Set<OWLDeclarationAxiom> declarationAxioms = ont
 		.getAxioms(AxiomType.DECLARATION);
 	om.removeAxioms(ont, ont.getAxioms());
 	om.addAxioms(ont, declarationAxioms);
@@ -126,7 +128,7 @@ public class KB {
     }
 
     public OWLClass[] getConcepts(int n) {
-	OWLClass[] result = new OWLClass[n];
+	final OWLClass[] result = new OWLClass[n];
 	for (int i = 0; i < n; i++)
 	    result[i] = getConcept();
 	return result;
@@ -151,14 +153,14 @@ public class KB {
     }
 
     public OWLDataProperty[] getDataRoles(int n) {
-	OWLDataProperty[] result = new OWLDataProperty[n];
+	final OWLDataProperty[] result = new OWLDataProperty[n];
 	for (int i = 0; i < n; i++)
 	    result[i] = getDataRole();
 	return result;
     }
 
     private IRI getEntityIRI(String name) {
-	IRI ontIRI = ont.getOntologyID().getOntologyIRI();
+	final IRI ontIRI = ont.getOntologyID().getOntologyIRI();
 	return IRI.create(ontIRI + "#" + name);
     }
 
@@ -169,7 +171,7 @@ public class KB {
     }
 
     public OWLObjectSomeValuesFrom getExistential(String roleName) {
-	OWLObjectProperty role = getRole(roleName);
+	final OWLObjectProperty role = getRole(roleName);
 	return df.getOWLObjectSomeValuesFrom(role, df.getOWLThing());
     }
 
@@ -191,7 +193,7 @@ public class KB {
     }
 
     public OWLObjectPropertyExpression getInverse(String roleName) {
-	OWLObjectProperty role = getRole(roleName);
+	final OWLObjectProperty role = getRole(roleName);
 	return df.getOWLObjectInverseOf(role);
     }
 
@@ -241,7 +243,7 @@ public class KB {
     }
 
     public OWLObjectProperty[] getRoles(int n) {
-	OWLObjectProperty[] result = new OWLObjectProperty[n];
+	final OWLObjectProperty[] result = new OWLObjectProperty[n];
 	for (int i = 0; i < n; i++)
 	    result[i] = getRole();
 	return result;
@@ -252,7 +254,7 @@ public class KB {
     }
 
     public String getRule(String ruleFormat, Object... cls) {
-	Object[] args = new String[cls.length];
+	final Object[] args = new String[cls.length];
 	for (int i = 0; i < cls.length; i++)
 	    args[i] = getLabel(cls[i]);
 	return String.format(ruleFormat, args);

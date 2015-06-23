@@ -44,7 +44,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nohr.model.Atom#apply(nohr.model.Substitution)
      */
     @Override
@@ -129,7 +129,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see nohr.model.Atom#getVariables()
      */
     @Override
@@ -143,7 +143,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -177,7 +177,7 @@ public class AtomImpl implements Atom {
 
     @Override
     public String toString() {
-	return predicate.getSymbol() + "(" + Utils.concat(",", arguments) + ")";
+	return predicate + "(" + Utils.concat(",", arguments) + ")";
     }
 
 }

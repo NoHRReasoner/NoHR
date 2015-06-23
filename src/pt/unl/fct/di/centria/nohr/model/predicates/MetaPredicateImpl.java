@@ -9,12 +9,13 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  */
 public class MetaPredicateImpl extends PredicateImpl implements MetaPredicate {
 
+    protected final char prefix;
     protected PredicateType type;
 
-    protected static char prefix;
-
-    public MetaPredicateImpl(String symbol, int arity, PredicateType type) {
+    public MetaPredicateImpl(String symbol, int arity, PredicateType type,
+	    char prefix) {
 	super(symbol, arity);
+	this.prefix = prefix;
     }
 
     @Override
@@ -25,10 +26,15 @@ public class MetaPredicateImpl extends PredicateImpl implements MetaPredicate {
 	    return false;
 	if (!(obj instanceof MetaPredicateImpl))
 	    return false;
-	MetaPredicateImpl other = (MetaPredicateImpl) obj;
+	final MetaPredicateImpl other = (MetaPredicateImpl) obj;
 	if (type != other.type)
 	    return false;
 	return true;
+    }
+
+    @Override
+    public String getName() {
+	return prefix + symbol + "/" + arity;
     }
 
     public PredicateType getType() {

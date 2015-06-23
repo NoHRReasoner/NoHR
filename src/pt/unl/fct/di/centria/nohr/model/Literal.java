@@ -3,6 +3,8 @@ package pt.unl.fct.di.centria.nohr.model;
 import java.util.List;
 import java.util.Map;
 
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+
 public interface Literal {
 
     public Literal acept(Visitor visitor);
@@ -26,9 +28,8 @@ public interface Literal {
 
     public Atom getAtom();
 
-    /**
-     * @return
-     */
+    public Predicate getPredicate();
+
     public List<Variable> getVariables();
 
     public boolean isGrounded();

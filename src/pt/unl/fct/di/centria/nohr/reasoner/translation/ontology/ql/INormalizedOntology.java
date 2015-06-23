@@ -18,37 +18,37 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 public interface INormalizedOntology {
 
-	public Set<OWLClassAssertionAxiom> getConceptAssertions();
+    public Set<OWLClassAssertionAxiom> getConceptAssertions();
 
-	public Set<OWLDisjointClassesAxiom> getConceptDisjunctions();
+    public Set<OWLDisjointClassesAxiom> getConceptDisjunctions();
 
-	public Set<OWLSubClassOfAxiom> getConceptSubsumptions();
+    public Set<OWLSubClassOfAxiom> getConceptSubsumptions();
 
-	public Set<OWLDataPropertyAssertionAxiom> getDataAssertions();
+    public Set<OWLDataPropertyAssertionAxiom> getDataAssertions();
 
-	public Set<OWLObjectPropertyAssertionAxiom> getRoleAssertions();
+    public Set<OWLClassExpression> getDisjointConcepts();
 
-	public Set<OWLNaryPropertyAxiom<?>> getRoleDisjunctions();
+    public Set<OWLProperty> getDisjointRoles();
 
-	public Set<OWLSubPropertyAxiom<?>> getRoleSubsumptions();
+    public Set<OWLObjectPropertyAssertionAxiom> getRoleAssertions();
 
-	public Set<OWLClassExpression> getUnsatisfiableConcepts();
+    public Set<OWLNaryPropertyAxiom<?>> getRoleDisjunctions();
 
-	public Set<OWLPropertyExpression<?, ?>> getUnsatisfiableRoles();
+    public Set<OWLObjectProperty> getRoles();
 
-	public boolean hasDisjointStatement();
+    public Set<OWLSubPropertyAxiom<?>> getRoleSubsumptions();
 
-	public Set<OWLObjectProperty> getRoles();
-	
-	public Set<OWLClassExpression> getSubConcepts();
-	
-	public Set<OWLClassExpression> getSuperConcepts();
+    public Set<OWLClassExpression> getSubConcepts();
 
-	public Set<OWLClassExpression> getDisjointConcepts();	
+    public Set<OWLProperty> getSubRoles();
 
-	public Set<OWLProperty> getSubRoles();	
+    public Set<OWLClassExpression> getSuperConcepts();
 
-	public Set<OWLProperty> getSuperRoles();	
+    public Set<OWLProperty> getSuperRoles();
 
-	public Set<OWLProperty> getDisjointRoles();
+    public Set<OWLClassExpression> getUnsatisfiableConcepts();
+
+    public Set<OWLPropertyExpression> getUnsatisfiableRoles();
+
+    public boolean hasDisjointStatement();
 }

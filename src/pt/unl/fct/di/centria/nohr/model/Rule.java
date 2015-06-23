@@ -16,6 +16,8 @@ public interface Rule {
 
     public Atom getHead();
 
+    public Set<Literal> getNegativeBody();
+
     public Set<Predicate> getPredicates();
 
     public boolean isFact();
