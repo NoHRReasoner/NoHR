@@ -16,7 +16,7 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 //TODO remove
 
-public interface INormalizedOntology {
+public interface QLNormalizedOntology {
 
     public Set<OWLClassAssertionAxiom> getConceptAssertions();
 
@@ -51,4 +51,12 @@ public interface INormalizedOntology {
     public Set<OWLPropertyExpression> getUnsatisfiableRoles();
 
     public boolean hasDisjointStatement();
+
+    public boolean isSub(OWLClassExpression ce);
+
+    public boolean isSub(OWLPropertyExpression pe);
+
+    public boolean isSuper(OWLClassExpression ce);
+
+    public boolean isSuper(OWLPropertyExpression pe);
 }

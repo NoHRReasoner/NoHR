@@ -1,5 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,13 +11,13 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public class RuleImpl implements Rule {
 
-    private final List<Literal> body;
+    private final Literal[] body;
 
     private final Atom head;
 
     RuleImpl(Atom head, List<Literal> body) {
 	this.head = head;
-	this.body = body;
+	this.body = body.toArray(new Literal[] {});
     }
 
     @Override
@@ -29,7 +30,7 @@ public class RuleImpl implements Rule {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -56,7 +57,9 @@ public class RuleImpl implements Rule {
 
     @Override
     public List<Literal> getBody() {
-	return body;
+	final List<Literal> result = new LinkedList<Literal>();
+	Collections.addAll(result, body);
+	return result;
     }
 
     @Override
@@ -75,7 +78,7 @@ public class RuleImpl implements Rule {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nohr.model.Rule#getPredicates()
      */
     @Override
@@ -89,7 +92,7 @@ public class RuleImpl implements Rule {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -103,12 +106,12 @@ public class RuleImpl implements Rule {
 
     @Override
     public boolean isFact() {
-	return body.isEmpty();
+	return body.length == 0;
     }
 
     @Override
     public String toString() {
-	return head + (body.isEmpty() ? "" : ":-") + Utils.concat(",", body);
+	return head + (body.length == 0 ? "" : ":-") + Utils.concat(",", body);
     }
 
 }

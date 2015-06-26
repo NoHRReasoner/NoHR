@@ -11,6 +11,7 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
@@ -28,7 +29,7 @@ public class EscapeVisitor implements Visitor {
     @Override
     public Constant visit(Constant constant) {
 	if (constant.isNumber())
-	    return cons(OntologyLabeler.escapeAtom(constant.toString()));
+	    return constant;
 	else
 	    return cons(OntologyLabeler.escapeAtom(constant.asString()));
 

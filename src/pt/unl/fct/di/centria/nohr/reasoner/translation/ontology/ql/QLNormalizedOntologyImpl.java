@@ -44,7 +44,7 @@ import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
 import com.google.common.base.Optional;
 
-public class Normalizer implements INormalizedOntology {
+public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private final Set<OWLClassAssertionAxiom> conceptAssertions;
 
@@ -84,7 +84,7 @@ public class Normalizer implements INormalizedOntology {
 
     private final Set<OWLPropertyExpression> unsatisfiableRoles;
 
-    public Normalizer(OWLOntology ontology) {
+    public QLNormalizedOntologyImpl(OWLOntology ontology) {
 	ontologyIRI = ontology.getOntologyID().getOntologyIRI();
 	df = ontology.getOWLOntologyManager().getOWLDataFactory();
 	roles = ontology.getObjectPropertiesInSignature();
@@ -195,6 +195,22 @@ public class Normalizer implements INormalizedOntology {
     @Override
     public boolean hasDisjointStatement() {
 	return hasDisjunction;
+    }
+
+    public boolean isSub(OWLClassExpression ce) {
+	return subConcepts.contains(ce);
+    }
+
+    public boolean isSub(OWLPropertyExpression pe) {
+	return subRoles.contains(pe);
+    }
+
+    public boolean isSuper(OWLClassExpression ce) {
+	return superConcepts.contains(ce);
+    }
+
+    public boolean isSuper(OWLPropertyExpression pe) {
+	return superRoles.contains(pe);
     }
 
     private void normalize(OWLAsymmetricObjectPropertyAxiom alpha) {

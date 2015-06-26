@@ -66,7 +66,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
  * @author nunocosta
  *
  */
-public abstract class AbstractAxiomsTranslator {
+public abstract class AbstractQLAxiomsTranslator {
 
     protected static final Variable ANNON = var("_");
 
@@ -75,18 +75,20 @@ public abstract class AbstractAxiomsTranslator {
     protected static final Variable Y = var("Y");
 
     protected OWLDataFactory dataFactory;
+    protected OWLOntology ontology;
     protected OntologyLabeler ontologyLabeler;
     private int opeNewCount = 0;
 
-    public AbstractAxiomsTranslator(OWLOntology ontology) {
+    public AbstractQLAxiomsTranslator(OWLOntology ontology) {
+	this.ontology = ontology;
 	dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
 	ontologyLabeler = new OntologyLabeler(ontology,
 		dataFactory
-			.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
-				.getIRI()));
+		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
+			.getIRI()));
     }
 
-    protected Atom negTr(OWLClassExpression c, Variable x) {
+    public Atom negTr(OWLClassExpression c, Variable x) {
 	if (c instanceof OWLClass)
 	    return atom(negPred(sym((OWLClass) c), 1), x);
 	else if (c instanceof OWLObjectSomeValuesFrom)
@@ -97,7 +99,7 @@ public abstract class AbstractAxiomsTranslator {
 		    "c must be an atomic or existential class");
     }
 
-    protected Atom negTr(OWLPropertyExpression r, Variable x, Variable y) {
+    public Atom negTr(OWLPropertyExpression r, Variable x, Variable y) {
 	if (r instanceof OWLObjectProperty)
 	    return atom(negPred(sym(r), 2), x, y);
 	else if (r instanceof OWLDataProperty)
@@ -374,7 +376,7 @@ public abstract class AbstractAxiomsTranslator {
 	if (ce2 instanceof OWLObjectComplementOf)
 	    return translateSubsumption(ce1, (OWLObjectComplementOf) ce2);
 	else if (ce2 instanceof OWLObjectIntersectionOf)
-	    return translateSubsumption(ce1, (OWLObjectComplementOf) ce2);
+	    return translateSubsumption(ce1, (OWLObjectIntersectionOf) ce2);
 	return translateBasicSubsumption(ce1, ce2);
     }
 
@@ -400,6 +402,8 @@ public abstract class AbstractAxiomsTranslator {
 	final OWLObjectPropertyExpression invOpeNew = opeNew
 		.getInverseProperty();
 	final OWLClassExpression c = ce2.getFiller();
+	if (c.isOWLThing())
+	    return translateBasicSubsumption(ce1, ce2);
 	final Set<Rule> result = new HashSet<Rule>();
 	result.addAll(translateSubsumption(opeNew, ope));
 	result.addAll(translateSubsumption(some(invOpeNew), c));

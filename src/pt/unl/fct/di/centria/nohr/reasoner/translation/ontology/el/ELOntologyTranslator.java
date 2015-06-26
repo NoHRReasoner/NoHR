@@ -143,7 +143,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator
      * #getNegatedPredicates()

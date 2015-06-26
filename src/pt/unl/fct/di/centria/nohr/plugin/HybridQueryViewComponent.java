@@ -48,8 +48,6 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
-import union.logger.Observer;
-import union.logger.UnionLogger;
 
 public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     // implements OWLModelManagerListener {
@@ -67,8 +65,8 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-			    int delay = 750; // milliseconds
-			    ActionListener taskPerformer = new ActionListener() {
+			    final int delay = 750; // milliseconds
+			    final ActionListener taskPerformer = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent evt) {
 				    if (isShowProgress)
@@ -80,7 +78,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		    });
 		    textField.selectAll();
 		    textField.requestFocus();
-		    Query query = parser.parseQuery(textField.getText());
+		    final Query query = parser.parseQuery(textField.getText());
 		    fillTable(query, nohr.queryAll(query));
 
 		} else {
@@ -90,7 +88,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		    // nohr.reasoner.ontologyTranslation.Logger.log(""):w
 		    ;
 		}
-	    } catch (Exception e) {
+	    } catch (final Exception e) {
 		progressFrame.setVisible(false);
 		e.printStackTrace();
 	    }
@@ -106,42 +104,36 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	}
     }
 
-    public class ViewLogger implements Observer {
-	@Override
-	public void update(String log) {
-	    textArea.append(log + Config.NL);
-	}
+    private static HybridKB nohr;
 
-    }
+    private static final long serialVersionUID = -4515710047558710080L;
+
+    private static JTextArea textArea;
 
     public static void clear() {
 	nohr = null;
     }
 
+    private final List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
+    private String filter;
+    private boolean hasVariables;
+    private boolean isNeedToQuery;
+    private boolean isShowAllSolutions = true;
+    private boolean isShowProgress;
     private final Parser parser = new Parser();
-
-    private static final long serialVersionUID = -4515710047558710080L;
-    private static HybridKB nohr;
-    private static JTextArea textArea;
-    private JTextField textField;
-    private TableRowSorter<DefaultTableModel> sorter;
-    private JTable table;
-    private DefaultTableModel tableModel;
-    private DefaultTableCellRenderer tableHeaderRenderer = new DefaultTableCellRenderer();
-    private JPanel settingsPanel;
-    private List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
     // private JLabel progressLabel;
     private JFrame progressFrame;
     private JLabel progressLabel;
     private QueryWorker queryWorker;
-    private boolean isShowAllSolutions = true;
-    private boolean hasVariables;
+    private JPanel settingsPanel;
+    private TableRowSorter<DefaultTableModel> sorter;
+    private JTable table;
 
-    private boolean isShowProgress;
+    private final DefaultTableCellRenderer tableHeaderRenderer = new DefaultTableCellRenderer();
 
-    private boolean isNeedToQuery;
+    private DefaultTableModel tableModel;
 
-    private String filter;
+    private JTextField textField;
 
     private void addChbListners(JCheckBox button) {
 	checkBoxs.add(button);
@@ -155,7 +147,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     }
 
     protected JButton addProcessButton() {
-	JButton button = new JButton("Execute");
+	final JButton button = new JButton("Execute");
 	button.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -177,19 +169,19 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	SwingUtilities.invokeLater(new Runnable() {
 	    @Override
 	    public void run() {
-		JProgressBar progressBar = new JProgressBar(0, 100);
+		final JProgressBar progressBar = new JProgressBar(0, 100);
 		progressBar.setIndeterminate(true);
 		// progressBar.setValue(0);
 		progressBar.setStringPainted(true);
 		// progressBar.setString("Half way there!");
 
-		JPanel progressPanel = new JPanel(new BorderLayout());
+		final JPanel progressPanel = new JPanel(new BorderLayout());
 		progressPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
 		// progressLabel = new
 		// JLabel("Rule translation process",SwingConstants.CENTER);
 		// progressPanel.add(progressLabel,BorderLayout.BEFORE_FIRST_LINE);
 
-		GridBagConstraints c = new GridBagConstraints();
+		final GridBagConstraints c = new GridBagConstraints();
 		// c.anchor = GridBagConstraints.NORTHWEST;
 		c.gridx = 1;
 		c.gridy = 0;
@@ -198,7 +190,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		c.weightx = 1;
 		c.fill = GridBagConstraints.BOTH;
 
-		JPanel panel = new JPanel(new GridBagLayout());
+		final JPanel panel = new JPanel(new GridBagLayout());
 		progressLabel = new JLabel("Processing", SwingConstants.CENTER);
 		//
 		progressLabel.setBorder(BorderFactory
@@ -259,17 +251,17 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     }
 
     protected JPanel addSettingsPanel() {
-	JPanel settingsPanel = new JPanel(new GridBagLayout());
+	final JPanel settingsPanel = new JPanel(new GridBagLayout());
 
 	settingsPanel.setBorder(BorderFactory.createTitledBorder("Settings"));
 
-	JPanel panelTop = new JPanel(new GridBagLayout());
+	final JPanel panelTop = new JPanel(new GridBagLayout());
 	panelTop.setBorder(BorderFactory.createTitledBorder("Solutions"));
-	JPanel panelBottom = new JPanel(new GridBagLayout());
+	final JPanel panelBottom = new JPanel(new GridBagLayout());
 	panelBottom.setBorder(BorderFactory.createTitledBorder("Valuation"));
-	JPanel panelTopBottom = new JPanel(new GridBagLayout());
+	final JPanel panelTopBottom = new JPanel(new GridBagLayout());
 
-	GridBagConstraints c = new GridBagConstraints();
+	final GridBagConstraints c = new GridBagConstraints();
 	c.anchor = GridBagConstraints.NORTHWEST;
 	c.gridx = 1;
 	c.gridy = 1;
@@ -277,7 +269,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	c.gridheight = 1;
 	c.weightx = 1;
 
-	JRadioButton oneChB = new JRadioButton("one", false);
+	final JRadioButton oneChB = new JRadioButton("one", false);
 	oneChB.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent ae) {
@@ -293,7 +285,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	    }
 	});
 
-	JRadioButton allChB = new JRadioButton("all", true);
+	final JRadioButton allChB = new JRadioButton("all", true);
 	allChB.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent ae) {
@@ -308,14 +300,14 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		    });
 	    }
 	});
-	ButtonGroup group = new ButtonGroup();
+	final ButtonGroup group = new ButtonGroup();
 	group.add(oneChB);
 	group.add(allChB);
-	JCheckBox trueChB = new JCheckBox("true", true);
+	final JCheckBox trueChB = new JCheckBox("true", true);
 	addChbListners(trueChB);
-	JCheckBox undefinedChB = new JCheckBox("undefined", true);
+	final JCheckBox undefinedChB = new JCheckBox("undefined", true);
 	addChbListners(undefinedChB);
-	JCheckBox inconsistentChB = new JCheckBox("inconsistent", true);
+	final JCheckBox inconsistentChB = new JCheckBox("inconsistent", true);
 	addChbListners(inconsistentChB);
 
 	panelTop.add(oneChB, c);
@@ -361,7 +353,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     }
 
     private void disableValuationCheckBoxes() {
-	for (JCheckBox checkBox : checkBoxs)
+	for (final JCheckBox checkBox : checkBoxs)
 	    checkBox.setEnabled(false);
     }
 
@@ -371,11 +363,11 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     }
 
     private void enableValuationCheckBoxes() {
-	int delay = 500; // milliseconds
-	ActionListener taskPerformer = new ActionListener() {
+	final int delay = 500; // milliseconds
+	final ActionListener taskPerformer = new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent evt) {
-		for (JCheckBox checkBox : checkBoxs)
+		for (final JCheckBox checkBox : checkBoxs)
 		    checkBox.setEnabled(true);
 	    }
 	};
@@ -416,11 +408,11 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		SwingUtilities.invokeLater(new Runnable() {
 		    @Override
 		    public void run() {
-			for (Answer answer : answers) {
+			for (final Answer answer : answers) {
 			    final Vector<String> row = new Vector<String>();
 			    if (hasVariables)
 				row.add(Integer.toString(table.getRowCount() + 1));
-			    for (Term t : answer.getValues())
+			    for (final Term t : answer.getValues())
 				row.add(t.toString());
 			    row.add(answer.getValuation().name().toLowerCase());
 			    if (!hasVariables
@@ -444,7 +436,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 			    fillNoAnswersTable("");
 		    }
 		});
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    fillNoAnswersTable("");
 	} finally {
 
@@ -456,7 +448,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private String getFilter() {
 	filter = "yes|no|no answers found";
 	isNeedToQuery = false;
-	for (JCheckBox chb : checkBoxs)
+	for (final JCheckBox chb : checkBoxs)
 	    if (chb.isSelected()) {
 		filter += "|" + chb.getText();
 		isNeedToQuery = true;
@@ -481,10 +473,10 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     @Override
     protected void initialiseOWLView() {
 	setLayout(new BorderLayout(12, 12));
-	JPanel panel = new JPanel(new GridBagLayout());
+	final JPanel panel = new JPanel(new GridBagLayout());
 
-	GridBagConstraints c = new GridBagConstraints();
-	GridBagConstraints subC = new GridBagConstraints();
+	final GridBagConstraints c = new GridBagConstraints();
+	final GridBagConstraints subC = new GridBagConstraints();
 	c.fill = GridBagConstraints.BOTH;
 	c.gridx = 0;
 	c.gridwidth = 1;
@@ -500,7 +492,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	subC.ipady = 0;
 	JScrollPane scrollPane;
 
-	JPanel queryPanel = new JPanel(new GridBagLayout());
+	final JPanel queryPanel = new JPanel(new GridBagLayout());
 	queryPanel.setBorder(BorderFactory.createTitledBorder("Query"));
 	c.gridy = 1;
 	c.weighty = 0.3;
@@ -517,12 +509,12 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	subC.ipady = 0;
 	subC.fill = GridBagConstraints.BOTH;
 
-	JPanel resultPanel = new JPanel(new GridBagLayout());
+	final JPanel resultPanel = new JPanel(new GridBagLayout());
 
-	JPanel tabPanel = new JPanel(new GridBagLayout());
-	JPanel outputPanel = new JPanel(new GridBagLayout());
+	final JPanel tabPanel = new JPanel(new GridBagLayout());
+	final JPanel outputPanel = new JPanel(new GridBagLayout());
 
-	JTabbedPane tabbedPane = new JTabbedPane();
+	final JTabbedPane tabbedPane = new JTabbedPane();
 	tabbedPane.setTabPlacement(SwingConstants.TOP);
 	tabbedPane.setBorder(BorderFactory.createTitledBorder("Output"));
 	tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
@@ -533,7 +525,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	textArea = new JTextArea();
 	textArea.setLineWrap(true);
 	textArea.setEditable(false);
-	DefaultCaret caret = (DefaultCaret) textArea.getCaret();
+	final DefaultCaret caret = (DefaultCaret) textArea.getCaret();
 	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
 	scrollPane = new JScrollPane(textArea);
@@ -548,7 +540,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	table.setFillsViewportHeight(true);
 	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	tableHeaderRenderer.setBackground(new Color(239, 198, 46));
-	JScrollPane tableSrollPane = new JScrollPane(table);
+	final JScrollPane tableSrollPane = new JScrollPane(table);
 	tabbedPane.addTab("Result", tableSrollPane);
 	tabbedPane.addTab("Log", outputPanel);
 	tabPanel.add(tabbedPane, subC);
@@ -568,9 +560,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	panel.add(resultPanel, c);
 
 	add(panel, BorderLayout.CENTER);
-	ViewLogger logger = new ViewLogger();
-	UnionLogger.LOGGER.removeAllObservers();
-	UnionLogger.LOGGER.registerObserver(logger);
 	startQueryEngine();
 	addProgressFrame();
 	textField.requestFocus();
@@ -591,7 +580,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	try {
 	    nohr = new HybridKB(getOWLModelManager().getOWLOntologyManager(),
 		    getOWLModelManager().getActiveOntology());
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    textArea.append(e.getMessage() + Config.NL);
 	}
     }

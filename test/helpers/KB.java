@@ -30,8 +30,8 @@ import com.google.common.base.Optional;
 import other.Utils;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.INormalizedOntology;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.Normalizer;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntology;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntologyImpl;
 
 public class KB {
 
@@ -83,6 +83,10 @@ public class KB {
 		df.getOWLObjectPropertyAssertionAxiom(role, ind1, ind2));
     }
 
+    public void addAxiom(OWLAxiom axiom) {
+	om.addAxiom(ont, axiom);
+    }
+
     public void addDisjunction(OWLClassExpression b1, OWLClassExpression b2) {
 	om.addAxiom(ont, df.getOWLDisjointClassesAxiom(b1, b2));
     }
@@ -113,8 +117,12 @@ public class KB {
 	Rules.resetRules();
     }
 
+    public OWLClassExpression getComplement(OWLClassExpression ce) {
+	return df.getOWLObjectComplementOf(ce);
+    }
+
     public OWLClass getConcept() {
-	return getConcept("Anew" + concepts.size());
+	return getConcept("a" + concepts.size());
     }
 
     public OWLClass getConcept(String name) {
@@ -157,6 +165,10 @@ public class KB {
 	for (int i = 0; i < n; i++)
 	    result[i] = getDataRole();
 	return result;
+    }
+
+    public OWLDataFactory getDatFactory() {
+	return df;
     }
 
     private IRI getEntityIRI(String name) {
@@ -216,8 +228,8 @@ public class KB {
 	return ol.getLabel(i, 1);
     }
 
-    public INormalizedOntology getNormalizedOntology() {
-	return new Normalizer(ont);
+    public QLNormalizedOntology getNormalizedOntology() {
+	return new QLNormalizedOntologyImpl(ont);
     }
 
     public OWLOntology getOntology() {
@@ -229,7 +241,7 @@ public class KB {
     }
 
     public OWLObjectProperty getRole() {
-	return getRole("Pnew" + roles.size());
+	return getRole("p" + roles.size());
     }
 
     public OWLObjectProperty getRole(String name) {

@@ -16,6 +16,27 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
  * The Class Utils.
  */
 public class Utils {
+    /*
+     * private static Pattern p = Pattern.compile(
+     * "(?x)          # enable comments                                      \n"
+     * +
+     * "((\"[^\"]*\")|# quoted data, and store in group #1                   \n"
+     * +
+     * "(\"[^\"]*\")) # quoted data, and store in group #1                   \n"
+     * +
+     * "|             # OR                                                   \n"
+     * +
+     * "([^,]+)       # one or more chars other than ',', and store it in #2 \n"
+     * +
+     * "|             # OR                                                   \n"
+     * +
+     * "\\s*,\\s*     # a ',' optionally surrounded by space-chars           \n"
+     * );
+     */
+    /** The p. */
+    private static Pattern p = Pattern
+	    .compile("(\\w+\\s)?(\\\"[^\\\"]+\\\"|'[^']+'|\\w+)(\\(\\w+\\d?\\s?(,\\s?\\w+\\d?)*\\))?");
+
     /**
      * _d allrule.
      *
@@ -25,12 +46,12 @@ public class Utils {
      */
     public static String _dAllrule(String rule) {
 	// System.out.println("Original rule for doub.: "+rule);
-	String[] _ = rule.split("\\)\\s*,");
+	final String[] _ = rule.split("\\)\\s*,");
 	String result = "";
 	if (_.length == 1)
 	    result = Utils.getSubRule(rule);
 	else {
-	    for (String s : _) {
+	    for (final String s : _) {
 		result += Utils.getSubRule(s);
 		if (s.contains("(") && !s.endsWith(")"))
 		    result += ")";
@@ -43,9 +64,19 @@ public class Utils {
     }
 
     public static String concat(String sep, List<?> objs) {
-	StringBuffer sb = new StringBuffer();
+	final StringBuffer sb = new StringBuffer();
 	String sepToken = "";
-	for (Object obj : objs) {
+	for (final Object obj : objs) {
+	    sb.append(sepToken + obj.toString());
+	    sepToken = sep;
+	}
+	return new String(sb);
+    }
+
+    public static String concat(String sep, Object[] objs) {
+	final StringBuffer sb = new StringBuffer();
+	String sepToken = "";
+	for (final Object obj : objs) {
 	    sb.append(sepToken + obj.toString());
 	    sepToken = sep;
 	}
@@ -103,8 +134,8 @@ public class Utils {
      */
     public static ArrayList<String> getSubRulesFromRule(String rule) {
 
-	Matcher m = p.matcher(rule);
-	ArrayList<String> rules = new ArrayList<String>();
+	final Matcher m = p.matcher(rule);
+	final ArrayList<String> rules = new ArrayList<String>();
 	while (m.find())
 	    rules.add(m.group().trim());
 	return rules;
@@ -119,7 +150,8 @@ public class Utils {
      */
     public static List<OWLClassExpression> removeDuplicates(
 	    List<OWLClassExpression> list) {
-	HashSet<OWLClassExpression> h = new HashSet<OWLClassExpression>(list);
+	final HashSet<OWLClassExpression> h = new HashSet<OWLClassExpression>(
+		list);
 	list.clear();
 	list.addAll(h);
 	return list;
@@ -142,25 +174,4 @@ public class Utils {
 
 	return result;
     }
-
-    /*
-     * private static Pattern p = Pattern.compile(
-     * "(?x)          # enable comments                                      \n"
-     * +
-     * "((\"[^\"]*\")|# quoted data, and store in group #1                   \n"
-     * +
-     * "(\"[^\"]*\")) # quoted data, and store in group #1                   \n"
-     * +
-     * "|             # OR                                                   \n"
-     * +
-     * "([^,]+)       # one or more chars other than ',', and store it in #2 \n"
-     * +
-     * "|             # OR                                                   \n"
-     * +
-     * "\\s*,\\s*     # a ',' optionally surrounded by space-chars           \n"
-     * );
-     */
-    /** The p. */
-    private static Pattern p = Pattern
-	    .compile("(\\w+\\s)?(\\\"[^\\\"]+\\\"|'[^']+'|\\w+)(\\(\\w+\\d?\\s?(,\\s?\\w+\\d?)*\\))?");
 }

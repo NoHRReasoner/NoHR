@@ -11,11 +11,11 @@ import other.Utils;
  */
 public class RuleTranslator {
 
-    /** The parsed rule. */
-    private ParsedRule parsedRule;
-
     /** The current rule. */
     private String currentRule;
+
+    /** The parsed rule. */
+    private ParsedRule parsedRule;
 
     private Set<String> rules;
 
@@ -73,9 +73,9 @@ public class RuleTranslator {
 	if (rule.endsWith("."))
 	    rule = rule.substring(0, rule.length() - 1);
 
-	String[] arrayRule = rule.split(Config.eq);
+	final String[] arrayRule = rule.split(Config.eq);
 
-	ParsedRule leftSideRule = new ParsedRule(arrayRule[0]);
+	final ParsedRule leftSideRule = new ParsedRule(arrayRule[0]);
 	String rightSideRule = null;
 	if (arrayRule.length > 1 && arrayRule[1] != null)
 	    rightSideRule = arrayRule[1].trim();
@@ -122,7 +122,7 @@ public class RuleTranslator {
 	else {
 	    String result = leftSide.getRule() + Utils.getEqForRule();
 
-	    for (String subRule : Utils.getSubRulesFromRule(rightSide)) {
+	    for (final String subRule : Utils.getSubRulesFromRule(rightSide)) {
 		parsedRule = new ParsedRule(subRule);
 		if (parsedRule.isUnderTnot()) {
 		    tablePredicateFromRule(parsedRule, hasDisjunctions);
@@ -149,13 +149,13 @@ public class RuleTranslator {
 	currentRule = "%writeBrule";
 	if (rightSide == null) {
 	    String rule = leftSide.getSubRule();
-	    if (negatedPredicates.contains(leftSide.getTabledNegRule()))
-		rule += Utils.getEqForRule() + leftSide.getNegRule();
+	    // if (negatedPredicates.contains(leftSide.getTabledNegRule()))
+	    rule += Utils.getEqForRule() + leftSide.getNegRule();
 	    writeLineToAppendedRules(rule + ".");
 	} else {
 	    String result = leftSide.getSubRule() + Utils.getEqForRule();
 
-	    for (String subRule : Utils.getSubRulesFromRule(rightSide)) {
+	    for (final String subRule : Utils.getSubRulesFromRule(rightSide)) {
 		parsedRule = new ParsedRule(subRule);
 		if (parsedRule.isUnderTnot()) {
 		    tablePredicateFromRule(parsedRule, hasDisjunctions);
@@ -190,7 +190,7 @@ public class RuleTranslator {
 	    writeLineToAppendedRules(leftSide.getRule() + ".");
 	else {
 	    String result = leftSide.getRule() + Utils.getEqForRule();
-	    for (String subRule : Utils.getSubRulesFromRule(rightSide)) {
+	    for (final String subRule : Utils.getSubRulesFromRule(rightSide)) {
 		parsedRule = new ParsedRule(subRule);
 		if (parsedRule.isUnderTnot()) {
 		    tablePredicateFromRule(parsedRule, hasDisjunctions);

@@ -32,7 +32,7 @@ public class BasicTBoxGraph implements TBoxGraph {
 
     private Set<OWLObjectProperty> irreflexiveRoles;
 
-    private final INormalizedOntology ontology;
+    private final QLNormalizedOntology ontology;
 
     private final GraphClosure<OWLPropertyExpression> rolesClosure;
 
@@ -40,7 +40,7 @@ public class BasicTBoxGraph implements TBoxGraph {
 
     private final Set<OWLEntity> unsatisfiableEntities;
 
-    public BasicTBoxGraph(INormalizedOntology ontology,
+    public BasicTBoxGraph(QLNormalizedOntology ontology,
 	    OWLDataFactory dataFactory) {
 	this.ontology = ontology;
 	this.dataFactory = dataFactory;

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ConstantImpl implements Constant {
 
-    private String symbol;
+    private final String symbol;
 
     ConstantImpl(String symbol) {
 	this.symbol = symbol;
@@ -54,7 +54,7 @@ public class ConstantImpl implements Constant {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -65,7 +65,7 @@ public class ConstantImpl implements Constant {
 	    return false;
 	if (!(obj instanceof ConstantImpl))
 	    return false;
-	ConstantImpl other = (ConstantImpl) obj;
+	final ConstantImpl other = (ConstantImpl) obj;
 	if (symbol == null) {
 	    if (other.symbol != null)
 		return false;
@@ -76,7 +76,7 @@ public class ConstantImpl implements Constant {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -112,7 +112,7 @@ public class ConstantImpl implements Constant {
 
     @Override
     public String toString() {
-	return symbol;
+	return "'" + symbol + "'";
     }
 
 }

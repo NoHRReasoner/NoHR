@@ -18,6 +18,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
 import other.Config;
@@ -58,14 +59,18 @@ public class QueryTest extends Object {
     private KB kb;
     private final Parser parser = new Parser();
 
-    private void assertAnswer(String query, String... expectedAns) {
+    private void assertAnswer(String query, boolean ql, String... expectedAns) {
+	if (ql)
+	    Config.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+	else
+	    Config.translationAlgorithm = TranslationAlgorithm.EL;
 	try {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    final Collection<Answer> result = new HybridKB(kb.getOntology())
 	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
-	    assertEquals("should have exactly one answer", result.size(), 1);
+	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
 	    int i = 0;
 	    for (final Term val : ans.getValues())
@@ -82,7 +87,14 @@ public class QueryTest extends Object {
 	} catch (final Exception e) {
 	    e.printStackTrace();
 	    fail(e.toString());
+	} finally {
+	    Config.translationAlgorithm = null;
 	}
+    }
+
+    private void assertAnswer(String query, String... expectedAns) {
+	assertAnswer(query, true, expectedAns);
+	assertAnswer(query, false, expectedAns);
     }
 
     private void assertConsistent(String query) {
@@ -122,6 +134,32 @@ public class QueryTest extends Object {
 	    final Answer ans = result.iterator().next();
 	    assertEquals("sould be inconsistent", TruthValue.INCONSISTENT,
 		    ans.getValuation());
+	} catch (final IOException e) {
+	    fail(e.getMessage());
+	} catch (final PrologParserException e) {
+	    fail(e.getMessage());
+	} catch (final UnsupportedOWLProfile e) {
+	    fail("ontology is not QL nor EL!\n" + e.getMessage());
+	} catch (final InconsistentOntologyException e) {
+	    fail("inconsistent ontology");
+	} catch (final Exception e) {
+	    e.printStackTrace();
+	    fail(e.toString());
+	}
+    }
+
+    private void assertNoneAnswers(String query, boolean ql) {
+	if (ql)
+	    Config.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+	else
+	    Config.translationAlgorithm = TranslationAlgorithm.EL;
+	try {
+	    if (!query.endsWith("."))
+		query = query + ".";
+	    final Collection<Answer> result = new HybridKB(kb.getOntology())
+	    .queryAll(parser.parseQuery(query));
+	    assertNotNull("should be consistent", result);
+	    assertEquals("should have no answer", 0, result.size());
 	} catch (final IOException e) {
 	    fail(e.getMessage());
 	} catch (final PrologParserException e) {
@@ -476,6 +514,37 @@ public class QueryTest extends Object {
 	assertInconsistent("p1(X,X)");
     }
 
+    @Test
+    public void normalizations() throws OWLOntologyCreationException {
+	kb.clear();
+	final OWLDataFactory df = kb.getDataFactory();
+	// Intersection on right side
+	final OWLClass[] A = kb.getConcepts(11);
+	final OWLObjectProperty[] P = kb.getRoles(11);
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
+	kb.addAssertion(A[1], a);
+	kb.addSubsumption(A[1], df.getOWLObjectIntersectionOf(A[2], A[3]));
+	assertAnswer("a2(X)", true, "a");
+	assertAnswer("a3(X)", true, "a");
+	// Qualified existential on right side
+	kb.addSubsumption(A[3], df.getOWLObjectSomeValuesFrom(P[1], A[4]));
+	kb.addSubsumption(kb.getExistential(P[1]), A[6]);
+	assertAnswer("a6(X)", true, "a");
+	// Concept equivalence
+	kb.addAxiom(df.getOWLEquivalentClassesAxiom(A[6], A[7], A[8]));
+	assertAnswer("a8(X)", "a");
+	// Concept disjunction
+	kb.addAxiom(df.getOWLDisjointClassesAxiom(A[7], A[9], A[10]));
+	kb.addRule("a10(X):-a7(X)");
+	assertInconsistent("a10(X)");
+	// Inverse roles
+	kb.addAssertion(P[2], a, b);
+	kb.addAxiom(df.getOWLInverseObjectPropertiesAxiom(P[2], P[3]));
+	assertAnswer("p3(X,Y)", true, "b", "a");
+
+    }
+
     public final void roleCycle() throws OWLOntologyCreationException {
 	kb.clear();
 	kb.getConcept("A");
@@ -535,7 +604,7 @@ public class QueryTest extends Object {
 	kb.addSubsumption(a1, kb.getExistential(p2));
 	kb.addSubsumption(p2, kb.getInverse(p3));
 	kb.addSubsumption(kb.getExistential(kb.getInverse(p3)), A4);
-	assertAnswer("a4(X)", new String[] { "a" });
+	assertAnswer("a4(X)", true, "a");
     }
 
     @Test
@@ -551,7 +620,7 @@ public class QueryTest extends Object {
 	kb.addSubsumption(a1, kb.getExistential(kb.getInverse(p2)));
 	kb.addSubsumption(kb.getInverse(p2), p3);
 	kb.addSubsumption(kb.getExistential(p3), A4);
-	assertAnswer("a4(X)", new String[] { "a" });
+	assertAnswer("a4(X)", true, "a");
     }
 
     @Test
@@ -567,7 +636,7 @@ public class QueryTest extends Object {
 	kb.addSubsumption(a1, kb.getExistential(kb.getInverse(p2)));
 	kb.addSubsumption(kb.getInverse(p2), kb.getInverse(p3));
 	kb.addSubsumption(kb.getExistential(kb.getInverse(p3)), A4);
-	assertAnswer("a4(X)", new String[] { "a" });
+	assertAnswer("a4(X)", true, "a");
     }
 
     /**
@@ -587,7 +656,7 @@ public class QueryTest extends Object {
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(p1, kb.getInverse(p2));
 	kb.addSubsumption(p2, p3);
-	assertAnswer("p2(X,Y)", new String[] { "b", "a" });
+	assertAnswer("p2(X,Y)", true, "b", "a");
     }
 
     /**
@@ -604,7 +673,7 @@ public class QueryTest extends Object {
 	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, a2);
-	assertAnswer("a2(X)", new String[] { "a" });
+	assertAnswer("a2(X)", "a");
     }
 
     /**
@@ -622,7 +691,7 @@ public class QueryTest extends Object {
 	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(p1, p2);
-	assertAnswer("p2(X,Y)", new String[] { "a", "b" });
+	assertAnswer("p2(X,Y)", "a", "b");
     }
 
     /**
@@ -640,7 +709,7 @@ public class QueryTest extends Object {
 	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(kb.getExistential(p1), a2);
-	assertAnswer("a2(X)", new String[] { "a" });
+	assertAnswer("a2(X)", "a");
     }
 
     /**
@@ -659,7 +728,7 @@ public class QueryTest extends Object {
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, kb.getExistential(p2));
 	kb.addSubsumption(kb.getExistential(p2), a3);
-	assertAnswer("a3(X)", new String[] { "a" });
+	assertAnswer("a3(X)", "a");
     }
 
     /**
@@ -677,7 +746,7 @@ public class QueryTest extends Object {
 	final OWLIndividual b = kb.getIndividual("b");
 	kb.addAssertion(p1, a, b);
 	kb.addSubsumption(p1, kb.getInverse(p2));
-	assertAnswer("p2(X,Y)", new String[] { "b", "a" });
+	assertAnswer("p2(X,Y)", true, "b", "a");
     }
 
     /**
@@ -705,7 +774,7 @@ public class QueryTest extends Object {
 	kb.addSubsumption(a3, kb.getExistential(p4));
 	kb.addSubsumption(p4, p5);
 	kb.addSubsumption(kb.getExistential(p5), a6);
-	assertAnswer("a6(X)", new String[] { "a" });
+	assertAnswer("a6(X)", false, "a");
 	Config.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
     }
 

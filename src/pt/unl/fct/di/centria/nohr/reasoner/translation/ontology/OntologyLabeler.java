@@ -29,6 +29,12 @@ import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
  * The Class OntologyLabel. Parsing the properties to get label
  */
 public class OntologyLabeler {
+    /** The _ontology. */
+    private static OWLOntology ontology;
+
+    /** The _ontology ID. */
+    private static String ontologyID;
+
     public static String escapeAtom(String atom) {
 	return atom.replaceAll("'", "''");
     }
@@ -36,11 +42,6 @@ public class OntologyLabeler {
     public static String unescapeAtom(String atom) {
 	return atom.replaceAll("''", "'");
     }
-
-    /** The _ontology ID. */
-    private static String ontologyID;
-    /** The _ontology. */
-    private static OWLOntology ontology;
 
     /** The ontology annotation property. */
     private final OWLAnnotationProperty ontologyLabel;
@@ -73,7 +74,7 @@ public class OntologyLabeler {
      */
     public String getLabel(OWLAxiom entity, int numInList) {
 	if (entity instanceof OWLSubPropertyChainAxiomImpl) {
-	    List<OWLObjectPropertyExpression> properties = ((OWLSubPropertyChainAxiomImpl) entity)
+	    final List<OWLObjectPropertyExpression> properties = ((OWLSubPropertyChainAxiomImpl) entity)
 		    .getPropertyChain();
 	    if (properties != null)
 		if (properties.size() >= numInList)
@@ -81,24 +82,24 @@ public class OntologyLabeler {
 		else
 		    return getLabel(
 			    ((OWLSubPropertyChainAxiomImpl) entity)
-				    .getSuperProperty(),
+			    .getSuperProperty(),
 			    1);
 	} else if (entity instanceof OWLObjectPropertyAssertionAxiomImpl)
 	    switch (numInList) {
 	    case 1:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-				.getProperty(),
+			.getProperty(),
 			1);
 	    case 2:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-				.getSubject(),
+			.getSubject(),
 			1);
 	    case 3:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-				.getObject(),
+			.getObject(),
 			1);
 	    }
 	return getLabel(entity.toString(), numInList);
@@ -167,7 +168,7 @@ public class OntologyLabeler {
      */
     public String getLabel(OWLIndividual member, int numInList) {
 	if (member instanceof OWLNamedIndividual)
-	    for (OWLEntity entity : member.getSignature())
+	    for (final OWLEntity entity : member.getSignature())
 		return getLabel(entity, 1);
 	return getLabel((OWLClass) member, numInList);
     }
@@ -214,7 +215,7 @@ public class OntologyLabeler {
 	    int numInList) {
 	String message = "";
 	if (annotations != null && annotations.size() > 0)
-	    for (OWLAnnotation annotation : annotations)
+	    for (final OWLAnnotation annotation : annotations)
 		message += annotation.getValue();
 	if (message.length() > 0)
 	    return getLabel(message);// message;//replaceSymbolsInRule("\""+message.replace("^^xsd:string","").replace(",","").replace(":-","").replace("'","").replace("\"","")+"\"");//
@@ -262,7 +263,7 @@ public class OntologyLabeler {
 		result = result.replaceAll("\\.", "");
 		if (Character.isUpperCase(result.charAt(0)))
 		    result = result.substring(0, 1).toLowerCase()
-			    + result.substring(1);
+		    + result.substring(1);
 	    } else if (rule.contains(Config.altDelimeter))
 		result = rule.split(Config.altDelimeter)[numInList].split(">")[0];
 	    else if (rule.startsWith("<"))
@@ -273,7 +274,7 @@ public class OntologyLabeler {
 	    }
 
 	    return getLabel(result);// result;//replaceSymbolsInRule(result);
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    printLog("------------------------------------------------------------------------");
 	    printLog(rule);
 	    // printLog(_currentRule);
@@ -299,7 +300,7 @@ public class OntologyLabeler {
     public EquivalentClass getLabelEquivalentClasses(
 	    OWLClassExpression owlClassExpression, int localIterator,
 	    int iterator) {
-	EquivalentClass equivalentClass = new EquivalentClass(iterator);
+	final EquivalentClass equivalentClass = new EquivalentClass(iterator);
 	switch (owlClassExpression.getClassExpressionType()) {
 	case OWL_CLASS: {
 	    if (!(owlClassExpression.isOWLThing() || owlClassExpression
@@ -310,17 +311,17 @@ public class OntologyLabeler {
 	    break;
 	}
 	case OBJECT_INTERSECTION_OF: {
-	    List<OWLClassExpression> operands = ((OWLObjectIntersectionOf) owlClassExpression)
+	    final List<OWLClassExpression> operands = ((OWLObjectIntersectionOf) owlClassExpression)
 		    .getOperandsAsList();
-	    for (OWLClassExpression operand : operands)
+	    for (final OWLClassExpression operand : operands)
 		equivalentClass.updateClass(getLabelEquivalentClasses(operand,
 			localIterator, equivalentClass.getVariableIterator()));
 	    break;
 	}
 	case OBJECT_SOME_VALUES_FROM: {
-	    OWLClassExpression classExpression = ((OWLObjectSomeValuesFromImpl) owlClassExpression)
+	    final OWLClassExpression classExpression = ((OWLObjectSomeValuesFromImpl) owlClassExpression)
 		    .getFiller();
-	    OWLObjectPropertyExpression property = ((OWLObjectSomeValuesFromImpl) owlClassExpression)
+	    final OWLObjectPropertyExpression property = ((OWLObjectSomeValuesFromImpl) owlClassExpression)
 		    .getProperty();
 
 	    equivalentClass.addRule(getLabel(property, 1), localIterator,
@@ -345,11 +346,12 @@ public class OntologyLabeler {
      */
     private String getOntologyID() {
 	try {
-	    String _ = ontology.getOntologyID().getOntologyIRI().toString();
+	    final String _ = ontology.getOntologyID().getOntologyIRI()
+		    .toString();
 	    return _.contains("/") ? _.substring(0, _.lastIndexOf("/")) + "/"
 		    : "";
 
-	} catch (NullPointerException e) {
+	} catch (final NullPointerException e) {
 	    return "";
 	}
 
