@@ -186,7 +186,13 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 		result.addAll(axiomsTranslator.translate(s));
 	for (final OWLNaryPropertyAxiom d : normalizedOntology
 		.getRoleDisjunctions())
-	    result.addAll(axiomsTranslator.translate(d));
+	    if (d instanceof OWLDisjointObjectPropertiesAxiom)
+		result.addAll(axiomsTranslator
+			.translate((OWLDisjointObjectPropertiesAxiom) d));
+	    else if (d instanceof OWLDisjointDataPropertiesAxiom)
+		result.addAll(axiomsTranslator
+			.translate((OWLDisjointDataPropertiesAxiom) d));
+
 	for (final OWLPropertyExpression ope : normalizedOntology.getRoles())
 	    if (ope instanceof OWLObjectPropertyExpression) {
 		final OWLObjectProperty p = ((OWLObjectPropertyExpression) ope)

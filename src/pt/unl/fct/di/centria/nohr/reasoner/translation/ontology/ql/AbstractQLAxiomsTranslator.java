@@ -183,11 +183,6 @@ public abstract class AbstractQLAxiomsTranslator {
 	    return atom(pred(sym(r), 2, doub), y, x);
     }
 
-    public Set<Rule> translate(OWLAsymmetricObjectPropertyAxiom alpha) {
-	final OWLObjectPropertyExpression ope = alpha.getProperty();
-	return translateDisjunction(ope, ope.getInverseProperty());
-    }
-
     public abstract Set<Rule> translate(OWLClassAssertionAxiom alpha);
 
     public Set<Rule> translate(OWLDisjointClassesAxiom alpha) {
@@ -219,109 +214,7 @@ public abstract class AbstractQLAxiomsTranslator {
 	return result;
     }
 
-    public Set<Rule> translate(OWLEquivalentClassesAxiom alpha) {
-	final Set<Rule> result = new HashSet<Rule>();
-	for (final OWLSubClassOfAxiom beta : alpha.asOWLSubClassOfAxioms())
-	    result.addAll(translate(beta));
-	return result;
-    }
-
-    public Set<Rule> translate(OWLEquivalentDataPropertiesAxiom alpha) {
-	final Set<Rule> result = new HashSet<Rule>();
-	for (final OWLSubDataPropertyOfAxiom beta : alpha
-		.asSubDataPropertyOfAxioms())
-	    result.addAll(translate(beta));
-	return result;
-    }
-
-    public Set<Rule> translate(OWLEquivalentObjectPropertiesAxiom alpha) {
-	final Set<Rule> result = new HashSet<Rule>();
-	for (final OWLSubPropertyAxiom<?> beta : alpha
-		.asSubObjectPropertyOfAxioms())
-	    Collections.addAll(translate(beta));
-	return result;
-    }
-
-    public Set<Rule> translate(OWLInverseObjectPropertiesAxiom alpha) {
-	final Set<Rule> result = new HashSet<Rule>();
-	final OWLObjectPropertyExpression ope1 = alpha.getFirstProperty();
-	final OWLObjectPropertyExpression ope2 = alpha.getSecondProperty();
-	result.addAll(translateSubsumption(ope1, ope2.getInverseProperty()));
-	result.addAll(translateSubsumption(ope1.getInverseProperty(), ope2));
-	return result;
-    }
-
-    public Set<Rule> translate(OWLIrreflexiveObjectPropertyAxiom alpha) {
-	final OWLObjectPropertyExpression ope = alpha.getProperty();
-	final OWLObjectPropertyExpression invOpe = ope.getInverseProperty();
-	final Set<Rule> result = new HashSet<Rule>();
-	result.addAll(translateDisjunction(some(ope), some(invOpe)));
-	return result;
-    }
-
-    public Set<Rule> translate(OWLLogicalAxiom alpha) {
-	if (alpha instanceof OWLClassAssertionAxiom)
-	    return translate((OWLClassAssertionAxiom) alpha);
-	else if (alpha instanceof OWLPropertyAssertionAxiom)
-	    return translate((OWLPropertyAssertionAxiom) alpha);
-	else if (alpha instanceof OWLSubClassOfAxiom)
-	    return translate((OWLSubClassOfAxiom) alpha);
-	else if (alpha instanceof OWLSubPropertyAxiom)
-	    return translate((OWLSubPropertyAxiom) alpha);
-	else if (alpha instanceof OWLDisjointClassesAxiom)
-	    return translate((OWLDisjointClassesAxiom) alpha);
-	else if (alpha instanceof OWLDisjointObjectPropertiesAxiom)
-	    return translate((OWLDisjointObjectPropertiesAxiom) alpha);
-	else if (alpha instanceof OWLDisjointDataPropertiesAxiom)
-	    return translate((OWLDisjointDataPropertiesAxiom) alpha);
-	else if (alpha instanceof OWLEquivalentClassesAxiom)
-	    return translate((OWLEquivalentClassesAxiom) alpha);
-	else if (alpha instanceof OWLEquivalentObjectPropertiesAxiom)
-	    return translate((OWLEquivalentObjectPropertiesAxiom) alpha);
-	else if (alpha instanceof OWLEquivalentDataPropertiesAxiom)
-	    return translate((OWLEquivalentDataPropertiesAxiom) alpha);
-	else if (alpha instanceof OWLReflexiveObjectPropertyAxiom)
-	    return translate((OWLReflexiveObjectPropertyAxiom) alpha);
-	else if (alpha instanceof OWLIrreflexiveObjectPropertyAxiom)
-	    return translate((OWLIrreflexiveObjectPropertyAxiom) alpha);
-	else if (alpha instanceof OWLSymmetricObjectPropertyAxiom)
-	    return translate((OWLSymmetricObjectPropertyAxiom) alpha);
-	else if (alpha instanceof OWLAsymmetricObjectPropertyAxiom)
-	    return translate((OWLAsymmetricObjectPropertyAxiom) alpha);
-	else if (alpha instanceof OWLInverseObjectPropertiesAxiom)
-	    return translate((OWLInverseObjectPropertiesAxiom) alpha);
-	else if (alpha instanceof OWLObjectPropertyDomainAxiom)
-	    return translate((OWLObjectPropertyDomainAxiom) alpha);
-	else if (alpha instanceof OWLObjectPropertyRangeAxiom)
-	    return translate((OWLObjectPropertyRangeAxiom) alpha);
-	else
-	    throw new IllegalArgumentException("unsupported OWLAxiom type: "
-		    + alpha.getClass());
-    }
-
-    public Set<Rule> translate(OWLObjectPropertyDomainAxiom alpha) {
-	return translate(alpha.asOWLSubClassOfAxiom());
-    }
-
-    public Set<Rule> translate(OWLObjectPropertyRangeAxiom alpha) {
-	final OWLObjectPropertyExpression invOpe = alpha.getProperty()
-		.getInverseProperty();
-	final OWLClassExpression ce = alpha.getRange();
-	final Set<Rule> result = new HashSet<Rule>();
-	result.addAll(translateSubsumption(some(invOpe), ce));
-	return result;
-    }
-
     public abstract Set<Rule> translate(OWLPropertyAssertionAxiom alpha);
-
-    public Set<Rule> translate(OWLReflexiveObjectPropertyAxiom alpha) {
-	final OWLObjectPropertyExpression ope = alpha.getProperty();
-	final OWLObjectPropertyExpression invOpe = ope.getInverseProperty();
-	final Set<Rule> result = new HashSet<Rule>();
-	result.addAll(translateSubsumption(some(ope), some(invOpe)));
-	result.addAll(translateSubsumption(some(invOpe), some(ope)));
-	return result;
-    }
 
     public Set<Rule> translate(OWLSubClassOfAxiom alpha) {
 	final OWLClassExpression b1 = alpha.getSubClass();
@@ -336,14 +229,6 @@ public abstract class AbstractQLAxiomsTranslator {
 	final OWLPropertyExpression ope2 = alpha.getSuperProperty();
 	final Set<Rule> result = new HashSet<Rule>();
 	result.addAll(translateSubsumption(ope1, ope2));
-	return result;
-    }
-
-    public Set<Rule> translate(OWLSymmetricObjectPropertyAxiom alpha) {
-	final Set<Rule> result = new HashSet<Rule>();
-	final OWLObjectPropertyExpression ope = alpha.getProperty();
-	result.addAll(translateSubsumption(ope, ope.getInverseProperty()));
-	result.addAll(translateSubsumption(ope.getInverseProperty(), ope));
 	return result;
     }
 

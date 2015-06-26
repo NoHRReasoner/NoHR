@@ -46,13 +46,9 @@ import com.google.common.base.Optional;
 
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
-    private final Set<OWLClassAssertionAxiom> conceptAssertions;
-
     private final Set<OWLDisjointClassesAxiom> conceptDisjunctions;
 
     private final Set<OWLSubClassOfAxiom> conceptSubsumptions;
-
-    private final Set<OWLDataPropertyAssertionAxiom> dataAssertions;
 
     private final OWLDataFactory df;
 
@@ -62,13 +58,11 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private boolean hasDisjunction;
 
+    private final OWLOntology ontology;
+
     private final IRI ontologyIRI;
 
-    private final Set<OWLObjectPropertyAssertionAxiom> roleAssertions;
-
     private final Set<OWLNaryPropertyAxiom<?>> roleDisjunctions;
-
-    private final Set<OWLObjectProperty> roles;
 
     private final Set<OWLSubPropertyAxiom<?>> roleSubsumptions;
 
@@ -85,12 +79,9 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     private final Set<OWLPropertyExpression> unsatisfiableRoles;
 
     public QLNormalizedOntologyImpl(OWLOntology ontology) {
+	this.ontology = ontology;
 	ontologyIRI = ontology.getOntologyID().getOntologyIRI();
 	df = ontology.getOWLOntologyManager().getOWLDataFactory();
-	roles = ontology.getObjectPropertiesInSignature();
-	conceptAssertions = new HashSet<OWLClassAssertionAxiom>();
-	roleAssertions = new HashSet<OWLObjectPropertyAssertionAxiom>();
-	dataAssertions = new HashSet<OWLDataPropertyAssertionAxiom>();
 	conceptSubsumptions = new HashSet<OWLSubClassOfAxiom>();
 	roleSubsumptions = new HashSet<OWLSubPropertyAxiom<?>>();
 	conceptDisjunctions = new HashSet<OWLDisjointClassesAxiom>();
@@ -108,7 +99,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     @Override
     public Set<OWLClassAssertionAxiom> getConceptAssertions() {
-	return conceptAssertions;
+	return ontology.getAxioms(AxiomType.CLASS_ASSERTION);
     }
 
     @Override
@@ -123,7 +114,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     @Override
     public Set<OWLDataPropertyAssertionAxiom> getDataAssertions() {
-	return dataAssertions;
+	return ontology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION);
     }
 
     @Override
@@ -144,7 +135,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     @Override
     public Set<OWLObjectPropertyAssertionAxiom> getRoleAssertions() {
-	return roleAssertions;
+	return ontology.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION);
     }
 
     @Override
@@ -154,7 +145,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     @Override
     public Set<OWLObjectProperty> getRoles() {
-	return roles;
+	return ontology.getObjectPropertiesInSignature();
     }
 
     @Override
@@ -197,18 +188,22 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	return hasDisjunction;
     }
 
+    @Override
     public boolean isSub(OWLClassExpression ce) {
 	return subConcepts.contains(ce);
     }
 
+    @Override
     public boolean isSub(OWLPropertyExpression pe) {
 	return subRoles.contains(pe);
     }
 
+    @Override
     public boolean isSuper(OWLClassExpression ce) {
 	return superConcepts.contains(ce);
     }
 
+    @Override
     public boolean isSuper(OWLPropertyExpression pe) {
 	return superRoles.contains(pe);
     }
@@ -271,11 +266,6 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     private void normalize(OWLOntology ontology) {
-	conceptAssertions.addAll(ontology.getAxioms(AxiomType.CLASS_ASSERTION));
-	roleAssertions.addAll(ontology
-		.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION));
-	dataAssertions.addAll(ontology
-		.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION));
 	for (final OWLSubClassOfAxiom a : ontology
 		.getAxioms(AxiomType.SUBCLASS_OF))
 	    normalize(a);
