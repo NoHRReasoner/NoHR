@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -33,6 +34,10 @@ public class Model {
     public static Answer ans(Query query, TruthValue truthValue,
 	    List<Term> values, Map<Variable, Integer> variablesIndex) {
 	return new AnswerImpl(query, truthValue, values, variablesIndex);
+    }
+
+    public static Atom atom(Predicate predicate, List<Term> arguments) {
+	return new AtomImpl(predicate, arguments);
     }
 
     public static Atom atom(Predicate predicate, Term... arguments) {
@@ -153,6 +158,11 @@ public class Model {
     public static Rule rule(Atom head, Literal... body) {
 	final List<Literal> bodyList = new LinkedList<Literal>();
 	Collections.addAll(bodyList, body);
+	return new RuleImpl(head, bodyList);
+    }
+
+    public static Rule rule(Atom head, Set<Literal> body) {
+	final List<Literal> bodyList = new LinkedList<Literal>(body);
 	return new RuleImpl(head, bodyList);
     }
 

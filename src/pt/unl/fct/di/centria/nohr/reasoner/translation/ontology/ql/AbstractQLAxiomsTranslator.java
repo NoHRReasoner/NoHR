@@ -11,7 +11,6 @@ import static pt.unl.fct.di.centria.nohr.model.Model.ranPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,9 +19,7 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
@@ -32,10 +29,8 @@ import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
@@ -46,8 +41,6 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
-import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -60,32 +53,25 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 
 /**
  * @author nunocosta
  *
  */
-public abstract class AbstractQLAxiomsTranslator {
+public abstract class AbstractQLAxiomsTranslator extends
+	AbstractAxiomsTranslator {
 
-    protected static final Variable ANNON = var("_");
-
-    protected static final Variable X = var("X");
-
-    protected static final Variable Y = var("Y");
-
-    protected OWLDataFactory dataFactory;
-    protected OWLOntology ontology;
-    protected OntologyLabeler ontologyLabeler;
     private int opeNewCount = 0;
 
     public AbstractQLAxiomsTranslator(OWLOntology ontology) {
-	this.ontology = ontology;
+	super(ontology);
 	dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
 	ontologyLabeler = new OntologyLabeler(ontology,
 		dataFactory
-		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
-			.getIRI()));
+			.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
+				.getIRI()));
     }
 
     public Atom negTr(OWLClassExpression c, Variable x) {
@@ -115,40 +101,9 @@ public abstract class AbstractQLAxiomsTranslator {
 	    return atom(negPred(sym(q), 2), var("_"), X);
     }
 
-    protected Set<Rule> ruleSet(Rule... rules) {
-	final Set<Rule> result = new HashSet<Rule>();
-	Collections.addAll(result, rules);
-	return result;
-    }
-
     private OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression ope) {
 	return dataFactory.getOWLObjectSomeValuesFrom(ope,
 		dataFactory.getOWLThing());
-    }
-
-    protected String sym(OWLClass c) {
-	return ontologyLabeler.getLabel(c, 1);
-    }
-
-    protected String sym(OWLIndividual i) {
-	return ontologyLabeler.getLabel(i, 1);
-    }
-
-    protected String sym(OWLPropertyAssertionObject o) {
-	if (o instanceof OWLIndividual)
-	    return sym((OWLIndividual) o);
-	else if (o instanceof OWLLiteral)
-	    return OntologyLabeler.escapeAtom(((OWLLiteral) o).getLiteral());
-	else
-	    return null;
-    }
-
-    protected String sym(OWLPropertyExpression r) {
-	if (r instanceof OWLObjectPropertyExpression)
-	    return ontologyLabeler.getLabel(
-		    ((OWLObjectPropertyExpression) r).getNamedProperty(), 1);
-	else
-	    return ontologyLabeler.getLabel((OWLDataProperty) r, 1);
     }
 
     protected Atom tr(OWLClassExpression c, Variable x, boolean doub) {
@@ -183,8 +138,6 @@ public abstract class AbstractQLAxiomsTranslator {
 	    return atom(pred(sym(r), 2, doub), y, x);
     }
 
-    public abstract Set<Rule> translate(OWLClassAssertionAxiom alpha);
-
     public Set<Rule> translate(OWLDisjointClassesAxiom alpha) {
 	final Set<Rule> result = new HashSet<Rule>();
 	final List<OWLClassExpression> ops = alpha.getClassExpressionsAsList();
@@ -213,8 +166,6 @@ public abstract class AbstractQLAxiomsTranslator {
 		result.addAll(translateDisjunction(ops.get(i), ops.get(j)));
 	return result;
     }
-
-    public abstract Set<Rule> translate(OWLPropertyAssertionAxiom alpha);
 
     public Set<Rule> translate(OWLSubClassOfAxiom alpha) {
 	final OWLClassExpression b1 = alpha.getSubClass();

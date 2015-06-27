@@ -49,6 +49,9 @@ import utils.Tracer;
 
 public class ELOntologyTranslator extends AbstractOntologyTranslator {
 
+    protected final ELDoubleAxiomsTranslator doubleAxiomsTranslator;
+    protected final ELOriginalAxiomsTranslator originalAxiomsTranslator;
+
     private OWLDataFactory owlDataFactory;
     protected ELAxiomsTranslator ruleCreator;
 
@@ -61,6 +64,8 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 	if (isOntologyNeedToBeNormalized(ontology))
 	    ontology = normalizeOntology(ontology, null);
 	ruleCreator = new ELAxiomsTranslator(ontologyLabel, hasDisjunctions);
+	originalAxiomsTranslator = new ELOriginalAxiomsTranslator(ontology);
+	doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(ontology);
     }
 
     private void classify() throws OWLOntologyCreationException {
@@ -343,6 +348,9 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 	    }
 	}
 	return owlOntology;
+    }
+
+    private void translate(AbstractELAxiomsTranslator translator) {
     }
 
     /**

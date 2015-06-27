@@ -42,8 +42,6 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
-import com.google.common.base.Optional;
-
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private final Set<OWLDisjointClassesAxiom> conceptDisjunctions;

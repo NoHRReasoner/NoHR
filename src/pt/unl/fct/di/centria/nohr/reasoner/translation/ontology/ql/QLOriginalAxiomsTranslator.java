@@ -4,7 +4,6 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.origDomPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.origPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.origRanPred;
@@ -12,7 +11,6 @@ import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 
 import java.util.Set;
 
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -25,10 +23,8 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 /**
  * @author nunocosta
@@ -57,25 +53,12 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     @Override
     public Set<Rule> translate(OWLClassAssertionAxiom alpha) {
-	final OWLClassExpression c = alpha.getClassExpression();
-	if (!(c instanceof OWLClass))
-	    throw new IllegalAccessError("assertion's concepts must be atomic");
-	if (c.isTopEntity() || c.isBottomEntity())
-	    return ruleSet();
-	final Predicate a = origPred(sym((OWLClass) c), 1);
-	final Constant i = cons(sym(alpha.getIndividual()));
-	return ruleSet(rule(atom(a, i)));
+	return translateOriginal(alpha);
     }
 
     @Override
     public Set<Rule> translate(OWLPropertyAssertionAxiom alpha) {
-	final OWLPropertyExpression ope = alpha.getProperty();
-	if (ope.isTopEntity() || ope.isBottomEntity())
-	    return ruleSet();
-	final Predicate p = origPred(sym(alpha.getProperty()), 2);
-	final Constant i1 = cons(sym(alpha.getSubject()));
-	final Constant i2 = cons(sym(alpha.getObject()));
-	return ruleSet(rule(atom(p, i1, i2)));
+	return translateOriginal(alpha);
     }
 
     @Override

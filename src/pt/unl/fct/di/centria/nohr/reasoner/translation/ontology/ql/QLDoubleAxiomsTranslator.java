@@ -4,12 +4,10 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.doubDomPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.doubPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.doubRanPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.negPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 
 import java.util.HashSet;
@@ -30,10 +28,8 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 /**
  * @author nunocosta
@@ -62,25 +58,12 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     @Override
     public Set<Rule> translate(OWLClassAssertionAxiom alpha) {
-	final OWLClassExpression c = alpha.getClassExpression();
-	if (!(c instanceof OWLClass))
-	    throw new IllegalArgumentException(
-		    "assertion's concepts must be atomic");
-	final String aSym = sym((OWLClass) c);
-	final Predicate a = doubPred(aSym, 1);
-	final Predicate na = negPred(aSym, 1);
-	final Constant i = cons(sym(alpha.getIndividual()));
-	return ruleSet(rule(atom(a, i), negLiteral(na, i)));
+	return translateDouble(alpha);
     }
 
     @Override
     public Set<Rule> translate(OWLPropertyAssertionAxiom alpha) {
-	final String aSym = sym(alpha.getProperty());
-	final Predicate p = doubPred(aSym, 2);
-	final Predicate np = negPred(aSym, 2);
-	final Constant i1 = cons(sym(alpha.getSubject()));
-	final Constant i2 = cons(sym(alpha.getObject()));
-	return ruleSet(rule(atom(p, i1, i2), negLiteral(np, i1, i2)));
+	return translateDouble(alpha);
     }
 
     @Override
