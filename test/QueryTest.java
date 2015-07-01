@@ -71,7 +71,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-		    .queryAll(parser.parseQuery(query));
+	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -109,7 +109,7 @@ public class QueryTest extends Object {
 
     private void assertAnswer(String query, String... expectedAns) {
 	assertAnswer(query, true, expectedAns);
-	// assertAnswer(query, false, expectedAns);
+	assertAnswer(query, false, expectedAns);
     }
 
     private void assertConsistent(String query) {
@@ -117,7 +117,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-		    .queryAll(parser.parseQuery(query));
+	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should't be null", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -143,7 +143,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-		    .queryAll(parser.parseQuery(query));
+	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -172,7 +172,7 @@ public class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-		    .queryAll(parser.parseQuery(query));
+	    .queryAll(parser.parseQuery(query));
 	    assertNotNull("should be consistent", result);
 	    assertEquals("should have no answer", 0, result.size());
 	} catch (final IOException e) {

@@ -29,17 +29,17 @@ import uk.ac.manchester.cs.owl.owlapi.OWLSubClassOfAxiomImpl;
  */
 public class ELAxiomsTranslator {
 
-    /** The ontology label. */
-    protected final OntologyLabeler ontologyLabel;
     /** The current rule. */
     private String currentRule;
+    private final boolean hasDisjunctions;
+
+    private final Set<String> negatedPredicates;
+
+    /** The ontology label. */
+    protected final OntologyLabeler ontologyLabel;
+    private final Set<String> tabledPredicates;
 
     private Set<String> translation;
-
-    private boolean hasDisjunctions;
-    private Set<String> negatedPredicates;
-
-    private Set<String> tabledPredicates;
 
     /**
      * Instantiates a new rule creator.
@@ -79,8 +79,8 @@ public class ELAxiomsTranslator {
      */
     private HashSet<OWLClass> getAllOWLClassesFromExpression(
 	    Set<OWLClassExpression> owlClassExpressions) {
-	HashSet<OWLClass> classes = new HashSet<OWLClass>();
-	for (OWLClassExpression owlClassExpression : owlClassExpressions)
+	final HashSet<OWLClass> classes = new HashSet<OWLClass>();
+	for (final OWLClassExpression owlClassExpression : owlClassExpressions)
 	    if (owlClassExpression.getClassExpressionType() == ClassExpressionType.OWL_CLASS)
 		classes.add((OWLClass) owlClassExpression);
 	    else if (owlClassExpression.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF)
@@ -118,19 +118,19 @@ public class ELAxiomsTranslator {
      */
     public void translateDataPropertyAssertion(OWLDataProperty dataProperty,
 	    OWLIndividual individual, OWLLiteral value) {
-	String Predicate = ontologyLabel.getLabel(dataProperty, 1);
-	String Individual = ontologyLabel.getLabel(individual, 1);
-	String Value = OntologyLabeler.escapeAtom(value.getLiteral());
-	addRule("a" + Predicate + "(" + Individual + "," + Value + ").");
+	final String Predicate = ontologyLabel.getLabel(dataProperty, 1);
+	final String Individual = ontologyLabel.getLabel(individual, 1);
+	final String Value = OntologyLabeler.escapeAtom(value.getLiteral());
+	addRule("'a" + Predicate + "'('" + Individual + "','" + Value + "').");
 	tabledPredicates.add("a" + Predicate + "/2");
 	if (hasDisjunctions) {
-	    String rule = "d" + Predicate + "(" + Individual + "," + Value
-		    + ")";
-	    tabledPredicates.add("d" + Predicate + "/2");
-	    if (isPredicateAppearedInHeadUnderNunderscore("n" + Predicate
-		    + "/2"))
-		rule += Utils.getEqForRule() + Config.negation + " n"
-			+ Predicate + "(" + Individual + "," + Value + ")";
+	    String rule = "'d" + Predicate + "'('" + Individual + "','" + Value
+		    + "')";
+	    tabledPredicates.add("'d" + Predicate + "'/2");
+	    if (isPredicateAppearedInHeadUnderNunderscore("'n" + Predicate
+		    + "'/2"))
+		rule += Utils.getEqForRule() + Config.negation + " 'n"
+			+ Predicate + "'('" + Individual + "','" + Value + "0)";
 	    addRule(rule + ".");
 	}
     }
@@ -146,22 +146,23 @@ public class ELAxiomsTranslator {
     public void writeDoubledRules(OWLClassExpression classExpression,
 	    OWLClassExpression owlClass) {
 	currentRule = "%DoubledRule";
-	EquivalentClass rules = ontologyLabel.getLabelEquivalentClasses(
+	final EquivalentClass rules = ontologyLabel.getLabelEquivalentClasses(
 		classExpression, 1, 1);
-	String _owlClass = ontologyLabel.getLabel(owlClass, 1);
-	String finalRule = rules.getFinalRule();
+	final String _owlClass = ontologyLabel.getLabel(owlClass, 1);
+	final String finalRule = rules.getFinalRule();
 	if (finalRule.length() > 0)
-	    addRule("a" + _owlClass + "(X1)" + Utils.getEqForRule() + finalRule);
+	    addRule("'a" + _owlClass + "'(X1)" + Utils.getEqForRule()
+		    + finalRule);
 	else
-	    addRule("a" + _owlClass + "(X1).");
-	tabledPredicates.add("a" + _owlClass + "/1");
+	    addRule("'a" + _owlClass + "'(X1).");
+	tabledPredicates.add("'a" + _owlClass + "'/1");
 	if (hasDisjunctions) {// if(isExistOntology(_owlClass)){
-	    String rule = "d" + _owlClass + "(X1)" + Utils.getEqForRule()
+	    String rule = "'d" + _owlClass + "'(X1)" + Utils.getEqForRule()
 		    + rules.getDoubledRules();
-	    tabledPredicates.add("d" + _owlClass + "/1");
-	    if (isPredicateAppearedInHeadUnderNunderscore("n" + _owlClass
-		    + "/1"))
-		rule += ", " + Config.negation + " n" + _owlClass + "(X1)";
+	    tabledPredicates.add("'d" + _owlClass + "'/1");
+	    if (isPredicateAppearedInHeadUnderNunderscore("'n" + _owlClass
+		    + "'/1"))
+		rule += ", " + Config.negation + " 'n" + _owlClass + "'(X1)";
 	    addRule(rule + ".");
 	}
     }
@@ -177,18 +178,18 @@ public class ELAxiomsTranslator {
     public void writeEquivalentRule(OWLClass owlClass,
 	    OWLClassExpression rightPartOfRule) {
 	currentRule = "%EquivalentRule";
-	EquivalentClass rightSideOfRule = ontologyLabel
+	final EquivalentClass rightSideOfRule = ontologyLabel
 		.getLabelEquivalentClasses(rightPartOfRule, 1, 1);
-	String owlClassName = ontologyLabel.getLabel(owlClass, 1);
-	String ruleHead = "a" + owlClassName;
+	final String owlClassName = ontologyLabel.getLabel(owlClass, 1);
+	final String ruleHead = "'a" + owlClassName + "'";
 	String rule = ruleHead + "(X1) " + Config.eq + " "
 		+ rightSideOfRule.getFinalRule();
 	addRule(rule);
 	tabledPredicates.add(ruleHead + "/1");
 	if (hasDisjunctions) {
-	    rule = "d" + owlClassName + "(X1)" + Utils.getEqForRule()
+	    rule = "'d" + owlClassName + "'(X1)" + Utils.getEqForRule()
 		    + rightSideOfRule.getFinalDoubledRule();
-	    tabledPredicates.add("d" + owlClassName + "/1");
+	    tabledPredicates.add("'d" + owlClassName + "'/1");
 	    addRule(rule);
 	}
     }
@@ -204,10 +205,10 @@ public class ELAxiomsTranslator {
     private void writeGeneralClassAxioms(OWLClassExpression superClass,
 	    OWLClassExpression subClass) {
 	if (superClass.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF) {
-	    HashSet<OWLClass> classes = new HashSet<OWLClass>();
+	    final HashSet<OWLClass> classes = new HashSet<OWLClass>();
 	    classes.addAll(getAllOWLClassesFromExpression(((OWLObjectIntersectionOfImpl) superClass)
 		    .getOperands()));
-	    for (OWLClass owlClass : classes)
+	    for (final OWLClass owlClass : classes)
 		writeEquivalentRule(owlClass, subClass);
 
 	}
@@ -222,7 +223,7 @@ public class ELAxiomsTranslator {
      */
     public void writeGeneralClassAxiomsEquivClasses(OWLClassAxiom owlClassAxiom) {
 	currentRule = "%GeneralClassAxiomsEquivClasses";
-	List<OWLClassExpression> classExpressions = ((OWLEquivalentClassesAxiomImpl) owlClassAxiom)
+	final List<OWLClassExpression> classExpressions = ((OWLEquivalentClassesAxiomImpl) owlClassAxiom)
 		.getClassExpressionsAsList();
 	if (classExpressions.size() >= 2) {
 	    writeGeneralClassAxioms(classExpressions.get(0),
@@ -240,9 +241,9 @@ public class ELAxiomsTranslator {
      */
     public void writeGeneralClassAxiomsSubClasses(OWLClassAxiom owlClassAxiom) {
 	currentRule = "%GeneralClassAxiomsSubClasses";
-	OWLClassExpression superClass = ((OWLSubClassOfAxiomImpl) owlClassAxiom)
+	final OWLClassExpression superClass = ((OWLSubClassOfAxiomImpl) owlClassAxiom)
 		.getSuperClass();
-	OWLClassExpression subClass = ((OWLSubClassOfAxiomImpl) owlClassAxiom)
+	final OWLClassExpression subClass = ((OWLSubClassOfAxiomImpl) owlClassAxiom)
 		.getSubClass();
 	writeGeneralClassAxioms(superClass, subClass);
 
@@ -258,23 +259,23 @@ public class ELAxiomsTranslator {
 	    OWLClassAxiom owlClassAxiom) {
 	currentRule = "%GeneralClassAxiomsWithComplexAssertions";
 
-	EquivalentClass rules = new EquivalentClass(1);
+	final EquivalentClass rules = new EquivalentClass(1);
 	EquivalentClass subEquivalentClass = new EquivalentClass(1);
-	for (OWLClassExpression owlClassExpression : ((OWLDisjointClassesAxiomImpl) owlClassAxiom)
+	for (final OWLClassExpression owlClassExpression : ((OWLDisjointClassesAxiomImpl) owlClassAxiom)
 		.getClassExpressions()) {
 	    subEquivalentClass = ontologyLabel.getLabelEquivalentClasses(
 		    owlClassExpression, 1,
 		    subEquivalentClass.getVariableIterator());
-	    for (EquivalentClass.EquivalentRules equivalentRules : subEquivalentClass
+	    for (final EquivalentClass.EquivalentRules equivalentRules : subEquivalentClass
 		    .getListOfRules())
 		rules.addRule(equivalentRules.name,
 			equivalentRules.localIterator,
 			equivalentRules.iterator, equivalentRules.ontologyType);
 
 	}
-	for (String rule : rules.getNegRules())
+	for (final String rule : rules.getNegRules())
 	    addRule(rule);
-	for (String rule : rules.getNegRulesHeadForTabling()) {
+	for (final String rule : rules.getNegRulesHeadForTabling()) {
 	    tabledPredicates.add(rule);
 	    addPredicateToSetPredicatesAppearedUnderNunderscore(rule);
 	}
@@ -291,14 +292,14 @@ public class ELAxiomsTranslator {
     public void writeNegEquivalentRules(OWLClassExpression classExpression,
 	    OWLClassExpression owlClass) {
 	currentRule = "%NegEquivalentRule";
-	EquivalentClass rules = ontologyLabel.getLabelEquivalentClasses(
+	final EquivalentClass rules = ontologyLabel.getLabelEquivalentClasses(
 		classExpression, 1, 1);
 	if (!(owlClass.isOWLThing() || owlClass.isOWLNothing()))
 	    rules.addRule(ontologyLabel.getLabel(owlClass, 1), 1, 1,
 		    EquivalentClass.OntologyType.ONTOLOGY);
-	for (String rule : rules.getNegRules())
+	for (final String rule : rules.getNegRules())
 	    addRule(rule);
-	for (String rule : rules.getNegRulesHeadForTabling()) {
+	for (final String rule : rules.getNegRulesHeadForTabling()) {
 	    tabledPredicates.add(rule);
 	    addPredicateToSetPredicatesAppearedUnderNunderscore(rule);
 	}
@@ -315,16 +316,16 @@ public class ELAxiomsTranslator {
      */
     public void writeRuleA1(OWLIndividual member, OWLClass entity) {
 	currentRule = "%A1";
-	String a = ontologyLabel.getLabel(member, 1);
-	String C = ontologyLabel.getLabel(entity, 1);
-	addRule("a" + C + "(" + a + ").");
-	tabledPredicates.add("a" + C + "/1");
+	final String a = ontologyLabel.getLabel(member, 1);
+	final String C = ontologyLabel.getLabel(entity, 1);
+	addRule("'a" + C + "'(" + a + ").");
+	tabledPredicates.add("'a" + C + "'/1");
 	if (hasDisjunctions) {
-	    String rule = "d" + C + "(" + a + ")";
-	    tabledPredicates.add("d" + C + "/1");
-	    if (isPredicateAppearedInHeadUnderNunderscore("n" + C + "/1"))
-		rule += Utils.getEqForRule() + Config.negation + " n" + C + "("
-			+ a + ")";
+	    String rule = "'d" + C + "'(" + a + ")";
+	    tabledPredicates.add("'d" + C + "'/1");
+	    if (isPredicateAppearedInHeadUnderNunderscore("'n" + C + "'/1"))
+		rule += Utils.getEqForRule() + Config.negation + " 'n" + C
+			+ "'(" + a + ")";
 	    addRule(rule + ".");
 	}
     }
@@ -337,16 +338,16 @@ public class ELAxiomsTranslator {
      */
     public void writeRuleA2(OWLAxiom entity) {
 	currentRule = "%A2";
-	String R = ontologyLabel.getLabel(entity, 1), a = ontologyLabel
+	final String R = ontologyLabel.getLabel(entity, 1), a = ontologyLabel
 		.getLabel(entity, 2), b = ontologyLabel.getLabel(entity, 3);
-	addRule("a" + R + "(" + a + "," + b + ").");
-	tabledPredicates.add("a" + R + "/2");
+	addRule("'a" + R + "'('" + a + "','" + b + "').");
+	tabledPredicates.add("'a" + R + "'/2");
 	if (hasDisjunctions) {
-	    String rule = "d" + R + "(" + a + "," + b + ")";
-	    tabledPredicates.add("d" + R + "/2");
-	    if (isPredicateAppearedInHeadUnderNunderscore("n" + R + "/2"))
-		rule += Utils.getEqForRule() + Config.negation + " n" + R + "("
-			+ a + "," + b + ")";
+	    String rule = "'d" + R + "'('" + a + "','" + b + "')";
+	    tabledPredicates.add("'d" + R + "'/2");
+	    if (isPredicateAppearedInHeadUnderNunderscore("'n" + R + "'/2"))
+		rule += Utils.getEqForRule() + Config.negation + " 'n" + R
+			+ "'('" + a + "','" + b + "')";
 	    addRule(rule + ".");
 	}
     }
@@ -365,17 +366,17 @@ public class ELAxiomsTranslator {
     public void writeRuleC1(OWLClassExpression expression, OWLClass superclass,
 	    boolean lastIndex) {
 	currentRule = "%C1";
-	String D = ontologyLabel.getLabel(superclass, 1);
-	String C = ontologyLabel.getLabel(expression, lastIndex ? -1 : 1);
-	addRule("a" + D + "(X)" + Utils.getEqForRule() + "a" + C + "(X).");
-	tabledPredicates.add("a" + D + "/1");
+	final String D = ontologyLabel.getLabel(superclass, 1);
+	final String C = ontologyLabel.getLabel(expression, lastIndex ? -1 : 1);
+	addRule("'a" + D + "'(X)" + Utils.getEqForRule() + "'a" + C + "'(X).");
+	tabledPredicates.add("'a" + D + "'/1");
 	if (hasDisjunctions) {
-	    String rule = "d" + D + "(X)" + Utils.getEqForRule() + "d" + C
-		    + "(X)";
-	    if (isPredicateAppearedInHeadUnderNunderscore("n" + D + "/1"))
-		rule += ", " + Config.negation + " n" + D + "(X)";
+	    String rule = "'d" + D + "'(X)" + Utils.getEqForRule() + "'d" + C
+		    + "'(X)";
+	    if (isPredicateAppearedInHeadUnderNunderscore("'n" + D + "'/1"))
+		rule += ", " + Config.negation + " 'n" + D + "'(X)";
 	    addRule(rule + ".");
-	    tabledPredicates.add("d" + D + "/1");
+	    tabledPredicates.add("'d" + D + "'/1");
 	}
     }
 
@@ -387,10 +388,10 @@ public class ELAxiomsTranslator {
      */
     public void writeRuleI1(OWLClassExpression expression) {
 	currentRule = "%I1";
-	String C = ontologyLabel.getLabel(expression, 1);
-	addRule("n" + C + "(X).");
-	tabledPredicates.add("n" + C + "/1");
-	addPredicateToSetPredicatesAppearedUnderNunderscore("n" + C + "/1");
+	final String C = ontologyLabel.getLabel(expression, 1);
+	addRule("'n" + C + "'(X).");
+	tabledPredicates.add("'n" + C + "'/1");
+	addPredicateToSetPredicatesAppearedUnderNunderscore("'n" + C + "'/1");
     }
 
     /**
@@ -402,14 +403,14 @@ public class ELAxiomsTranslator {
      */
     public void writeRuleI2(OWLClassExpression expression) {
 	currentRule = "%I2";
-	String C2 = ontologyLabel.getLabel(expression, 1);
-	String C1 = ontologyLabel.getLabel(expression, 2);
-	addRule("n" + C2 + "(X) :- a" + C1 + "(X).");
-	tabledPredicates.add("n" + C2 + "/1");
+	final String C2 = ontologyLabel.getLabel(expression, 1);
+	final String C1 = ontologyLabel.getLabel(expression, 2);
+	addRule("'n" + C2 + "'(X) :- 'a" + C1 + "'(X).");
+	tabledPredicates.add("'n" + C2 + "'/1");
 	addPredicateToSetPredicatesAppearedUnderNunderscore("n" + C2 + "/1");
-	addRule("n" + C1 + "(X) :- a" + C2 + "(X).");
-	tabledPredicates.add("n" + C1 + "/1");
-	addPredicateToSetPredicatesAppearedUnderNunderscore("n" + C1 + "/1");
+	addRule("'n" + C1 + "'(X) :- 'a" + C2 + "'(X).");
+	tabledPredicates.add("'n" + C1 + "'/1");
+	addPredicateToSetPredicatesAppearedUnderNunderscore("'n" + C1 + "'/1");
 
     }
 
@@ -422,13 +423,13 @@ public class ELAxiomsTranslator {
      */
     public void writeRuleI3(OWLClassExpression expression) {
 	currentRule = "%I3";
-	String C = ontologyLabel.getLabel(expression, 2);
-	String R = ontologyLabel.getLabel(expression, 1);
-	addRule("n" + C + "(Y) :- a" + R + "(X,Y).");
-	tabledPredicates.add("n" + C + "/1");
-	addPredicateToSetPredicatesAppearedUnderNunderscore("n" + C + "/1");
-	addRule("n" + R + "(X,Y) :- a" + C + "(Y).");
-	tabledPredicates.add("n" + R + "/2");
+	final String C = ontologyLabel.getLabel(expression, 2);
+	final String R = ontologyLabel.getLabel(expression, 1);
+	addRule("'n" + C + "'(Y) :- 'a" + R + "'(X,Y).");
+	tabledPredicates.add("'n" + C + "'/1");
+	addPredicateToSetPredicatesAppearedUnderNunderscore("'n" + C + "'/1");
+	addRule("'n" + R + "'(X,Y) :- 'a" + C + "'(Y).");
+	tabledPredicates.add("'n" + R + "'/2");
     }
 
     /**
@@ -445,16 +446,17 @@ public class ELAxiomsTranslator {
 	currentRule = "%R1";
 	if (expression == superclass)
 	    return;
-	String S = ontologyLabel.getLabel(superclass, 1);
-	String R = ontologyLabel.getLabel(expression, 1);
-	addRule("a" + S + "(X,Y)" + Utils.getEqForRule() + "a" + R + "(X,Y).");
-	tabledPredicates.add("a" + S + "/2");
+	final String S = ontologyLabel.getLabel(superclass, 1);
+	final String R = ontologyLabel.getLabel(expression, 1);
+	addRule("'a" + S + "'(X,Y)" + Utils.getEqForRule() + "'a" + R
+		+ "'(X,Y).");
+	tabledPredicates.add("'a" + S + "'/2");
 	if (hasDisjunctions) {
-	    String rule = "d" + S + "(X,Y)" + Utils.getEqForRule() + "d" + R
-		    + "(X,Y)";
-	    tabledPredicates.add("d" + S + "/2");
-	    if (isPredicateAppearedInHeadUnderNunderscore("n" + S + "/2"))
-		rule += ", " + Config.negation + " n" + S + "(X,Y)";
+	    String rule = "'d" + S + "'(X,Y)" + Utils.getEqForRule() + "'d" + R
+		    + "(X,Y)'";
+	    tabledPredicates.add("'d" + S + "'/2");
+	    if (isPredicateAppearedInHeadUnderNunderscore("'n" + S + "'/2"))
+		rule += ", " + Config.negation + " 'n" + S + "'(X,Y)";
 	    addRule(rule + ".");
 	}
     }
@@ -468,18 +470,18 @@ public class ELAxiomsTranslator {
      */
     public void writeRuleR2(OWLAxiom axiom) {
 	currentRule = "%R2";
-	String S = ontologyLabel.getLabel(axiom, 2);
-	String R = ontologyLabel.getLabel(axiom, 1);
-	String T = ontologyLabel.getLabel(axiom, 3);
-	addRule("a" + T + "(X,Z)" + Utils.getEqForRule() + "a" + R + "(X,Y), "
-		+ "a" + S + "(Y,Z).");
-	tabledPredicates.add("a" + T + "/2");
+	final String S = ontologyLabel.getLabel(axiom, 2);
+	final String R = ontologyLabel.getLabel(axiom, 1);
+	final String T = ontologyLabel.getLabel(axiom, 3);
+	addRule("'a" + T + "''(X,Z)" + Utils.getEqForRule() + "'a" + R
+		+ "'(X,Y), " + "'a" + S + "'(Y,Z).");
+	tabledPredicates.add("'a" + T + "'/2");
 	if (hasDisjunctions) {// if(isExistRule(T)){
-	    String rule = "d" + T + "(X,Z)" + Utils.getEqForRule() + "d" + R
-		    + "(X,Y), " + "d" + S + "(Y,Z)";
-	    tabledPredicates.add("d" + T + "/2");
-	    if (isPredicateAppearedInHeadUnderNunderscore("n" + T + "/2"))
-		rule += ", " + Config.negation + " n" + T + "(X,Z)";
+	    String rule = "'d" + T + "'(X,Z)" + Utils.getEqForRule() + "'d" + R
+		    + "'(X,Y), " + "'d" + S + "'(Y,Z)";
+	    tabledPredicates.add("'d" + T + "'/2");
+	    if (isPredicateAppearedInHeadUnderNunderscore("'n" + T + "'/2"))
+		rule += ", " + Config.negation + " 'n" + T + "'(X,Z)";
 	    addRule(rule + ".");
 	}
     }
