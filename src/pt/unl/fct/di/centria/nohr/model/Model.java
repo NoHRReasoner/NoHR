@@ -93,6 +93,18 @@ public class Model {
 	return new NegativeLiteralImpl(atom);
     }
 
+    public static NegativeLiteral negLiteral(Atom atom, boolean existentially) {
+	return new NegativeLiteralImpl(atom, existentially);
+    }
+
+    public static NegativeLiteral negLiteral(Predicate pred,
+	    boolean existentially, Term... args) {
+	final List<Term> argsList = new LinkedList<Term>();
+	Collections.addAll(argsList, args);
+	return new NegativeLiteralImpl(new AtomImpl(pred, argsList),
+		existentially);
+    }
+
     public static NegativeLiteral negLiteral(Predicate pred, Term... args) {
 	final List<Term> argsList = new LinkedList<Term>();
 	Collections.addAll(argsList, args);

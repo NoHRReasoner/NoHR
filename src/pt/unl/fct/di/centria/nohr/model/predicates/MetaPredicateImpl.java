@@ -34,7 +34,7 @@ public class MetaPredicateImpl extends PredicateImpl implements MetaPredicate {
 
     @Override
     public String getName() {
-	return prefix + symbol + "/" + arity;
+	return "'" + prefix + symbol + "'/" + arity;
     }
 
     public PredicateType getType() {
@@ -51,6 +51,6 @@ public class MetaPredicateImpl extends PredicateImpl implements MetaPredicate {
 
     @Override
     public String toString() {
-	return prefix + symbol;
+	return "'" + prefix + symbol + "'";
     }
 }

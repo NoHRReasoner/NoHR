@@ -49,7 +49,7 @@ public class PredicateImpl implements Predicate {
 
     @Override
     public String getName() {
-	return symbol + "/" + arity;
+	return "'" + symbol + "'/" + arity;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PredicateImpl implements Predicate {
 
     @Override
     public String toString() {
-	return symbol;
+	return "'" + symbol + "'";
     }
 
 }

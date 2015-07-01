@@ -9,12 +9,11 @@ import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
-
-//TODO remove
 
 public interface QLNormalizedOntology {
 
@@ -29,6 +28,8 @@ public interface QLNormalizedOntology {
     public Set<OWLClassExpression> getDisjointConcepts();
 
     public Set<OWLProperty> getDisjointRoles();
+
+    public OWLOntology getOriginalOntology();
 
     public Set<OWLObjectPropertyAssertionAxiom> getRoleAssertions();
 

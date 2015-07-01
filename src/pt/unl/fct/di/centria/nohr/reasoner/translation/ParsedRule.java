@@ -8,8 +8,8 @@ import other.Utils;
  */
 public class ParsedRule {
 
-    /** The rule. */
-    private String rule;
+    /** The is under tnot. */
+    private boolean isUnderTnot = false;
 
     /** The len. */
     private int len;
@@ -17,11 +17,11 @@ public class ParsedRule {
     /** The predicate. */
     private String predicate;
 
+    /** The rule. */
+    private String rule;
+
     /** The variables. */
     private String variables;
-
-    /** The is under tnot. */
-    private boolean isUnderTnot = false;
 
     /**
      * Instantiates a new parsed rule.
@@ -65,7 +65,7 @@ public class ParsedRule {
      * @return the negated rule
      */
     public String getNegRule() {
-	return Config.negation + " n" + predicate + variables;
+	return Config.negation + " 'n" + predicate + "'" + variables;
     }
 
     /**
@@ -107,7 +107,7 @@ public class ParsedRule {
      * @return the rule
      */
     public String getRule() {
-	return "a" + predicate + variables;
+	return "'a" + predicate + "'" + variables;
     }
 
     /**
@@ -116,7 +116,7 @@ public class ParsedRule {
      * @return the sub rule
      */
     public String getSubRule() {
-	return "d" + predicate + variables;
+	return "'d" + predicate + "'" + variables;
     }
 
     /**
@@ -125,7 +125,7 @@ public class ParsedRule {
      * @return the tabled doubled rule
      */
     public String getTabledDoubledRule() {
-	return "d" + predicate + "/" + len;
+	return "'d" + predicate + "'/" + len;
     }
 
     /**
@@ -143,7 +143,7 @@ public class ParsedRule {
      * @return the tabled rule
      */
     public String getTabledRule() {
-	return "a" + predicate + "/" + len;
+	return "'a" + predicate + "'/" + len;
     }
 
     /**
@@ -171,11 +171,11 @@ public class ParsedRule {
 	variables = "";
 	String[] _;
 	if (rule.startsWith("'")) {
-	    int index = rule.lastIndexOf("'");
+	    final int index = rule.lastIndexOf("'");
 	    predicate = rule.substring(0, index) + "'";
 	    _ = rule.substring(index + 1, rule.length()).split("\\(");
 	} else if (rule.startsWith("\"")) {
-	    int index = rule.lastIndexOf("\"");
+	    final int index = rule.lastIndexOf("\"");
 	    predicate = rule.substring(0, index) + "\"";
 	    _ = rule.substring(index + 1, rule.length()).split("\\(");
 	} else {

@@ -30,6 +30,9 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -40,6 +43,7 @@ import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 
 import other.Utils;
+import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AbstractOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
@@ -53,36 +57,19 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
     protected final ELOriginalAxiomsTranslator originalAxiomsTranslator;
 
     private OWLDataFactory owlDataFactory;
+    private final ELReducedOntology reducedOntology;
+
     protected ELAxiomsTranslator ruleCreator;
 
     public ELOntologyTranslator(OWLOntologyManager ontologyManager,
 	    OWLOntology ontology, OntologyLabeler ontologyLabel)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-		    IOException, CloneNotSupportedException, UnsupportedOWLProfile {
+		    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    IOException, CloneNotSupportedException, UnsupportedOWLProfile,
+		    UnsupportedAxiomTypeException {
 	super(ontologyManager, ontology);
-	classify();
-	if (isOntologyNeedToBeNormalized(ontology))
-	    ontology = normalizeOntology(ontology, null);
-	ruleCreator = new ELAxiomsTranslator(ontologyLabel, hasDisjunctions);
+	reducedOntology = new ELReducedOntologyImpl(ontology);
 	originalAxiomsTranslator = new ELOriginalAxiomsTranslator(ontology);
 	doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(ontology);
-    }
-
-    private void classify() throws OWLOntologyCreationException {
-	Tracer.start("ontology classification");
-	final OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
-	final OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
-	/** Classify the ontology. */
-	reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
-	final List<InferredAxiomGenerator<? extends OWLAxiom>> generators = new ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>(
-		3);
-	generators.add(new InferredSubClassAxiomGenerator());
-	generators.add(new InferredEquivalentClassAxiomGenerator());
-	generators.add(new InferredClassAssertionAxiomGenerator());
-	final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(
-		reasoner, generators);
-	inferredOntologyGenerator.fillOntology(ontologyManager, ontology);
-	Tracer.stop("ontology classification", "loading");
     }
 
     private Set<OWLAxiom> createNormalizedAxioms(OWLClassExpression superClass,
@@ -140,7 +127,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 	    if (owlClassAxiom.getAxiomType() == AxiomType.DISJOINT_CLASSES) {
 		hasDisjunctions = true;
 		ruleCreator
-		.writeGeneralClassAxiomsWithComplexAssertions(owlClassAxiom);
+			.writeGeneralClassAxiomsWithComplexAssertions(owlClassAxiom);
 	    }
 	return hasDisjunctions;
 
@@ -148,7 +135,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator
      * #getNegatedPredicates()
@@ -160,7 +147,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator
      * #getTabledPredicates()
@@ -182,7 +169,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 	    break;
 	case OBJECT_INTERSECTION_OF:
 	    final List<OWLClassExpression> operands = ((OWLObjectIntersectionOf) owlClassExpression)
-		    .getOperandsAsList();
+	    .getOperandsAsList();
 	    for (final OWLClassExpression operand : operands) {
 		hasAnyExists = hasOwlClassExpressionAnyExists(operand);
 		if (hasAnyExists == true)
@@ -309,7 +296,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 
     private OWLOntology normalizeOntology(OWLOntology ontology,
 	    OWLOntologyManager owlOntologyManager)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException {
+		    throws OWLOntologyCreationException, OWLOntologyStorageException {
 	if (owlOntologyManager == null)
 	    owlOntologyManager = OWLManager.createOWLOntologyManager();
 	final Set<OWLOntology> _onts = new HashSet<OWLOntology>();
@@ -328,7 +315,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 		axiomsToBeAdded.addAll(createNormalizedAxioms(
 			((OWLSubClassOfAxiomImpl) owlClassAxiom).getSubClass(),
 			((OWLSubClassOfAxiomImpl) owlClassAxiom)
-				.getSuperClass()));
+			.getSuperClass()));
 	    if (owlClassAxiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES) {
 		equivalentClassExpressions = ((OWLEquivalentClassesAxiomImpl) owlClassAxiom)
 			.getClassExpressionsAsList();
@@ -350,7 +337,15 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 	return owlOntology;
     }
 
-    private void translate(AbstractELAxiomsTranslator translator) {
+    private Set<Rule> translate(AbstractELAxiomsTranslator translator) {
+	final Set<Rule> result = new HashSet<Rule>();
+	for (final OWLSubClassOfAxiom axiom : reducedOntology
+		.getConceptSubsumptions())
+	    result.addAll(translator.translate(axiom));
+	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology
+		.getRoleSubsumptions())
+	    result.addAll(translator.translate(axiom));
+	return result;
     }
 
     /**

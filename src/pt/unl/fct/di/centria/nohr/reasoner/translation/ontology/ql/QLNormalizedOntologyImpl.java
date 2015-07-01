@@ -42,6 +42,8 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
+import utils.Tracer;
+
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private final Set<OWLDisjointClassesAxiom> conceptDisjunctions;
@@ -129,6 +131,11 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	final String fragment = String.valueOf(hashCode);
 	final IRI ruleIri = IRI.create(ontologyIRI + "#" + fragment);
 	return df.getOWLObjectProperty(ruleIri);
+    }
+
+    @Override
+    public OWLOntology getOriginalOntology() {
+	return ontology;
     }
 
     @Override
@@ -264,6 +271,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     private void normalize(OWLOntology ontology) {
+	Tracer.start("ontology normalization");
 	for (final OWLSubClassOfAxiom a : ontology
 		.getAxioms(AxiomType.SUBCLASS_OF))
 	    normalize(a);
@@ -321,6 +329,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	    for (final OWLSubDataPropertyOfAxiom s : a
 		    .asSubDataPropertyOfAxioms())
 		normalize(s);
+	Tracer.stop("ontology normalization", "loading");
     }
 
     private void normalize(OWLReflexiveObjectPropertyAxiom alpha) {

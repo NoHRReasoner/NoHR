@@ -23,6 +23,7 @@ import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
@@ -38,7 +39,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.*;
  *
  */
 public abstract class AbstractELAxiomsTranslator extends
-AbstractAxiomsTranslator {
+	AbstractAxiomsTranslator {
 
     private static final Variable ANNON = var("_");
     protected static final Variable X = var("X");
@@ -109,6 +110,12 @@ AbstractAxiomsTranslator {
 	final OWLClassExpression ce1 = axiom.getSubClass();
 	final OWLClassExpression ce2 = axiom.getSuperClass();
 	return translateSubsumption(ce1, (OWLClass) ce2);
+    }
+
+    public Set<Rule> translate(OWLSubPropertyAxiom axiom) {
+	final OWLProperty pe1 = (OWLProperty) axiom.getSubProperty();
+	final OWLProperty pe2 = (OWLProperty) axiom.getSuperProperty();
+	return translateSubsumption(pe1, pe2);
     }
 
     protected abstract Set<Rule> translateSubsumption(

@@ -34,6 +34,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.UnescapeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.EscapeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.RuleTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
 import utils.Tracer;
 
@@ -65,14 +66,15 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     public HybridKB(final OWLOntology ontology)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException {
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
 	this(OWLManager.createOWLOntologyManager(), ontology);
     }
 
     public HybridKB(final OWLOntologyManager ontologyManager,
 	    final OWLOntology ontology) throws OWLOntologyCreationException,
 	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-	    CloneNotSupportedException {
+	    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	hasChanges = true;
 	this.ontology = ontology;
 	this.ontologyManager = ontologyManager;
@@ -126,17 +128,20 @@ public class HybridKB implements OWLOntologyChangeListener {
 	} catch (IOException | CloneNotSupportedException
 		| UnsupportedOWLProfile e) {
 	    e.printStackTrace();
+	} catch (final UnsupportedAxiomTypeException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
     }
 
     private void preprocess() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, ParserException,
-	    UnsupportedOWLProfile, IOException {
+    OWLOntologyStorageException, ParserException,
+    UnsupportedOWLProfile, IOException {
 	if (hasChanges) {
-	    utils.Tracer.start("ontology proceeding");
+	    utils.Tracer.start("ontology processing");
 	    ontologyTranslation = new HashSet<String>();
 	    ontologyTranslator.translate(ontologyTranslation);
-	    utils.Tracer.stop("ontology proceeding", "loading");
+	    utils.Tracer.stop("ontology processing", "loading");
 	}
 	if (Rules.hasChanges
 		|| ontologyTranslator.hasDisjunctions() != hasDisjunctions) {
@@ -176,5 +181,13 @@ public class HybridKB implements OWLOntologyChangeListener {
 	for (final Answer ans : answers)
 	    result.add(ans.acept(unescapeVisitor));
 	return result;
+    }
+
+    public void resetQueriesCount() {
+	queryCount = 1;
+    }
+
+    public void shutdown() {
+	xsbDatabase.shutdown();
     }
 }

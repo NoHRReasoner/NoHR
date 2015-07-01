@@ -69,7 +69,8 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
     @Override
     protected Set<Rule> translateBasicSubsumption(OWLClassExpression b1,
 	    OWLClassExpression b2) {
-	return ruleSet(rule(tr(b2, X), tr(b1, X), negLiteral(negTr(b2, X))),
+	return ruleSet(
+		rule(tr(b2, X), tr(b1, X), negLiteral(negTr(b2, X), true)),
 		rule(negTr(b1, X), negTr(b2, X)));
     }
 
@@ -111,7 +112,7 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
 	final OWLObjectPropertyExpression q1 = alpha.getSubProperty();
 	final OWLObjectPropertyExpression q2 = alpha.getSuperProperty();
 	return rule(existTr(q2, X), existTr(q1, X),
-		negLiteral(negTrExist(q2, X)));
+		negLiteral(negTrExist(q2, X), true));
     }
 
     public Rule translateIrreflexive(OWLObjectProperty p) {
@@ -132,7 +133,7 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
 	final OWLObjectPropertyExpression q2 = alpha.getSuperProperty()
 		.getInverseProperty();
 	return rule(existTr(q2, X), existTr(q1, X),
-		negLiteral(negTrExist(q2, X)));
+		negLiteral(negTrExist(q2, X), true));
     }
 
     @Override

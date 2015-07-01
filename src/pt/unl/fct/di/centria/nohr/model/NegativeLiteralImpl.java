@@ -6,8 +6,15 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral {
 
+    private final boolean existentially;
+
     NegativeLiteralImpl(Atom atom) {
+	this(atom, false);
+    }
+
+    NegativeLiteralImpl(Atom atom, boolean existentially) {
 	super(atom);
+	this.existentially = existentially;
     }
 
     @Override
@@ -97,7 +104,8 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     @Override
     public String toString() {
-	return String.format("tnot(%s)", atom);
+	final String expr = existentially ? "not_exists(%s)" : "tnot(%s)";
+	return String.format(expr, atom);
     }
 
 }

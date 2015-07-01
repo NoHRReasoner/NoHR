@@ -149,8 +149,8 @@ public class RuleTranslator {
 	currentRule = "%writeBrule";
 	if (rightSide == null) {
 	    String rule = leftSide.getSubRule();
-	    // if (negatedPredicates.contains(leftSide.getTabledNegRule()))
-	    rule += Utils.getEqForRule() + leftSide.getNegRule();
+	    if (negatedPredicates.contains(leftSide.getTabledNegRule()))
+		rule += Utils.getEqForRule() + leftSide.getNegRule();
 	    writeLineToAppendedRules(rule + ".");
 	} else {
 	    String result = leftSide.getSubRule() + Utils.getEqForRule();

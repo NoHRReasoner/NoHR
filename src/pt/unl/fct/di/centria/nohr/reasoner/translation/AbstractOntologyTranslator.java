@@ -19,6 +19,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.ELOntologyTranslator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLOntologyTranslator;
 import utils.Tracer;
 
@@ -26,12 +27,13 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 
     public static OntologyTranslator createOntologyTranslator(
 	    OWLOntologyManager ontologyManager, OWLOntology ontology)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException {
-	OWLAnnotationProperty labelAnnotation = ontologyManager
+		    throws OWLOntologyCreationException, OWLOntologyStorageException,
+		    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
+	final OWLAnnotationProperty labelAnnotation = ontologyManager
 		.getOWLDataFactory().getOWLAnnotationProperty(
 			OWLRDFVocabulary.RDFS_LABEL.getIRI());
-	OntologyLabeler ontologyLabel = new OntologyLabeler(ontology,
+	final OntologyLabeler ontologyLabel = new OntologyLabeler(ontology,
 		labelAnnotation);
 	switch (getTranslationAlgorithm(ontology)) {
 	case DL_LITE_R:
@@ -50,12 +52,12 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 	    OWLOntology ontology) throws UnsupportedOWLProfile {
 	if (Config.translationAlgorithm != null)
 	    return Config.translationAlgorithm;
-	OWL2ELProfile elProfile = new OWL2ELProfile();
-	OWL2QLProfile qlProfile = new OWL2QLProfile();
-	OWLProfileReport elReport = elProfile.checkOntology(ontology);
-	OWLProfileReport qlRerport = qlProfile.checkOntology(ontology);
-	boolean isEL = elReport.isInProfile();
-	boolean isQL = qlRerport.isInProfile();
+	final OWL2ELProfile elProfile = new OWL2ELProfile();
+	final OWL2QLProfile qlProfile = new OWL2QLProfile();
+	final OWLProfileReport elReport = elProfile.checkOntology(ontology);
+	final OWLProfileReport qlRerport = qlProfile.checkOntology(ontology);
+	final boolean isEL = elReport.isInProfile();
+	final boolean isQL = qlRerport.isInProfile();
 	if (!isEL && !isQL)
 	    throw new UnsupportedOWLProfile(qlRerport.getViolations());
 	Tracer.logBool("OWL EL", isEL);
@@ -69,11 +71,11 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 	return null;
     }
 
-    protected final OWLOntologyManager ontologyManager;
+    protected boolean hasDisjunctions;
 
     protected OWLOntology ontology;
 
-    protected boolean hasDisjunctions;
+    protected final OWLOntologyManager ontologyManager;
 
     public AbstractOntologyTranslator(OWLOntology ontology)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
