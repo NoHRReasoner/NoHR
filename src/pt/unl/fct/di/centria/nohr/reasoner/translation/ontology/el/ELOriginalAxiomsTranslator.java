@@ -11,6 +11,8 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
@@ -31,8 +33,8 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
 	super(ontology);
     }
 
-    private Set<Literal> tr(List<OWLPropertyExpression> chain, Variable x,
-	    Variable y) {
+    private Set<Literal> tr(List<OWLObjectPropertyExpression> chain,
+	    Variable x, Variable y) {
 	return tr(chain, x, y);
     }
 
@@ -58,8 +60,9 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return translateOriginal(alpha);
     }
 
-    public Set<Rule> translateSubsumption(List<OWLPropertyExpression> pes1,
-	    OWLProperty p2) {
+    @Override
+    public Set<Rule> translateSubsumption(
+	    List<OWLObjectPropertyExpression> pes1, OWLObjectProperty p2) {
 	return ruleSet(rule(tr(p2, X, Y), tr(pes1, X, Y)));
     }
 
@@ -72,6 +75,7 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
 
     @Override
     public Set<Rule> translateSubsumption(OWLProperty p1, OWLProperty p2) {
-	return ruleSet(rule(tr(p1, X, Y), tr(p2, X, Y)));
+	return ruleSet(rule(tr(p2, X, Y), tr(p1, X, Y)));
     }
+
 }

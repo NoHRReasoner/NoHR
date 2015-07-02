@@ -135,8 +135,8 @@ public class HybridKB implements OWLOntologyChangeListener {
     }
 
     private void preprocess() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, ParserException,
-    UnsupportedOWLProfile, IOException {
+	    OWLOntologyStorageException, ParserException,
+	    UnsupportedOWLProfile, IOException {
 	if (hasChanges) {
 	    utils.Tracer.start("ontology processing");
 	    ontologyTranslation = new HashSet<String>();

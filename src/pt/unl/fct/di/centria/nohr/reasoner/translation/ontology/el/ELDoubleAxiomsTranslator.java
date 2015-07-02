@@ -10,6 +10,8 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
@@ -35,23 +37,23 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	super(ontology);
     }
 
-    private Atom negTr(Literal b) {
+    public Atom negTr(Literal b) {
 	final Predicate pred0 = b.getPredicate();
 	final Predicate pred = negPred(pred0.getSymbol(), pred0.getArity());
 	return atom(pred, b.getAtom().getArguments());
     }
 
-    private Atom negTr(OWLClass c, Variable x) {
+    public Atom negTr(OWLClass c, Variable x) {
 	final Predicate pred = negPred(sym(c), 1);
 	return atom(pred, x);
     }
 
-    private Atom negTr(OWLProperty p, Variable x, Variable y) {
+    public Atom negTr(OWLProperty p, Variable x, Variable y) {
 	final Predicate pred = negPred(sym(p), 2);
 	return atom(pred, x, y);
     }
 
-    private Set<Literal> tr(List<OWLPropertyExpression> chain, Variable x,
+    Set<Literal> tr(List<OWLObjectPropertyExpression> chain, Variable x,
 	    Variable y) {
 	return tr(chain, x, y);
     }
@@ -60,11 +62,11 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return tr(c, x, false);
     }
 
-    private Set<Literal> tr(OWLClassExpression ce, Variable x) {
+    public Set<Literal> tr(OWLClassExpression ce, Variable x) {
 	return tr(ce, x, false);
     }
 
-    private Atom tr(OWLProperty p, Variable x, Variable y) {
+    Atom tr(OWLProperty p, Variable x, Variable y) {
 	return tr(p, x, y, false);
     }
 
@@ -79,8 +81,9 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     // (r2)
-    public Set<Rule> translateSubsumption(List<OWLPropertyExpression> chain,
-	    OWLProperty s) {
+    @Override
+    public Set<Rule> translateSubsumption(
+	    List<OWLObjectPropertyExpression> chain, OWLObjectProperty s) {
 	final Set<Rule> result = new HashSet<Rule>();
 	final Set<Literal> chainTr = tr(chain, X, Y);
 	Set<Literal> body = new HashSet<Literal>(chainTr);
@@ -94,6 +97,7 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return result;
     }
 
+    @Override
     public Set<Rule> translateSubsumption(OWLClassExpression c, OWLClass a) {
 	final Set<Rule> result = new HashSet<Rule>();
 	// (t1)
@@ -125,6 +129,7 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     // (r1)
+    @Override
     public Set<Rule> translateSubsumption(OWLProperty r, OWLProperty s) {
 	return ruleSet(
 		rule(tr(r, X, Y), tr(s, X, Y), negLiteral(negTr(r, X, Y))),

@@ -197,6 +197,10 @@ public class Model {
 	return new SubstitutionImpl(varsIdx, vals);
     }
 
+    public static Variable var() {
+	return new VariableImpl("_");
+    }
+
     public static Variable var(String name) {
 	return new VariableImpl(name);
     }

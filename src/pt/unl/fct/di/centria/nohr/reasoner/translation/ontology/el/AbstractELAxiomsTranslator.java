@@ -8,9 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.semanticweb.elk.owlapi.OwlChangesLoader;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
@@ -24,6 +22,7 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
@@ -109,6 +108,8 @@ public abstract class AbstractELAxiomsTranslator extends
     public Set<Rule> translate(OWLSubClassOfAxiom axiom) {
 	final OWLClassExpression ce1 = axiom.getSubClass();
 	final OWLClassExpression ce2 = axiom.getSuperClass();
+	if (ce2.isAnonymous())
+	    return ruleSet();
 	return translateSubsumption(ce1, (OWLClass) ce2);
     }
 
@@ -118,8 +119,20 @@ public abstract class AbstractELAxiomsTranslator extends
 	return translateSubsumption(pe1, pe2);
     }
 
+    /**
+     * @param axiom
+     * @return
+     */
+    public Set<Rule> translate(OWLSubPropertyChainOfAxiom axiom) {
+	final List<OWLObjectPropertyExpression> chain = axiom
+		.getPropertyChain();
+	final OWLObjectPropertyExpression superProperty = axiom
+		.getSuperProperty();
+	return translateSubsumption(chain, (OWLObjectProperty) superProperty);
+    }
+
     protected abstract Set<Rule> translateSubsumption(
-	    List<OWLPropertyExpression> chain, OWLProperty p2);
+	    List<OWLObjectPropertyExpression> chain, OWLObjectProperty p2);
 
     protected abstract Set<Rule> translateSubsumption(OWLClassExpression ce1,
 	    OWLClass c2);

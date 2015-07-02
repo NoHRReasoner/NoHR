@@ -20,6 +20,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
@@ -67,11 +68,6 @@ public abstract class AbstractQLAxiomsTranslator extends
 
     public AbstractQLAxiomsTranslator(OWLOntology ontology) {
 	super(ontology);
-	dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
-	ontologyLabeler = new OntologyLabeler(ontology,
-		dataFactory
-			.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
-				.getIRI()));
     }
 
     public Atom negTr(OWLClassExpression c, Variable x) {
@@ -101,7 +97,14 @@ public abstract class AbstractQLAxiomsTranslator extends
 	    return atom(negPred(sym(q), 2), var("_"), X);
     }
 
+    private OWLObjectProperty newConcept() {
+	return ontology.getOWLOntologyManager().getOWLDataFactory()
+		.getOWLObjectProperty(IRI.create("PNEW" + opeNewCount++));
+    }
+
     private OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression ope) {
+	final OWLDataFactory dataFactory = ontology.getOWLOntologyManager()
+		.getOWLDataFactory();
 	return dataFactory.getOWLObjectSomeValuesFrom(ope,
 		dataFactory.getOWLThing());
     }
@@ -233,8 +236,7 @@ public abstract class AbstractQLAxiomsTranslator extends
     protected Set<Rule> translateSubsumption(OWLClassExpression ce1,
 	    OWLObjectSomeValuesFrom ce2) {
 	final OWLObjectPropertyExpression ope = ce2.getProperty();
-	final OWLObjectPropertyExpression opeNew = dataFactory
-		.getOWLObjectProperty(IRI.create("PNEW" + opeNewCount++));
+	final OWLObjectPropertyExpression opeNew = newConcept();
 	final OWLObjectPropertyExpression invOpeNew = opeNew
 		.getInverseProperty();
 	final OWLClassExpression c = ce2.getFiller();

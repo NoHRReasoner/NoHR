@@ -5,6 +5,7 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -49,6 +50,141 @@ import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
  */
 public class ELReducedOntologyImpl implements ELReducedOntology {
 
+    private class ComplexSidesNormalizer implements
+	    Normalizer<OWLSubClassOfAxiom> {
+
+	@Override
+	public boolean addNormalization(OWLSubClassOfAxiom axiom,
+		Set<OWLSubClassOfAxiom> newAxioms) {
+	    final OWLClassExpression ce1 = axiom.getSubClass();
+	    final OWLClassExpression ce2 = axiom.getSuperClass();
+	    if (!ce1.isAnonymous() && hasExistential(ce2)) {
+		final OWLClass anew = newConcept();
+		newAxioms.add(subsumption(ce1, anew));
+		newAxioms.add(subsumption(anew, ce2));
+		return true;
+	    }
+	    return false;
+	}
+
+    }
+
+    private class ConceptAssertionsNormalizer implements
+    Normalizer<OWLClassAssertionAxiom> {
+
+	@Override
+	public boolean addNormalization(OWLClassAssertionAxiom assertion,
+		Set<OWLClassAssertionAxiom> newAssertions) {
+	    final Set<OWLClassExpression> ceConj = assertion
+		    .getClassExpression().asConjunctSet();
+	    final OWLIndividual i = assertion.getIndividual();
+	    if (ceConj.size() > 1) {
+		for (final OWLClassExpression ci : ceConj)
+		    if (!ci.isTopEntity())
+			newAssertions.add(assertion(ci, i));
+		return true;
+	    }
+	    return false;
+	}
+    }
+
+    private class LeftBottomNormalizer implements
+    Normalizer<OWLSubClassOfAxiom> {
+
+	@Override
+	public boolean addNormalization(OWLSubClassOfAxiom axiom,
+		Set<OWLSubClassOfAxiom> newAxioms) {
+	    return axiom.getSubClass().isOWLNothing();
+	}
+
+    }
+
+    private class LeftConjunctionNormalizer implements
+    Normalizer<OWLSubClassOfAxiom> {
+
+	@Override
+	public boolean addNormalization(OWLSubClassOfAxiom axiom,
+		Set<OWLSubClassOfAxiom> newAxioms) {
+	    boolean changed = false;
+	    final Set<OWLClassExpression> ce1Conj = axiom.getSubClass()
+		    .asConjunctSet();
+	    final OWLClassExpression ce2 = axiom.getSuperClass();
+	    if (ce1Conj.size() > 1) {
+		final Set<OWLClassExpression> normCe1Conj = new HashSet<OWLClassExpression>();
+		for (final OWLClassExpression ci : ce1Conj)
+		    if (isExistential(ci)) {
+			final OWLClass anew = newConcept();
+			newAxioms.add(subsumption(ci, anew));
+			normCe1Conj.add(anew);
+			changed = true;
+		    } else
+			normCe1Conj.add(ci);
+		if (changed)
+		    newAxioms.add(subsumption(conj(normCe1Conj), ce2));
+	    }
+	    return changed;
+	}
+
+    }
+
+    private class LeftExistentialNormalizer implements
+	    Normalizer<OWLSubClassOfAxiom> {
+
+	@Override
+	public boolean addNormalization(OWLSubClassOfAxiom axiom,
+		Set<OWLSubClassOfAxiom> newAxioms) {
+	    boolean changed = false;
+	    final OWLClassExpression ce1 = axiom.getSubClass();
+	    final OWLClassExpression ce2 = axiom.getSuperClass();
+	    if (ce1 instanceof OWLObjectSomeValuesFrom) {
+		final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) ce1;
+		final OWLObjectPropertyExpression ope = some.getProperty();
+		final Set<OWLClassExpression> fillerConj = some.getFiller()
+			.asConjunctSet();
+		if (fillerConj.size() > 1) {
+		    final Set<OWLClassExpression> normFillerConj = new HashSet<OWLClassExpression>();
+		    for (final OWLClassExpression ci : fillerConj)
+			if (isExistential(ci)) {
+			    final OWLClass anew = newConcept();
+			    newAxioms.add(subsumption(ci, anew));
+			    normFillerConj.add(anew);
+			    changed = true;
+			} else
+			    normFillerConj.add(ci);
+		    if (changed)
+			newAxioms.add(subsumption(
+				some(ope, conj(normFillerConj)), ce2));
+		}
+	    }
+	    return changed;
+	}
+    }
+
+    private interface Normalizer<T> {
+
+	boolean addNormalization(T axiom, Set<T> newAxioms);
+
+    }
+
+    private class RightConjunctionNormalizer implements
+    Normalizer<OWLSubClassOfAxiom> {
+
+	@Override
+	public boolean addNormalization(OWLSubClassOfAxiom axiom,
+		Set<OWLSubClassOfAxiom> newAxioms) {
+	    boolean changed = false;
+	    final OWLClassExpression ce1 = axiom.getSubClass();
+	    final Set<OWLClassExpression> ce2Conj = axiom.getSuperClass()
+		    .asConjunctSet();
+	    if (ce2Conj.size() > 1) {
+		for (final OWLClassExpression ci : ce2Conj)
+		    newAxioms.add(subsumption(ce1, ci));
+		changed = true;
+	    }
+	    return changed;
+	}
+    }
+
     private static final AxiomType[] UNSUPP_TYPES = new AxiomType[] {
 	    AxiomType.REFLEXIVE_OBJECT_PROPERTY,
 	    AxiomType.OBJECT_PROPERTY_RANGE, AxiomType.DATA_PROPERTY_DOMAIN,
@@ -60,7 +196,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 
     private final OWLOntology closure;
 
-    private boolean hasDisjunction;
+    private final boolean hasDisjunction;
 
     private final OWLOntology ontology;
 
@@ -72,8 +208,11 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	    if (ontology.getAxiomCount(type) > 1)
 		throw new UnsupportedAxiomTypeException(type);
 	this.ontology = ontology;
-	closure = reduce(ontology);
+	final Set<OWLClassAssertionAxiom> conceptAssertions = ontology.getAxioms(AxiomType.CLASS_ASSERTION);
+	final Set<OWLSubClassOfAxiom> conceptSubsumptions = conceptSubsumptions(ontology);
 	roleSubsumptions = roleSubsumptions(ontology);
+	closure = reducedOntology(conceptAssertions, conceptSubsumptions, roleSubsumptions);
+	hasDisjunction = hasDisjunctions(closure);
 	chainSubsumptions = chainSubsumptions(ontology);
     }
 
@@ -111,6 +250,21 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 		reasoner, generators);
 	inferredOntologyGenerator.fillOntology(
 		ontology.getOWLOntologyManager(), ontology);
+    }
+
+    private Set<OWLSubClassOfAxiom> conceptSubsumptions(OWLOntology ontology) {
+	final Set<OWLSubClassOfAxiom> conceptSubsumptions = ontology
+		.getAxioms(AxiomType.SUBCLASS_OF);
+	for (final OWLEquivalentClassesAxiom axiom : ontology
+		.getAxioms(AxiomType.EQUIVALENT_CLASSES))
+	    conceptSubsumptions.addAll(axiom.asOWLSubClassOfAxioms());
+	for (final OWLDisjointClassesAxiom axiom : ontology
+		.getAxioms(AxiomType.DISJOINT_CLASSES))
+	    conceptSubsumptions.addAll(axiom.asOWLSubClassOfAxioms());
+	for (final OWLObjectPropertyDomainAxiom axiom : ontology
+		.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN))
+	    conceptSubsumptions.add(norm(axiom));
+	return conceptSubsumptions;
     }
 
     private OWLObjectIntersectionOf conj(Set<OWLClassExpression> concepts) {
@@ -158,20 +312,21 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	return hasDisjunction;
     }
 
-    private boolean hasExistential(OWLClassExpression ce) {
-	if (ce instanceof OWLClass)
-	    return false;
-	else if (ce instanceof OWLObjectSomeValuesFrom)
-	    return true;
-	else if (ce instanceof OWLObjectHasValue)
-	    return true;
-	else if (ce instanceof OWLObjectIntersectionOf) {
-	    for (final OWLClassExpression cei : ce.asConjunctSet())
-		if (hasExistential(cei))
+    private boolean hasDisjunctions(OWLOntology closure) {
+	for (final OWLSubClassOfAxiom axiom : closure
+		.getAxioms(AxiomType.SUBCLASS_OF))
+	    for (final OWLClassExpression ci : axiom.getSuperClass()
+		    .asConjunctSet())
+		if (ci.isOWLNothing())
 		    return true;
-	    return false;
-	} else
-	    return false;
+	return false;
+    }
+
+    private boolean hasExistential(OWLClassExpression ce) {
+	for (final OWLClassExpression cei : ce.asConjunctSet())
+	    if (isExistential(cei))
+		return true;
+	return false;
     }
 
     private boolean isExistential(OWLClassExpression ce) {
@@ -201,166 +356,60 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	return subsumption(chain, ope);
     }
 
-    private OWLOntology normalized(OWLOntology ontology)
+    private void norm(Set<OWLSubClassOfAxiom> axioms) {
+	boolean changed1;
+	boolean changed2 = false;
+	boolean first = true;
+	do {
+	    changed1 = norm(axioms, new LeftConjunctionNormalizer());
+	    if (first || changed1)
+		changed2 = norm(axioms, new LeftExistentialNormalizer());
+	    first = false;
+	} while (changed1 || changed2);
+	norm(axioms, new LeftBottomNormalizer());
+	norm(axioms, new ComplexSidesNormalizer());
+	norm(axioms, new RightConjunctionNormalizer());
+    }
+
+    private <T> boolean norm(Set<T> axioms, Normalizer<T> normalizer) {
+	boolean changed = false;
+	final Iterator<T> axiomsIt = axioms.iterator();
+	final Set<T> newAxioms = new HashSet<T>();
+	while (axiomsIt.hasNext()) {
+	    final T axiom = axiomsIt.next();
+	    final boolean hasChange = normalizer.addNormalization(axiom,
+		    newAxioms);
+	    if (hasChange) {
+		axiomsIt.remove();
+		changed = true;
+	    }
+	}
+	if (changed)
+	    axioms.addAll(newAxioms);
+	return changed;
+    }
+
+    private OWLOntology normalized(
+	    Set<OWLClassAssertionAxiom> conceptAssertions,
+	    Set<OWLSubClassOfAxiom> conceptSubsumptions,
+	    Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions)
 	    throws OWLOntologyCreationException {
 	final OWLOntologyManager om = ontology.getOWLOntologyManager();
 	final OWLOntology result = om.createOntology();
-	final Set<OWLSubClassOfAxiom> conceptSubsumptions = ontology
-		.getAxioms(AxiomType.SUBCLASS_OF);
-	for (final OWLEquivalentClassesAxiom axiom : ontology
-		.getAxioms(AxiomType.EQUIVALENT_CLASSES))
-	    conceptSubsumptions.addAll(axiom.asOWLSubClassOfAxioms());
-	for (final OWLDisjointClassesAxiom axiom : ontology
-		.getAxioms(AxiomType.DISJOINT_CLASSES))
-	    conceptSubsumptions.addAll(axiom.asOWLSubClassOfAxioms());
-	for (final OWLObjectPropertyDomainAxiom axiom : ontology
-		.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN))
-	    om.addAxiom(result, norm(axiom));
-	final Set<OWLClassAssertionAxiom> conceptAssertions = ontology
-		.getAxioms(AxiomType.CLASS_ASSERTION);
-	normConceptAssertions(conceptAssertions);
-	normConceptSubsumptions(conceptSubsumptions);
-	simplify(conceptSubsumptions);
+	norm(conceptAssertions, new ConceptAssertionsNormalizer());
+	norm(conceptSubsumptions);
 	om.addAxioms(result, conceptAssertions);
 	om.addAxioms(result, conceptSubsumptions);
+	om.addAxioms(result, roleSubsumptions);
 	return result;
     }
 
-    private boolean normComplexSides(Set<OWLSubClassOfAxiom> axioms) {
-	boolean changed = false;
-	for (final OWLSubClassOfAxiom axiom : axioms) {
-	    final OWLClassExpression ce1 = axiom.getSubClass();
-	    final OWLClassExpression ce2 = axiom.getSuperClass();
-	    if (!ce1.isAnonymous() && hasExistential(ce2)) {
-		final OWLClass anew = newConcept();
-		axioms.remove(axiom);
-		axioms.add(subsumption(ce1, anew));
-		axioms.add(subsumption(anew, ce2));
-		changed = true;
-	    }
-	}
-	return changed;
-    }
-
-    private boolean normConceptAssertions(Set<OWLClassAssertionAxiom> assertions) {
-	boolean changed = false;
-	for (final OWLClassAssertionAxiom assertion : assertions) {
-	    final Set<OWLClassExpression> ceConj = assertion
-		    .getClassExpression().asConjunctSet();
-	    final OWLIndividual i = assertion.getIndividual();
-	    if (ceConj.size() > 1) {
-		assertions.remove(assertion);
-		for (final OWLClassExpression ci : ceConj)
-		    if (!ci.isTopEntity())
-			assertions.add(assertion(ci, i));
-		changed = true;
-	    }
-	}
-	return changed;
-    }
-
-    private boolean normConceptSubsumptions(Set<OWLSubClassOfAxiom> axioms) {
-	boolean changed = false;
-	do {
-	    final boolean n1 = normLeftConjunction(axioms);
-	    final boolean n2 = normLeftExistential(axioms);
-	    final boolean n3 = normLeftBottom(axioms);
-	    changed = n1 || n2 || n3;
-	} while (changed);
-	do {
-	    final boolean n4 = normComplexSides(axioms);
-	    final boolean n5 = normRightConjunction(axioms);
-	    changed = n4 || n5;
-	} while (changed);
-	return changed;
-    }
-
-    private boolean normLeftBottom(Set<OWLSubClassOfAxiom> axioms) {
-	boolean changed = false;
-	for (final OWLSubClassOfAxiom axiom : axioms)
-	    if (axiom.getSubClass().isOWLNothing()) {
-		axioms.remove(axiom);
-		changed = true;
-	    }
-	return changed;
-    }
-
-    private boolean normLeftConjunction(Set<OWLSubClassOfAxiom> axioms) {
-	boolean changed = false;
-	for (final OWLSubClassOfAxiom axiom : axioms) {
-	    final Set<OWLClassExpression> ce1Conj = axiom.getSubClass()
-		    .asConjunctSet();
-	    final OWLClassExpression ce2 = axiom.getSuperClass();
-	    if (ce1Conj.size() > 1) {
-		final Set<OWLClassExpression> normCe1Conj = new HashSet<OWLClassExpression>();
-		for (final OWLClassExpression ci : ce1Conj)
-		    if (isExistential(ci)) {
-			final OWLClass anew = newConcept();
-			axioms.add(subsumption(ci, anew));
-			normCe1Conj.add(anew);
-			changed = true;
-		    } else
-			normCe1Conj.add(ci);
-		if (changed) {
-		    axioms.remove(axiom);
-		    axioms.add(subsumption(conj(normCe1Conj), ce2));
-		}
-	    }
-	}
-	return changed;
-    }
-
-    private boolean normLeftExistential(Set<OWLSubClassOfAxiom> axioms) {
-	boolean changed = false;
-	for (final OWLSubClassOfAxiom axiom : axioms) {
-	    final OWLClassExpression ce1 = axiom.getSubClass();
-	    final OWLClassExpression ce2 = axiom.getSuperClass();
-	    if (ce1 instanceof OWLObjectSomeValuesFrom) {
-		final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) ce1;
-		final OWLObjectPropertyExpression ope = some.getProperty();
-		final Set<OWLClassExpression> fillerConj = some.getFiller()
-			.asConjunctSet();
-		if (fillerConj.size() > 1) {
-		    final Set<OWLClassExpression> normFillerConj = new HashSet<OWLClassExpression>();
-		    for (final OWLClassExpression ci : fillerConj)
-			if (isExistential(ci)) {
-			    final OWLClass anew = newConcept();
-			    axioms.add(subsumption(ci, anew));
-			    normFillerConj.add(anew);
-			    changed = true;
-			} else
-			    normFillerConj.add(ci);
-		    if (changed) {
-			axioms.remove(axiom);
-			axioms.add(subsumption(some(ope, conj(normFillerConj)),
-				ce2));
-		    }
-		}
-	    }
-	}
-	return changed;
-    }
-
-    private boolean normRightConjunction(Set<OWLSubClassOfAxiom> axioms) {
-	boolean changed = false;
-	for (final OWLSubClassOfAxiom axiom : axioms) {
-	    final OWLClassExpression ce1 = axiom.getSubClass();
-	    final Set<OWLClassExpression> ce2Conj = axiom.getSuperClass()
-		    .asConjunctSet();
-	    if (ce2Conj.size() > 1) {
-		axioms.remove(axiom);
-		for (final OWLClassExpression ci : ce2Conj)
-		    axioms.add(subsumption(ce1, ci));
-		changed = true;
-	    }
-	}
-	return changed;
-    }
-
-    private OWLOntology reduce(OWLOntology ontology)
-	    throws OWLOntologyCreationException {
-	final OWLOntologyManager om = ontology.getOWLOntologyManager();
-	final OWLOntology result = normalized(ontology);
+    private OWLOntology reducedOntology(Set<OWLClassAssertionAxiom> conceptAssertions,
+	    Set<OWLSubClassOfAxiom> conceptSubsumptions,
+	    Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions)
+		    throws OWLOntologyCreationException {
+	final OWLOntology result = normalized(conceptAssertions,
+		conceptSubsumptions, roleSubsumptions);
 	classify(result);
 	return result;
     }
@@ -373,49 +422,6 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 		.getAxioms(AxiomType.EQUIVALENT_OBJECT_PROPERTIES))
 	    result.addAll(axiom.asSubObjectPropertyOfAxioms());
 	return result;
-    }
-
-    private boolean simplify(Set<OWLSubClassOfAxiom> axioms) {
-	boolean changed = false;
-	for (final OWLSubClassOfAxiom axiom : axioms) {
-	    OWLClassExpression ce1 = axiom.getSubClass();
-	    OWLClassExpression ce2 = axiom.getSuperClass();
-	    if (ce2.isOWLThing()) {
-		axioms.remove(ce2);
-		changed = true;
-	    } else {
-		ce1 = simplifyLefTop(ce1);
-		ce2 = simplifyRightBottom(ce2);
-		if (ce1 != null && ce2 != null) {
-		    axioms.remove(axiom);
-		    axioms.add(subsumption(ce1, ce2));
-		    changed = true;
-		}
-	    }
-	}
-	return changed;
-    }
-
-    private OWLClassExpression simplifyLefTop(OWLClassExpression ce) {
-	final Set<OWLClassExpression> conjs = new HashSet<OWLClassExpression>(
-		ce.asConjunctSet());
-	boolean changed = false;
-	for (final OWLClassExpression c : ce.asConjunctSet())
-	    if (c.isOWLThing()) {
-		conjs.remove(c);
-		changed = true;
-	    }
-	if (changed)
-	    return conj(conjs);
-	else
-	    return null;
-    }
-
-    private OWLClassExpression simplifyRightBottom(OWLClassExpression ce) {
-	for (final OWLClassExpression ci : ce.asConjunctSet())
-	    if (ci.isOWLNothing())
-		return bottom();
-	return null;
     }
 
     private OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression op,
