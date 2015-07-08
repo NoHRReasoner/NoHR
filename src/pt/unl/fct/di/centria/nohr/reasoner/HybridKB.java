@@ -54,8 +54,6 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private OntologyTranslator ontologyTranslator;
 
-    private int queryCount;
-
     private final QueryProcessor queryProcessor;
 
     private Set<String> rulesTranslation;
@@ -81,7 +79,6 @@ public class HybridKB implements OWLOntologyChangeListener {
 	ontologyTranslation = new HashSet<String>();
 	ontologyTranslator = AbstractOntologyTranslator
 		.createOntologyTranslator(ontologyManager, ontology);
-	queryCount = 1;
 	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(
 		System.getenv("XSB_BIN_DIRECTORY"), "xsb"));
 	queryProcessor = new QueryProcessor(xsbDatabase);
@@ -135,8 +132,8 @@ public class HybridKB implements OWLOntologyChangeListener {
     }
 
     private void preprocess() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, ParserException,
-	    UnsupportedOWLProfile, IOException {
+    OWLOntologyStorageException, ParserException,
+    UnsupportedOWLProfile, IOException {
 	if (hasChanges) {
 	    utils.Tracer.start("ontology processing");
 	    ontologyTranslation = new HashSet<String>();
@@ -173,18 +170,14 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    preprocess();
 	final Visitor escapeVisitor = new EscapeVisitor();
 	final Visitor unescapeVisitor = new UnescapeVisitor();
-	Tracer.start("query" + queryCount);
+	Tracer.start("query");
 	final Collection<Answer> answers = queryProcessor.queryAll(
 		query.acept(escapeVisitor), hasDisjunctions);
-	Tracer.stop("query" + queryCount++, "queries");
+	Tracer.stop("query", "queries");
 	final Collection<Answer> result = new LinkedList<Answer>();
 	for (final Answer ans : answers)
 	    result.add(ans.acept(unescapeVisitor));
 	return result;
-    }
-
-    public void resetQueriesCount() {
-	queryCount = 1;
     }
 
     public void shutdown() {

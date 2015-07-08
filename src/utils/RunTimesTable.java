@@ -13,19 +13,26 @@ import java.util.Map;
 
 class RunTimesTable {
 
-    private List<String> datasets;
+    private final List<String> datasets;
 
-    private String name;
+    private final String name;
 
-    private List<String> phases;
+    private final List<String> phases;
 
     private int runs;
 
     // phase, run, data set, time
-    private Map<String, Map<Integer, Map<String, Long>>> table;
+    private final Map<String, Map<Integer, Map<String, Long>>> table;
+
+    private final boolean writeAverage;
 
     public RunTimesTable(String name) {
+	this(name, true);
+    }
+
+    public RunTimesTable(String name, boolean average) {
 	this.name = name;
+	writeAverage = average;
 	datasets = new LinkedList<String>();
 	phases = new LinkedList<String>();
 	table = new HashMap<String, Map<Integer, Map<String, Long>>>();
@@ -33,12 +40,12 @@ class RunTimesTable {
     }
 
     private long average(String phase, String dataset) {
-	Map<Integer, Map<String, Long>> phaseMap = table.get(phase);
+	final Map<Integer, Map<String, Long>> phaseMap = table.get(phase);
 	if (phaseMap == null)
 	    return -1;
 	long ac = 0;
 	for (int run = 1; run <= runs; run++) {
-	    long time = get(phase, run, dataset);
+	    final long time = get(phase, run, dataset);
 	    if (time == -1)
 		return -1;
 	    ac += time;
@@ -47,13 +54,13 @@ class RunTimesTable {
     }
 
     public long get(String phase, int run, String dataset) {
-	Map<Integer, Map<String, Long>> phaseMap = table.get(phase);
+	final Map<Integer, Map<String, Long>> phaseMap = table.get(phase);
 	if (phaseMap == null)
 	    return -1;
-	Map<String, Long> runMap = phaseMap.get(run);
+	final Map<String, Long> runMap = phaseMap.get(run);
 	if (runMap == null)
 	    return -1;
-	Long time = runMap.get(dataset);
+	final Long time = runMap.get(dataset);
 	if (time == null)
 	    return -1;
 	return time;
@@ -79,36 +86,39 @@ class RunTimesTable {
     }
 
     public void save() {
-	Charset charset = Charset.forName("US-ASCII");
-	Path file = FileSystems.getDefault().getPath(name + ".csv");
+	final Charset charset = Charset.forName("US-ASCII");
+	final Path file = FileSystems.getDefault().getPath(name + ".csv");
 	try (BufferedWriter writer = Files.newBufferedWriter(file, charset)) {
 	    writer.write(",");
-	    for (String dataset : datasets) {
+	    for (final String dataset : datasets) {
 		writer.write(",");
 		writer.write(dataset);
 	    }
 	    writer.newLine();
-	    for (String phase : phases) {
+	    for (final String phase : phases) {
 		for (int run = 1; run <= runs; run++) {
 		    writer.write(phase + "," + run);
-		    for (String dataset : datasets) {
-			long time = get(phase, run, dataset);
+		    for (final String dataset : datasets) {
+			final long time = get(phase, run, dataset);
 			writer.write(",");
 			writer.write(time == -1 ? "-" : String.valueOf(time));
 		    }
 		    writer.newLine();
 		}
-		writer.write(phase);
-		writer.write(",");
-		writer.write("average");
-		for (String dataset : datasets) {
-		    long average = average(phase, dataset);
+		if (writeAverage) {
+		    writer.write(phase);
 		    writer.write(",");
-		    writer.write(average == -1 ? "-" : String.valueOf(average));
+		    writer.write("average");
+		    for (final String dataset : datasets) {
+			final long average = average(phase, dataset);
+			writer.write(",");
+			writer.write(average == -1 ? "-" : String
+				.valueOf(average));
+		    }
+		    writer.newLine();
 		}
-		writer.newLine();
 	    }
-	} catch (IOException x) {
+	} catch (final IOException x) {
 	    System.err.format("IOException: %s%n", x);
 	}
     }

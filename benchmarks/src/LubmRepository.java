@@ -19,6 +19,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import other.Config;
 import pt.unl.fct.di.centria.nohr.model.Answer;
@@ -26,7 +27,9 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import ubt.api.QueryResult;
 import ubt.api.QuerySpecification;
 import utils.Tracer;
@@ -35,23 +38,21 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 public class LubmRepository {
 
-    private pt.unl.fct.di.centria.nohr.reasoner.HybridKB nohrQuery;
+    private Path data;
+
+    private String dataset;
 
     private String lastQuery;
 
     private IRI mainOntologyIRI;
 
-    private String dataset;
-
-    private int queryCount;
+    private pt.unl.fct.di.centria.nohr.reasoner.HybridKB nohrQuery;
 
     private File ontology;
 
-    private Path data;
+    private int queryCount;
 
-    private String resultsDirectory;
-
-    private final Parser parser = new Parser();
+    private File resultsDirectory;
 
     int universities = 0;
 
@@ -59,7 +60,7 @@ public class LubmRepository {
 	queryCount = 1;
     }
 
-    public LubmRepository(Path data, String resultsDirectory) {
+    public LubmRepository(Path data, File resultsDirectory) {
 	this.resultsDirectory = resultsDirectory;
 	queryCount = 1;
 	this.data = data;
@@ -77,14 +78,13 @@ public class LubmRepository {
 
     public QueryResult issueQuery(QuerySpecification querySpecification)
 	    throws IOException, PrologParserException, Exception {
+	final String queryId = querySpecification.id_;
+	Tracer.setIteration("query", queryId);
 	String queryStr = querySpecification.query_.getString();
 	if (!queryStr.endsWith("."))
 	    queryStr = queryStr + ".";
-	boolean sameQuery = queryStr.equals(lastQuery);
-	if (!sameQuery)
-	    nohrQuery.abolishTables();
-
-	Collection<Answer> result = nohrQuery.queryAll(parser
+	final boolean sameQuery = queryStr.equals(lastQuery);
+	final Collection<Answer> result = nohrQuery.queryAll(Parser
 		.parseQuery(queryStr));
 	Tracer.info(String.valueOf(result.size()) + " answers");
 	if (!sameQuery && resultsDirectory != null)
@@ -95,7 +95,9 @@ public class LubmRepository {
 	return new NoHRQueryResult(result);
     }
 
-    public boolean load(int universities) throws OWLOntologyCreationException {
+    public boolean load(int universities) throws OWLOntologyCreationException,
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	this.universities = universities;
 	OWLOntologyManager inManager = OWLManager.createOWLOntologyManager();
 	OWLOntologyManager outManager = OWLManager.createOWLOntologyManager();
@@ -104,23 +106,23 @@ public class LubmRepository {
 	for (int u = 0; u < universities; u++)
 	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(data,
 		    "University" + u + "_*.owl")) {
-		for (Path entry : stream) {
+		for (final Path entry : stream) {
 		    Tracer.info("loading " + entry.getFileName().toString());
 		    if (entry.getFileName().toString().endsWith(".owl")) {
-			File file = entry.toFile();
+			final File file = entry.toFile();
 			inManager.loadOntologyFromOntologyDocument(file);
 		    }
 		}
-	    } catch (IOException x) {
+	    } catch (final IOException x) {
 		System.err.println(x);
 		return false;
-	    } catch (OWLOntologyCreationException e) {
+	    } catch (final OWLOntologyCreationException e) {
 		PrintStream s;
 		try {
 		    s = new PrintStream("log");
 		    e.printStackTrace(s);
 		    s.close();
-		} catch (FileNotFoundException e1) {
+		} catch (final FileNotFoundException e1) {
 		    e1.printStackTrace();
 		}
 		e.printStackTrace();
@@ -141,9 +143,10 @@ public class LubmRepository {
     private void loadRules(Path path) throws IOException {
 	File file = path.toFile();
 	if (file.exists()) {
-	    FileInputStream fstream = new FileInputStream(file);
-	    DataInputStream in = new DataInputStream(fstream);
-	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    final FileInputStream fstream = new FileInputStream(file);
+	    final DataInputStream in = new DataInputStream(fstream);
+	    final BufferedReader br = new BufferedReader(new InputStreamReader(
+		    in));
 	    String strLine;
 	    // Read File Line By Line
 	    while ((strLine = br.readLine()) != null)
@@ -159,23 +162,24 @@ public class LubmRepository {
 
     private void logResults(QuerySpecification querySpecification,
 	    Collection<Answer> result2) {
-	// if (!dataset.endsWith("/1"))
-	// return;
-	Charset charset = Charset.defaultCharset();
-	String fileName = universities + "." + querySpecification.id_ + ".txt";
-	Path path = FileSystems.getDefault()
-		.getPath(resultsDirectory, fileName);
+	if (resultsDirectory == null)
+	    return;
+	final Charset charset = Charset.defaultCharset();
+	final String fileName = universities + "." + querySpecification.id_
+		+ ".txt";
+	final Path path = FileSystems.getDefault().getPath(
+		resultsDirectory.getAbsolutePath(), fileName);
 	try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
 	    if (result2.size() >= 1)
-		for (Answer result : result2) {
-		    for (Term val : result.getValues()) {
-			String valStr = val.toString();
+		for (final Answer result : result2) {
+		    for (final Term val : result.getValues()) {
+			final String valStr = val.toString();
 			writer.write(valStr, 0, valStr.length());
 			writer.write(9);
 		    }
 		    writer.newLine();
 		}
-	} catch (IOException x) {
+	} catch (final IOException x) {
 	    System.err.format("IOException: %s%n", x);
 	}
     }
@@ -185,7 +189,8 @@ public class LubmRepository {
     }
 
     public void setOntology(String ontology) {
-	Path path = FileSystems.getDefault().getPath(ontology).toAbsolutePath();
+	final Path path = FileSystems.getDefault().getPath(ontology)
+		.toAbsolutePath();
 	this.ontology = new File(path.toString());
 	// mainOntologyIRI = IRI.create(new File(path.toString()));
     }

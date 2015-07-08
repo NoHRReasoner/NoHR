@@ -216,7 +216,6 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 		.hasDisjointStatement();
 	computeNegHeads();
 	utils.Tracer.start("ontology translation");
-	utils.Tracer.info("ruleCreatorQL.translate");
 	addAll(translate(originalAxiomsTranslator), translationContainer);
 	if (hasDisjunctions)
 	    addAll(translate(doubleAxiomsTranslator), translationContainer);
