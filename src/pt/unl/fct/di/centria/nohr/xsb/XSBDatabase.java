@@ -31,10 +31,12 @@ import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import utils.Tracer;
 
+import com.declarativa.interprolog.AbstractPrologEngine;
 import com.declarativa.interprolog.SolutionIterator;
 import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
+import com.xsb.interprolog.NativeEngine;
 
 /**
  * The Class QueryEngine.
@@ -42,15 +44,7 @@ import com.declarativa.interprolog.util.IPException;
 public class XSBDatabase implements Collection<Rule> {
 
     /** The xsb engine. */
-    protected XSBSubprocessEngine engine;
-
-    private final Set<Rule> rules = new HashSet<Rule>();
-
-    private final Queue<String> rulesBuffer = new LinkedList<String>();
-
-    protected Path xsbPath;
-
-    private int rulesCount;
+    protected AbstractPrologEngine engine;
 
     /** The is engine started. */
     private boolean isEngineStarted = false;
@@ -59,6 +53,14 @@ public class XSBDatabase implements Collection<Rule> {
 
     private final List<String> prologCommands = Arrays.asList(
 	    "abolish_all_tables", "set_prolog_flag(unknown,fail)");
+
+    private final Set<Rule> rules = new HashSet<Rule>();
+
+    private final Queue<String> rulesBuffer = new LinkedList<String>();
+
+    private int rulesCount;
+
+    protected Path xsbPath;
 
     /**
      * Instantiates a new query engine
@@ -95,11 +97,11 @@ public class XSBDatabase implements Collection<Rule> {
     @Override
     public boolean add(Rule rule) {
 	rules.add(rule);
-	for (Predicate pred : rule.getPredicates())
+	for (final Predicate pred : rule.getPredicates())
 	    if (!add(pred))
 		return false;
-	boolean added = engine.deterministicGoal(String.format("assert((%s))",
-		rule));
+	final boolean added = engine.deterministicGoal(String.format(
+		"assert((%s))", rule));
 	if (added) {
 	    rules.add(rule);
 	    rulesCount++;
@@ -118,7 +120,7 @@ public class XSBDatabase implements Collection<Rule> {
      */
     @Override
     public boolean addAll(Collection<? extends Rule> rules) {
-	for (Rule rule : rules)
+	for (final Rule rule : rules)
 	    if (!add(rule))
 		return false;
 	return true;
@@ -127,13 +129,14 @@ public class XSBDatabase implements Collection<Rule> {
     private void addAnswer(TermModel valuesList,
 	    Map<List<Term>, TruthValue> answers) {
 	try {
-	    TermModel[] termsList = valuesList.flatList();
-	    List<Term> vals = new ArrayList<Term>(termsList.length);
+	    final TermModel[] termsList = valuesList.flatList();
+	    final List<Term> vals = new ArrayList<Term>(termsList.length);
 	    for (int i = 1; i < termsList.length; i++)
 		vals.add(TermModelAdapter.getTerm(termsList[i]));
-	    TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
+	    final TruthValue truth = TermModelAdapter
+		    .getTruthValue(termsList[0]);
 	    answers.put(vals, truth);
-	} catch (ModelException e) {
+	} catch (final ModelException e) {
 	    e.printStackTrace();
 	    System.exit(1);
 	}
@@ -142,13 +145,14 @@ public class XSBDatabase implements Collection<Rule> {
     private Answer answer(Query query, Map<Variable, Integer> varsIdx,
 	    TermModel valuesList) {
 	try {
-	    TermModel[] termsList = valuesList.flatList();
-	    TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
-	    List<Term> vals = new ArrayList<Term>(termsList.length);
+	    final TermModel[] termsList = valuesList.flatList();
+	    final TruthValue truth = TermModelAdapter
+		    .getTruthValue(termsList[0]);
+	    final List<Term> vals = new ArrayList<Term>(termsList.length);
 	    for (int i = 1; i <= varsIdx.size(); i++)
 		vals.add(TermModelAdapter.getTerm(termsList[i]));
 	    return ans(query, truth, vals);
-	} catch (ModelException e) {
+	} catch (final ModelException e) {
 	    e.printStackTrace();
 	    System.exit(1);
 	    return null;
@@ -169,7 +173,7 @@ public class XSBDatabase implements Collection<Rule> {
 	rules.clear();
 	try {
 	    startEngine(xsbPath.toAbsolutePath().toString());
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    e.printStackTrace();
 	}
 	// engine.deterministicGoal("retractall(call(X))");
@@ -208,7 +212,7 @@ public class XSBDatabase implements Collection<Rule> {
      */
     @Override
     public boolean containsAll(Collection<?> c) {
-	for (Object o : c)
+	for (final Object o : c)
 	    if (!contains(o))
 		return false;
 	return true;
@@ -269,7 +273,7 @@ public class XSBDatabase implements Collection<Rule> {
 	if (trueAnswers == null)
 	    goal = query.toString();
 	else {
-	    String truth = trueAnswers ? "true" : "undefined";
+	    final String truth = trueAnswers ? "true" : "undefined";
 	    goal = String.format("call_tv((%s),%s)", query, truth);
 	}
 	return engine.deterministicGoal(goal);
@@ -314,12 +318,12 @@ public class XSBDatabase implements Collection<Rule> {
 	    lastSolutionsIterator = null;
 	}
 	flush();
-	String vars = Utils.concat(",", query.getVariables());
+	final String vars = Utils.concat(",", query.getVariables());
 	String goal;
 	if (trueAnswers == null)
 	    goal = String.format("detGoal([%s],(%s),TM)", vars, query);
 	else {
-	    String truth = trueAnswers ? "true" : "undefined";
+	    final String truth = trueAnswers ? "true" : "undefined";
 	    goal = String
 		    .format("detGoal([%s],(%s),%s,TM)", vars, query, truth);
 	}
@@ -345,13 +349,13 @@ public class XSBDatabase implements Collection<Rule> {
 
 		    @Override
 		    public Answer next() {
-			Object[] bindings = solutions.next();
+			final Object[] bindings = solutions.next();
 			if (!solutions.hasNext()) {
 			    solutions.cancel();
 			    canceled = true;
 			    xsbDatabase.lastSolutionsIterator = null;
 			}
-			TermModel valuesList = (TermModel) bindings[0];
+			final TermModel valuesList = (TermModel) bindings[0];
 			return answer(query, varsIdx, valuesList);
 		    }
 
@@ -373,7 +377,7 @@ public class XSBDatabase implements Collection<Rule> {
      * @return true, if successful
      */
     public void load(File file) {
-	boolean loaded = engine.load_dynAbsolute(file);
+	final boolean loaded = engine.load_dynAbsolute(file);
 	if (!loaded)
 	    throw new IPException("file not loaded");
     }
@@ -394,16 +398,16 @@ public class XSBDatabase implements Collection<Rule> {
 
     public Answer query(Query query, Boolean trueAnswers) {
 	flush();
-	String vars = Utils.concat(",", query.getVariables());
+	final String vars = Utils.concat(",", query.getVariables());
 	String goal;
 	if (trueAnswers == null)
 	    goal = String.format("detGoal([%s],(%s),TM)", vars, query);
 	else {
-	    String truth = trueAnswers ? "true" : "undefined";
+	    final String truth = trueAnswers ? "true" : "undefined";
 	    goal = String
 		    .format("detGoal([%s],(%s),%s,TM)", vars, query, truth);
 	}
-	Object[] bindings = engine.deterministicGoal(goal, "[TM]");
+	final Object[] bindings = engine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
 	    return null;
 	return answer(query, variablesIndex(query.getVariables()),
@@ -416,21 +420,21 @@ public class XSBDatabase implements Collection<Rule> {
 
     public Map<List<Term>, TruthValue> queryAll(Query query, Boolean trueAnswers) {
 	flush();
-	Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
-	String vars = Utils.concat(",", query.getVariables());
+	final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
+	final String vars = Utils.concat(",", query.getVariables());
 	String goal;
 	if (trueAnswers == null)
 	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars, query);
 	else {
-	    String truth = trueAnswers ? "true" : "undefined";
+	    final String truth = trueAnswers ? "true" : "undefined";
 	    goal = String.format("nonDetGoal([%s],(%s),%s,TM)", vars, query,
 		    truth);
 	}
-	Object[] bindings = engine.deterministicGoal(goal, "[TM]");
+	final Object[] bindings = engine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
 	    return answers;
-	TermModel ansList = (TermModel) bindings[0];
-	for (TermModel ans : ansList.flatList())
+	final TermModel ansList = (TermModel) bindings[0];
+	for (final TermModel ans : ansList.flatList())
 	    addAnswer(ans, answers);
 	return answers;
     }
@@ -444,8 +448,8 @@ public class XSBDatabase implements Collection<Rule> {
     public boolean remove(Object o) {
 	if (!(o instanceof Rule))
 	    return false;
-	Rule rule = (Rule) o;
-	boolean removed = engine.deterministicGoal(String.format(
+	final Rule rule = (Rule) o;
+	final boolean removed = engine.deterministicGoal(String.format(
 		"retract((%))", rule));
 	if (removed) {
 	    rules.remove(o);
@@ -461,7 +465,7 @@ public class XSBDatabase implements Collection<Rule> {
      */
     @Override
     public boolean removeAll(Collection<?> c) {
-	for (Object o : c)
+	for (final Object o : c)
 	    if (!remove(o))
 		return false;
 	return true;
@@ -519,11 +523,11 @@ public class XSBDatabase implements Collection<Rule> {
 	// _engine.addPrologOutputListener(this);
 	printLog("Engine started" + Config.NL);
 
-	for (String command : prologCommands)
+	for (final String command : prologCommands)
 	    engine.deterministicGoal(command);
 	engine.deterministicGoal("assert((detGoal(Vars,G,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
 	engine.deterministicGoal("assert((detGoal(Vars,G,TV,TM):-call_tv(G,TV),buildTermModel([TV|Vars],TM)))");
-	engine.deterministicGoal("assert((nonDetGoal(Vars,G,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
+	engine.deterministicGoal("assert((nonDetGoal(Vars,G,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildInitiallyFlatTermModel(L,ListTM)))");
 	engine.deterministicGoal("assert((nonDetGoal(Vars,G,TV,ListTM):-findall([TV|Vars],call_tv(G,TV),L),buildTermModel(L,ListTM)))");
 
     }
@@ -553,9 +557,9 @@ public class XSBDatabase implements Collection<Rule> {
     }
 
     private SortedMap<Variable, Integer> variablesIndex(List<Variable> variables) {
-	SortedMap<Variable, Integer> result = new TreeMap<Variable, Integer>();
+	final SortedMap<Variable, Integer> result = new TreeMap<Variable, Integer>();
 	int i = 0;
-	for (Variable var : variables)
+	for (final Variable var : variables)
 	    result.put(var, i++);
 	return result;
     }
