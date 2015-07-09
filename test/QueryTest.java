@@ -59,14 +59,13 @@ public abstract class QueryTest extends Object {
     }
 
     protected KB kb;
-    protected final Parser parser = new Parser();
 
     protected void assertAnswer(String query, String... expectedAns) {
 	try {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(parser.parseQuery(query));
+	    .queryAll(Parser.parseQuery(query));
 	    assertNotNull("should't have null result", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -100,7 +99,7 @@ public abstract class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(parser.parseQuery(query));
+	    .queryAll(Parser.parseQuery(query));
 	    assertNotNull("should't hava null result", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -133,7 +132,7 @@ public abstract class QueryTest extends Object {
 	    if (!query.endsWith("."))
 		query = query + ".";
 	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(parser.parseQuery(query));
+	    .queryAll(Parser.parseQuery(query));
 	    assertNotNull("shouldn't have null result", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -206,7 +205,7 @@ public abstract class QueryTest extends Object {
 	kb.addSubsumption(a2, a1);
 	try {
 	    new HybridKB(kb.getOntology())
-	    .queryAll(parser.parseQuery("p1(X)."));
+	    .queryAll(Parser.parseQuery("p1(X)."));
 	} catch (final Exception e) {
 	    fail(e.getMessage());
 	}
@@ -341,6 +340,16 @@ public abstract class QueryTest extends Object {
 	assertAnswer("a3(X)", "b");
     }
 
+    @Test
+    public final void nonDefinedBodyPredicates()
+	    throws OWLOntologyCreationException {
+	kb.clear();
+	final OWLClass a1 = kb.getConcept("a1");
+	final OWLClass a2 = kb.getConcept("a2");
+	kb.addSubsumption(a1, a2);
+	test("a2(X).");
+    }
+
     // (s2)
     @Test
     public final void roleCycle() throws OWLOntologyCreationException {
@@ -349,12 +358,7 @@ public abstract class QueryTest extends Object {
 	final OWLObjectProperty p2 = kb.getRole("p2");
 	kb.addSubsumption(p1, p2);
 	kb.addSubsumption(p2, p1);
-	try {
-	    new HybridKB(kb.getOntology()).queryAll(parser
-		    .parseQuery("p1(X,Y)."));
-	} catch (final Exception e) {
-	    fail(e.getMessage());
-	}
+	test("p1(X,Y).");
     }
 
     // (s2)
@@ -378,6 +382,14 @@ public abstract class QueryTest extends Object {
 
     @After
     public void tearDown() throws Exception {
+    }
+
+    private void test(String query) {
+	try {
+	    new HybridKB(kb.getOntology()).queryAll(Parser.parseQuery(query));
+	} catch (final Exception e) {
+	    fail(e.getMessage());
+	}
     }
 
     // (i1) (a1), (s1)

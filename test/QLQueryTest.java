@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import other.Config;
+import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
 
@@ -183,7 +184,7 @@ public class QLQueryTest extends QueryTest {
 	kb.addSubsumption(p1, kb.getInverse(p2));
 	kb.addSubsumption(p2, kb.getInverse(p1));
 	try {
-	    new HybridKB(kb.getOntology()).queryAll(parser
+	    new HybridKB(kb.getOntology()).queryAll(Parser
 		    .parseQuery("p1(X,Y)."));
 	} catch (final Exception e) {
 	    Assert.fail(e.getMessage());

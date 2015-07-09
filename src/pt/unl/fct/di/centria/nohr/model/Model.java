@@ -167,6 +167,10 @@ public class Model {
 	    return new OriginalRangePredicate(symbol);
     }
 
+    public static Rule rule(Atom head, List<Literal> body) {
+	return new RuleImpl(head, body);
+    }
+
     public static Rule rule(Atom head, Literal... body) {
 	final List<Literal> bodyList = new LinkedList<Literal>();
 	Collections.addAll(bodyList, body);

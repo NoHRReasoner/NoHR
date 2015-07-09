@@ -24,15 +24,8 @@ class RunTimesTable {
     // phase, run, data set, time
     private final Map<String, Map<Integer, Map<String, Long>>> table;
 
-    private final boolean writeAverage;
-
     public RunTimesTable(String name) {
-	this(name, true);
-    }
-
-    public RunTimesTable(String name, boolean average) {
 	this.name = name;
-	writeAverage = average;
 	datasets = new LinkedList<String>();
 	phases = new LinkedList<String>();
 	table = new HashMap<String, Map<Integer, Map<String, Long>>>();
@@ -89,7 +82,8 @@ class RunTimesTable {
 	final Charset charset = Charset.forName("US-ASCII");
 	final Path file = FileSystems.getDefault().getPath(name + ".csv");
 	try (BufferedWriter writer = Files.newBufferedWriter(file, charset)) {
-	    writer.write(",");
+	    if (runs > 1)
+		writer.write(",");
 	    for (final String dataset : datasets) {
 		writer.write(",");
 		writer.write(dataset);
@@ -97,7 +91,9 @@ class RunTimesTable {
 	    writer.newLine();
 	    for (final String phase : phases) {
 		for (int run = 1; run <= runs; run++) {
-		    writer.write(phase + "," + run);
+		    writer.write(phase);
+		    if (runs > 1)
+			writer.write("," + run);
 		    for (final String dataset : datasets) {
 			final long time = get(phase, run, dataset);
 			writer.write(",");
@@ -105,7 +101,7 @@ class RunTimesTable {
 		    }
 		    writer.newLine();
 		}
-		if (writeAverage) {
+		if (runs > 1) {
 		    writer.write(phase);
 		    writer.write(",");
 		    writer.write("average");

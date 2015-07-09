@@ -78,7 +78,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		    });
 		    textField.selectAll();
 		    textField.requestFocus();
-		    final Query query = parser.parseQuery(textField.getText());
+		    final Query query = Parser.parseQuery(textField.getText());
 		    fillTable(query, nohr.queryAll(query));
 
 		} else {
@@ -120,7 +120,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private boolean isNeedToQuery;
     private boolean isShowAllSolutions = true;
     private boolean isShowProgress;
-    private final Parser parser = new Parser();
     // private JLabel progressLabel;
     private JFrame progressFrame;
     private JLabel progressLabel;

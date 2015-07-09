@@ -80,16 +80,12 @@ public class Tracer {
 	return result;
     }
 
-    public static void open(boolean average, String... fileNames) {
+    public static void open(String... fileNames) {
 	if (!ON)
 	    return;
 	for (final String fileName : fileNames)
-	    tables.put(fileName, new RunTimesTable(fileName, average));
+	    tables.put(fileName, new RunTimesTable(fileName));
 
-    }
-
-    public static void open(String... fileNames) {
-	open(true, fileNames);
     }
 
     public static void pause(String phase) {

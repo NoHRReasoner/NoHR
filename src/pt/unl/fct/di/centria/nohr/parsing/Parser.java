@@ -7,15 +7,21 @@ import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.query;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 
+import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 
+import com.igormaznitsa.prologparser.PrologCharDataSource;
 import com.igormaznitsa.prologparser.PrologParser;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 import com.igormaznitsa.prologparser.terms.AbstractPrologTerm;
@@ -29,10 +35,9 @@ import com.igormaznitsa.prologparser.terms.PrologStructure;
  */
 public class Parser {
 
-    private final PrologParser parser = new PrologParser(null);
+    private static final PrologParser parser = new PrologParser(null);
 
-    private Literal parseLiteral(AbstractPrologTerm prologTerm) {
-	final PrologStructure struct = (PrologStructure) prologTerm;
+    private static Atom parseAtom(final PrologStructure struct) {
 	final String pred = struct.getFunctor().getText();
 	final List<Term> args = new LinkedList<Term>();
 	for (int i = 0; i < struct.getArity(); i++) {
@@ -60,19 +65,25 @@ public class Parser {
 	return atom(pred, args);
     }
 
-    private void parseLiteralsList(AbstractPrologTerm prologTerm,
+    private static Literal parseLiteral(PrologStructure struct) {
+	final String pred = struct.getFunctor().getText();
+	if (pred.equals("tnot"))
+	    return negLiteral(parseAtom((PrologStructure) struct.getElement(0)));
+	return parseAtom(struct);
+    }
+
+    private static void parseLiteralsList(PrologStructure struct,
 	    List<Literal> literals) throws IOException, PrologParserException {
-	final PrologStructure struct = (PrologStructure) prologTerm;
 	final String functor = struct.getFunctor().getText();
 	if (!functor.equals(","))
-	    literals.add(parseLiteral(prologTerm));
+	    literals.add(parseLiteral(struct));
 	else {
-	    literals.add(parseLiteral(struct.getElement(0)));
-	    parseLiteralsList(struct.getElement(1), literals);
+	    literals.add(parseLiteral((PrologStructure) struct.getElement(0)));
+	    parseLiteralsList((PrologStructure) struct.getElement(1), literals);
 	}
     }
 
-    public Query parseQuery(String string) throws IOException,
+    public static Query parseQuery(String string) throws IOException,
 	    PrologParserException {
 	final PrologStructure rootStructure = (PrologStructure) parser
 		.nextSentence(string);
@@ -80,4 +91,38 @@ public class Parser {
 	parseLiteralsList(rootStructure, literals);
 	return query(literals);
     }
+
+    private static Rule parseRule(PrologStructure structure)
+	    throws IOException, PrologParserException {
+
+	if (!structure.getFunctor().getText().equals(":-"))
+	    throw new IllegalArgumentException("isn't a rule");
+	final Atom head = (Atom) parseLiteral((PrologStructure) structure
+		.getElement(0));
+	final List<Literal> body = new LinkedList<Literal>();
+	final AbstractPrologTerm bodyTerm = structure.getElement(1);
+	if (bodyTerm != null)
+	    parseLiteralsList((PrologStructure) bodyTerm, body);
+	return rule(head, body);
+    }
+
+    public static Rule parseRule(String rule) throws IOException,
+	    PrologParserException {
+	return parseRule((PrologStructure) parser.nextSentence(rule));
+    }
+
+    private final PrologCharDataSource src;
+
+    public Parser(Reader reader) {
+	src = new PrologCharDataSource(reader);
+    }
+
+    public Rule nextRule() throws IOException, PrologParserException {
+	final PrologStructure struct = (PrologStructure) parser
+		.nextSentence(src);
+	if (struct == null)
+	    return null;
+	return parseRule(struct);
+    }
+
 }
