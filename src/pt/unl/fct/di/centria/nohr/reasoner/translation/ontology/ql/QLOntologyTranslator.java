@@ -70,9 +70,7 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 	    OWLOntologyStorageException, IOException,
 	    CloneNotSupportedException, UnsupportedOWLProfile {
 	super(ontologyManager, ontology);
-	Tracer.start("normalize ontology");
 	normalizedOntology = new QLNormalizedOntologyImpl(ontology);
-	Tracer.stop("normalize ontology", "loading");
 	graph = new BasicTBoxGraph(normalizedOntology, dataFactory);
 	originalAxiomsTranslator = new QLOriginalAxiomsTranslator(ontology);
 	doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(ontology);
