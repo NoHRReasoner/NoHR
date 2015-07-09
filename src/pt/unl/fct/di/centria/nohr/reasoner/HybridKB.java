@@ -92,9 +92,10 @@ public class HybridKB implements OWLOntologyChangeListener {
 	final File file = FileSystems.getDefault()
 		.getPath(TRANSLATION_FILE_NAME).toAbsolutePath().toFile();
 	final FileWriter writer = new FileWriter(file);
-	for (final String predicate : ontologyTranslator.getTabledPredicates())
-	    writer.write(":- table " + predicate + ".\n");
-	for (final String predicate : ruleTranslator.getTabledPredicates())
+	final Set<String> tabled = new HashSet<String>();
+	tabled.addAll(ontologyTranslator.getTabledPredicates());
+	tabled.addAll(ruleTranslator.getTabledPredicates());
+	for (final String predicate : tabled)
 	    writer.write(":- table " + predicate + ".\n");
 	for (String rule : ontologyTranslation) {
 	    if (!rule.endsWith("."))
