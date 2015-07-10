@@ -59,15 +59,15 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     private Atom tr(OWLClass c, Variable x) {
-	return tr(c, x, false);
+	return tr(c, x, true);
     }
 
-    public Set<Literal> tr(OWLClassExpression ce, Variable x) {
-	return tr(ce, x, false);
+    public List<Literal> tr(OWLClassExpression ce, Variable x) {
+	return tr(ce, x, true);
     }
 
     Atom tr(OWLProperty p, Variable x, Variable y) {
-	return tr(p, x, y, false);
+	return tr(p, x, y, true);
     }
 
     @Override
@@ -105,21 +105,21 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	    result.add(rule(tr(a, X), negLiteral(negTr(a, X))));
 	// (i1)
 	else if (a.isOWLNothing() && !c.isAnonymous())
-	    result.add(rule(tr(c.asOWLClass(), X), negTr(c.asOWLClass(), X)));
+	    result.add(rule(negTr(c.asOWLClass(), X)));
 	// (i2)
 	else if (a.isOWLNothing() && c.isAnonymous())
-	    for (final Literal b : tr(c, X)) {
-		final Set<Literal> body = tr(c, X);
+	    for (final Literal b : tr(c, X, false)) {
+		final List<Literal> body = tr(c, X, false);
 		body.remove(b);
 		result.add(rule(negTr(b), body));
 	    }
 	// (c1)
 	else {
-	    Set<Literal> body = tr(c, X);
+	    List<Literal> body = tr(c, X);
 	    body.add(negLiteral(negTr(a, X)));
 	    result.add(rule(tr(a, X), body));
-	    for (final Literal b : tr(c, X)) {
-		body = tr(c, X);
+	    for (final Literal b : tr(c, X, false)) {
+		body = tr(c, X, false);
 		body.add(negTr(a, X));
 		body.remove(b);
 		result.add(rule(negTr(b), body));

@@ -79,7 +79,7 @@ public class LubmTest {
 		Config.translationAlgorithm = TranslationAlgorithm.EL;
 	Tracer.info("warm up");
 	run(test, data, queries, 1);
-	Tracer.open(false, "loading", "queries");
+	Tracer.open("loading", "queries");
 	if (test.isMaxUniversities())
 	    for (int u = 1; u <= test.getMaxUniversities(); u += test.getStep())
 		run(test, data, queries, u);
@@ -94,9 +94,9 @@ public class LubmTest {
 
     private static void run(final Test test, final Path data,
 	    final Vector<QuerySpecification> queries, int u)
-		    throws OWLOntologyCreationException, OWLOntologyStorageException,
-		    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-		    UnsupportedAxiomTypeException, PrologParserException, Exception {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException, PrologParserException, Exception {
 	Tracer.setDataset(String.valueOf(u));
 	final LubmRepository nohrRepository = new LubmRepository(data,
 		test.getOutputDir());

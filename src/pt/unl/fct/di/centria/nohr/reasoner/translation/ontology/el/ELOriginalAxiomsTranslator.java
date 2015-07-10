@@ -42,7 +42,7 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return tr(c, x, false);
     }
 
-    private Set<Literal> tr(OWLClassExpression ce, Variable x) {
+    private List<Literal> tr(OWLClassExpression ce, Variable x) {
 	return tr(ce, x, false);
     }
 
@@ -67,10 +67,12 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     @Override
-    public Set<Rule> translateSubsumption(OWLClassExpression ce1, OWLClass c2) {
-	if (ce1.isOWLThing())
-	    return ruleSet(rule(tr(c2, X)));
-	return ruleSet(rule(tr(c2, X), tr(ce1, X)));
+    public Set<Rule> translateSubsumption(OWLClassExpression c, OWLClass a) {
+	if (a.isOWLNothing())
+	    return ruleSet();
+	if (c.isOWLThing())
+	    return ruleSet(rule(tr(a, X)));
+	return ruleSet(rule(tr(a, X), tr(c, X)));
     }
 
     @Override

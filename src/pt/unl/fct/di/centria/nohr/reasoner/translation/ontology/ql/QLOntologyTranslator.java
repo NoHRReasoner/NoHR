@@ -56,6 +56,8 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 
     private final TBoxGraph graph;
 
+    private final boolean hasDisjunctions;
+
     private Set<String> negatedPredicates;
 
     private final QLNormalizedOntology normalizedOntology;
@@ -136,6 +138,11 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 	return tabled;
     }
 
+    @Override
+    public boolean hasDisjunctions() {
+	return hasDisjunctions;
+    }
+
     private OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression ope) {
 	final OWLDataFactory df = ontology.getOWLOntologyManager()
 		.getOWLDataFactory();
@@ -173,8 +180,8 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 			.getInverseProperty();
 		if ((normalizedOntology.isSuper(some(ope1)) || normalizedOntology
 			.isSuper(ope1))
-			&& normalizedOntology.isSub(some(ope2))
-			|| normalizedOntology.isSub(ope2))
+			&& (normalizedOntology.isSub(some(ope2)) || normalizedOntology
+				.isSub(ope2)))
 		    result.add(axiomsTranslator.translateDomain(axiom));
 		if ((normalizedOntology.isSuper(some(invOpe1)) || normalizedOntology
 			.isSuper(invOpe1))

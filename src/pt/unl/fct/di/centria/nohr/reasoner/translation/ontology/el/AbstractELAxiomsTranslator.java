@@ -3,6 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +39,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.*;
  *
  */
 public abstract class AbstractELAxiomsTranslator extends
-	AbstractAxiomsTranslator {
+AbstractAxiomsTranslator {
 
     private static final Variable ANNON = var("_");
     protected static final Variable X = var("X");
@@ -51,8 +52,8 @@ public abstract class AbstractELAxiomsTranslator extends
 	super(ontology);
     }
 
-    private Set<Literal> atomsSet(Atom... atoms) {
-	final Set<Literal> result = new HashSet<Literal>();
+    private List<Literal> atomsList(Atom... atoms) {
+	final List<Literal> result = new ArrayList<Literal>(atoms.length);
 	Collections.addAll(result, atoms);
 	return result;
     }
@@ -77,15 +78,14 @@ public abstract class AbstractELAxiomsTranslator extends
 	return atom(pred, x);
     }
 
-    protected Set<Literal> tr(OWLClassExpression ce, Variable x, boolean doub) {
-	final Set<Literal> result = new HashSet<Literal>();
+    protected List<Literal> tr(OWLClassExpression ce, Variable x, boolean doub) {
+	final List<Literal> result = new ArrayList<Literal>();
 	if (ce.isOWLThing())
-	    return atomsSet();
-	else if (ce instanceof OWLClass)
-	    return atomsSet(tr((OWLClass) ce, x, doub));
+	    return atomsList();
+	else if (ce instanceof OWLClass && !ce.isOWLThing())
+	    return atomsList(tr((OWLClass) ce, x, doub));
 	else if (ce instanceof OWLObjectIntersectionOf) {
-	    final Set<OWLClassExpression> ops = ((OWLObjectIntersectionOf) ce)
-		    .getOperands();
+	    final Set<OWLClassExpression> ops = ce.asConjunctSet();
 	    for (final OWLClassExpression op : ops)
 		result.addAll(tr(op, x, doub));
 	} else if (ce instanceof OWLObjectSomeValuesFrom) {
@@ -109,6 +109,11 @@ public abstract class AbstractELAxiomsTranslator extends
 	final OWLClassExpression ce1 = axiom.getSubClass();
 	final OWLClassExpression ce2 = axiom.getSuperClass();
 	if (ce2.isAnonymous())
+	    return ruleSet();
+	for (final OWLClassExpression ci : ce1.asConjunctSet())
+	    if (ci.isOWLNothing())
+		return ruleSet();
+	if (ce2.isOWLThing())
 	    return ruleSet();
 	return translateSubsumption(ce1, (OWLClass) ce2);
     }

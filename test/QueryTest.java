@@ -145,6 +145,7 @@ public abstract class QueryTest extends Object {
 	} catch (final UnsupportedOWLProfile e) {
 	    fail("ontology is not QL nor EL!\n" + e.getMessage());
 	} catch (final InconsistentOntologyException e) {
+	    e.printStackTrace();
 	    fail("inconsistent ontology");
 	} catch (final OWLOntologyCreationException e) {
 	    fail(e.getMessage());
@@ -220,7 +221,6 @@ public abstract class QueryTest extends Object {
 	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
 	kb.addRule("a2(X):-a1(X)");
-	assertConsistent("a2(X)");
 	kb.addDisjunction(a1, a2);
 	assertInconsistent("a2(X)");
     }
@@ -280,12 +280,10 @@ public abstract class QueryTest extends Object {
 	final OWLClass a5 = kb.getConcept("a5");
 	final OWLIndividual a = kb.getIndividual("a");
 	kb.addAssertion(a1, a);
-	kb.addRule("a2(X):-a1(X)");
-	assertConsistent("a2(X)");
 	kb.addDisjunction(a1, a2);
+	kb.addRule("a2(X):-a1(X)");
 	kb.addSubsumption(a2, kb.getExistential(p3));
 	kb.addSubsumption(p3, p4);
-	assertInconsistent("p4(a,Y)");
 	kb.addSubsumption(kb.getExistential(p4), a5);
 	assertInconsistent("a5(X)");
     }
@@ -321,23 +319,6 @@ public abstract class QueryTest extends Object {
 	kb.addSubsumption(p2, p3);
 	kb.addSubsumption(kb.getExistential(p3), a4);
 	assertAnswer("a4(X)", new String[] { "a" });
-    }
-
-    // (a2), (e), (s1)
-    @Test
-    public final void leftExistentialSubsumption()
-	    throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLObjectProperty p1 = kb.getRole("p1");
-	final OWLClass a2 = kb.getConcept("a2");
-	final OWLClass a3 = kb.getConcept("a3");
-	final OWLIndividual a = kb.getIndividual("a");
-	final OWLIndividual b = kb.getIndividual("b");
-	kb.addAssertion(p1, a, b);
-	kb.addSubsumption(kb.getExistential(p1), a2);
-	assertAnswer("a2(X)", "a");
-	kb.addSubsumption(kb.getExistential(kb.getInverse(p1)), a3);
-	assertAnswer("a3(X)", "b");
     }
 
     @Test
@@ -400,8 +381,7 @@ public abstract class QueryTest extends Object {
 	final OWLClass a1 = kb.getConcept("a1");
 	final OWLClass a2 = kb.getConcept("a2");
 	final OWLClass a3 = kb.getConcept("a3");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(a1, a);
+	kb.addRule("a1(a).");
 	kb.addSubsumption(a1, a2);
 	kb.addSubsumption(a2, a1);
 	kb.addSubsumption(a3, a2);

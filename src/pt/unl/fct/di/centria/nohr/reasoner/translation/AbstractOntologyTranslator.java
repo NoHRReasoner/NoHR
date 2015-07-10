@@ -71,9 +71,7 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 	return null;
     }
 
-    protected boolean hasDisjunctions;
-
-    protected OWLOntology ontology;
+    protected final OWLOntology ontology;
 
     protected final OWLOntologyManager ontologyManager;
 
@@ -89,11 +87,6 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 	    CloneNotSupportedException, UnsupportedOWLProfile {
 	this.ontologyManager = ontologyManager;
 	this.ontology = ontology;
-    }
-
-    @Override
-    public boolean hasDisjunctions() {
-	return hasDisjunctions;
     }
 
 }

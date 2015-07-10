@@ -145,6 +145,23 @@ public class QLQueryTest extends QueryTest {
 	assertInconsistent("p1(X,X)");
     }
 
+    // (a2), (e), (s1)
+    @Test
+    public final void leftExistentialSubsumption()
+	    throws OWLOntologyCreationException {
+	kb.clear();
+	final OWLObjectProperty p1 = kb.getRole("p1");
+	final OWLClass a2 = kb.getConcept("a2");
+	final OWLClass a3 = kb.getConcept("a3");
+	final OWLIndividual a = kb.getIndividual("a");
+	final OWLIndividual b = kb.getIndividual("b");
+	kb.addAssertion(p1, a, b);
+	kb.addSubsumption(kb.getExistential(p1), a2);
+	assertAnswer("a2(X)", "a");
+	kb.addSubsumption(kb.getExistential(kb.getInverse(p1)), a3);
+	assertAnswer("a3(X)", "b");
+    }
+
     @Test
     public void normalizations() throws OWLOntologyCreationException {
 	kb.clear();

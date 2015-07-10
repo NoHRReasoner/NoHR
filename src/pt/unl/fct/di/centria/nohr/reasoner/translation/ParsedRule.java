@@ -134,7 +134,7 @@ public class ParsedRule {
      * @return the tabled neg rule
      */
     public String getTabledNegRule() {
-	return "n" + predicate + "/" + len;
+	return "'n" + predicate + "'/" + len;
     }
 
     /**

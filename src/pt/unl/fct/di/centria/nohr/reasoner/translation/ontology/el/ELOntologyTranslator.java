@@ -65,9 +65,9 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 
     public ELOntologyTranslator(OWLOntologyManager ontologyManager,
 	    OWLOntology ontology, OntologyLabeler ontologyLabel)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-		    IOException, CloneNotSupportedException, UnsupportedOWLProfile,
-	    UnsupportedAxiomTypeException {
+		    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    IOException, CloneNotSupportedException, UnsupportedOWLProfile,
+		    UnsupportedAxiomTypeException {
 	super(ontologyManager, ontology);
 	tabled = new HashSet<String>();
 	negHeads = new HashSet<String>();
@@ -127,12 +127,24 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
 
     @Override
     public Set<String> getNegatedPredicates() {
-	return new HashSet<String>();
+	return negHeads;
     }
 
     @Override
     public Set<String> getTabledPredicates() {
 	return tabled;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator
+     * #hasDisjunctions()
+     */
+    @Override
+    public boolean hasDisjunctions() {
+	return reducedOntology.hasDisjunction();
     }
 
     private Set<Rule> translate(AbstractELAxiomsTranslator axiomTranslator) {
@@ -167,10 +179,10 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
     @Override
     public void translate(Set<String> translationContainer)
 	    throws ParserException {
-	if (hasDisjunctions)
+	if (reducedOntology.hasDisjunction())
 	    computeNegHeads();
 	addAll(translate(originalAxiomsTranslator), translationContainer);
-	if (hasDisjunctions)
+	if (reducedOntology.hasDisjunction())
 	    addAll(translate(doubleAxiomsTranslator), translationContainer);
     }
 }
