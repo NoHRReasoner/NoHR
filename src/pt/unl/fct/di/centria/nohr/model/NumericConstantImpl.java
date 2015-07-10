@@ -4,10 +4,10 @@ import java.util.List;
 
 public class NumericConstantImpl implements Constant {
 
-    private Number number;
+    private final Number number;
 
     NumericConstantImpl(Number number) {
-	double dval = number.doubleValue();
+	final double dval = number.doubleValue();
 	if (number.shortValue() == dval)
 	    number = number.shortValue();
 	else if (number.intValue() == dval)
@@ -64,7 +64,7 @@ public class NumericConstantImpl implements Constant {
 	    return false;
 	if (getClass() != obj.getClass())
 	    return false;
-	NumericConstantImpl other = (NumericConstantImpl) obj;
+	final NumericConstantImpl other = (NumericConstantImpl) obj;
 	if (number == null) {
 	    if (other.number != null)
 		return false;

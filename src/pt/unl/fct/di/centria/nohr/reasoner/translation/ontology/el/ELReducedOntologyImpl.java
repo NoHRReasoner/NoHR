@@ -15,7 +15,6 @@ import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLBooleanClassExpression;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -25,7 +24,6 @@ import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLObjectHasValue;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
@@ -54,7 +52,7 @@ import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 public class ELReducedOntologyImpl implements ELReducedOntology {
 
     private class ComplexSidesNormalizer implements
-	    Normalizer<OWLSubClassOfAxiom> {
+    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -73,7 +71,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class ConceptAssertionsNormalizer implements
-    Normalizer<OWLClassAssertionAxiom> {
+	    Normalizer<OWLClassAssertionAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLClassAssertionAxiom assertion,
@@ -92,7 +90,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class LeftBottomNormalizer implements
-    Normalizer<OWLSubClassOfAxiom> {
+	    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -103,7 +101,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class LeftConjunctionNormalizer implements
-    Normalizer<OWLSubClassOfAxiom> {
+	    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -131,7 +129,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class LeftExistentialNormalizer implements
-	    Normalizer<OWLSubClassOfAxiom> {
+    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -170,7 +168,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class RightConjunctionNormalizer implements
-    Normalizer<OWLSubClassOfAxiom> {
+	    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -189,11 +187,11 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private static final AxiomType[] UNSUPP_TYPES = new AxiomType[] {
-	    AxiomType.REFLEXIVE_OBJECT_PROPERTY,
-	    AxiomType.OBJECT_PROPERTY_RANGE, AxiomType.DATA_PROPERTY_DOMAIN,
-	AxiomType.DATA_PROPERTY_RANGE, AxiomType.SAME_INDIVIDUAL,
-	    AxiomType.DIFFERENT_INDIVIDUALS,
-	    AxiomType.FUNCTIONAL_DATA_PROPERTY, AxiomType.HAS_KEY };
+	AxiomType.REFLEXIVE_OBJECT_PROPERTY,
+	AxiomType.OBJECT_PROPERTY_RANGE, AxiomType.DATA_PROPERTY_DOMAIN,
+	    AxiomType.DATA_PROPERTY_RANGE, AxiomType.SAME_INDIVIDUAL,
+	AxiomType.DIFFERENT_INDIVIDUALS,
+	AxiomType.FUNCTIONAL_DATA_PROPERTY, AxiomType.HAS_KEY };
 
     private final Set<OWLSubPropertyChainOfAxiom> chainSubsumptions;
 
@@ -401,7 +399,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	    Set<OWLClassAssertionAxiom> conceptAssertions,
 	    Set<OWLSubClassOfAxiom> conceptSubsumptions,
 	    Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions)
-	    throws OWLOntologyCreationException {
+		    throws OWLOntologyCreationException {
 	final OWLOntologyManager om = ontology.getOWLOntologyManager();
 	final OWLOntology result = om.createOntology();
 	norm(conceptAssertions, new ConceptAssertionsNormalizer());
@@ -416,7 +414,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	    Set<OWLClassAssertionAxiom> conceptAssertions,
 	    Set<OWLSubClassOfAxiom> conceptSubsumptions,
 	    Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions)
-		    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException {
 	final OWLOntology result = normalized(conceptAssertions,
 		conceptSubsumptions, roleSubsumptions);
 	classify(result);

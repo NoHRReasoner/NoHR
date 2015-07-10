@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
+import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 
 public interface OntologyTranslator {
@@ -14,10 +15,10 @@ public interface OntologyTranslator {
 
     public Set<String> getTabledPredicates();
 
-    public boolean hasDisjunctions();
+    public Set<Rule> getTranslation() throws ParserException,
+	    UnsupportedOWLProfile, OWLOntologyCreationException,
+	    OWLOntologyStorageException;
 
-    public void translate(Set<String> translationContainer)
-	    throws ParserException, UnsupportedOWLProfile,
-	    OWLOntologyCreationException, OWLOntologyStorageException;
+    public boolean hasDisjunctions();
 
 }

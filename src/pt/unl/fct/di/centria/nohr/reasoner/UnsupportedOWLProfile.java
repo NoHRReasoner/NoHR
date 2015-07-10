@@ -13,12 +13,12 @@ import org.semanticweb.owlapi.profiles.OWLProfileViolation;
  */
 public class UnsupportedOWLProfile extends Exception {
 
-    private List<OWLProfileViolation> violations;
-
     /**
      *
      */
     private static final long serialVersionUID = -5537995982642676635L;
+
+    private final List<OWLProfileViolation> violations;
 
     public UnsupportedOWLProfile(List<OWLProfileViolation> violations) {
 	this.violations = violations;

@@ -4,6 +4,6 @@ import java.util.Set;
 
 public interface GraphClosure<T> {
 
-	public Set<T> getAncestors(T v);
+    public Set<T> getAncestors(T v);
 
 }

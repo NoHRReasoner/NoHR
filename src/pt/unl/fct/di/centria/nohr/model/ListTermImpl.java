@@ -3,11 +3,11 @@ package pt.unl.fct.di.centria.nohr.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import other.Utils;
+import pt.unl.fct.di.centria.nohr.Utils;
 
 public class ListTermImpl implements Term {
 
-    private List<Term> termList;
+    private final List<Term> termList;
 
     ListTermImpl(List<Term> termList) {
 	this.termList = termList;
@@ -15,8 +15,8 @@ public class ListTermImpl implements Term {
 
     @Override
     public Term acept(Visitor visitor) {
-	List<Term> list = new LinkedList<Term>();
-	for (Term term : termList)
+	final List<Term> list = new LinkedList<Term>();
+	for (final Term term : termList)
 	    list.add(visitor.visit(term));
 	return new ListTermImpl(list);
     }
@@ -44,7 +44,7 @@ public class ListTermImpl implements Term {
 	    return false;
 	if (!(obj instanceof ListTermImpl))
 	    return false;
-	ListTermImpl other = (ListTermImpl) obj;
+	final ListTermImpl other = (ListTermImpl) obj;
 	if (termList == null) {
 	    if (other.termList != null)
 		return false;
@@ -55,7 +55,7 @@ public class ListTermImpl implements Term {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override

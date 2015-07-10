@@ -88,17 +88,17 @@ public class QueryProcessor {
 
 		    private Answer nextAnswer() {
 			while (origAnssIt.hasNext()) {
-			    Answer origAns = origAnssIt.next();
-			    Query doubQuery = query.getDouble().apply(
+			    final Answer origAns = origAnssIt.next();
+			    final Query doubQuery = query.getDouble().apply(
 				    origAns.getValues());
-			    TruthValue origTruth = origAns.getValuation();
+			    final TruthValue origTruth = origAns.getValuation();
 			    if (!hasDoubled
 				    && isRequiredTruth(origTruth, trueAnswers,
 					    undefinedAnswers,
 					    inconsistentAnswers))
 				return origAns;
 			    if (origTruth == TruthValue.TRUE) {
-				boolean hasDoubAns = xsbDatabase
+				final boolean hasDoubAns = xsbDatabase
 					.hasAnswers(doubQuery);
 				if (trueAnswers && hasDoubAns)
 				    return ans(query, TruthValue.TRUE,
@@ -167,23 +167,27 @@ public class QueryProcessor {
 	if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
 	    throw new IllegalArgumentException(
 		    "must have at least one truth value enabled");
-	Query origQuery = query.getOriginal();
+	final Query origQuery = query.getOriginal();
 	// undefined original answers
 	if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-	    for (Answer origAns : xsbDatabase.lazilyQuery(origQuery, false)) {
+	    for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery,
+		    false)) {
 		if (!hasDoubled)
 		    return ans(query, TruthValue.UNDEFINED, origAns.getValues());
-		Query doubQuery = query.getDouble().apply(origAns.getValues());
+		final Query doubQuery = query.getDouble().apply(
+			origAns.getValues());
 		if (xsbDatabase.hasAnswers(doubQuery, false))
 		    return ans(query, TruthValue.UNDEFINED, origAns.getValues());
 	    }
 	// true original answers
 	if (!undefinedAnswers)
-	    for (Answer origAns : xsbDatabase.lazilyQuery(origQuery, true)) {
+	    for (final Answer origAns : xsbDatabase
+		    .lazilyQuery(origQuery, true)) {
 		if (trueAnswers && !hasDoubled)
 		    return ans(query, TruthValue.TRUE, origAns.getValues());
-		Query doubQuery = query.getDouble().apply(origAns.getValues());
-		boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
+		final Query doubQuery = query.getDouble().apply(
+			origAns.getValues());
+		final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
 		if (trueAnswers && hasDoubAns)
 		    return ans(query, TruthValue.TRUE, origAns.getValues());
 		else if (inconsistentAnswers && !hasDoubAns)
@@ -192,16 +196,17 @@ public class QueryProcessor {
 	    }
 
 	// all original answers
-	for (Answer origAns : xsbDatabase.lazilyQuery(origQuery, null)) {
-	    TruthValue origTruth = origAns.getValuation();
+	for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, null)) {
+	    final TruthValue origTruth = origAns.getValuation();
 	    if ((trueAnswers && origTruth == TruthValue.TRUE || undefinedAnswers
 		    && origTruth == TruthValue.UNDEFINED)
 		    && !hasDoubled)
 		return ans(query, origTruth, origAns.getValues());
-	    Query doubQuery = query.getDouble().apply(origAns.getValues());
+	    final Query doubQuery = query.getDouble()
+		    .apply(origAns.getValues());
 	    if ((trueAnswers || inconsistentAnswers)
 		    && origTruth == TruthValue.TRUE) {
-		boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
+		final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
 		if (trueAnswers && hasDoubAns)
 		    return ans(query, TruthValue.TRUE, origAns.getValues());
 		else if (inconsistentAnswers && !hasDoubAns)
@@ -210,9 +215,9 @@ public class QueryProcessor {
 	    }
 	    if ((trueAnswers && hasDoubled || undefinedAnswers)
 		    && origTruth == TruthValue.UNDEFINED) {
-		Answer doubAns = xsbDatabase.query(doubQuery);
+		final Answer doubAns = xsbDatabase.query(doubQuery);
 		if (doubAns != null) {
-		    TruthValue doubTruth = doubAns.getValuation();
+		    final TruthValue doubTruth = doubAns.getValuation();
 		    if (trueAnswers && doubTruth == TruthValue.TRUE)
 			return ans(query, TruthValue.TRUE, origAns.getValues());
 		    else if (undefinedAnswers
@@ -242,10 +247,10 @@ public class QueryProcessor {
 	if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
 	    throw new IllegalArgumentException(
 		    "must have at least one truth value enabled");
-	Collection<Answer> result = new LinkedList<Answer>();
-	Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
+	final Collection<Answer> result = new LinkedList<Answer>();
+	final Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
 	int i = 0;
-	for (Variable var : query.getVariables())
+	for (final Variable var : query.getVariables())
 	    varsIdx.put(var, i++);
 	Map<List<Term>, TruthValue> origAnss;
 	if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
@@ -260,9 +265,10 @@ public class QueryProcessor {
 		doubAnss = xsbDatabase.queryAll(query.getDouble(), false);
 	    else
 		doubAnss = xsbDatabase.queryAll(query.getDouble());
-	for (Entry<List<Term>, TruthValue> origEntry : origAnss.entrySet()) {
-	    List<Term> vals = origEntry.getKey();
-	    TruthValue origTruth = origEntry.getValue();
+	for (final Entry<List<Term>, TruthValue> origEntry : origAnss
+		.entrySet()) {
+	    final List<Term> vals = origEntry.getKey();
+	    final TruthValue origTruth = origEntry.getValue();
 	    TruthValue truth;
 	    if (hasDoubled) {
 		TruthValue doubTruth = doubAnss.get(vals);

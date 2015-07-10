@@ -9,7 +9,7 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  */
 public class DoubleDomainPredicate extends MetaPredicateImpl {
 
-    public DoubleDomainPredicate(String symbol) {
+    DoubleDomainPredicate(String symbol) {
 	super(symbol, 1, PredicateType.DOUBLE_DOMAIN, 'g');
     }
 

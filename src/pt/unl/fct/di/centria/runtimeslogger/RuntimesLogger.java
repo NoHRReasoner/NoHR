@@ -1,10 +1,10 @@
-package utils;
+package pt.unl.fct.di.centria.runtimeslogger;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Tracer {
+public class RuntimesLogger {
 
     private static String dataset;
 
@@ -22,13 +22,13 @@ public class Tracer {
 
     private static final Map<String, Long> starts;
 
-    private static final Map<String, RunTimesTable> tables;
+    private static final Map<String, RuntimesTable> tables;
 
     static {
 	level = 0;
 	starts = new HashMap<String, Long>();
 	durations = new HashMap<String, Long>();
-	tables = new HashMap<String, RunTimesTable>();
+	tables = new HashMap<String, RuntimesTable>();
 	phaseIterations = new HashMap<String, String>();
 	run = 1;
     }
@@ -36,7 +36,7 @@ public class Tracer {
     public static void close() {
 	if (!ON)
 	    return;
-	for (final RunTimesTable table : tables.values())
+	for (final RuntimesTable table : tables.values())
 	    table.save();
     }
 
@@ -84,7 +84,7 @@ public class Tracer {
 	if (!ON)
 	    return;
 	for (final String fileName : fileNames)
-	    tables.put(fileName, new RunTimesTable(fileName));
+	    tables.put(fileName, new RuntimesTable(fileName));
 
     }
 

@@ -29,7 +29,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nohr.model.Literal#apply(nohr.model.Substitution)
      */
     @Override
@@ -54,7 +54,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -81,7 +81,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

@@ -9,7 +9,7 @@ public interface Constant extends Term {
 
     public String asString();
 
-    public TruthValue asTruthValue() throws ModelException;
+    public TruthValue asTruthValue();
 
     @Override
     public boolean equals(Object obj);

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -14,18 +13,10 @@ import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -33,22 +24,17 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
-import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.AbstractOntologyTranslator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
-import utils.Tracer;
 
 public class QLOntologyTranslator extends AbstractOntologyTranslator {
 
@@ -58,13 +44,9 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 
     private final boolean hasDisjunctions;
 
-    private Set<String> negatedPredicates;
-
     private final QLNormalizedOntology normalizedOntology;
 
     private final QLOriginalAxiomsTranslator originalAxiomsTranslator;
-
-    private Set<String> tabled;
 
     public QLOntologyTranslator(OWLOntology ontology,
 	    OWLDataFactory dataFactory, OWLOntologyManager ontologyManager,
@@ -73,35 +55,15 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 	    CloneNotSupportedException, UnsupportedOWLProfile {
 	super(ontologyManager, ontology);
 	normalizedOntology = new QLNormalizedOntologyImpl(ontology);
-	graph = new BasicTBoxGraph(normalizedOntology, dataFactory);
+	graph = new BasicTBoxGraph(normalizedOntology);
 	originalAxiomsTranslator = new QLOriginalAxiomsTranslator(ontology);
 	doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(ontology);
 	hasDisjunctions = normalizedOntology.hasDisjointStatement();
     }
 
-    private void addAll(Rule rule, Set<String> target) {
-	addPredicates(rule);
-	target.add(rule.toString());
-    }
-
-    private void addAll(Set<Rule> set, Set<String> target) {
-	for (final Rule rule : set) {
-	    addPredicates(rule);
-	    target.add(rule.toString());
-	}
-    }
-
-    private void addPredicates(Rule rule) {
-	final Predicate headPred = rule.getHead().getPredicate();
-	tabled.add(headPred.getName());
-	for (final Literal negLiteral : rule.getNegativeBody())
-	    tabled.add(negLiteral.getPredicate().getName());
-    }
-
     public void computeNegHeads() {
 	final Variable X = Model.var("X");
 	final Variable Y = Model.var("Y");
-	negatedPredicates = new HashSet<String>();
 	for (final OWLClassExpression b : normalizedOntology.getSubConcepts())
 	    negatedPredicates.add(originalAxiomsTranslator.negTr(b, X)
 		    .getPredicate().getName());
@@ -129,13 +91,34 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
     }
 
     @Override
-    public Set<String> getNegatedPredicates() {
-	return negatedPredicates;
-    }
-
-    @Override
-    public Set<String> getTabledPredicates() {
-	return tabled;
+    public Set<Rule> getTranslation() {
+	final Set<Rule> result = new HashSet<Rule>();
+	final boolean hasDisjunctions = normalizedOntology
+		.hasDisjointStatement();
+	computeNegHeads();
+	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
+		.start("ontology translation");
+	result.addAll(translate(originalAxiomsTranslator));
+	if (hasDisjunctions)
+	    result.addAll(translate(doubleAxiomsTranslator));
+	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop(
+		"ontology translation", "loading");
+	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
+		.start("ontology classification");
+	for (final OWLEntity e : graph.getUnsatisfiableEntities())
+	    if (e instanceof OWLClass)
+		result.add(doubleAxiomsTranslator
+			.translateUnsatisfaible((OWLClass) e));
+	    else if (e instanceof OWLProperty)
+		result.add(doubleAxiomsTranslator
+			.translateUnsatisfaible((OWLProperty) e));
+	for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
+	    result.add(doubleAxiomsTranslator.translateIrreflexive(p));
+	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop(
+		"ontology classification", "loading");
+	for (final Rule rule : result)
+	    addTabledPredicates(rule);
+	return result;
     }
 
     @Override
@@ -212,33 +195,6 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 		    result.add(axiomsTranslator.translateRange(p));
 	    }
 	return result;
-    }
-
-    @Override
-    public void translate(Set<String> translationContainer) {
-	tabled = new HashSet<String>();
-	final boolean hasDisjunctions = normalizedOntology
-		.hasDisjointStatement();
-	computeNegHeads();
-	utils.Tracer.start("ontology translation");
-	addAll(translate(originalAxiomsTranslator), translationContainer);
-	if (hasDisjunctions)
-	    addAll(translate(doubleAxiomsTranslator), translationContainer);
-	utils.Tracer.stop("ontology translation", "loading");
-	utils.Tracer.start("ontology classification");
-	for (final OWLEntity e : graph.getUnsatisfiableEntities())
-	    if (e instanceof OWLClass)
-		addAll(doubleAxiomsTranslator
-			.translateUnsatisfaible((OWLClass) e),
-			translationContainer);
-	    else if (e instanceof OWLProperty)
-		addAll(doubleAxiomsTranslator
-			.translateUnsatisfaible((OWLProperty) e),
-			translationContainer);
-	for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
-	    addAll(doubleAxiomsTranslator.translateIrreflexive(p),
-		    translationContainer);
-	utils.Tracer.stop("ontology classification", "loading");
     }
 
 }

@@ -7,8 +7,8 @@ import java.util.SortedMap;
 
 public class SubstitutionImpl implements Substitution {
 
-    private SortedMap<Variable, Integer> variablesIndex;
-    private Term[] values;
+    private final Term[] values;
+    private final SortedMap<Variable, Integer> variablesIndex;
 
     SubstitutionImpl(SortedMap<Variable, Integer> variablesIndex, Term[] values) {
 	this.variablesIndex = variablesIndex;
@@ -17,7 +17,7 @@ public class SubstitutionImpl implements Substitution {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -28,7 +28,7 @@ public class SubstitutionImpl implements Substitution {
 	    return false;
 	if (!(obj instanceof SubstitutionImpl))
 	    return false;
-	SubstitutionImpl other = (SubstitutionImpl) obj;
+	final SubstitutionImpl other = (SubstitutionImpl) obj;
 	if (!Arrays.equals(values, other.values))
 	    return false;
 	if (variablesIndex == null) {
@@ -51,7 +51,7 @@ public class SubstitutionImpl implements Substitution {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -66,7 +66,7 @@ public class SubstitutionImpl implements Substitution {
     public String toString() {
 	String result = "{";
 	String sep = "";
-	for (Entry<Variable, Integer> entry : variablesIndex.entrySet()) {
+	for (final Entry<Variable, Integer> entry : variablesIndex.entrySet()) {
 	    result += sep + entry.getKey() + "=" + values[entry.getValue()];
 	    sep = ",";
 	}

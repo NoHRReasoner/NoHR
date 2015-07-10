@@ -25,7 +25,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import other.Utils;
+import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntology;
@@ -213,7 +213,7 @@ public class KB {
 	else if (obj instanceof OWLIndividual)
 	    return getLabel((OWLIndividual) obj);
 	else if (obj instanceof OWLLiteral)
-	    return Utils.getHash(((OWLLiteral) obj).getLiteral());
+	    return OntologyLabeler.escapeAtom(((OWLLiteral) obj).getLiteral());
 	else
 	    return null;
     }

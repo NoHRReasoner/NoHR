@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import other.Utils;
+import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public class AtomImpl implements Atom {
@@ -44,7 +44,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see nohr.model.Atom#apply(nohr.model.Substitution)
      */
     @Override
@@ -129,7 +129,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nohr.model.Atom#getVariables()
      */
     @Override
@@ -143,7 +143,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override

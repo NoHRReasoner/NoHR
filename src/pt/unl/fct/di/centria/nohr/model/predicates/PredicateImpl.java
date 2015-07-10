@@ -20,7 +20,7 @@ public class PredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -59,7 +59,7 @@ public class PredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override

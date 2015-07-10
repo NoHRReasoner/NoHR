@@ -1,6 +1,8 @@
-package pt.unl.fct.di.centria.nohr.reasoner.translation;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -13,17 +15,18 @@ import org.semanticweb.owlapi.profiles.OWL2QLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import other.Config;
+import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.ELOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLOntologyTranslator;
-import utils.Tracer;
+import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public abstract class AbstractOntologyTranslator implements OntologyTranslator {
+
+    public static TranslationAlgorithm translationAlgorithm = null;
 
     public static OntologyTranslator createOntologyTranslator(
 	    OWLOntologyManager ontologyManager, OWLOntology ontology)
@@ -50,8 +53,8 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 
     private static TranslationAlgorithm getTranslationAlgorithm(
 	    OWLOntology ontology) throws UnsupportedOWLProfile {
-	if (Config.translationAlgorithm != null)
-	    return Config.translationAlgorithm;
+	if (AbstractOntologyTranslator.translationAlgorithm != null)
+	    return AbstractOntologyTranslator.translationAlgorithm;
 	final OWL2ELProfile elProfile = new OWL2ELProfile();
 	final OWL2QLProfile qlProfile = new OWL2QLProfile();
 	final OWLProfileReport elReport = elProfile.checkOntology(ontology);
@@ -60,10 +63,10 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 	final boolean isQL = qlRerport.isInProfile();
 	if (!isEL && !isQL)
 	    throw new UnsupportedOWLProfile(qlRerport.getViolations());
-	Tracer.logBool("OWL EL", isEL);
-	Tracer.logBool("OWL QL", isQL);
-	if (Config.translationAlgorithm != null)
-	    return Config.translationAlgorithm;
+	RuntimesLogger.logBool("OWL EL", isEL);
+	RuntimesLogger.logBool("OWL QL", isQL);
+	if (AbstractOntologyTranslator.translationAlgorithm != null)
+	    return AbstractOntologyTranslator.translationAlgorithm;
 	if (isQL)
 	    return TranslationAlgorithm.DL_LITE_R;
 	else if (isEL)
@@ -71,9 +74,13 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 	return null;
     }
 
+    protected final Set<String> negatedPredicates;
+
     protected final OWLOntology ontology;
 
     protected final OWLOntologyManager ontologyManager;
+
+    protected final Set<String> tabled;
 
     public AbstractOntologyTranslator(OWLOntology ontology)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
@@ -87,6 +94,25 @@ public abstract class AbstractOntologyTranslator implements OntologyTranslator {
 	    CloneNotSupportedException, UnsupportedOWLProfile {
 	this.ontologyManager = ontologyManager;
 	this.ontology = ontology;
+	tabled = new HashSet<String>();
+	negatedPredicates = new HashSet<String>();
+    }
+
+    protected void addTabledPredicates(Rule rule) {
+	final Predicate headPred = rule.getHead().getPredicate();
+	tabled.add(headPred.getName());
+	for (final Literal negLiteral : rule.getNegativeBody())
+	    tabled.add(negLiteral.getPredicate().getName());
+    }
+
+    @Override
+    public Set<String> getNegatedPredicates() {
+	return negatedPredicates;
+    }
+
+    @Override
+    public Set<String> getTabledPredicates() {
+	return tabled;
     }
 
 }

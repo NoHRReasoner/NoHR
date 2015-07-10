@@ -5,12 +5,12 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.doubPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.negPred;
-import static pt.unl.fct.di.centria.nohr.model.Model.origPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.doubPred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origPred;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -24,7 +24,6 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;

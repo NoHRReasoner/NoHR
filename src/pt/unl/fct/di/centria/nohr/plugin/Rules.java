@@ -10,9 +10,21 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import pt.unl.fct.di.centria.nohr.model.Config;
-
 public class Rules {
+    private static JTextArea _currentTextArea;
+
+    private static HashSet<JTextArea> _listners = new HashSet<JTextArea>();
+
+    private static ArrayList<String> _rules = new ArrayList<String>();
+
+    public static boolean hasChanges;
+
+    public static boolean isRulesChanged;
+
+    public static String rulesFilePath;// =
+
+    // "/Users/vadimivanov/Documents/University/tests/cities/cities.p";
+
     private static void addEventsForTextArea(final JTextArea textarea) {
 	textarea.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -47,34 +59,34 @@ public class Rules {
 	_listners.add(textarea);
 	addEventsForTextArea(textarea);
 	textarea.setText("");
-	for (String rule : _rules)
-	    textarea.append(rule + Config.NL);
+	for (final String rule : _rules)
+	    textarea.append(rule + System.lineSeparator());
     }
 
     public static void addRule(String rule) {
 	isRulesChanged = true;
 	hasChanges = true;
 	_rules.add(rule);
-	for (JTextArea textArea : _listners)
-	    textArea.append(rule + Config.NL);
+	for (final JTextArea textArea : _listners)
+	    textArea.append(rule + System.lineSeparator());
 
     }
 
     public static void addRule(String rule, JTextArea textarea) {
 	_rules.add(rule);
-	for (JTextArea textArea : _listners)
+	for (final JTextArea textArea : _listners)
 	    if (textArea != textarea)
-		textArea.append(rule + Config.NL);
+		textArea.append(rule + System.lineSeparator());
     }
 
     public static void deleteAllRules() {
 	resetRules();
-	for (JTextArea textArea : _listners)
+	for (final JTextArea textArea : _listners)
 	    textArea.setText("");
     }
 
     public static void dispose() {
-	for (JTextArea textArea : _listners)
+	for (final JTextArea textArea : _listners)
 	    textArea.setText("");
 	resetRules();
     }
@@ -85,11 +97,11 @@ public class Rules {
     }
 
     private static void printRulesToTextArea() {
-	for (JTextArea textArea : _listners)
+	for (final JTextArea textArea : _listners)
 	    if (textArea != _currentTextArea) {
 		textArea.setText("");
-		for (String rule : _rules)
-		    textArea.append(rule + Config.NL);
+		for (final String rule : _rules)
+		    textArea.append(rule + System.lineSeparator());
 	    }
     }
 
@@ -97,8 +109,8 @@ public class Rules {
 	if (isRulesChanged && _currentTextArea != null) {
 	    isRulesChanged = false;
 	    hasChanges = true;
-	    StringReader sr = new StringReader(_currentTextArea.getText());
-	    BufferedReader br = new BufferedReader(sr);
+	    final StringReader sr = new StringReader(_currentTextArea.getText());
+	    final BufferedReader br = new BufferedReader(sr);
 	    String nextLine = "";
 	    resetRules();
 	    try {
@@ -108,7 +120,7 @@ public class Rules {
 			_rules.add(nextLine);
 		}
 		br.close();
-	    } catch (IOException e) {
+	    } catch (final IOException e) {
 		e.printStackTrace();
 	    }
 	    sr.close();
@@ -128,18 +140,5 @@ public class Rules {
     public static void setCurrentTextArea(JTextArea textarea) {
 	_currentTextArea = textarea;
     }
-
-    private static ArrayList<String> _rules = new ArrayList<String>();
-
-    private static HashSet<JTextArea> _listners = new HashSet<JTextArea>();
-
-    public static boolean isRulesChanged;
-
-    public static boolean hasChanges;
-
-    private static JTextArea _currentTextArea;
-
-    public static String rulesFilePath;// =
-				       // "/Users/vadimivanov/Documents/University/tests/cities/cities.p";
 
 }

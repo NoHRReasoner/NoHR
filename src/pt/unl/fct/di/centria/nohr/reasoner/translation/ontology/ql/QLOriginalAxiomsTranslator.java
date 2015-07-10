@@ -4,10 +4,11 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.origDomPred;
-import static pt.unl.fct.di.centria.nohr.model.Model.origPred;
-import static pt.unl.fct.di.centria.nohr.model.Model.origRanPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origDomPred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origPred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origRanPred;
 
 import java.util.Set;
 
@@ -20,7 +21,6 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
@@ -83,7 +83,7 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
     public Rule translateDomain(OWLObjectProperty p) {
 	final String pSym = sym(p);
 	return rule(atom(origDomPred(pSym), X),
-		atom(origPred(pSym, 2), X, ANNON));
+		atom(origPred(pSym, 2), X, var()));
     }
 
     @Override
@@ -97,7 +97,7 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
     public Rule translateRange(OWLObjectProperty p) {
 	final String pSym = sym(p);
 	return rule(atom(origRanPred(pSym), X),
-		atom(origPred(pSym, 2), ANNON, X));
+		atom(origPred(pSym, 2), var(), X));
     }
 
     @Override

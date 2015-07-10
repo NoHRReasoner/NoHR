@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import other.Utils;
+import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public class RuleImpl implements Rule {
@@ -30,7 +30,7 @@ public class RuleImpl implements Rule {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -78,7 +78,7 @@ public class RuleImpl implements Rule {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see nohr.model.Rule#getPredicates()
      */
     @Override
@@ -92,7 +92,7 @@ public class RuleImpl implements Rule {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

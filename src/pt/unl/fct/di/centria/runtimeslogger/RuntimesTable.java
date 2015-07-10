@@ -1,4 +1,4 @@
-package utils;
+package pt.unl.fct.di.centria.runtimeslogger;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-class RunTimesTable {
+class RuntimesTable {
 
     private final List<String> datasets;
 
@@ -24,7 +24,7 @@ class RunTimesTable {
     // phase, run, data set, time
     private final Map<String, Map<Integer, Map<String, Long>>> table;
 
-    public RunTimesTable(String name) {
+    public RuntimesTable(String name) {
 	this.name = name;
 	datasets = new LinkedList<String>();
 	phases = new LinkedList<String>();

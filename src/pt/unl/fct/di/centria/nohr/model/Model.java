@@ -10,15 +10,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import pt.unl.fct.di.centria.nohr.model.predicates.DoubleDomainPredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.DoublePredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.DoubleRangePredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.NegativePredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.OriginalDomainPredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.OriginalPredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.OriginalRangePredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateImpl;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 
 public class Model {
 
@@ -47,13 +40,15 @@ public class Model {
     }
 
     public static Atom atom(String predicate, List<Term> arguments) {
-	return new AtomImpl(pred(predicate, arguments.size()), arguments);
+	return new AtomImpl(Predicates.pred(predicate, arguments.size()),
+		arguments);
     }
 
     public static Atom atom(String predicate, Term... arguments) {
 	final List<Term> argumentsList = new LinkedList<Term>();
 	Collections.addAll(argumentsList, arguments);
-	return new AtomImpl(pred(predicate, arguments.length), argumentsList);
+	return new AtomImpl(Predicates.pred(predicate, arguments.length),
+		argumentsList);
     }
 
     public static Constant cons(Number n) {
@@ -64,23 +59,8 @@ public class Model {
 	return new ConstantImpl(symbol);
     }
 
-    public static Predicate domPred(String symbol, boolean doub) {
-	if (doub)
-	    return new DoubleDomainPredicate(symbol);
-	else
-	    return new OriginalDomainPredicate(symbol);
-    }
-
-    public static Predicate doubDomPred(String symbol) {
-	return new DoubleDomainPredicate(symbol);
-    }
-
-    public static Predicate doubPred(String symbol, int arity) {
-	return new DoublePredicate(symbol, arity);
-    }
-
-    public static Predicate doubRanPred(String symbol) {
-	return new DoubleRangePredicate(symbol);
+    public static Term list(List<Term> terms) {
+	return new ListTermImpl(terms);
     }
 
     public static Term list(Term... terms) {
@@ -111,33 +91,6 @@ public class Model {
 	return new NegativeLiteralImpl(new AtomImpl(pred, argsList));
     }
 
-    public static Predicate negPred(String symbol, int arity) {
-	return new NegativePredicate(symbol, arity);
-    }
-
-    public static Predicate origDomPred(String symbol) {
-	return new OriginalDomainPredicate(symbol);
-    }
-
-    public static Predicate origPred(String symbol, int arity) {
-	return new OriginalPredicate(symbol, arity);
-    }
-
-    public static Predicate origRanPred(String symbol) {
-	return new OriginalRangePredicate(symbol);
-    }
-
-    public static Predicate pred(String symbol, int arity) {
-	return new PredicateImpl(symbol, arity);
-    }
-
-    public static Predicate pred(String symbol, int arity, boolean doub) {
-	if (doub)
-	    return new DoublePredicate(symbol, arity);
-	else
-	    return new OriginalPredicate(symbol, arity);
-    }
-
     public static Query query(List<Literal> literalList) {
 	final List<Variable> vars = new LinkedList<Variable>();
 	for (final Literal literal : literalList)
@@ -158,13 +111,6 @@ public class Model {
 	new LinkedList<Variable>();
 	Collections.addAll(literalList, literals);
 	return query(literalList);
-    }
-
-    public static Predicate ranPred(String symbol, boolean doub) {
-	if (doub)
-	    return new DoubleRangePredicate(symbol);
-	else
-	    return new OriginalRangePredicate(symbol);
     }
 
     public static Rule rule(Atom head, List<Literal> body) {

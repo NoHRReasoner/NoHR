@@ -3,6 +3,9 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -11,17 +14,14 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
-import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
@@ -30,9 +30,8 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.AbstractQLAxiomsTranslator;
-import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 /**
  * @author nunocosta
@@ -41,7 +40,6 @@ import static pt.unl.fct.di.centria.nohr.model.Model.*;
 public abstract class AbstractELAxiomsTranslator extends
 AbstractAxiomsTranslator {
 
-    private static final Variable ANNON = var("_");
     protected static final Variable X = var("X");
     protected static final Variable Y = var("Y");
 
@@ -74,7 +72,7 @@ AbstractAxiomsTranslator {
     }
 
     protected Atom tr(OWLClass c, Variable x, boolean doub) {
-	final Predicate pred = pred(sym(c), 1, doub);
+	final Predicate pred = Predicates.pred(sym(c), 1, doub);
 	return atom(pred, x);
     }
 
@@ -99,7 +97,7 @@ AbstractAxiomsTranslator {
     }
 
     protected Atom tr(OWLProperty pe, Variable x, Variable y, boolean doub) {
-	final Predicate pred = pred(sym(pe), 2, doub);
+	final Predicate pred = Predicates.pred(sym(pe), 2, doub);
 	if (pe instanceof OWLProperty)
 	    return atom(pred, x, y);
 	return null;

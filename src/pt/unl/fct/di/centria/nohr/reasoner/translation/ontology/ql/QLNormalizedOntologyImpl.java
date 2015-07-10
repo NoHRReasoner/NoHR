@@ -1,6 +1,5 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -42,7 +41,7 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
-import utils.Tracer;
+import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
@@ -130,6 +129,8 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     private OWLObjectProperty getNewRole(int hashCode) {
 	final String fragment = String.valueOf(hashCode);
 	final IRI ruleIri = IRI.create(ontologyIRI + "#" + fragment);
+	final OWLDataFactory df = ontology.getOWLOntologyManager()
+		.getOWLDataFactory();
 	return df.getOWLObjectProperty(ruleIri);
     }
 
@@ -271,7 +272,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     private void normalize(OWLOntology ontology) {
-	Tracer.start("ontology normalization");
+	RuntimesLogger.start("ontology normalization");
 	for (final OWLSubClassOfAxiom a : ontology
 		.getAxioms(AxiomType.SUBCLASS_OF))
 	    normalize(a);
@@ -329,7 +330,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	    for (final OWLSubDataPropertyOfAxiom s : a
 		    .asSubDataPropertyOfAxioms())
 		normalize(s);
-	Tracer.stop("ontology normalization", "loading");
+	RuntimesLogger.stop("ontology normalization", "loading");
     }
 
     private void normalize(OWLReflexiveObjectPropertyAxiom alpha) {

@@ -18,25 +18,21 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import other.Utils;
+import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Config;
-import pt.unl.fct.di.centria.nohr.model.ModelException;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.TermModelAdapter;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import utils.Tracer;
+import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 import com.declarativa.interprolog.AbstractPrologEngine;
 import com.declarativa.interprolog.SolutionIterator;
 import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
-import com.xsb.interprolog.NativeEngine;
 
 /**
  * The Class QueryEngine.
@@ -76,8 +72,6 @@ public class XSBDatabase implements Collection<Rule> {
 	 * Env variable which should be responsible for directory where XSB was
 	 * installed
 	 */
-	printLog("Starting query engine" + Config.NL);
-	printLog(Config.TEMP_DIR + Config.NL);
 
 	// if (xsbBin != null)
 	// xsbBin += "/xsb";
@@ -115,7 +109,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#addAll(java.util.Collection)
      */
     @Override
@@ -128,35 +122,23 @@ public class XSBDatabase implements Collection<Rule> {
 
     private void addAnswer(TermModel valuesList,
 	    Map<List<Term>, TruthValue> answers) {
-	try {
-	    final TermModel[] termsList = valuesList.flatList();
-	    final List<Term> vals = new ArrayList<Term>(termsList.length);
-	    for (int i = 1; i < termsList.length; i++)
-		vals.add(TermModelAdapter.getTerm(termsList[i]));
-	    final TruthValue truth = TermModelAdapter
-		    .getTruthValue(termsList[0]);
-	    answers.put(vals, truth);
-	} catch (final ModelException e) {
-	    e.printStackTrace();
-	    System.exit(1);
-	}
+	final TermModel[] termsList = valuesList.flatList();
+	final List<Term> vals = new ArrayList<Term>(termsList.length);
+	for (int i = 1; i < termsList.length; i++)
+	    vals.add(TermModelAdapter.getTerm(termsList[i]));
+	final TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
+	answers.put(vals, truth);
+
     }
 
     private Answer answer(Query query, Map<Variable, Integer> varsIdx,
 	    TermModel valuesList) {
-	try {
-	    final TermModel[] termsList = valuesList.flatList();
-	    final TruthValue truth = TermModelAdapter
-		    .getTruthValue(termsList[0]);
-	    final List<Term> vals = new ArrayList<Term>(termsList.length);
-	    for (int i = 1; i <= varsIdx.size(); i++)
-		vals.add(TermModelAdapter.getTerm(termsList[i]));
-	    return ans(query, truth, vals);
-	} catch (final ModelException e) {
-	    e.printStackTrace();
-	    System.exit(1);
-	    return null;
-	}
+	final TermModel[] termsList = valuesList.flatList();
+	final TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
+	final List<Term> vals = new ArrayList<Term>(termsList.length);
+	for (int i = 1; i <= varsIdx.size(); i++)
+	    vals.add(TermModelAdapter.getTerm(termsList[i]));
+	return ans(query, truth, vals);
     }
 
     public void cancelLastIterator() {
@@ -179,20 +161,13 @@ public class XSBDatabase implements Collection<Rule> {
 	// engine.deterministicGoal("retractall(call(X))");
     }
 
-    private void clearSolutionIterator() {
-	if (lastSolutionsIterator != null) {
-	    lastSolutionsIterator.cancel();
-	    lastSolutionsIterator = null;
-	}
-    }
-
     public boolean command(String command) {
 	return engine.deterministicGoal(command);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#contains(java.lang.Object)
      */
     @Override
@@ -207,7 +182,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
     @Override
@@ -246,7 +221,7 @@ public class XSBDatabase implements Collection<Rule> {
 	int c = 0;
 	while (!rulesBuffer.isEmpty()) {
 	    if (c == 0)
-		Tracer.start("xsb assert");
+		RuntimesLogger.start("xsb assert");
 	    goal.append(sep);
 	    goal.append("assert((");
 	    goal.append(rulesBuffer.remove());
@@ -255,7 +230,7 @@ public class XSBDatabase implements Collection<Rule> {
 	    sep = ",";
 	    if (c == 10000 | rulesBuffer.isEmpty()) {
 		engine.deterministicGoal(goal.toString());
-		Tracer.stop("xsb assert", "loading");
+		RuntimesLogger.stop("xsb assert", "loading");
 		c = 0;
 		sep = "";
 		goal = new StringBuilder();
@@ -281,7 +256,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#isEmpty()
      */
     @Override
@@ -300,7 +275,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#iterator()
      */
     @Override
@@ -382,16 +357,6 @@ public class XSBDatabase implements Collection<Rule> {
 	    throw new IPException("file not loaded");
     }
 
-    /**
-     * Prints the log.
-     *
-     * @param message
-     *            the message
-     */
-    private void printLog(String message) {
-
-    }
-
     public Answer query(Query query) {
 	return query(query, null);
     }
@@ -441,7 +406,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#remove(java.lang.Object)
      */
     @Override
@@ -460,7 +425,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
     @Override
@@ -473,7 +438,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
     @Override
@@ -490,7 +455,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#size()
      */
     @Override
@@ -521,7 +486,6 @@ public class XSBDatabase implements Collection<Rule> {
 	engine = new XSBSubprocessEngine(xsbBin);
 
 	// _engine.addPrologOutputListener(this);
-	printLog("Engine started" + Config.NL);
 
 	for (final String command : prologCommands)
 	    engine.deterministicGoal(command);
@@ -538,7 +502,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Collection#toArray()
      */
     @Override
@@ -548,7 +512,7 @@ public class XSBDatabase implements Collection<Rule> {
 
     /*
      * (non-Javadoc)format
-     * 
+     *
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
     @Override

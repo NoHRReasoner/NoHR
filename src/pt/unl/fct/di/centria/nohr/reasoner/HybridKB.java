@@ -3,6 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,16 +28,15 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.AbstractOntologyTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.UnescapeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.EscapeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.RuleTranslator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.UnescapeVisitor;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
-import utils.Tracer;
+import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class HybridKB implements OWLOntologyChangeListener {
 
@@ -50,7 +50,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private final OWLOntologyManager ontologyManager;
 
-    private Set<String> ontologyTranslation;
+    private Set<Rule> ontologyTranslation;
 
     private OntologyTranslator ontologyTranslator;
 
@@ -76,7 +76,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 	hasChanges = true;
 	this.ontology = ontology;
 	this.ontologyManager = ontologyManager;
-	ontologyTranslation = new HashSet<String>();
+	ontologyTranslation = new HashSet<Rule>();
 	ontologyTranslator = AbstractOntologyTranslator
 		.createOntologyTranslator(ontologyManager, ontology);
 	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(
@@ -91,21 +91,23 @@ public class HybridKB implements OWLOntologyChangeListener {
     private File generateTranslationFile() throws IOException {
 	final File file = FileSystems.getDefault()
 		.getPath(TRANSLATION_FILE_NAME).toAbsolutePath().toFile();
-	final FileWriter writer = new FileWriter(file);
+	final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 	final Set<String> tabled = new HashSet<String>();
 	tabled.addAll(ontologyTranslator.getTabledPredicates());
 	tabled.addAll(ruleTranslator.getTabledPredicates());
-	for (final String predicate : tabled)
-	    writer.write(":- table " + predicate + ".\n");
-	for (String rule : ontologyTranslation) {
-	    if (!rule.endsWith("."))
-		rule += ".";
-	    writer.write(rule + "\n");
+	for (final String predicate : tabled) {
+	    writer.write(":- table " + predicate + ".");
+	    writer.newLine();
+	}
+	for (final Rule rule : ontologyTranslation) {
+	    writer.write(rule + ".");
+	    writer.newLine();
 	}
 	for (String rule : rulesTranslation) {
 	    if (!rule.endsWith("."))
 		rule += ".";
-	    writer.write(rule + "\n");
+	    writer.write(rule);
+	    writer.newLine();
 	}
 	writer.close();
 	return file;
@@ -133,33 +135,41 @@ public class HybridKB implements OWLOntologyChangeListener {
     }
 
     private void preprocess() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, ParserException,
-    UnsupportedOWLProfile, IOException {
+	    OWLOntologyStorageException, ParserException,
+	    UnsupportedOWLProfile, IOException {
 	if (hasChanges) {
-	    utils.Tracer.start("ontology processing");
-	    ontologyTranslation = new HashSet<String>();
-	    ontologyTranslator.translate(ontologyTranslation);
-	    utils.Tracer.stop("ontology processing", "loading");
+	    pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
+		    .start("ontology processing");
+	    ontologyTranslation = new HashSet<Rule>();
+	    ontologyTranslation = ontologyTranslator.getTranslation();
+	    pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop(
+		    "ontology processing", "loading");
 	}
 	if (Rules.hasChanges
 		|| ontologyTranslator.hasDisjunctions() != hasDisjunctions) {
-	    utils.Tracer.start("rules parsing");
+	    pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
+		    .start("rules parsing");
 	    rulesTranslation = new HashSet<String>();
 	    ruleTranslator.reset();
 	    for (final String rule : Rules.getRules())
 		rulesTranslation.addAll(ruleTranslator.proceedRule(rule,
 			ontologyTranslator.hasDisjunctions(),
 			ontologyTranslator.getNegatedPredicates()));
-	    utils.Tracer.stop("rules parsing", "loading");
+	    pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop(
+		    "rules parsing", "loading");
 	    Rules.hasChanges = false;
 	}
-	utils.Tracer.start("file writing");
+	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
+		.start("file writing");
 	final File xsbFile = generateTranslationFile();
-	utils.Tracer.stop("file writing", "loading");
-	utils.Tracer.start("xsb loading");
+	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop(
+		"file writing", "loading");
+	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
+		.start("xsb loading");
 	xsbDatabase.clear();
 	xsbDatabase.load(xsbFile);
-	utils.Tracer.stop("xsb loading", "loading");
+	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop("xsb loading",
+		"loading");
 	hasChanges = false;
 	hasDisjunctions = ontologyTranslator.hasDisjunctions();
     }
@@ -171,10 +181,10 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    preprocess();
 	final Visitor escapeVisitor = new EscapeVisitor();
 	final Visitor unescapeVisitor = new UnescapeVisitor();
-	Tracer.start("query");
+	RuntimesLogger.start("query");
 	final Collection<Answer> answers = queryProcessor.queryAll(
 		query.acept(escapeVisitor), hasDisjunctions);
-	Tracer.stop("query", "queries");
+	RuntimesLogger.stop("query", "queries");
 	final Collection<Answer> result = new LinkedList<Answer>();
 	for (final Answer ans : answers)
 	    result.add(ans.acept(unescapeVisitor));

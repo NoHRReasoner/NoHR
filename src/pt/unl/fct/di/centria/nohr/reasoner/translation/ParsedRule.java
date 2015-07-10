@@ -1,12 +1,17 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
-import other.Config;
-import other.Utils;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 
 /**
  * The Class ParsedRule.
  */
 public class ParsedRule {
+
+    /** The negation which should appear in the rules at the end. */
+    public static String negation = "tnot";
+
+    /** The search negation what should be replaced. */
+    public static String searchNegation = "not";
 
     /** The is under tnot. */
     private boolean isUnderTnot = false;
@@ -34,10 +39,6 @@ public class ParsedRule {
 	parse();
     }
 
-    public String getHashedLabel(String label) {
-	return Utils.getHash(label);
-    }
-
     /**
      * Gets the hashed rule for query.
      *
@@ -56,7 +57,7 @@ public class ParsedRule {
      * @return the neg plain rule
      */
     public String getNegPlainRule() {
-	return Config.negation + " " + getRule();
+	return ParsedRule.negation + " " + getRule();
     }
 
     /**
@@ -65,7 +66,7 @@ public class ParsedRule {
      * @return the negated rule
      */
     public String getNegRule() {
-	return Config.negation + " 'n" + predicate + "'" + variables;
+	return ParsedRule.negation + " 'n" + predicate + "'" + variables;
     }
 
     /**
@@ -74,7 +75,7 @@ public class ParsedRule {
      * @return the neg sub rule
      */
     public String getNegSubRule() {
-	return Config.negation + " " + getSubRule();
+	return ParsedRule.negation + " " + getSubRule();
     }
 
     /**
@@ -160,10 +161,11 @@ public class ParsedRule {
      */
     private void parse() {
 	rule = rule.trim();
-	if (rule.startsWith(Config.searchNegation))
-	    rule = rule.replaceFirst(Config.searchNegation, Config.negation);
-	if (rule.startsWith(Config.negation)) {
-	    rule = rule.replaceFirst(Config.negation + " ", "").trim();
+	if (rule.startsWith(ParsedRule.searchNegation))
+	    rule = rule.replaceFirst(ParsedRule.searchNegation,
+		    ParsedRule.negation);
+	if (rule.startsWith(ParsedRule.negation)) {
+	    rule = rule.replaceFirst(ParsedRule.negation + " ", "").trim();
 	    isUnderTnot = true;
 	}
 	len = 0;
@@ -193,7 +195,8 @@ public class ParsedRule {
 		argument = argument.trim();
 		if (Character.isLowerCase(argument.charAt(0)))
 		    // variables+="c"+Utils.getHash(argument)+", ";
-		    variables += "c" + getHashedLabel(argument) + ", ";
+		    variables += "c" + OntologyLabeler.escapeAtom(argument)
+		    + ", ";
 		else
 		    variables += argument + ", ";
 	    }
@@ -202,6 +205,6 @@ public class ParsedRule {
 	    len = _.length;
 	}
 	// predicate = Utils.getHash(Utils.replaceQuotes(predicate));
-	predicate = getHashedLabel(Utils.replaceQuotes(predicate));
+	predicate = OntologyLabeler.escapeAtom(predicate);
     }
 }

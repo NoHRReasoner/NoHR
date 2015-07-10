@@ -4,12 +4,12 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.domPred;
-import static pt.unl.fct.di.centria.nohr.model.Model.negPred;
-import static pt.unl.fct.di.centria.nohr.model.Model.pred;
-import static pt.unl.fct.di.centria.nohr.model.Model.ranPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.domPred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.ranPred;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -27,42 +26,29 @@ import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 
 /**
  * @author nunocosta
  *
  */
 public abstract class AbstractQLAxiomsTranslator extends
-	AbstractAxiomsTranslator {
+AbstractAxiomsTranslator {
 
     private int opeNewCount = 0;
 
@@ -70,7 +56,7 @@ public abstract class AbstractQLAxiomsTranslator extends
 	super(ontology);
     }
 
-    public Atom negTr(OWLClassExpression c, Variable x) {
+    protected Atom negTr(OWLClassExpression c, Variable x) {
 	if (c instanceof OWLClass)
 	    return atom(negPred(sym((OWLClass) c), 1), x);
 	else if (c instanceof OWLObjectSomeValuesFrom)
@@ -81,7 +67,7 @@ public abstract class AbstractQLAxiomsTranslator extends
 		    "c must be an atomic or existential class");
     }
 
-    public Atom negTr(OWLPropertyExpression r, Variable x, Variable y) {
+    protected Atom negTr(OWLPropertyExpression r, Variable x, Variable y) {
 	if (r instanceof OWLObjectProperty)
 	    return atom(negPred(sym(r), 2), x, y);
 	else if (r instanceof OWLDataProperty)

@@ -42,7 +42,6 @@ import javax.swing.text.DefaultCaret;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Config;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
@@ -208,7 +207,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		progressFrame.setUndecorated(true);
 		progressFrame.setContentPane(progressPanel);
 		progressFrame
-			.setLocationRelativeTo(HybridQueryViewComponent.this);
+		.setLocationRelativeTo(HybridQueryViewComponent.this);
 		// progressFrame.setVisible(true);
 	    }
 	});
@@ -444,17 +443,6 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 
     }
 
-    private String getFilter() {
-	filter = "yes|no|no answers found";
-	isNeedToQuery = false;
-	for (final JCheckBox chb : checkBoxs)
-	    if (chb.isSelected()) {
-		filter += "|" + chb.getText();
-		isNeedToQuery = true;
-	    }
-	return filter;
-    }
-
     // @Override
     // public void handleChange(OWLModelManagerChangeEvent event) {
     // if (event
@@ -580,7 +568,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	    nohr = new HybridKB(getOWLModelManager().getOWLOntologyManager(),
 		    getOWLModelManager().getActiveOntology());
 	} catch (final Exception e) {
-	    textArea.append(e.getMessage() + Config.NL);
+	    textArea.append(e.getMessage() + System.lineSeparator());
 	}
     }
 

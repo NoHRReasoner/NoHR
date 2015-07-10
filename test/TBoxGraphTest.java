@@ -60,7 +60,7 @@ public class TBoxGraphTest {
 	final Set<OWLClassExpression> expectedAncestors = set(a[1], a[2], a[3]);
 	// Test
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	final Set<OWLClassExpression> ancestors = graph.getAncestors(a[0]);
 	Assert.assertEquals(expectedAncestors, ancestors);
     }
@@ -85,7 +85,7 @@ public class TBoxGraphTest {
 	final Set<OWLClassExpression> expectedAncestors = set(a);
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	Set<OWLClassExpression> ancestors;
 	// Tests
 	for (int i = 0; i < 4; i++) {
@@ -115,7 +115,7 @@ public class TBoxGraphTest {
 	kb.addSubsumption(kb.getExistential(p[2]), kb.getExistential(p[3]));
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	// Test1
 	Set<OWLClassExpression> predecessors = graph.getPredecessors(a[2]);
 	Assert.assertEquals(set(a[0], a[1]), predecessors);
@@ -165,7 +165,7 @@ public class TBoxGraphTest {
 	final Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	final Set<OWLObjectProperty> irreflexiveRoles = graph
 		.getIrreflexiveRoles();
 	// Test
@@ -190,7 +190,7 @@ public class TBoxGraphTest {
 	final Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	final Set<OWLObjectProperty> irreflexiveRoles = graph
 		.getIrreflexiveRoles();
 	// Test
@@ -216,7 +216,7 @@ public class TBoxGraphTest {
 		p[2], p[3]);
 	// Test
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	final Set<OWLPropertyExpression> ancestors = graph.getAncestors(p[0]);
 	Assert.assertEquals(expectedAncestors, ancestors);
     }
@@ -241,7 +241,7 @@ public class TBoxGraphTest {
 	final Set<OWLObjectPropertyExpression> expectedAncestors = set(p);
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	Set<OWLPropertyExpression> ancestors;
 	// Tests
 	for (int i = 0; i < 4; i++) {
@@ -271,7 +271,7 @@ public class TBoxGraphTest {
 		kb.getInverse((OWLObjectProperty) p[8]));
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	// Test1
 	Set<OWLPropertyExpression> predecessors = graph.getPredecessors(p[2]);
 	Assert.assertEquals(set(p[0], p[1]), predecessors);
@@ -336,7 +336,7 @@ public class TBoxGraphTest {
 		(OWLEntity) a[0], (OWLEntity) p[0]);
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	final Set<OWLEntity> unsatisfiableEntities = graph
 		.getUnsatisfiableEntities();
 	// Test
@@ -371,7 +371,7 @@ public class TBoxGraphTest {
 		(OWLEntity) p[0], (OWLEntity) p[1], (OWLEntity) p[2]);
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getNormalizedOntology(), kb.getDataFactory());
+		kb.getNormalizedOntology());
 	final Set<OWLEntity> unsatisfiableEntities = graph
 		.getUnsatisfiableEntities();
 	// Test

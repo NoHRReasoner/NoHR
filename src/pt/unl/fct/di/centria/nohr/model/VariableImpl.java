@@ -4,7 +4,7 @@ import java.util.List;
 
 public class VariableImpl implements Variable {
 
-    private String symbol;
+    private final String symbol;
 
     VariableImpl(String symbol) {
 	this.symbol = symbol;
@@ -32,7 +32,7 @@ public class VariableImpl implements Variable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -42,7 +42,7 @@ public class VariableImpl implements Variable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -53,7 +53,7 @@ public class VariableImpl implements Variable {
 	    return false;
 	if (!(obj instanceof VariableImpl))
 	    return false;
-	VariableImpl other = (VariableImpl) obj;
+	final VariableImpl other = (VariableImpl) obj;
 	if (symbol == null) {
 	    if (other.symbol != null)
 		return false;
@@ -69,7 +69,7 @@ public class VariableImpl implements Variable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override

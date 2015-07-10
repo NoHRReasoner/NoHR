@@ -4,17 +4,17 @@ import java.util.Set;
 
 public interface Substitution {
 
-	@Override
-	public boolean equals(Object obj);
+    @Override
+    public boolean equals(Object obj);
 
-	public Term getValue(Variable variable);
+    public Term getValue(Variable variable);
 
-	public Set<Variable> getVariables();
+    public Set<Variable> getVariables();
 
-	@Override
-	public int hashCode();
+    @Override
+    public int hashCode();
 
-	@Override
-	public String toString();
+    @Override
+    public String toString();
 
 }

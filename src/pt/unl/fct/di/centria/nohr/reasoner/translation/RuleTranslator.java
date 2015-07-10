@@ -1,18 +1,64 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
-import other.Config;
-import other.Utils;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The Class RuleTranslator.
  */
 public class RuleTranslator {
 
-    /** The current rule. */
-    private String currentRule;
+    /** The equivalent symbols */
+    public static String eq = ":-";
+
+    /*
+     * private static Pattern p = Pattern.compile(
+     * "(?x)          # enable comments                                      \n"
+     * +
+     * "((\"[^\"]*\")|# quoted data, and store in group #1                   \n"
+     * +
+     * "(\"[^\"]*\")) # quoted data, and store in group #1                   \n"
+     * +
+     * "|             # OR                                                   \n"
+     * +
+     * "([^,]+)       # one or more chars other than ',', and store it in #2 \n"
+     * +
+     * "|             # OR                                                   \n"
+     * +
+     * "\\s*,\\s*     # a ',' optionally surrounded by space-chars           \n"
+     * );
+     */
+    /** The p. */
+    public static Pattern p = Pattern
+	    .compile("(\\w+\\s)?(\\\"[^\\\"]+\\\"|'[^']+'|\\w+)(\\(\\w+\\d?\\s?(,\\s?\\w+\\d?)*\\))?");
+
+    /**
+     * Gets the eq for rule.
+     *
+     * @return the eq for rule
+     */
+    public static String getEqForRule() {
+	return " " + RuleTranslator.eq + " ";
+    }
+
+    /**
+     * Gets the sub rules from rule.
+     *
+     * @param rule
+     *            the rule
+     * @return the sub rules from rule
+     */
+    public static ArrayList<String> getSubRulesFromRule(String rule) {
+
+	final Matcher m = p.matcher(rule);
+	final ArrayList<String> rules = new ArrayList<String>();
+	while (m.find())
+	    rules.add(m.group().trim());
+	return rules;
+    }
 
     /** The parsed rule. */
     private ParsedRule parsedRule;
@@ -38,7 +84,7 @@ public class RuleTranslator {
      *            the parsed rule
      */
     private void addPlainRuleForTabledPredicate(ParsedRule parsedRule) {
-	writeLineToAppendedRules(parsedRule.getRule() + " " + Config.eq
+	writeLineToAppendedRules(parsedRule.getRule() + " " + RuleTranslator.eq
 		+ " fail.");
     }
 
@@ -49,8 +95,8 @@ public class RuleTranslator {
      *            the parsed rule
      */
     private void addSubRuleForTabledPredicate(ParsedRule parsedRule) {
-	writeLineToAppendedRules(parsedRule.getSubRule() + " " + Config.eq
-		+ " fail.");
+	writeLineToAppendedRules(parsedRule.getSubRule() + " "
+		+ RuleTranslator.eq + " fail.");
     }
 
     public Set<String> getTabledPredicates() {
@@ -68,12 +114,12 @@ public class RuleTranslator {
     public Set<String> proceedRule(String rule, boolean hasDisjunctions,
 	    Set<String> negatedPredicates) {
 	rules = new HashSet<String>();
-	if (rule.startsWith(Config.eq))
+	if (rule.startsWith(RuleTranslator.eq))
 	    return rules;
 	if (rule.endsWith("."))
 	    rule = rule.substring(0, rule.length() - 1);
 
-	final String[] arrayRule = rule.split(Config.eq);
+	final String[] arrayRule = rule.split(RuleTranslator.eq);
 
 	final ParsedRule leftSideRule = new ParsedRule(arrayRule[0]);
 	String rightSideRule = null;
@@ -116,13 +162,13 @@ public class RuleTranslator {
      */
     private void writeArule(ParsedRule leftSide, String rightSide,
 	    boolean hasDisjunctions) {
-	currentRule = "%writeArule";
 	if (rightSide == null)
 	    writeLineToAppendedRules(leftSide.getRule() + ".");
 	else {
-	    String result = leftSide.getRule() + Utils.getEqForRule();
+	    String result = leftSide.getRule() + RuleTranslator.getEqForRule();
 
-	    for (final String subRule : Utils.getSubRulesFromRule(rightSide)) {
+	    for (final String subRule : RuleTranslator
+		    .getSubRulesFromRule(rightSide)) {
 		parsedRule = new ParsedRule(subRule);
 		if (parsedRule.isUnderTnot()) {
 		    tablePredicateFromRule(parsedRule, hasDisjunctions);
@@ -146,16 +192,17 @@ public class RuleTranslator {
      */
     private void writeBrule(ParsedRule leftSide, String rightSide,
 	    boolean hasDisjunctions, Set<String> negatedPredicates) {
-	currentRule = "%writeBrule";
 	if (rightSide == null) {
 	    String rule = leftSide.getSubRule();
 	    if (negatedPredicates.contains(leftSide.getTabledNegRule()))
-		rule += Utils.getEqForRule() + leftSide.getNegRule();
+		rule += RuleTranslator.getEqForRule() + leftSide.getNegRule();
 	    writeLineToAppendedRules(rule + ".");
 	} else {
-	    String result = leftSide.getSubRule() + Utils.getEqForRule();
+	    String result = leftSide.getSubRule()
+		    + RuleTranslator.getEqForRule();
 
-	    for (final String subRule : Utils.getSubRulesFromRule(rightSide)) {
+	    for (final String subRule : RuleTranslator
+		    .getSubRulesFromRule(rightSide)) {
 		parsedRule = new ParsedRule(subRule);
 		if (parsedRule.isUnderTnot()) {
 		    tablePredicateFromRule(parsedRule, hasDisjunctions);
@@ -185,12 +232,12 @@ public class RuleTranslator {
      */
     private void writePlainRule(ParsedRule leftSide, String rightSide,
 	    boolean hasDisjunctions) {
-	currentRule = "%writePlainRule";
 	if (rightSide == null)
 	    writeLineToAppendedRules(leftSide.getRule() + ".");
 	else {
-	    String result = leftSide.getRule() + Utils.getEqForRule();
-	    for (final String subRule : Utils.getSubRulesFromRule(rightSide)) {
+	    String result = leftSide.getRule() + RuleTranslator.getEqForRule();
+	    for (final String subRule : RuleTranslator
+		    .getSubRulesFromRule(rightSide)) {
 		parsedRule = new ParsedRule(subRule);
 		if (parsedRule.isUnderTnot()) {
 		    tablePredicateFromRule(parsedRule, hasDisjunctions);

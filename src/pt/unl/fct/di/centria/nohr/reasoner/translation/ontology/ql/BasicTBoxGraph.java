@@ -10,7 +10,6 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -19,7 +18,6 @@ import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 public class BasicTBoxGraph implements TBoxGraph {
@@ -27,8 +25,6 @@ public class BasicTBoxGraph implements TBoxGraph {
     private final GraphClosure<OWLClassExpression> conceptsClosure;
 
     private final Map<OWLClassExpression, Set<OWLClassExpression>> conceptsPredecessors;
-
-    private final OWLDataFactory dataFactory;
 
     private Set<OWLObjectProperty> irreflexiveRoles;
 
@@ -40,10 +36,8 @@ public class BasicTBoxGraph implements TBoxGraph {
 
     private final Set<OWLEntity> unsatisfiableEntities;
 
-    public BasicTBoxGraph(QLNormalizedOntology ontology,
-	    OWLDataFactory dataFactory) {
+    public BasicTBoxGraph(QLNormalizedOntology ontology) {
 	this.ontology = ontology;
-	this.dataFactory = dataFactory;
 	conceptsPredecessors = new HashMap<OWLClassExpression, Set<OWLClassExpression>>();
 	rolesPredecessor = new HashMap<OWLPropertyExpression, Set<OWLPropertyExpression>>();
 	for (final OWLSubClassOfAxiom axiom : ontology.getConceptSubsumptions()) {
@@ -109,6 +103,9 @@ public class BasicTBoxGraph implements TBoxGraph {
 		final OWLObjectPropertyExpression prop = exist.getProperty();
 		final OWLObjectPropertyExpression invProp = prop
 			.getInverseProperty().getSimplified();
+		final OWLDataFactory dataFactory = ontology
+			.getOriginalOntology().getOWLOntologyManager()
+			.getOWLDataFactory();
 		final OWLObjectSomeValuesFrom invExist = dataFactory
 			.getOWLObjectSomeValuesFrom(invProp,
 				dataFactory.getOWLThing());

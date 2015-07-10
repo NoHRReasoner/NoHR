@@ -3,12 +3,12 @@
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.query;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.query;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -84,7 +84,7 @@ public class Parser {
     }
 
     public static Query parseQuery(String string) throws IOException,
-	    PrologParserException {
+    PrologParserException {
 	final PrologStructure rootStructure = (PrologStructure) parser
 		.nextSentence(string);
 	final List<Literal> literals = new LinkedList<Literal>();
@@ -107,7 +107,7 @@ public class Parser {
     }
 
     public static Rule parseRule(String rule) throws IOException,
-	    PrologParserException {
+    PrologParserException {
 	return parseRule((PrologStructure) parser.nextSentence(rule));
     }
 

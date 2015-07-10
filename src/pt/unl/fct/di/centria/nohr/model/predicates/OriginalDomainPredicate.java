@@ -9,7 +9,7 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  */
 public class OriginalDomainPredicate extends MetaPredicateImpl {
 
-    public OriginalDomainPredicate(String symbol) {
+    OriginalDomainPredicate(String symbol) {
 	super(symbol, 1, PredicateType.ORIGINAL_DOMAIN, 'e');
     }
 

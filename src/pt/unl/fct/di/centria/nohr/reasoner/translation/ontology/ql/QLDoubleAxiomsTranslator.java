@@ -4,16 +4,15 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.doubDomPred;
-import static pt.unl.fct.di.centria.nohr.model.Model.doubPred;
-import static pt.unl.fct.di.centria.nohr.model.Model.doubRanPred;
 import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
 import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.doubDomPred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.doubPred;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.doubRanPred;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -23,9 +22,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
@@ -104,7 +101,7 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
     public Rule translateDomain(OWLObjectProperty p) {
 	final String pSym = sym(p);
 	return rule(atom(doubDomPred(pSym), X),
-		atom(doubPred(pSym, 2), X, ANNON));
+		atom(doubPred(pSym, 2), X, var()));
     }
 
     @Override
@@ -123,7 +120,7 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
     public Rule translateRange(OWLObjectProperty p) {
 	final String pSym = sym(p);
 	return rule(atom(doubRanPred(pSym), X),
-		atom(doubPred(pSym, 2), ANNON, X));
+		atom(doubPred(pSym, 2), var(), X));
     }
 
     @Override

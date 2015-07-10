@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import other.Utils;
+import pt.unl.fct.di.centria.nohr.Utils;
 
 public class AnswerImpl implements Answer {
 
-    private Query query;
+    private final Query query;
 
-    private TruthValue truthValue;
+    private final TruthValue truthValue;
 
-    private List<Term> values;
+    private final List<Term> values;
 
-    private Map<Variable, Integer> variablesIndex;
+    private final Map<Variable, Integer> variablesIndex;
 
     AnswerImpl(Query query, TruthValue truthValue, List<Term> values,
 	    Map<Variable, Integer> variablesIndex) {
@@ -29,25 +29,25 @@ public class AnswerImpl implements Answer {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * pt.unl.fct.di.centria.nohr.model.Answer#acept(pt.unl.fct.di.centria.nohr
      * .model.Visitor)
      */
     @Override
     public Answer acept(Visitor visitor) {
-	Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
-	List<Term> vals = new ArrayList<Term>();
-	for (Entry<Variable, Integer> entry : variablesIndex.entrySet())
+	final Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
+	final List<Term> vals = new ArrayList<Term>();
+	for (final Entry<Variable, Integer> entry : variablesIndex.entrySet())
 	    varsIdx.put(entry.getKey().acept(visitor), entry.getValue());
-	for (Term val : values)
+	for (final Term val : values)
 	    vals.add(val.acept(visitor));
 	return new AnswerImpl(query, truthValue, vals, varsIdx);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -58,7 +58,7 @@ public class AnswerImpl implements Answer {
 	    return false;
 	if (!(obj instanceof AnswerImpl))
 	    return false;
-	AnswerImpl other = (AnswerImpl) obj;
+	final AnswerImpl other = (AnswerImpl) obj;
 	if (truthValue != other.truthValue)
 	    return false;
 	if (values == null) {
@@ -91,7 +91,7 @@ public class AnswerImpl implements Answer {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see pt.unl.fct.di.centria.nohr.model.Answer#getValues()
      */
     @Override
@@ -101,7 +101,7 @@ public class AnswerImpl implements Answer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -116,11 +116,11 @@ public class AnswerImpl implements Answer {
 
     @Override
     public String toString() {
-	Map<Variable, Term> substitution = new HashMap<Variable, Term>();
-	for (Entry<Variable, Integer> entry : variablesIndex.entrySet())
+	final Map<Variable, Term> substitution = new HashMap<Variable, Term>();
+	for (final Entry<Variable, Integer> entry : variablesIndex.entrySet())
 	    substitution.put(entry.getKey(), values.get(entry.getValue()));
-	List<Literal> literals = new LinkedList<Literal>();
-	for (Literal literal : query.getLiterals())
+	final List<Literal> literals = new LinkedList<Literal>();
+	for (final Literal literal : query.getLiterals())
 	    literals.add(literal.apply(substitution));
 	return Utils.concat(",", literals);
     }

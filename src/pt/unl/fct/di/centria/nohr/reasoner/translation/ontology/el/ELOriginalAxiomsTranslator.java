@@ -16,7 +16,6 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
@@ -33,20 +32,20 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
 	super(ontology);
     }
 
-    private Set<Literal> tr(List<OWLObjectPropertyExpression> chain,
-	    Variable x, Variable y) {
+    Set<Literal> tr(List<OWLObjectPropertyExpression> chain, Variable x,
+	    Variable y) {
 	return tr(chain, x, y);
     }
 
-    private Atom tr(OWLClass c, Variable x) {
+    Atom tr(OWLClass c, Variable x) {
 	return tr(c, x, false);
     }
 
-    private List<Literal> tr(OWLClassExpression ce, Variable x) {
+    List<Literal> tr(OWLClassExpression ce, Variable x) {
 	return tr(ce, x, false);
     }
 
-    private Atom tr(OWLProperty p, Variable x, Variable y) {
+    Atom tr(OWLProperty p, Variable x, Variable y) {
 	return tr(p, x, y, false);
     }
 

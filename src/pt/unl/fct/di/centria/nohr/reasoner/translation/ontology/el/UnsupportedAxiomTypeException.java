@@ -11,11 +11,13 @@ import org.semanticweb.owlapi.model.AxiomType;
  */
 public class UnsupportedAxiomTypeException extends Exception {
 
-    private final AxiomType type;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1487281045709804735L;
 
     public UnsupportedAxiomTypeException(AxiomType type) {
 	super();
-	this.type = type;
     }
 
 }

@@ -3,6 +3,10 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,14 +19,13 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import static pt.unl.fct.di.centria.nohr.model.Model.*;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 
 /**
  * @author nunocosta
@@ -37,19 +40,20 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	super(ontology);
     }
 
-    public Atom negTr(Literal b) {
+    Atom negTr(Literal b) {
 	final Predicate pred0 = b.getPredicate();
-	final Predicate pred = negPred(pred0.getSymbol(), pred0.getArity());
+	final Predicate pred = Predicates.negPred(pred0.getSymbol(),
+		pred0.getArity());
 	return atom(pred, b.getAtom().getArguments());
     }
 
-    public Atom negTr(OWLClass c, Variable x) {
-	final Predicate pred = negPred(sym(c), 1);
+    Atom negTr(OWLClass c, Variable x) {
+	final Predicate pred = Predicates.negPred(sym(c), 1);
 	return atom(pred, x);
     }
 
-    public Atom negTr(OWLProperty p, Variable x, Variable y) {
-	final Predicate pred = negPred(sym(p), 2);
+    Atom negTr(OWLProperty p, Variable x, Variable y) {
+	final Predicate pred = Predicates.negPred(sym(p), 2);
 	return atom(pred, x, y);
     }
 
@@ -58,11 +62,11 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return tr(chain, x, y);
     }
 
-    private Atom tr(OWLClass c, Variable x) {
+    Atom tr(OWLClass c, Variable x) {
 	return tr(c, x, true);
     }
 
-    public List<Literal> tr(OWLClassExpression ce, Variable x) {
+    List<Literal> tr(OWLClassExpression ce, Variable x) {
 	return tr(ce, x, true);
     }
 

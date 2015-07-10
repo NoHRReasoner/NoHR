@@ -30,6 +30,7 @@ public interface Atom extends Literal {
 
     public int getArity();
 
+    @Override
     public Predicate getPredicate();
 
     /**

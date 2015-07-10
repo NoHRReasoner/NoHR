@@ -22,13 +22,13 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
-import other.Config;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 
@@ -357,7 +357,7 @@ public abstract class QueryTest extends Object {
 
     @Before
     public void setUp() throws Exception {
-	Config.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+	AbstractOntologyTranslator.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
 	kb = new KB();
     }
 

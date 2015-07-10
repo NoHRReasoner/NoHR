@@ -36,7 +36,7 @@ public class ConstantImpl implements Constant {
     }
 
     @Override
-    public TruthValue asTruthValue() throws ModelException {
+    public TruthValue asTruthValue() {
 	if (symbol.equals("true"))
 	    return TruthValue.TRUE;
 	else if (symbol.equals("undefined"))
@@ -44,7 +44,7 @@ public class ConstantImpl implements Constant {
 	else if (symbol.equals("false"))
 	    return TruthValue.FALSE;
 	else
-	    throw new ModelException();
+	    throw new ClassCastException();
     }
 
     @Override

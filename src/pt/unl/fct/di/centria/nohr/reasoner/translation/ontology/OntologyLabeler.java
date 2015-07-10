@@ -13,14 +13,11 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import other.Config;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyAssertionAxiomImpl;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectSomeValuesFromImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
 
 //TODO remove
@@ -29,6 +26,12 @@ import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
  * The Class OntologyLabel. Parsing the properties to get label
  */
 public class OntologyLabeler {
+    /** The alt delimeter. */
+    public static String altDelimeter = ":";
+
+    /** The delimeter. */
+    public static String delimeter = "#";
+
     /** The _ontology. */
     private static OWLOntology ontology;
 
@@ -82,24 +85,24 @@ public class OntologyLabeler {
 		else
 		    return getLabel(
 			    ((OWLSubPropertyChainAxiomImpl) entity)
-			    .getSuperProperty(),
+				    .getSuperProperty(),
 			    1);
 	} else if (entity instanceof OWLObjectPropertyAssertionAxiomImpl)
 	    switch (numInList) {
 	    case 1:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-			.getProperty(),
+				.getProperty(),
 			1);
 	    case 2:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-			.getSubject(),
+				.getSubject(),
 			1);
 	    case 3:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-			.getObject(),
+				.getObject(),
 			1);
 	    }
 	return getLabel(entity.toString(), numInList);
@@ -252,8 +255,9 @@ public class OntologyLabeler {
 	    rule = rule.replace(ontologyID, "");
 	try {
 	    String result;
-	    if (rule.contains(Config.delimeter))
-		result = rule.split(Config.delimeter)[numInList].split(">")[0];
+	    if (rule.contains(OntologyLabeler.delimeter))
+		result = rule.split(OntologyLabeler.delimeter)[numInList]
+			.split(">")[0];
 	    else if (rule.contains("<http://")) {
 		// String[] split = rule.split("/");
 		// result = split[split.length-1];
@@ -263,9 +267,10 @@ public class OntologyLabeler {
 		result = result.replaceAll("\\.", "");
 		if (Character.isUpperCase(result.charAt(0)))
 		    result = result.substring(0, 1).toLowerCase()
-		    + result.substring(1);
-	    } else if (rule.contains(Config.altDelimeter))
-		result = rule.split(Config.altDelimeter)[numInList].split(">")[0];
+			    + result.substring(1);
+	    } else if (rule.contains(OntologyLabeler.altDelimeter))
+		result = rule.split(OntologyLabeler.altDelimeter)[numInList]
+			.split(">")[0];
 	    else if (rule.startsWith("<"))
 		result = rule.replaceFirst("<", "").replace(">", "");
 	    else {
@@ -284,59 +289,6 @@ public class OntologyLabeler {
 	    e.printStackTrace();
 	}
 	return getLabel(rule);
-    }
-
-    /**
-     * Gets the label equivalent classes.
-     *
-     * @param owlClassExpression
-     *            the owl class expression
-     * @param localIterator
-     *            the local iterator
-     * @param iterator
-     *            the iterator
-     * @return the label equivalent classes
-     */
-    public EquivalentClass getLabelEquivalentClasses(
-	    OWLClassExpression owlClassExpression, int localIterator,
-	    int iterator) {
-	final EquivalentClass equivalentClass = new EquivalentClass(iterator);
-	switch (owlClassExpression.getClassExpressionType()) {
-	case OWL_CLASS: {
-	    if (!(owlClassExpression.isOWLThing() || owlClassExpression
-		    .isOWLNothing()))
-		equivalentClass.addRule(getLabel(owlClassExpression, 1),
-			localIterator, iterator,
-			EquivalentClass.OntologyType.ONTOLOGY);
-	    break;
-	}
-	case OBJECT_INTERSECTION_OF: {
-	    final List<OWLClassExpression> operands = ((OWLObjectIntersectionOf) owlClassExpression)
-		    .getOperandsAsList();
-	    for (final OWLClassExpression operand : operands)
-		equivalentClass.updateClass(getLabelEquivalentClasses(operand,
-			localIterator, equivalentClass.getVariableIterator()));
-	    break;
-	}
-	case OBJECT_SOME_VALUES_FROM: {
-	    final OWLClassExpression classExpression = ((OWLObjectSomeValuesFromImpl) owlClassExpression)
-		    .getFiller();
-	    final OWLObjectPropertyExpression property = ((OWLObjectSomeValuesFromImpl) owlClassExpression)
-		    .getProperty();
-
-	    equivalentClass.addRule(getLabel(property, 1), localIterator,
-		    equivalentClass.incrementIterator(),
-		    EquivalentClass.OntologyType.RULE);
-	    equivalentClass.updateClass(getLabelEquivalentClasses(
-		    classExpression, ++localIterator,
-		    equivalentClass.getVariableIterator()));
-	    break;
-	}
-	default:
-	    break;
-
-	}
-	return equivalentClass;
     }
 
     /**
