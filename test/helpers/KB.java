@@ -25,6 +25,8 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
+import com.google.common.base.Optional;
+
 import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
@@ -170,7 +172,7 @@ public class KB {
     }
 
     private IRI getEntityIRI(String name) {
-	final IRI ontIRI = ont.getOntologyID().getOntologyIRI();
+	final Optional<IRI> ontIRI = ont.getOntologyID().getOntologyIRI();
 	return IRI.create(ontIRI + "#" + name);
     }
 

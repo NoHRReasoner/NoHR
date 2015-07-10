@@ -1,11 +1,17 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology;
 
 import java.text.ParseException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.print.attribute.HashAttributeSet;
+
+import org.semanticweb.owlapi.model.HasAnnotationPropertiesInSignature;
 import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -118,8 +124,8 @@ public class OntologyLabeler {
      * @return the label
      */
     public String getLabel(OWLClass owlClass, int numInList) {
-	return getLabel(owlClass.getAnnotations(ontology, ontologyLabel),
-		owlClass.toString(), numInList);
+	final Set<OWLAnnotation> classAnnotations = labelAnnotations(owlClass);
+	return getLabel(classAnnotations, owlClass.toString(), numInList);
     }
 
     /**
@@ -142,8 +148,9 @@ public class OntologyLabeler {
      * @return (hashed) label of the data property
      */
     public String getLabel(OWLDataProperty dataProperty, int numInList) {
-	return getLabel(dataProperty.getAnnotations(ontology, ontologyLabel),
-		dataProperty.toString(), numInList);
+	final Set<OWLAnnotation> dataPropertyAnnotations = labelAnnotations(dataProperty);
+	return getLabel(dataPropertyAnnotations, dataProperty.toString(),
+		numInList);
     }
 
     /**
@@ -156,8 +163,8 @@ public class OntologyLabeler {
      * @return the label
      */
     public String getLabel(OWLEntity entity, int numInList) {
-	return getLabel(entity.getAnnotations(ontology, ontologyLabel),
-		entity.toString(), numInList);
+	final Set<OWLAnnotation> entityAnnotatoions = labelAnnotations(entity);
+	return getLabel(entityAnnotatoions, entity.toString(), numInList);
     }
 
     /**
@@ -186,8 +193,8 @@ public class OntologyLabeler {
      * @return the label
      */
     public String getLabel(OWLObjectProperty objectProperty, int numInList) {
-	return getLabel(objectProperty.getAnnotations(ontology, ontologyLabel),
-		objectProperty.toString(), numInList);
+	final Set<OWLAnnotation> opAnnots = labelAnnotations(objectProperty);
+	return getLabel(opAnnots, objectProperty.toString(), numInList);
     }
 
     /**
@@ -307,6 +314,15 @@ public class OntologyLabeler {
 	    return "";
 	}
 
+    }
+
+    private Set<OWLAnnotation> labelAnnotations(OWLEntity subject) {
+	final Set<OWLAnnotation> result = new HashSet<OWLAnnotation>();
+	for (final OWLAnnotationAssertionAxiom annotationAssertion : ontology
+		.getAnnotationAssertionAxioms(subject.getIRI()))
+	    if (annotationAssertion.getProperty().equals(ontologyLabel))
+		result.add(annotationAssertion.getAnnotation());
+	return result;
     }
 
     /**

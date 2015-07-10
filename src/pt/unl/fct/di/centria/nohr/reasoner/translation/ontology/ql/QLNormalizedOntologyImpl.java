@@ -41,6 +41,8 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
+import com.google.common.base.Optional;
+
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
@@ -59,7 +61,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private final OWLOntology ontology;
 
-    private final IRI ontologyIRI;
+    private final Optional<IRI> ontologyIRI;
 
     private final Set<OWLNaryPropertyAxiom<?>> roleDisjunctions;
 
