@@ -16,8 +16,9 @@ public class UnsupportedAxiomTypeException extends Exception {
      */
     private static final long serialVersionUID = 1487281045709804735L;
 
-    public UnsupportedAxiomTypeException(AxiomType type) {
+    public UnsupportedAxiomTypeException(AxiomType<?> type) {
 	super();
+	// TODO
     }
 
 }

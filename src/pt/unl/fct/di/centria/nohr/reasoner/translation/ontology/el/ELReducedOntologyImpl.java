@@ -186,12 +186,12 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	}
     }
 
-    private static final AxiomType<?>[] UNSUPP_TYPES = new AxiomType[] {
-	    AxiomType.REFLEXIVE_OBJECT_PROPERTY,
-	    AxiomType.OBJECT_PROPERTY_RANGE, AxiomType.DATA_PROPERTY_DOMAIN,
-	AxiomType.DATA_PROPERTY_RANGE, AxiomType.SAME_INDIVIDUAL,
-	    AxiomType.DIFFERENT_INDIVIDUALS,
-	    AxiomType.FUNCTIONAL_DATA_PROPERTY, AxiomType.HAS_KEY };
+    // private static final AxiomType<?>[] UNSUPP_TYPES = new AxiomType[] {
+    // AxiomType.REFLEXIVE_OBJECT_PROPERTY,
+    // AxiomType.OBJECT_PROPERTY_RANGE, AxiomType.DATA_PROPERTY_DOMAIN,
+    // AxiomType.DATA_PROPERTY_RANGE, AxiomType.SAME_INDIVIDUAL,
+    // AxiomType.DIFFERENT_INDIVIDUALS,
+    // AxiomType.FUNCTIONAL_DATA_PROPERTY, AxiomType.HAS_KEY };
 
     private final Set<OWLSubPropertyChainOfAxiom> chainSubsumptions;
 
@@ -205,9 +205,9 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 
     public ELReducedOntologyImpl(OWLOntology ontology)
 	    throws OWLOntologyCreationException, UnsupportedAxiomTypeException {
-	for (final AxiomType<?> type : UNSUPP_TYPES)
-	    if (ontology.getAxiomCount(type) > 1)
-		throw new UnsupportedAxiomTypeException(type);
+	// for (final AxiomType<?> type : UNSUPP_TYPES)
+	// if (ontology.getAxiomCount(type) > 1)
+	// throw new UnsupportedAxiomTypeException(type);
 	this.ontology = ontology;
 	final Set<OWLClassAssertionAxiom> conceptAssertions = ontology
 		.getAxioms(AxiomType.CLASS_ASSERTION);

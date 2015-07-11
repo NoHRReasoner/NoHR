@@ -290,7 +290,7 @@ public class TBoxGraphTest {
 		predecessors);
     }
 
-    private <T> Set<T> set(T... elems) {
+    private <T> Set<T> set(@SuppressWarnings("unchecked") T... elems) {
 	final Set<T> result = new HashSet<T>();
 	for (final T e : elems)
 	    result.add(e);

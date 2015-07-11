@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -86,7 +85,7 @@ public class ELOntologyTranslator extends AbstractOntologyTranslator {
     }
 
     @Override
-    public Set<Rule> getTranslation() throws ParserException {
+    public Set<Rule> getTranslation() {
 	final Set<Rule> result = new HashSet<Rule>();
 	if (reducedOntology.hasDisjunction())
 	    computeNegHeads();

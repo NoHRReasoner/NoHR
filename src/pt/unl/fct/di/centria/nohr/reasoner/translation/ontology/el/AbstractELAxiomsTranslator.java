@@ -38,7 +38,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTr
  *
  */
 public abstract class AbstractELAxiomsTranslator extends
-AbstractAxiomsTranslator {
+	AbstractAxiomsTranslator {
 
     protected static final Variable X = var("X");
     protected static final Variable Y = var("Y");
@@ -116,7 +116,7 @@ AbstractAxiomsTranslator {
 	return translateSubsumption(ce1, (OWLClass) ce2);
     }
 
-    public Set<Rule> translate(OWLSubPropertyAxiom axiom) {
+    public Set<Rule> translate(OWLSubPropertyAxiom<?> axiom) {
 	final OWLProperty pe1 = (OWLProperty) axiom.getSubProperty();
 	final OWLProperty pe2 = (OWLProperty) axiom.getSuperProperty();
 	return translateSubsumption(pe1, pe2);

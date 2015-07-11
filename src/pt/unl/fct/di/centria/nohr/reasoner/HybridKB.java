@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
@@ -135,11 +134,10 @@ public class HybridKB implements OWLOntologyChangeListener {
     }
 
     private void preprocess() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, ParserException,
-	    UnsupportedOWLProfile, IOException {
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException {
 	if (hasChanges) {
 	    pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
-		    .start("ontology processing");
+	    .start("ontology processing");
 	    ontologyTranslation = new HashSet<Rule>();
 	    ontologyTranslation = ontologyTranslator.getTranslation();
 	    pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop(
@@ -148,7 +146,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 	if (Rules.hasChanges
 		|| ontologyTranslator.hasDisjunctions() != hasDisjunctions) {
 	    pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
-		    .start("rules parsing");
+	    .start("rules parsing");
 	    rulesTranslation = new HashSet<String>();
 	    ruleTranslator.reset();
 	    for (final String rule : Rules.getRules())
@@ -160,12 +158,12 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    Rules.hasChanges = false;
 	}
 	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
-		.start("file writing");
+	.start("file writing");
 	final File xsbFile = generateTranslationFile();
 	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop(
 		"file writing", "loading");
 	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
-		.start("xsb loading");
+	.start("xsb loading");
 	xsbDatabase.clear();
 	xsbDatabase.load(xsbFile);
 	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop("xsb loading",
@@ -176,7 +174,7 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     public Collection<Answer> queryAll(Query query)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    ParserException, UnsupportedOWLProfile, IOException {
+	    UnsupportedOWLProfile, IOException {
 	if (hasChanges || Rules.hasChanges)
 	    preprocess();
 	final Visitor escapeVisitor = new EscapeVisitor();

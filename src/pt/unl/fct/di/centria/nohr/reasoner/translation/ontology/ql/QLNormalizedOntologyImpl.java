@@ -41,9 +41,9 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
-import com.google.common.base.Optional;
-
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
+
+import com.google.common.base.Optional;
 
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
@@ -218,7 +218,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private void normalize(OWLAsymmetricObjectPropertyAxiom alpha) {
 	final OWLObjectPropertyExpression q = alpha.getProperty();
-	normalize(df.getOWLDisjointObjectPropertiesAxiom(q, q
+	normalizeDisjunction(df.getOWLDisjointObjectPropertiesAxiom(q, q
 		.getInverseProperty().getSimplified()));
     }
 
@@ -226,44 +226,6 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	final OWLObjectPropertyExpression q = alpha.getProperty();
 	normalize(df.getOWLSubClassOfAxiom(some(q),
 		some(q.getInverseProperty()).getObjectComplementOf()));
-
-    }
-
-    private void normalize(OWLNaryPropertyAxiom alpha) {
-	hasDisjunction = true;
-	final Set<OWLPropertyExpression> props = alpha.getProperties();
-	final Iterator<OWLPropertyExpression> propsIt1 = props.iterator();
-	while (propsIt1.hasNext()) {
-	    final OWLPropertyExpression q1 = propsIt1.next();
-	    final OWLProperty p = DLUtils.getRoleName(q1);
-	    disjointRoles.add(p);
-	    subRoles.add(p);
-	    if (q1.isBottomEntity())
-		continue;
-	    final Iterator<OWLPropertyExpression> propsIt2 = props.iterator();
-	    while (propsIt2.hasNext()) {
-		final OWLPropertyExpression q2 = propsIt2.next();
-		if (q2.isBottomEntity())
-		    continue;
-		if (!q1.equals(q2))
-		    if (q1.isTopEntity())
-			unsatisfiableRoles.add(q2);
-		    else if (q2.isTopEntity())
-			unsatisfiableRoles.add(q2);
-		    else if (q1 instanceof OWLObjectPropertyExpression
-			    && q2 instanceof OWLObjectPropertyExpression)
-			roleDisjunctions.add(df
-				.getOWLDisjointObjectPropertiesAxiom(
-					(OWLObjectPropertyExpression) q1,
-					(OWLObjectPropertyExpression) q2));
-		    else if (q1 instanceof OWLDataPropertyExpression
-			    && q2 instanceof OWLDataPropertyExpression)
-			roleDisjunctions.add(df
-				.getOWLDisjointDataPropertiesAxiom(
-					(OWLDataPropertyExpression) q1,
-					(OWLDataPropertyExpression) q2));
-	    }
-	}
 
     }
 
@@ -283,7 +245,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	    normalize(a);
 	for (final OWLDisjointObjectPropertiesAxiom a : ontology
 		.getAxioms(AxiomType.DISJOINT_OBJECT_PROPERTIES))
-	    normalize(a);
+	    normalizeDisjunction(a);
 	for (final OWLEquivalentClassesAxiom a : ontology
 		.getAxioms(AxiomType.EQUIVALENT_CLASSES))
 	    for (final OWLSubClassOfAxiom s : a.asOWLSubClassOfAxioms())
@@ -326,7 +288,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	    normalize(a);
 	for (final OWLDisjointDataPropertiesAxiom a : ontology
 		.getAxioms(AxiomType.DISJOINT_DATA_PROPERTIES))
-	    normalize(a);
+	    normalizeDisjunction(a);
 	for (final OWLEquivalentDataPropertiesAxiom a : ontology
 		.getAxioms(AxiomType.EQUIVALENT_DATA_PROPERTIES))
 	    for (final OWLSubDataPropertyOfAxiom s : a
@@ -397,7 +359,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	}
     }
 
-    private void normalize(OWLSubPropertyAxiom alpha) {
+    private void normalize(OWLSubPropertyAxiom<?> alpha) {
 	final OWLPropertyExpression q1 = alpha.getSubProperty();
 	final OWLPropertyExpression q2 = alpha.getSuperProperty();
 	subRoles.add(DLUtils.getRoleName(q1));
@@ -416,6 +378,46 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	    roleSubsumptions.add(df.getOWLSubDataPropertyOfAxiom(
 		    (OWLDataPropertyExpression) q1,
 		    (OWLDataPropertyExpression) q2));
+    }
+
+    // TODO refactor
+    private <P extends OWLPropertyExpression> void normalizeDisjunction(
+	    OWLNaryPropertyAxiom<P> alpha) {
+	hasDisjunction = true;
+	final Set<P> props = alpha.getProperties();
+	final Iterator<P> propsIt1 = props.iterator();
+	while (propsIt1.hasNext()) {
+	    final OWLPropertyExpression q1 = propsIt1.next();
+	    final OWLProperty p = DLUtils.getRoleName(q1);
+	    disjointRoles.add(p);
+	    subRoles.add(p);
+	    if (q1.isBottomEntity())
+		continue;
+	    final Iterator<P> propsIt2 = props.iterator();
+	    while (propsIt2.hasNext()) {
+		final OWLPropertyExpression q2 = propsIt2.next();
+		if (q2.isBottomEntity())
+		    continue;
+		if (!q1.equals(q2))
+		    if (q1.isTopEntity())
+			unsatisfiableRoles.add(q2);
+		    else if (q2.isTopEntity())
+			unsatisfiableRoles.add(q2);
+		    else if (q1 instanceof OWLObjectPropertyExpression
+			    && q2 instanceof OWLObjectPropertyExpression)
+			roleDisjunctions.add(df
+				.getOWLDisjointObjectPropertiesAxiom(
+					(OWLObjectPropertyExpression) q1,
+					(OWLObjectPropertyExpression) q2));
+		    else if (q1 instanceof OWLDataPropertyExpression
+			    && q2 instanceof OWLDataPropertyExpression)
+			roleDisjunctions.add(df
+				.getOWLDisjointDataPropertiesAxiom(
+					(OWLDataPropertyExpression) q1,
+					(OWLDataPropertyExpression) q2));
+	    }
+	}
+
     }
 
     private OWLClassExpression some(OWLObjectPropertyExpression q) {

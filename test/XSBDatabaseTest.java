@@ -46,14 +46,14 @@ public class XSBDatabaseTest extends XSBDatabase {
 		System.getenv("XSB_BIN_DIRECTORY"), "xsb"));
     }
 
-    public <E> List<E> list(E... elems) {
-	final List<E> list = new LinkedList<E>();
+    public List<String> list(String... elems) {
+	final List<String> list = new LinkedList<String>();
 	Collections.addAll(list, elems);
 	return list;
     }
 
-    public <E> Set<E> set(E... elems) {
-	final Set<E> set = new HashSet<E>();
+    public Set<String> set(String... elems) {
+	final Set<String> set = new HashSet<String>();
 	Collections.addAll(set, elems);
 	return set;
     }
@@ -119,8 +119,8 @@ public class XSBDatabaseTest extends XSBDatabase {
 	engine.deterministicGoal("assert((p(f):-tnot(p(f))))");
 	Iterable<Answer> answers = lazilyQuery(query);
 	Iterator<Answer> answersIt = answers.iterator();
-	for (final String expecteAns : list("p(f)", "p(e)", "p(d)", "p(c)", "p(b)",
-		"p(a)")) {
+	for (final String expecteAns : list("p(f)", "p(e)", "p(d)", "p(c)",
+		"p(b)", "p(a)")) {
 	    Assert.assertTrue(answersIt.hasNext());
 	    final Answer ans = answersIt.next();
 	    Assert.assertEquals(expecteAns, query.apply(ans.getValues())
@@ -161,23 +161,27 @@ public class XSBDatabaseTest extends XSBDatabase {
 	final Query q4 = Model.query(atom("u", cons("e")));
 
 	int i = 0;
-	for (final Answer ans : lazilyQuery(q1))
+	for (@SuppressWarnings("unused")
+	final Answer ans : lazilyQuery(q1))
 	    if (i++ >= 1)
 		break;
 
-	for (final Answer ans : lazilyQuery(q1)) {
+	for (@SuppressWarnings("unused")
+	final Answer ans : lazilyQuery(q1)) {
 	    assertTrue(hasAnswers(q2));
 	    assertTrue(hasAnswers(q2, true));
 	    assertFalse(hasAnswers(q2, false));
 	}
 
-	for (final Answer ans : lazilyQuery(q1)) {
+	for (@SuppressWarnings("unused")
+	final Answer ans : lazilyQuery(q1)) {
 	    assertTrue(hasAnswers(q3));
 	    assertFalse(hasAnswers(q3, true));
 	    assertTrue(hasAnswers(q3, false));
 	}
 
-	for (final Answer ans : lazilyQuery(q1)) {
+	for (@SuppressWarnings("unused")
+	final Answer ans : lazilyQuery(q1)) {
 	    assertFalse(hasAnswers(q4));
 	    assertFalse(hasAnswers(q4, true));
 	    assertFalse(hasAnswers(q4, false));

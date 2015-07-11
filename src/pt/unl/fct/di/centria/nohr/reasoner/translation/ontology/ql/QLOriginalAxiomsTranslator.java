@@ -57,7 +57,7 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
     }
 
     @Override
-    public Set<Rule> translate(OWLPropertyAssertionAxiom alpha) {
+    public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha) {
 	return translateOriginal(alpha);
     }
 

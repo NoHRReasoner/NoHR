@@ -56,8 +56,8 @@ public abstract class AbstractAxiomsTranslator {
 		.getOWLDataFactory();
 	ontologyLabeler = new OntologyLabeler(ontology,
 		dataFactory
-		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
-			.getIRI()));
+			.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
+				.getIRI()));
     }
 
     protected Set<Rule> ruleSet(Rule... rules) {
@@ -93,7 +93,7 @@ public abstract class AbstractAxiomsTranslator {
 
     public abstract Set<Rule> translate(OWLClassAssertionAxiom alpha);
 
-    public abstract Set<Rule> translate(OWLPropertyAssertionAxiom alpha);
+    public abstract Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha);
 
     public Set<Rule> translateDouble(OWLClassAssertionAxiom alpha) {
 	final OWLClassExpression c = alpha.getClassExpression();
@@ -107,7 +107,7 @@ public abstract class AbstractAxiomsTranslator {
 	return ruleSet(rule(atom(a, i), negLiteral(na, i)));
     }
 
-    public Set<Rule> translateDouble(OWLPropertyAssertionAxiom alpha) {
+    public Set<Rule> translateDouble(OWLPropertyAssertionAxiom<?, ?> alpha) {
 	final String aSym = sym(alpha.getProperty());
 	final Predicate p = doubPred(aSym, 2);
 	final Predicate np = negPred(aSym, 2);
@@ -127,7 +127,7 @@ public abstract class AbstractAxiomsTranslator {
 	return ruleSet(rule(atom(a, i)));
     }
 
-    public Set<Rule> translateOriginal(OWLPropertyAssertionAxiom alpha) {
+    public Set<Rule> translateOriginal(OWLPropertyAssertionAxiom<?, ?> alpha) {
 	final OWLPropertyExpression ope = alpha.getProperty();
 	if (ope.isTopEntity() || ope.isBottomEntity())
 	    return ruleSet();

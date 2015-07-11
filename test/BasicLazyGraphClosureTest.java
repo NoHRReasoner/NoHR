@@ -1,5 +1,4 @@
 
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
@@ -14,9 +13,9 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.GraphClosure;
 
 public class BasicLazyGraphClosureTest {
 
-    private <T> Set<T> set(T... elems) {
-	Set<T> result = new HashSet<T>();
-	for (T e : elems)
+    private Set<Integer> set(int... elems) {
+	final Set<Integer> result = new HashSet<Integer>();
+	for (final int e : elems)
 	    result.add(e);
 	return result;
 
@@ -25,7 +24,7 @@ public class BasicLazyGraphClosureTest {
     @Test
     public final void testGetAncestors() {
 	// Data
-	Map<Integer, Set<Integer>> predecessors = new HashMap<Integer, Set<Integer>>();
+	final Map<Integer, Set<Integer>> predecessors = new HashMap<Integer, Set<Integer>>();
 	predecessors.put(9, set(8));
 	predecessors.put(8, set(7));
 	predecessors.put(7, set(5, 9));
@@ -35,7 +34,7 @@ public class BasicLazyGraphClosureTest {
 	predecessors.put(3, set(1));
 	predecessors.put(2, set(1, 6));
 	// Test
-	GraphClosure<Integer> graph = new BasicLazyGraphClosure<Integer>(
+	final GraphClosure<Integer> graph = new BasicLazyGraphClosure<Integer>(
 		predecessors);
 	assertEquals(set(1, 6, 5, 3, 4), graph.getAncestors(2));
 	assertEquals(set(1), graph.getAncestors(3));

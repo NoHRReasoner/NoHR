@@ -13,13 +13,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
@@ -85,8 +83,6 @@ public abstract class QueryTest extends Object {
 	    fail(e.getMessage());
 	} catch (final OWLOntologyStorageException e) {
 	    fail(e.getMessage());
-	} catch (final ParserException e) {
-	    fail(e.getMessage());
 	} catch (final CloneNotSupportedException e) {
 	    fail(e.getMessage());
 	} catch (final UnsupportedAxiomTypeException e) {
@@ -116,8 +112,6 @@ public abstract class QueryTest extends Object {
 	} catch (final OWLOntologyCreationException e) {
 	    fail(e.getMessage());
 	} catch (final OWLOntologyStorageException e) {
-	    fail(e.getMessage());
-	} catch (final ParserException e) {
 	    fail(e.getMessage());
 	} catch (final CloneNotSupportedException e) {
 	    fail(e.getMessage());
@@ -150,8 +144,6 @@ public abstract class QueryTest extends Object {
 	} catch (final OWLOntologyCreationException e) {
 	    fail(e.getMessage());
 	} catch (final OWLOntologyStorageException e) {
-	    fail(e.getMessage());
-	} catch (final ParserException e) {
 	    fail(e.getMessage());
 	} catch (final CloneNotSupportedException e) {
 	    fail(e.getMessage());

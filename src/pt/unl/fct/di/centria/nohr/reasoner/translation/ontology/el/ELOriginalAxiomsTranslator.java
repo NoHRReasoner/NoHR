@@ -55,7 +55,7 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     @Override
-    public Set<Rule> translate(OWLPropertyAssertionAxiom alpha) {
+    public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha) {
 	return translateOriginal(alpha);
     }
 

@@ -97,14 +97,14 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 		.hasDisjointStatement();
 	computeNegHeads();
 	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
-		.start("ontology translation");
+	.start("ontology translation");
 	result.addAll(translate(originalAxiomsTranslator));
 	if (hasDisjunctions)
 	    result.addAll(translate(doubleAxiomsTranslator));
 	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger.stop(
 		"ontology translation", "loading");
 	pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger
-		.start("ontology classification");
+	.start("ontology classification");
 	for (final OWLEntity e : graph.getUnsatisfiableEntities())
 	    if (e instanceof OWLClass)
 		result.add(doubleAxiomsTranslator
@@ -173,7 +173,7 @@ public class QLOntologyTranslator extends AbstractOntologyTranslator {
 		    result.add(axiomsTranslator.translateRange(axiom));
 	    } else if (s instanceof OWLSubDataPropertyOfAxiom)
 		result.addAll(axiomsTranslator.translate(s));
-	for (final OWLNaryPropertyAxiom d : normalizedOntology
+	for (final OWLNaryPropertyAxiom<?> d : normalizedOntology
 		.getRoleDisjunctions())
 	    if (d instanceof OWLDisjointObjectPropertiesAxiom)
 		result.addAll(axiomsTranslator
