@@ -45,6 +45,8 @@ import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 import com.google.common.base.Optional;
 
+//TODO refactor
+
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private final Set<OWLDisjointClassesAxiom> conceptDisjunctions;

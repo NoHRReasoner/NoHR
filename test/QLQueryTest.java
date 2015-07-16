@@ -5,11 +5,11 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.profiles.Profiles;
 
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 
 /**
  *
@@ -226,13 +226,13 @@ public class QLQueryTest extends QueryTest {
     @Override
     public void setUp() throws Exception {
 	super.setUp();
-	AbstractOntologyTranslator.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+	AbstractOntologyTranslation.profile = Profiles.OWL2_QL;
     }
 
     @Override
     public void tearDown() throws Exception {
 	super.tearDown();
-	AbstractOntologyTranslator.translationAlgorithm = null;
+	AbstractOntologyTranslation.profile = null;
     }
 
     // (i2) (a2), (s2)

@@ -1,5 +1,7 @@
 package helpers;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,14 +25,22 @@ import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
+import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
+import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntology;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntologyImpl;
 
 import com.google.common.base.Optional;
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 public class KB {
 
@@ -39,6 +49,8 @@ public class KB {
     private final Map<String, OWLDataProperty> dataRoles;
 
     private final OWLDataFactory df;
+
+    private HybridKB hybridKB;
 
     private final Map<String, OWLIndividual> individuals;
 
@@ -76,6 +88,12 @@ public class KB {
 	om.addAxiom(ont, df.getOWLClassAssertionAxiom(concept, individual));
     }
 
+    public void addAssertion(OWLDataProperty dataProperty, OWLIndividual ind1,
+	    String literal) {
+	om.addAxiom(ont, df.getOWLDataPropertyAssertionAxiom(dataProperty,
+		ind1, literal));
+    }
+
     public void addAssertion(OWLObjectProperty role, OWLIndividual ind1,
 	    OWLIndividual ind2) {
 	om.addAxiom(ont,
@@ -111,6 +129,7 @@ public class KB {
     public void clear() throws OWLOntologyCreationException {
 	final Set<OWLDeclarationAxiom> declarationAxioms = ont
 		.getAxioms(AxiomType.DECLARATION);
+	hybridKB = null;
 	om.removeAxioms(ont, ont.getAxioms());
 	om.addAxioms(ont, declarationAxioms);
 	Rules.resetRules();
@@ -269,6 +288,16 @@ public class KB {
 	for (int i = 0; i < cls.length; i++)
 	    args[i] = getLabel(cls[i]);
 	return String.format(ruleFormat, args);
+    }
+
+    public Collection<Answer> queryAll(String query)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException, PrologParserException {
+	final Query q = Parser.parseQuery(query);
+	if (hybridKB == null)
+	    hybridKB = new HybridKB(ont);
+	return hybridKB.queryAll(q);
     }
 
 }

@@ -4,6 +4,8 @@ import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 public class PredicateImpl implements Predicate {
 
+    // TODO provide quoted and unquoted forms
+
     protected final int arity;
 
     protected final String symbol;
@@ -20,7 +22,7 @@ public class PredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -59,7 +61,7 @@ public class PredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

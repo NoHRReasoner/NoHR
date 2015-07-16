@@ -10,11 +10,12 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 public class MetaPredicateImpl extends PredicateImpl implements MetaPredicate {
 
     protected final char prefix;
-    protected PredicateType type;
+    protected final PredicateType type;
 
     MetaPredicateImpl(String symbol, int arity, PredicateType type, char prefix) {
 	super(symbol, arity);
 	this.prefix = prefix;
+	this.type = type;
     }
 
     @Override

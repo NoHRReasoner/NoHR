@@ -4,18 +4,22 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.profiles.Profiles;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 
-public interface OntologyTranslator {
+public interface OntologyTranslation {
 
-    public Set<String> getNegatedPredicates();
+    public Set<Predicate> getNegativeHeadsPredicates();
 
-    public Set<String> getTabledPredicates();
+    public Profiles getProfile();
+
+    public Set<Predicate> getTabledPredicates();
 
     public Set<Rule> getTranslation() throws UnsupportedOWLProfile,
-    OWLOntologyCreationException, OWLOntologyStorageException;
+	    OWLOntologyCreationException, OWLOntologyStorageException;
 
     public boolean hasDisjunctions();
 

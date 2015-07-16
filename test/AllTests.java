@@ -12,8 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ BasicLazyGraphClosureTest.class, ParserTest.class,
-    QueryProcessorTest.class, QLQueryTest.class, ELQueryTest.class,
-	TBoxGraphTest.class, XSBDatabaseTest.class })
+	QueryProcessorTest.class, QLQueryTest.class, ELQueryTest.class,
+    TBoxGraphTest.class })
 public class AllTests {
 
 }

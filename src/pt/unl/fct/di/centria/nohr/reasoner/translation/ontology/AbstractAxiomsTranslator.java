@@ -41,7 +41,6 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
  */
 public abstract class AbstractAxiomsTranslator {
 
-    protected static final Variable ANNON = var("_");
     protected static final Variable X = var("X");
     protected static final Variable Y = var("Y");
     protected final OWLOntology ontology;

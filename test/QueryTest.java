@@ -14,10 +14,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.profiles.Profiles;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
@@ -26,8 +28,7 @@ import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
@@ -62,8 +63,7 @@ public abstract class QueryTest extends Object {
 	try {
 	    if (!query.endsWith("."))
 		query = query + ".";
-	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(Parser.parseQuery(query));
+	    final Collection<Answer> result = kb.queryAll(query);
 	    assertNotNull("should't have null result", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -94,8 +94,7 @@ public abstract class QueryTest extends Object {
 	try {
 	    if (!query.endsWith("."))
 		query = query + ".";
-	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(Parser.parseQuery(query));
+	    final Collection<Answer> result = kb.queryAll(query);
 	    assertNotNull("should't hava null result", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -125,8 +124,7 @@ public abstract class QueryTest extends Object {
 	try {
 	    if (!query.endsWith("."))
 		query = query + ".";
-	    final Collection<Answer> result = new HybridKB(kb.getOntology())
-	    .queryAll(Parser.parseQuery(query));
+	    final Collection<Answer> result = kb.queryAll(query);
 	    assertNotNull("shouldn't have null result", result);
 	    assertEquals("should have exactly one answer", 1, result.size());
 	    final Answer ans = result.iterator().next();
@@ -198,7 +196,7 @@ public abstract class QueryTest extends Object {
 	kb.addSubsumption(a2, a1);
 	try {
 	    new HybridKB(kb.getOntology())
-	    .queryAll(Parser.parseQuery("p1(X)."));
+		    .queryAll(Parser.parseQuery("p1(X)."));
 	} catch (final Exception e) {
 	    fail(e.getMessage());
 	}
@@ -227,6 +225,16 @@ public abstract class QueryTest extends Object {
 	kb.addAssertion(a1, a);
 	kb.addSubsumption(a1, a2);
 	assertAnswer("a2(X)", "a");
+    }
+
+    @Test
+    public final void dataPropertyAssertions()
+	    throws OWLOntologyCreationException {
+	kb.clear();
+	final OWLDataProperty d1 = kb.getDataRole("d1");
+	final OWLIndividual a = kb.getIndividual("a");
+	kb.addAssertion(d1, a, "l");
+	assertAnswer("d1(X,Y)", "a", "l");
     }
 
     // (a1), (n1)
@@ -349,7 +357,7 @@ public abstract class QueryTest extends Object {
 
     @Before
     public void setUp() throws Exception {
-	AbstractOntologyTranslator.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+	AbstractOntologyTranslation.profile = Profiles.OWL2_QL;
 	kb = new KB();
     }
 

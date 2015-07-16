@@ -207,7 +207,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		progressFrame.setUndecorated(true);
 		progressFrame.setContentPane(progressPanel);
 		progressFrame
-		.setLocationRelativeTo(HybridQueryViewComponent.this);
+			.setLocationRelativeTo(HybridQueryViewComponent.this);
 		// progressFrame.setVisible(true);
 	    }
 	});
@@ -565,8 +565,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 
     private void startQueryEngine() {
 	try {
-	    nohr = new HybridKB(getOWLModelManager().getOWLOntologyManager(),
-		    getOWLModelManager().getActiveOntology());
+	    nohr = new HybridKB(getOWLModelManager().getActiveOntology());
 	} catch (final Exception e) {
 	    textArea.append(e.getMessage() + System.lineSeparator());
 	}

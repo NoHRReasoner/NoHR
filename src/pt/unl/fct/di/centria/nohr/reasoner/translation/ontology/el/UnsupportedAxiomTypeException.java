@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.AxiomType;
  * @author nunocosta
  *
  */
+// TODO implement
 public class UnsupportedAxiomTypeException extends Exception {
 
     /**
@@ -18,7 +19,6 @@ public class UnsupportedAxiomTypeException extends Exception {
 
     public UnsupportedAxiomTypeException(AxiomType<?> type) {
 	super();
-	// TODO
     }
 
 }

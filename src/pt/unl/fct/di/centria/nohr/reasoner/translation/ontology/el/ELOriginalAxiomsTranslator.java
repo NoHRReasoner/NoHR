@@ -60,13 +60,13 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     @Override
-    public Set<Rule> translateSubsumption(
+    protected Set<Rule> translateSubsumption(
 	    List<OWLObjectPropertyExpression> pes1, OWLObjectProperty p2) {
 	return ruleSet(rule(tr(p2, X, Y), tr(pes1, X, Y)));
     }
 
     @Override
-    public Set<Rule> translateSubsumption(OWLClassExpression c, OWLClass a) {
+    protected Set<Rule> translateSubsumption(OWLClassExpression c, OWLClass a) {
 	if (a.isOWLNothing())
 	    return ruleSet();
 	if (c.isOWLThing())
@@ -75,7 +75,7 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     @Override
-    public Set<Rule> translateSubsumption(OWLProperty p1, OWLProperty p2) {
+    protected Set<Rule> translateSubsumption(OWLProperty p1, OWLProperty p2) {
 	return ruleSet(rule(tr(p2, X, Y), tr(p1, X, Y)));
     }
 

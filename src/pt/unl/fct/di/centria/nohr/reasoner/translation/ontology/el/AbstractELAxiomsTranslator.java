@@ -38,7 +38,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTr
  *
  */
 public abstract class AbstractELAxiomsTranslator extends
-	AbstractAxiomsTranslator {
+AbstractAxiomsTranslator {
 
     protected static final Variable X = var("X");
     protected static final Variable Y = var("Y");
@@ -50,7 +50,7 @@ public abstract class AbstractELAxiomsTranslator extends
 	super(ontology);
     }
 
-    private List<Literal> atomsList(Atom... atoms) {
+    protected List<Literal> atomsList(Atom... atoms) {
 	final List<Literal> result = new ArrayList<Literal>(atoms.length);
 	Collections.addAll(result, atoms);
 	return result;

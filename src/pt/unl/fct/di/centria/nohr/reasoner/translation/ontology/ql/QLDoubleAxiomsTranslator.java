@@ -38,18 +38,18 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
 	super(ontology);
     }
 
-    private Atom existTr(OWLObjectPropertyExpression q, Variable X) {
+    Atom existTr(OWLObjectPropertyExpression q, Variable X) {
 	if (q instanceof OWLObjectProperty)
 	    return atom(doubDomPred(sym(q)), X);
 	else
 	    return atom(doubRanPred(sym(q)), X);
     }
 
-    private Atom tr(OWLClassExpression c, Variable x) {
+    Atom tr(OWLClassExpression c, Variable x) {
 	return tr(c, x, true);
     }
 
-    private Atom tr(OWLPropertyExpression r, Variable x, Variable y) {
+    Atom tr(OWLPropertyExpression r, Variable x, Variable y) {
 	return tr(r, x, y, true);
     }
 

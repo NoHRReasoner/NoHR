@@ -182,7 +182,7 @@ public class BasicTBoxGraph implements TBoxGraph {
 	return rolesPredecessor.get(v);
     }
 
-    // TODO simplify thi
+    // TODO refactor
     @Override
     public Set<OWLEntity> getUnsatisfiableEntities() {
 	if (unsatisfiableEntities != null)

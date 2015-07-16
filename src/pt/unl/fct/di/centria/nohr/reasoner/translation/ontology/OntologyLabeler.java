@@ -22,8 +22,6 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyAssertionAxiomImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLSubPropertyChainAxiomImpl;
 
-//TODO remove
-
 /**
  * The Class OntologyLabel. Parsing the properties to get label
  */
@@ -312,12 +310,13 @@ public class OntologyLabeler {
 
     }
 
+    // TODO
     private Set<OWLAnnotation> labelAnnotations(OWLEntity subject) {
 	final Set<OWLAnnotation> result = new HashSet<OWLAnnotation>();
-	for (final OWLAnnotationAssertionAxiom annotationAssertion : ontology
-		.getAnnotationAssertionAxioms(subject.getIRI()))
-	    if (annotationAssertion.getProperty().equals(ontologyLabel))
-		result.add(annotationAssertion.getAnnotation());
+	// for (final OWLAnnotationAssertionAxiom annotationAssertion : ontology
+	// .getAnnotationAssertionAxioms(subject.getIRI()))
+	// if (annotationAssertion.getProperty().equals(ontologyLabel))
+	// result.add(annotationAssertion.getAnnotation());
 	return result;
     }
 

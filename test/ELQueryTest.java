@@ -1,5 +1,6 @@
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslator;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
+import org.semanticweb.owlapi.profiles.Profiles;
+
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 
 /**
  *
@@ -17,13 +18,13 @@ public class ELQueryTest extends QueryTest {
     @Override
     public void setUp() throws Exception {
 	super.setUp();
-	AbstractOntologyTranslator.translationAlgorithm = TranslationAlgorithm.EL;
+	AbstractOntologyTranslation.profile = Profiles.OWL2_EL;
     }
 
     @Override
     public void tearDown() throws Exception {
 	super.tearDown();
-	AbstractOntologyTranslator.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+	AbstractOntologyTranslation.profile = null;
     }
 
 }
