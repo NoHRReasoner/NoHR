@@ -94,15 +94,21 @@ public class Parser {
 
     private static Rule parseRule(PrologStructure structure)
 	    throws IOException, PrologParserException {
-
-	if (!structure.getFunctor().getText().equals(":-"))
+	if (structure.getArity() < 1 || structure.getArity() > 1
+		&& !structure.getFunctor().getText().equals(":-"))
 	    throw new IllegalArgumentException("isn't a rule");
-	final Atom head = (Atom) parseLiteral((PrologStructure) structure
-		.getElement(0));
+	final Atom head;
+	if (structure.getArity() == 1)
+	    head = (Atom) parseLiteral(structure);
+	else
+	    head = (Atom) parseLiteral((PrologStructure) structure
+		    .getElement(0));
 	final List<Literal> body = new LinkedList<Literal>();
-	final AbstractPrologTerm bodyTerm = structure.getElement(1);
-	if (bodyTerm != null)
-	    parseLiteralsList((PrologStructure) bodyTerm, body);
+	if (structure.getArity() > 1) {
+	    final AbstractPrologTerm bodyTerm = structure.getElement(1);
+	    if (bodyTerm != null)
+		parseLiteralsList((PrologStructure) bodyTerm, body);
+	}
 	return rule(head, body);
     }
 

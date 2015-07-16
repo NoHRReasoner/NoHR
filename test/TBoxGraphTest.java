@@ -4,6 +4,7 @@
 
 import helpers.KB;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,8 +19,11 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.BasicTBoxGraph;
 
 /**
@@ -48,9 +52,16 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
-    public final void conceptsAncestors() throws OWLOntologyCreationException {
+    public final void conceptsAncestors() throws OWLOntologyCreationException,
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -71,10 +82,17 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
     public final void conceptsAncestorsWithCycles()
-	    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -100,10 +118,17 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
     public final void conceptsPredecessors()
-	    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 6);
@@ -150,10 +175,17 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
     public final void irreflexiveRolesFromConceptDisjunction()
-	    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 2);
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 1);
@@ -178,10 +210,17 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
     public final void irreflexiveRolesFromRoleDisjunction()
-	    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
 	kb.addSubsumption(p[0], p[1]);
@@ -203,9 +242,16 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
-    public final void rolesAncestors() throws OWLOntologyCreationException {
+    public final void rolesAncestors() throws OWLOntologyCreationException,
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
@@ -227,10 +273,17 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
     public final void rolesAncestorsWithCycles()
-	    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
@@ -257,9 +310,16 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
-    public final void rolesPredecessors() throws OWLOntologyCreationException {
+    public final void rolesPredecessors() throws OWLOntologyCreationException,
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 9);
@@ -318,10 +378,17 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
     public final void unsatisfiableEntities1()
-	    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -350,10 +417,17 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
+     * @throws UnsupportedAxiomTypeException
+     * @throws CloneNotSupportedException
+     * @throws IOException
+     * @throws UnsupportedOWLProfile
+     * @throws OWLOntologyStorageException
      */
     @Test
     public final void unsatisfiableEntities2()
-	    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 3);

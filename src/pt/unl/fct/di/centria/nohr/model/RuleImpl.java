@@ -1,5 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public class RuleImpl implements Rule {
 
+    // TODO positive body vs negative body
     private final Literal[] body;
 
     private final Atom head;
@@ -68,11 +70,20 @@ public class RuleImpl implements Rule {
     }
 
     @Override
-    public Set<Literal> getNegativeBody() {
-	final Set<Literal> result = new HashSet<Literal>();
+    public List<Literal> getNegativeBody() {
+	final List<Literal> result = new ArrayList<Literal>(body.length);
 	for (final Literal literal : body)
-	    if (literal instanceof NegativeLiteral)
+	    if (literal.isNegative())
 		result.add(literal);
+	return result;
+    }
+
+    @Override
+    public List<Atom> getPositiveBody() {
+	final List<Atom> result = new ArrayList<Atom>(body.length);
+	for (final Literal literal : body)
+	    if (literal.isPositive())
+		result.add(literal.asPositiveLiteral());
 	return result;
     }
 

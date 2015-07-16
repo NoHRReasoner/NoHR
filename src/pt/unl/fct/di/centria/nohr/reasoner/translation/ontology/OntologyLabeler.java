@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLAnnotation;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -47,7 +46,7 @@ public class OntologyLabeler {
     }
 
     /** The ontology annotation property. */
-    private final OWLAnnotationProperty ontologyLabel;
+    // private final OWLAnnotationProperty ontologyLabel;
 
     /**
      * Instantiates a new ontology label.
@@ -62,7 +61,7 @@ public class OntologyLabeler {
     public OntologyLabeler(OWLOntology ont,
 	    OWLAnnotationProperty annotationProperty) {
 	ontology = ont;
-	ontologyLabel = annotationProperty;
+	// ontologyLabel = annotationProperty;
 	ontologyID = getOntologyID();
     }
 
@@ -85,24 +84,24 @@ public class OntologyLabeler {
 		else
 		    return getLabel(
 			    ((OWLSubPropertyChainAxiomImpl) entity)
-			    .getSuperProperty(),
+				    .getSuperProperty(),
 			    1);
 	} else if (entity instanceof OWLObjectPropertyAssertionAxiomImpl)
 	    switch (numInList) {
 	    case 1:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-			.getProperty(),
+				.getProperty(),
 			1);
 	    case 2:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-			.getSubject(),
+				.getSubject(),
 			1);
 	    case 3:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-			.getObject(),
+				.getObject(),
 			1);
 	    }
 	return getLabel(entity.toString(), numInList);
@@ -268,7 +267,7 @@ public class OntologyLabeler {
 		result = result.replaceAll("\\.", "");
 		if (Character.isUpperCase(result.charAt(0)))
 		    result = result.substring(0, 1).toLowerCase()
-		    + result.substring(1);
+			    + result.substring(1);
 	    } else if (rule.contains(OntologyLabeler.altDelimeter))
 		result = rule.split(OntologyLabeler.altDelimeter)[numInList]
 			.split(">")[0];

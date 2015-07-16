@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -6,6 +8,8 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.profiles.Profiles;
+
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
@@ -26,7 +30,8 @@ public class QLQueryTest extends QueryTest {
 
     // (a1), (a2), (s2), (n1)
     @Test
-    public final void cln4() throws OWLOntologyCreationException {
+    public final void cln4() throws OWLOntologyCreationException, IOException,
+	    PrologParserException {
 	kb.clear();
 	final OWLObjectProperty p1 = kb.getRole("p1");
 	final OWLObjectProperty p2 = kb.getRole("p2");
@@ -45,7 +50,8 @@ public class QLQueryTest extends QueryTest {
 
     // (a2), (s2), (n2)
     @Test
-    public final void cln5() throws OWLOntologyCreationException {
+    public final void cln5() throws OWLOntologyCreationException, IOException,
+	    PrologParserException {
 	kb.clear();
 	final OWLObjectProperty p1 = kb.getRole("p1");
 	final OWLObjectProperty p2 = kb.getRole("p2");
@@ -163,7 +169,8 @@ public class QLQueryTest extends QueryTest {
     }
 
     @Test
-    public void normalizations() throws OWLOntologyCreationException {
+    public void normalizations() throws OWLOntologyCreationException,
+	    IOException, PrologParserException {
 	kb.clear();
 	final OWLDataFactory df = kb.getDataFactory();
 	// Intersection on right side
@@ -210,7 +217,8 @@ public class QLQueryTest extends QueryTest {
 
     // (a2), (n2)
     @Test
-    public final void roleDisjunction() throws OWLOntologyCreationException {
+    public final void roleDisjunction() throws OWLOntologyCreationException,
+	    IOException, PrologParserException {
 	kb.clear();
 	final OWLObjectProperty p1 = kb.getRole("p1");
 	final OWLObjectProperty p2 = kb.getRole("p2");
@@ -237,7 +245,8 @@ public class QLQueryTest extends QueryTest {
 
     // (i2) (a2), (s2)
     @Test
-    public final void unsatisfiableRoles() throws OWLOntologyCreationException {
+    public final void unsatisfiableRoles() throws OWLOntologyCreationException,
+	    IOException, PrologParserException {
 	kb.clear();
 	final OWLObjectProperty p1 = kb.getRole("p1");
 	final OWLObjectProperty p2 = kb.getRole("p2");

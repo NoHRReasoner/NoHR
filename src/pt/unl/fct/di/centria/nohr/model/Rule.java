@@ -16,7 +16,9 @@ public interface Rule {
 
     public Atom getHead();
 
-    public Set<Literal> getNegativeBody();
+    public List<Literal> getNegativeBody();
+
+    public List<Atom> getPositiveBody();
 
     public Set<Predicate> getPredicates();
 

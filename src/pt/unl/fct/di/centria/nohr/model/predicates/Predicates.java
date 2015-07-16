@@ -55,6 +55,39 @@ public class Predicates {
 	    return new OriginalPredicate(symbol, arity);
     }
 
+    public static Predicate pred(String symbol, int arity, PredicateType type) {
+	switch (type) {
+	case DOUBLE:
+	    return new DoublePredicate(symbol, arity);
+	case DOUBLE_DOMAIN:
+	    if (arity != 1)
+		throw new IllegalArgumentException(type.name()
+			+ " must have arity 1");
+	    return new DoubleDomainPredicate(symbol);
+	case DOUBLED_RANGE:
+	    if (arity != 1)
+		throw new IllegalArgumentException(type.name()
+			+ " must have arity 1");
+	    return new DoubleRangePredicate(symbol);
+	case NEGATIVE:
+	    return new NegativePredicate(symbol, arity);
+	case ORIGINAL:
+	    return new OriginalPredicate(symbol, arity);
+	case ORIGINAL_DOMAIN:
+	    if (arity != 1)
+		throw new IllegalArgumentException(type.name()
+			+ " must have arity 1");
+	    return new OriginalDomainPredicate(symbol);
+	case ORIGINAL_RANGE:
+	    if (arity != 1)
+		throw new IllegalArgumentException(type.name()
+			+ " must have arity 1");
+	    return new OriginalRangePredicate(symbol);
+	default:
+	    return null;
+	}
+    }
+
     public static Predicate ranPred(String symbol, boolean doub) {
 	if (doub)
 	    return new DoubleRangePredicate(symbol);

@@ -31,7 +31,6 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
-import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
@@ -62,7 +61,9 @@ public class KB {
 
     private final Map<String, OWLObjectProperty> roles;
 
-    public KB() throws OWLOntologyCreationException {
+    public KB() throws OWLOntologyCreationException,
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	om = OWLManager.createOWLOntologyManager();
 	df = om.getOWLDataFactory();
 	ont = om.createOntology(IRI.generateDocumentIRI());
@@ -73,6 +74,7 @@ public class KB {
 	roles = new HashMap<String, OWLObjectProperty>();
 	dataRoles = new HashMap<String, OWLDataProperty>();
 	individuals = new HashMap<String, OWLIndividual>();
+	hybridKB = new HybridKB(ont);
     }
 
     public void add(OWLAxiom... axioms) {
@@ -113,8 +115,11 @@ public class KB {
 	om.addAxiom(ont, df.getOWLDisjointObjectPropertiesAxiom(q1, q2));
     }
 
-    public void addRule(String rule) {
-	Rules.addRule(rule);
+    public void addRule(String rule) throws IOException, PrologParserException {
+	if (!rule.endsWith("."))
+	    rule += ".";
+	final pt.unl.fct.di.centria.nohr.model.Rule r = Parser.parseRule(rule);
+	hybridKB.add(r);
     }
 
     public void addSubsumption(OWLClassExpression b1, OWLClassExpression b2) {
@@ -126,13 +131,18 @@ public class KB {
 	om.addAxiom(ont, df.getOWLSubObjectPropertyOfAxiom(q1, q2));
     }
 
-    public void clear() throws OWLOntologyCreationException {
+    public void clear() {
 	final Set<OWLDeclarationAxiom> declarationAxioms = ont
 		.getAxioms(AxiomType.DECLARATION);
-	hybridKB = null;
 	om.removeAxioms(ont, ont.getAxioms());
 	om.addAxioms(ont, declarationAxioms);
-	Rules.resetRules();
+	try {
+	    hybridKB = new HybridKB(ont);
+	} catch (OWLOntologyCreationException | OWLOntologyStorageException
+		| UnsupportedOWLProfile | IOException
+		| CloneNotSupportedException | UnsupportedAxiomTypeException e) {
+	    e.printStackTrace();
+	}
     }
 
     public OWLClassExpression getComplement(OWLClassExpression ce) {
@@ -295,8 +305,6 @@ public class KB {
 	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
 	    UnsupportedAxiomTypeException, PrologParserException {
 	final Query q = Parser.parseQuery(query);
-	if (hybridKB == null)
-	    hybridKB = new HybridKB(ont);
 	return hybridKB.queryAll(q);
     }
 
