@@ -19,7 +19,6 @@ package ubt.api;
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-import java.io.*;
 import java.util.*;
 
 public class QueryConfigParser extends ConfigParser {
@@ -33,7 +32,7 @@ public class QueryConfigParser extends ConfigParser {
     /** QuerySpecification object representing the current section */
     private QuerySpecification query_ = null;
     /** list of queries */
-    private Vector queryList_;
+    private Vector<QuerySpecification> queryList_;
 
     /**
      * constructor
@@ -50,8 +49,8 @@ public class QueryConfigParser extends ConfigParser {
      * @throws java.lang.Exception
      *             if there are IO errors or syntax/content errors.
      */
-    public Vector createQueryList(String fileName) throws Exception {
-	queryList_ = new Vector();
+    public Vector<QuerySpecification> createQueryList(String fileName) throws Exception {
+	queryList_ = new Vector<QuerySpecification>();
 	parse(fileName);
 	return queryList_;
     }

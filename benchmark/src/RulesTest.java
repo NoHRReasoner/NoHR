@@ -22,17 +22,17 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import other.Config;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.TranslationAlgorithm;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
+import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 import ubt.api.QueryConfigParser;
 import ubt.api.QuerySpecification;
-import utils.Tracer;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
@@ -55,8 +55,8 @@ public class RulesTest {
 		    l++;
 		}
 	    in.close();
-	    Tracer.info("additional rule file: " + file.getName());
-	    Tracer.info(l + " rules added");
+	    RuntimesLogger.info("additional rule file: " + file.getName());
+	    RuntimesLogger.info(l + " rules added");
 	}
 	// ontology.setResultFileName(file.getName());
 	file = null;
@@ -71,21 +71,21 @@ public class RulesTest {
 	    System.exit(1);
 	}
 
-	Config.translationAlgorithm = TranslationAlgorithm.DL_LITE_R;
+	AbstractOntologyTranslation.profile = Profiles.OWL2_QL;
 
 	final QueryConfigParser queriesParser = new QueryConfigParser();
 	final Path queriesFile = FileSystems.getDefault().getPath(args[2])
 		.toAbsolutePath();
-	Vector queries = null;
+	Vector<?> queries = null;
 	try {
 	    queries = queriesParser.createQueryList(queriesFile.toString());
 	} catch (final Exception e) {
 	    e.printStackTrace();
 	}
 
-	utils.Tracer.open("loading", "queries");
+	RuntimesLogger.open("loading", "queries");
 	for (int run = 1; run <= 5; run++) {
-	    Tracer.setRun(run);
+	    RuntimesLogger.setRun(run);
 	    final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
 	    final Path ontologyFile = FileSystems.getDefault().getPath(args[0])
 		    .toAbsolutePath();
@@ -94,8 +94,8 @@ public class RulesTest {
 
 	    final String name = ontologyFile.getFileName().toString()
 		    .replaceFirst(".owl", "");
-	    Tracer.setDataset(name);
-	    Tracer.start("ontology loading");
+	    RuntimesLogger.setDataset(name);
+	    RuntimesLogger.start("ontology loading");
 	    OWLOntology ontology = null;
 	    try {
 		ontology = om.loadOntologyFromOntologyDocument(ontologyFile
@@ -103,17 +103,18 @@ public class RulesTest {
 	    } catch (final OWLOntologyCreationException e) {
 		e.printStackTrace();
 	    }
-	    Tracer.stop("ontology loading", "loading");
+	    RuntimesLogger.stop("ontology loading", "loading");
 	    final HybridKB nohr = new HybridKB(ontology);
 	    Rules.resetRules();
-	    final Iterator queriesIt1 = queries.iterator();
+	    final Iterator<?> queriesIt1 = queries.iterator();
 	    while (queriesIt1.hasNext()) {
 		final QuerySpecification querySpecification = (QuerySpecification) queriesIt1
 			.next();
+		RuntimesLogger.setIteration("query", querySpecification.id_);
 		try {
 		    final Collection<Answer> ans = nohr.queryAll(Parser
 			    .parseQuery(querySpecification.query_.getString()));
-		    Tracer.info(ans.size() + " answers");
+		    RuntimesLogger.info(ans.size() + " answers");
 		} catch (final IOException e) {
 		    e.printStackTrace();
 		} catch (final PrologParserException e) {
@@ -144,7 +145,7 @@ public class RulesTest {
 		    }
 		});
 		for (final Path progFile : files) {
-		    Tracer.setDataset(name
+		    RuntimesLogger.setDataset(name
 			    + "+"
 			    + progFile.getFileName().toString()
 			    .replaceFirst(".p", ""));
@@ -153,18 +154,19 @@ public class RulesTest {
 		    for (int i = 0; i < queries.size(); i++) {
 			final QuerySpecification querySpecification = (QuerySpecification) queries
 				.get(i);
-
+			RuntimesLogger.setIteration("query",
+				querySpecification.id_);
 			final Collection<Answer> ans = nohr.queryAll(Parser
 				.parseQuery(querySpecification.query_
 					.getString()));
-			Tracer.info(ans.size() + " answers");
+			RuntimesLogger.info(ans.size() + " answers");
 		    }
 		}
 	    } catch (final Exception e1) {
 		e1.printStackTrace();
 	    }
 	}
-	utils.Tracer.close();
+	RuntimesLogger.close();
 	System.out.println("Consult loading times at loading.csv");
 	System.out.println("Consult query times at queries.csv");
 	System.exit(0);

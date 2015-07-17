@@ -19,7 +19,6 @@ package ubt.api;
  */
 
 
-import java.io.*;
 import java.util.*;
 
 public class KbConfigParser
@@ -38,7 +37,7 @@ public class KbConfigParser
   /** KbSpecification object representing the current section */
   private KbSpecification kb_ = null;
   /** list of target systems */
-  private Vector kbList_;
+  private Vector<KbSpecification> kbList_;
   /** flags whether the target system is memory-based or not */
   private boolean isMemory_;
 
@@ -54,9 +53,9 @@ public class KbConfigParser
    * @return The created target system list.
    * @throws java.lang.Exception if there are IO errors or syntax/content errors.
    */
-  public Vector createKbList(String fileName, boolean isMemory) throws Exception {
+  public Vector<KbSpecification> createKbList(String fileName, boolean isMemory) throws Exception {
     isMemory_ = isMemory;
-    kbList_ = new Vector();
+    kbList_ = new Vector<KbSpecification>();
     parse(fileName);
     return kbList_;
   }

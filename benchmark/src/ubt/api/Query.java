@@ -24,7 +24,7 @@ public class Query {
   /** original string */
   private String string_ = "";
   /** list of conjunctive atoms */
-  private Vector atoms_ = new Vector(); //Atom
+  private Vector<Atom> atoms_ = new Vector<Atom>(); //Atom
 
   /**
    * Constructor.
@@ -36,7 +36,7 @@ public class Query {
    * Gets the constituent atoms.
    * @return List of atoms in this query.
    */
-  public Vector getAtoms() {
+  public Vector<Atom> getAtoms() {
     return atoms_;
   }
 

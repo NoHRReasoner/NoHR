@@ -27,7 +27,7 @@ public interface QLNormalizedOntology {
 
     public Set<OWLClassExpression> getDisjointConcepts();
 
-    public Set<OWLProperty> getDisjointRoles();
+    public Set<OWLProperty<?, ?>> getDisjointRoles();
 
     public OWLOntology getOriginalOntology();
 
@@ -41,23 +41,23 @@ public interface QLNormalizedOntology {
 
     public Set<OWLClassExpression> getSubConcepts();
 
-    public Set<OWLProperty> getSubRoles();
+    public Set<OWLProperty<?, ?>> getSubRoles();
 
     public Set<OWLClassExpression> getSuperConcepts();
 
-    public Set<OWLProperty> getSuperRoles();
+    public Set<OWLProperty<?, ?>> getSuperRoles();
 
     public Set<OWLClassExpression> getUnsatisfiableConcepts();
 
-    public Set<OWLPropertyExpression> getUnsatisfiableRoles();
+    public Set<OWLPropertyExpression<?, ?>> getUnsatisfiableRoles();
 
     public boolean hasDisjointStatement();
 
     public boolean isSub(OWLClassExpression ce);
 
-    public boolean isSub(OWLPropertyExpression pe);
+    public boolean isSub(OWLPropertyExpression<?, ?> pe);
 
     public boolean isSuper(OWLClassExpression ce);
 
-    public boolean isSuper(OWLPropertyExpression pe);
+    public boolean isSuper(OWLPropertyExpression<?, ?> pe);
 }

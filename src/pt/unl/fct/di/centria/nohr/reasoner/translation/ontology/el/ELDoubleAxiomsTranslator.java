@@ -52,7 +52,7 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return atom(pred, x);
     }
 
-    Atom negTr(OWLProperty p, Variable x, Variable y) {
+    Atom negTr(OWLProperty<?, ?> p, Variable x, Variable y) {
 	final Predicate pred = Predicates.negPred(sym(p), 2);
 	return atom(pred, x, y);
     }
@@ -70,7 +70,7 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return tr(ce, x, true);
     }
 
-    Atom tr(OWLProperty p, Variable x, Variable y) {
+    Atom tr(OWLProperty<?, ?> p, Variable x, Variable y) {
 	return tr(p, x, y, true);
     }
 
@@ -135,7 +135,7 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 
     // (r1)
     @Override
-    protected Set<Rule> translateSubsumption(OWLProperty r, OWLProperty s) {
+    protected Set<Rule> translateSubsumption(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
 	return ruleSet(
 		rule(tr(r, X, Y), tr(s, X, Y), negLiteral(negTr(r, X, Y))),
 		rule(negTr(r, X, Y), negTr(s, X, Y)));

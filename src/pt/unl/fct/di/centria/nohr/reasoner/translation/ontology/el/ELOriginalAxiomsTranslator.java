@@ -45,7 +45,7 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return tr(ce, x, false);
     }
 
-    Atom tr(OWLProperty p, Variable x, Variable y) {
+    Atom tr(OWLProperty<?, ?> p, Variable x, Variable y) {
 	return tr(p, x, y, false);
     }
 
@@ -75,7 +75,7 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     @Override
-    protected Set<Rule> translateSubsumption(OWLProperty p1, OWLProperty p2) {
+    protected Set<Rule> translateSubsumption(OWLProperty<?, ?> p1, OWLProperty<?, ?> p2) {
 	return ruleSet(rule(tr(p2, X, Y), tr(p1, X, Y)));
     }
 

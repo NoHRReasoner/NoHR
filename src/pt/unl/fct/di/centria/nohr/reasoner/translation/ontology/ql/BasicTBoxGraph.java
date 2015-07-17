@@ -30,16 +30,16 @@ public class BasicTBoxGraph implements TBoxGraph {
 
     private final QLNormalizedOntology ontology;
 
-    private final GraphClosure<OWLPropertyExpression> rolesClosure;
+    private final GraphClosure<OWLPropertyExpression<?, ?>> rolesClosure;
 
-    private final Map<OWLPropertyExpression, Set<OWLPropertyExpression>> rolesPredecessor;
+    private final Map<OWLPropertyExpression<?, ?>, Set<OWLPropertyExpression<?, ?>>> rolesPredecessor;
 
     private final Set<OWLEntity> unsatisfiableEntities;
 
     public BasicTBoxGraph(QLNormalizedOntology ontology) {
 	this.ontology = ontology;
 	conceptsPredecessors = new HashMap<OWLClassExpression, Set<OWLClassExpression>>();
-	rolesPredecessor = new HashMap<OWLPropertyExpression, Set<OWLPropertyExpression>>();
+	rolesPredecessor = new HashMap<OWLPropertyExpression<?, ?>, Set<OWLPropertyExpression<?, ?>>>();
 	for (final OWLSubClassOfAxiom axiom : ontology.getConceptSubsumptions()) {
 	    Set<OWLClassExpression> predecessors = conceptsPredecessors
 		    .get(axiom.getSuperClass());
@@ -51,17 +51,17 @@ public class BasicTBoxGraph implements TBoxGraph {
 	}
 	for (final OWLSubPropertyAxiom<?> axiom : ontology
 		.getRoleSubsumptions()) {
-	    Set<OWLPropertyExpression> predecessors = rolesPredecessor
+	    Set<OWLPropertyExpression<?, ?>> predecessors = rolesPredecessor
 		    .get(axiom.getSuperProperty());
 	    if (predecessors == null) {
-		predecessors = new HashSet<OWLPropertyExpression>();
+		predecessors = new HashSet<OWLPropertyExpression<?, ?>>();
 		rolesPredecessor.put(axiom.getSuperProperty(), predecessors);
 	    }
 	    predecessors.add(axiom.getSubProperty());
 	}
 	conceptsClosure = new BasicLazyGraphClosure<OWLClassExpression>(
 		conceptsPredecessors);
-	rolesClosure = new BasicLazyGraphClosure<OWLPropertyExpression>(
+	rolesClosure = new BasicLazyGraphClosure<OWLPropertyExpression<?, ?>>(
 		rolesPredecessor);
 	irreflexiveRoles = null;
 	unsatisfiableEntities = null;
@@ -77,19 +77,19 @@ public class BasicTBoxGraph implements TBoxGraph {
 	    return null;
     }
 
-    private OWLProperty atom(OWLPropertyExpression v) {
+    private OWLProperty<?, ?> atom(OWLPropertyExpression<?, ?> v) {
 	if (!DLUtils.isInverse(v))
-	    return (OWLProperty) v;
+	    return (OWLProperty<?, ?>) v;
 	else
 	    return ((OWLObjectPropertyExpression) v).getNamedProperty();
     }
 
     private Set<OWLEntity> atoms(Set<OWLClassExpression> unsatisfiableConcepts,
-	    Set<OWLPropertyExpression> unsatisfiableRoles) {
+	    Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles) {
 	final Set<OWLEntity> result = new HashSet<OWLEntity>();
 	for (final OWLClassExpression c : unsatisfiableConcepts)
 	    result.add(atom(c));
-	for (final OWLPropertyExpression r : unsatisfiableRoles)
+	for (final OWLPropertyExpression<?, ?> r : unsatisfiableRoles)
 	    result.add(atom(r));
 	return result;
     }
@@ -119,7 +119,8 @@ public class BasicTBoxGraph implements TBoxGraph {
 	return conceptsClosure.getAncestors(v);
     }
 
-    public Set<OWLPropertyExpression> getAncestors(OWLPropertyExpression v) {
+    public Set<OWLPropertyExpression<?, ?>> getAncestors(
+	    OWLPropertyExpression<?, ?> v) {
 	return rolesClosure.getAncestors(v);
     }
 
@@ -152,16 +153,16 @@ public class BasicTBoxGraph implements TBoxGraph {
 		.getRoleDisjunctions()) {
 	    final Object[] props = disjPropsAxiom.getProperties().toArray();
 	    for (int i = 0; i < props.length; i++) {
-		final OWLPropertyExpression q1 = (OWLPropertyExpression) props[i];
+		final OWLPropertyExpression<?, ?> q1 = (OWLPropertyExpression<?, ?>) props[i];
 		for (int j = 0; j < props.length; j++)
 		    if (i != j) {
-			final OWLPropertyExpression q2 = (OWLPropertyExpression) props[j];
-			Set<OWLPropertyExpression> q1Ancs = getAncestors(q1);
-			Set<OWLPropertyExpression> q2Ancs = getAncestors(q2);
+			final OWLPropertyExpression<?, ?> q2 = (OWLPropertyExpression<?, ?>) props[j];
+			Set<OWLPropertyExpression<?, ?>> q1Ancs = getAncestors(q1);
+			Set<OWLPropertyExpression<?, ?>> q2Ancs = getAncestors(q2);
 			if (q1Ancs == null)
-			    q1Ancs = new HashSet<OWLPropertyExpression>();
+			    q1Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
 			if (q2Ancs == null)
-			    q2Ancs = new HashSet<OWLPropertyExpression>();
+			    q2Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
 			q1Ancs.add(q1);
 			q2Ancs.add(q2);
 			final Set<OWLObjectProperty> intersection = roleInverseIntersection(
@@ -177,7 +178,7 @@ public class BasicTBoxGraph implements TBoxGraph {
 	return conceptsPredecessors.get(v);
     }
 
-    public Set<OWLPropertyExpression> getPredecessors(
+    public Set<OWLPropertyExpression<?, ?>> getPredecessors(
 	    OWLObjectPropertyExpression v) {
 	return rolesPredecessor.get(v);
     }
@@ -215,33 +216,34 @@ public class BasicTBoxGraph implements TBoxGraph {
 	    cAncs.add(c);
 	    unsatisfiableConcepts.addAll(cAncs);
 	}
-	final Set<OWLPropertyExpression> unsatisfiableRoles = new HashSet<OWLPropertyExpression>();
+	final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles = new HashSet<OWLPropertyExpression<?, ?>>();
 	for (final OWLNaryPropertyAxiom<?> disjPropsAxiom : ontology
 		.getRoleDisjunctions()) {
 	    final Object[] props = disjPropsAxiom.getProperties().toArray();
 	    for (int i = 0; i < props.length; i++) {
-		final OWLPropertyExpression q1 = (OWLPropertyExpression) props[i];
+		final OWLPropertyExpression<?, ?> q1 = (OWLPropertyExpression<?, ?>) props[i];
 		for (int j = 0; j < props.length; j++)
 		    if (i != j) {
-			final OWLPropertyExpression q2 = (OWLPropertyExpression) props[j];
-			Set<OWLPropertyExpression> q1Ancs = getAncestors(q1);
-			Set<OWLPropertyExpression> q2Ancs = getAncestors(q2);
+			final OWLPropertyExpression<?, ?> q2 = (OWLPropertyExpression<?, ?>) props[j];
+			Set<OWLPropertyExpression<?, ?>> q1Ancs = getAncestors(q1);
+			Set<OWLPropertyExpression<?, ?>> q2Ancs = getAncestors(q2);
 			if (q1Ancs == null)
-			    q1Ancs = new HashSet<OWLPropertyExpression>();
+			    q1Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
 			if (q2Ancs == null)
-			    q2Ancs = new HashSet<OWLPropertyExpression>();
+			    q2Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
 			q1Ancs.add(q1);
 			q2Ancs.add(q2);
-			final Set<OWLPropertyExpression> intersection = intersection(
+			final Set<OWLPropertyExpression<?, ?>> intersection = intersection(
 				q1Ancs, q2Ancs);
 			unsatisfiableRoles.addAll(intersection);
 		    }
 	    }
 	}
-	for (final OWLPropertyExpression q : ontology.getUnsatisfiableRoles()) {
-	    Set<OWLPropertyExpression> qAncs = getAncestors(q);
+	for (final OWLPropertyExpression<?, ?> q : ontology
+		.getUnsatisfiableRoles()) {
+	    Set<OWLPropertyExpression<?, ?>> qAncs = getAncestors(q);
 	    if (qAncs == null)
-		qAncs = new HashSet<OWLPropertyExpression>();
+		qAncs = new HashSet<OWLPropertyExpression<?, ?>>();
 	    qAncs.add(q);
 	    unsatisfiableRoles.addAll(qAncs);
 	}
@@ -264,9 +266,10 @@ public class BasicTBoxGraph implements TBoxGraph {
     }
 
     private Set<OWLObjectProperty> roleInverseIntersection(
-	    Set<OWLPropertyExpression> s1, Set<OWLPropertyExpression> s2) {
+	    Set<OWLPropertyExpression<?, ?>> s1,
+	    Set<OWLPropertyExpression<?, ?>> s2) {
 	final Set<OWLObjectProperty> result = new HashSet<OWLObjectProperty>();
-	for (final OWLPropertyExpression v : s1)
+	for (final OWLPropertyExpression<?, ?> v : s1)
 	    if (v instanceof OWLObjectPropertyExpression) {
 		final OWLObjectPropertyExpression vo = (OWLObjectPropertyExpression) v;
 		if (s2.contains(vo.getInverseProperty().getSimplified()))

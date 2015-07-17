@@ -67,7 +67,7 @@ AbstractAxiomsTranslator {
 		    "c must be an atomic or existential class");
     }
 
-    protected Atom negTr(OWLPropertyExpression r, Variable x, Variable y) {
+    protected Atom negTr(OWLPropertyExpression<?, ?> r, Variable x, Variable y) {
 	if (r instanceof OWLObjectProperty)
 	    return atom(negPred(sym(r), 2), x, y);
 	else if (r instanceof OWLDataProperty)
@@ -117,7 +117,7 @@ AbstractAxiomsTranslator {
 	throw new IllegalArgumentException("c must be an valid concept");
     }
 
-    protected Atom tr(OWLPropertyExpression r, Variable x, Variable y,
+    protected Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y,
 	    boolean doub) {
 	if (r instanceof OWLObjectProperty)
 	    return atom(pred(sym(r), 2, doub), x, y);
@@ -165,8 +165,8 @@ AbstractAxiomsTranslator {
     }
 
     public Set<Rule> translate(OWLSubPropertyAxiom<?> alpha) {
-	final OWLPropertyExpression ope1 = alpha.getSubProperty();
-	final OWLPropertyExpression ope2 = alpha.getSuperProperty();
+	final OWLPropertyExpression<?, ?> ope1 = alpha.getSubProperty();
+	final OWLPropertyExpression<?, ?> ope2 = alpha.getSuperProperty();
 	final Set<Rule> result = new HashSet<Rule>();
 	result.addAll(translateSubsumption(ope1, ope2));
 	return result;
@@ -178,8 +178,8 @@ AbstractAxiomsTranslator {
     protected abstract Set<Rule> translateDisjunction(OWLClassExpression b1,
 	    OWLClassExpression b2);
 
-    protected abstract Set<Rule> translateDisjunction(OWLPropertyExpression q1,
-	    OWLPropertyExpression q2);
+    protected abstract Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1,
+	    OWLPropertyExpression<?, ?> q2);
 
     public abstract Rule translateDomain(OWLObjectProperty p);
 
@@ -235,14 +235,14 @@ AbstractAxiomsTranslator {
 	return result;
     }
 
-    protected abstract Set<Rule> translateSubsumption(OWLPropertyExpression q1,
-	    OWLPropertyExpression q2);
+    protected abstract Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1,
+	    OWLPropertyExpression<?, ?> q2);
 
     public Rule translateUnsatisfaible(OWLClass a) {
 	return rule(negTr(a, X));
     }
 
-    public Rule translateUnsatisfaible(OWLProperty p) {
+    public Rule translateUnsatisfaible(OWLProperty<?, ?> p) {
 	return rule(negTr(p, X, Y));
     }
 

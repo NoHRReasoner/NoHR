@@ -27,7 +27,6 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
-import org.semanticweb.owlapi.profiles.Profiles;
 
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Rule;
@@ -35,6 +34,7 @@ import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class QLOntologyTranslation extends AbstractOntologyTranslation {
@@ -75,10 +75,10 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 		.getDisjointConcepts())
 	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(b, X)
 		    .getPredicate());
-	for (final OWLPropertyExpression q : normalizedOntology.getSubRoles())
+	for (final OWLPropertyExpression<?, ?> q : normalizedOntology.getSubRoles())
 	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(q, X, Y)
 		    .getPredicate());
-	for (final OWLPropertyExpression q : normalizedOntology
+	for (final OWLPropertyExpression<?, ?> q : normalizedOntology
 		.getDisjointRoles())
 	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(q, X, Y)
 		    .getPredicate());
@@ -88,7 +88,7 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 			(OWLClass) e, X).getPredicate());
 	    else if (e instanceof OWLProperty)
 		negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(
-			(OWLProperty) e, X, Y).getPredicate());
+			(OWLProperty<?, ?>) e, X, Y).getPredicate());
 	for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
 	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(p, X, Y)
 		    .getPredicate());
@@ -111,7 +111,7 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 			.translateUnsatisfaible((OWLClass) e));
 	    else if (e instanceof OWLProperty)
 		rules.add(doubleAxiomsTranslator
-			.translateUnsatisfaible((OWLProperty) e));
+			.translateUnsatisfaible((OWLProperty<?, ?>) e));
 	for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
 	    rules.add(doubleAxiomsTranslator.translateIrreflexive(p));
 	RuntimesLogger.stop("ontology classification", "loading");
@@ -176,7 +176,7 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 		result.addAll(axiomsTranslator
 			.translate((OWLDisjointDataPropertiesAxiom) d));
 
-	for (final OWLPropertyExpression ope : normalizedOntology.getRoles())
+	for (final OWLPropertyExpression<?, ?> ope : normalizedOntology.getRoles())
 	    if (ope instanceof OWLObjectPropertyExpression) {
 		final OWLObjectProperty p = ((OWLObjectPropertyExpression) ope)
 			.getNamedProperty();

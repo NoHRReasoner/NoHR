@@ -1,6 +1,5 @@
-import org.semanticweb.owlapi.profiles.Profiles;
-
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 
 /**
  *

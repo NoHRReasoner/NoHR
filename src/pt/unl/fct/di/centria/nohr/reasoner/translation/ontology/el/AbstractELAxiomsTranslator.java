@@ -38,7 +38,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTr
  *
  */
 public abstract class AbstractELAxiomsTranslator extends
-AbstractAxiomsTranslator {
+	AbstractAxiomsTranslator {
 
     protected static final Variable X = var("X");
     protected static final Variable Y = var("Y");
@@ -56,14 +56,14 @@ AbstractAxiomsTranslator {
 	return result;
     }
 
-    protected Set<Atom> tr(List<OWLPropertyExpression> chain, Variable x,
+    protected Set<Atom> tr(List<OWLPropertyExpression<?, ?>> chain, Variable x,
 	    Variable xk, boolean doub) {
 	final Set<Atom> result = new HashSet<Atom>();
 	final int n = chain.size();
 	Variable xi = x;
 	Variable xj = x;
 	for (int i = 0; i < n; i++) {
-	    final OWLProperty pe = (OWLProperty) chain.get(i);
+	    final OWLProperty<?, ?> pe = (OWLProperty<?, ?>) chain.get(i);
 	    xi = xj;
 	    xj = i == n - 1 ? xk : var("X" + i);
 	    result.add(tr(pe, xi, xj, doub));
@@ -88,7 +88,7 @@ AbstractAxiomsTranslator {
 		result.addAll(tr(op, x, doub));
 	} else if (ce instanceof OWLObjectSomeValuesFrom) {
 	    final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) ce;
-	    final OWLProperty p = (OWLProperty) some.getProperty();
+	    final OWLProperty<?, ?> p = (OWLProperty<?, ?>) some.getProperty();
 	    final OWLClassExpression filler = some.getFiller();
 	    result.add(tr(p, X, Y, doub));
 	    result.addAll(tr(filler, Y, doub));
@@ -96,7 +96,7 @@ AbstractAxiomsTranslator {
 	return result;
     }
 
-    protected Atom tr(OWLProperty pe, Variable x, Variable y, boolean doub) {
+    protected Atom tr(OWLProperty<?, ?> pe, Variable x, Variable y, boolean doub) {
 	final Predicate pred = Predicates.pred(sym(pe), 2, doub);
 	if (pe instanceof OWLProperty)
 	    return atom(pred, x, y);
@@ -117,8 +117,10 @@ AbstractAxiomsTranslator {
     }
 
     public Set<Rule> translate(OWLSubPropertyAxiom<?> axiom) {
-	final OWLProperty pe1 = (OWLProperty) axiom.getSubProperty();
-	final OWLProperty pe2 = (OWLProperty) axiom.getSuperProperty();
+	final OWLProperty<?, ?> pe1 = (OWLProperty<?, ?>) axiom
+		.getSubProperty();
+	final OWLProperty<?, ?> pe2 = (OWLProperty<?, ?>) axiom
+		.getSuperProperty();
 	return translateSubsumption(pe1, pe2);
     }
 
@@ -140,6 +142,6 @@ AbstractAxiomsTranslator {
     protected abstract Set<Rule> translateSubsumption(OWLClassExpression ce1,
 	    OWLClass c2);
 
-    protected abstract Set<Rule> translateSubsumption(OWLProperty p1,
-	    OWLProperty p2);
+    protected abstract Set<Rule> translateSubsumption(OWLProperty<?, ?> p1,
+	    OWLProperty<?, ?> p2);
 }

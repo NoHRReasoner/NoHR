@@ -38,7 +38,6 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAx
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntology;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntologyImpl;
 
-import com.google.common.base.Optional;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 public class KB {
@@ -62,8 +61,8 @@ public class KB {
     private final Map<String, OWLObjectProperty> roles;
 
     public KB() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-    CloneNotSupportedException, UnsupportedAxiomTypeException {
+	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	om = OWLManager.createOWLOntologyManager();
 	df = om.getOWLDataFactory();
 	ont = om.createOntology(IRI.generateDocumentIRI());
@@ -200,7 +199,7 @@ public class KB {
     }
 
     private IRI getEntityIRI(String name) {
-	final Optional<IRI> ontIRI = ont.getOntologyID().getOntologyIRI();
+	final IRI ontIRI = ont.getOntologyID().getOntologyIRI();
 	return IRI.create(ontIRI + "#" + name);
     }
 

@@ -11,7 +11,6 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.profiles.OWL2ELProfile;
 import org.semanticweb.owlapi.profiles.OWL2QLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
-import org.semanticweb.owlapi.profiles.Profiles;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import pt.unl.fct.di.centria.nohr.model.Literal;

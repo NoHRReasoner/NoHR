@@ -54,7 +54,7 @@ import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 public class ELReducedOntologyImpl implements ELReducedOntology {
 
     private class ComplexSidesNormalizer implements
-    Normalizer<OWLSubClassOfAxiom> {
+	    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -73,7 +73,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class ConceptAssertionsNormalizer implements
-	    Normalizer<OWLClassAssertionAxiom> {
+    Normalizer<OWLClassAssertionAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLClassAssertionAxiom assertion,
@@ -92,7 +92,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class LeftBottomNormalizer implements
-	    Normalizer<OWLSubClassOfAxiom> {
+    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -103,7 +103,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class LeftConjunctionNormalizer implements
-	    Normalizer<OWLSubClassOfAxiom> {
+    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -131,7 +131,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class LeftExistentialNormalizer implements
-    Normalizer<OWLSubClassOfAxiom> {
+	    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -170,7 +170,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private class RightConjunctionNormalizer implements
-	    Normalizer<OWLSubClassOfAxiom> {
+    Normalizer<OWLSubClassOfAxiom> {
 
 	@Override
 	public boolean addNormalization(OWLSubClassOfAxiom axiom,
@@ -255,8 +255,8 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	generators.add(new InferredClassAssertionAxiomGenerator());
 	final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(
 		reasoner, generators);
-	inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager()
-		.getOWLDataFactory(), ontology);
+	inferredOntologyGenerator.fillOntology(
+		ontology.getOWLOntologyManager(), ontology);
 	RuntimesLogger.stop("ontology classification", "loading");
     }
 
@@ -403,7 +403,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	    Set<OWLClassAssertionAxiom> conceptAssertions,
 	    Set<OWLSubClassOfAxiom> conceptSubsumptions,
 	    Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions)
-		    throws OWLOntologyCreationException {
+	    throws OWLOntologyCreationException {
 	final OWLOntologyManager om = ontology.getOWLOntologyManager();
 	final OWLOntology result = om.createOntology();
 	norm(conceptAssertions, new ConceptAssertionsNormalizer());
@@ -418,7 +418,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	    Set<OWLClassAssertionAxiom> conceptAssertions,
 	    Set<OWLSubClassOfAxiom> conceptSubsumptions,
 	    Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions)
-	    throws OWLOntologyCreationException {
+		    throws OWLOntologyCreationException {
 	final OWLOntology result = normalized(conceptAssertions,
 		conceptSubsumptions, roleSubsumptions);
 	classify(result);

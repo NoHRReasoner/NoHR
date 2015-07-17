@@ -12,7 +12,7 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 public class DLUtils {
 
-    public static OWLProperty getRoleName(OWLPropertyExpression q) {
+    public static OWLProperty<?, ?> getRoleName(OWLPropertyExpression<?, ?> q) {
 	if (q instanceof OWLDataPropertyExpression)
 	    return ((OWLDataPropertyExpression) q).asOWLDataProperty();
 	else if (q instanceof OWLObjectPropertyExpression)
@@ -33,7 +33,7 @@ public class DLUtils {
 	return cls instanceof OWLObjectSomeValuesFrom;
     }
 
-    public static boolean isInverse(OWLPropertyExpression p) {
+    public static boolean isInverse(OWLPropertyExpression<?, ?> p) {
 	return p instanceof OWLObjectInverseOf;
     }
 }

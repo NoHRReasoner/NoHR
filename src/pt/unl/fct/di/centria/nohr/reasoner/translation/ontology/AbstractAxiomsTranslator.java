@@ -82,7 +82,7 @@ public abstract class AbstractAxiomsTranslator {
 	    return null;
     }
 
-    protected String sym(OWLPropertyExpression r) {
+    protected String sym(OWLPropertyExpression<?, ?> r) {
 	if (r instanceof OWLObjectPropertyExpression)
 	    return ontologyLabeler.getLabel(
 		    ((OWLObjectPropertyExpression) r).getNamedProperty(), 1);
@@ -127,7 +127,7 @@ public abstract class AbstractAxiomsTranslator {
     }
 
     public Set<Rule> translateOriginal(OWLPropertyAssertionAxiom<?, ?> alpha) {
-	final OWLPropertyExpression ope = alpha.getProperty();
+	final OWLPropertyExpression<?, ?> ope = alpha.getProperty();
 	if (ope.isTopEntity() || ope.isBottomEntity())
 	    return ruleSet();
 	final Predicate p = origPred(sym(alpha.getProperty()), 2);

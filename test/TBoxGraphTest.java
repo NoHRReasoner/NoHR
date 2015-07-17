@@ -60,8 +60,8 @@ public class TBoxGraphTest {
      */
     @Test
     public final void conceptsAncestors() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-    CloneNotSupportedException, UnsupportedAxiomTypeException {
+	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -250,8 +250,8 @@ public class TBoxGraphTest {
      */
     @Test
     public final void rolesAncestors() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-    CloneNotSupportedException, UnsupportedAxiomTypeException {
+	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
@@ -263,7 +263,8 @@ public class TBoxGraphTest {
 	// Test
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
 		kb.getNormalizedOntology());
-	final Set<OWLPropertyExpression> ancestors = graph.getAncestors(p[0]);
+	final Set<OWLPropertyExpression<?, ?>> ancestors = graph
+		.getAncestors(p[0]);
 	Assert.assertEquals(expectedAncestors, ancestors);
     }
 
@@ -295,7 +296,7 @@ public class TBoxGraphTest {
 	// TestInit
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
 		kb.getNormalizedOntology());
-	Set<OWLPropertyExpression> ancestors;
+	Set<OWLPropertyExpression<?, ?>> ancestors;
 	// Tests
 	for (int i = 0; i < 4; i++) {
 	    ancestors = graph.getAncestors(p[i]);
@@ -318,8 +319,8 @@ public class TBoxGraphTest {
      */
     @Test
     public final void rolesPredecessors() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-    CloneNotSupportedException, UnsupportedAxiomTypeException {
+	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	// Data
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 9);
@@ -333,7 +334,8 @@ public class TBoxGraphTest {
 	final BasicTBoxGraph graph = new BasicTBoxGraph(
 		kb.getNormalizedOntology());
 	// Test1
-	Set<OWLPropertyExpression> predecessors = graph.getPredecessors(p[2]);
+	Set<OWLPropertyExpression<?, ?>> predecessors = graph
+		.getPredecessors(p[2]);
 	Assert.assertEquals(set(p[0], p[1]), predecessors);
 	// Test2
 	predecessors = graph.getPredecessors(p[4]);

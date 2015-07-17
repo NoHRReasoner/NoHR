@@ -47,7 +47,7 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
 	return tr(c, x, false);
     }
 
-    private Atom tr(OWLPropertyExpression r, Variable x, Variable y) {
+    private Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y) {
 	return tr(r, x, y, false);
     }
 
@@ -74,8 +74,8 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
     }
 
     @Override
-    protected Set<Rule> translateDisjunction(OWLPropertyExpression q1,
-	    OWLPropertyExpression q2) {
+    protected Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1,
+	    OWLPropertyExpression<?, ?> q2) {
 	return ruleSet();
     }
 
@@ -110,12 +110,12 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
     }
 
     @Override
-    protected Set<Rule> translateSubsumption(OWLPropertyExpression q1,
-	    OWLPropertyExpression q2) {
+    protected Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1,
+	    OWLPropertyExpression<?, ?> q2) {
 	if (q1.isTopEntity() || q1.isBottomEntity() || q2.isTopEntity())
 	    return ruleSet();
 	if (q2.isBottomEntity())
-	    return ruleSet(translateUnsatisfaible((OWLProperty) q1));
+	    return ruleSet(translateUnsatisfaible((OWLProperty<?, ?>) q1));
 	return ruleSet(rule(tr(q2, X, Y), tr(q1, X, Y)));
     }
 }

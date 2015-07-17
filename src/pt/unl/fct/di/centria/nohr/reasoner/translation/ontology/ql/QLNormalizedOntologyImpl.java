@@ -43,8 +43,6 @@ import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
-import com.google.common.base.Optional;
-
 //TODO refactor
 
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
@@ -57,13 +55,13 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private final Set<OWLClassExpression> disjointConcepts;
 
-    private final Set<OWLProperty> disjointRoles;
+    private final Set<OWLProperty<?, ?>> disjointRoles;
 
     private boolean hasDisjunction;
 
     private final OWLOntology ontology;
 
-    private final Optional<IRI> ontologyIRI;
+    private final IRI ontologyIRI;
 
     private final Set<OWLNaryPropertyAxiom<?>> roleDisjunctions;
 
@@ -71,15 +69,15 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private final Set<OWLClassExpression> subConcepts;
 
-    private final Set<OWLProperty> subRoles;
+    private final Set<OWLProperty<?, ?>> subRoles;
 
     private final Set<OWLClassExpression> superConcepts;
 
-    private final Set<OWLProperty> superRoles;
+    private final Set<OWLProperty<?, ?>> superRoles;
 
     private final Set<OWLClassExpression> unsatisfiableConcepts;
 
-    private final Set<OWLPropertyExpression> unsatisfiableRoles;
+    private final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles;
 
     public QLNormalizedOntologyImpl(OWLOntology ontology) {
 	this.ontology = ontology;
@@ -90,13 +88,13 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	conceptDisjunctions = new HashSet<OWLDisjointClassesAxiom>();
 	roleDisjunctions = new HashSet<OWLNaryPropertyAxiom<?>>();
 	unsatisfiableConcepts = new HashSet<OWLClassExpression>();
-	unsatisfiableRoles = new HashSet<OWLPropertyExpression>();
+	unsatisfiableRoles = new HashSet<OWLPropertyExpression<?, ?>>();
 	subConcepts = new HashSet<OWLClassExpression>();
 	superConcepts = new HashSet<OWLClassExpression>();
 	disjointConcepts = new HashSet<OWLClassExpression>();
-	subRoles = new HashSet<OWLProperty>();
-	superRoles = new HashSet<OWLProperty>();
-	disjointRoles = new HashSet<OWLProperty>();
+	subRoles = new HashSet<OWLProperty<?, ?>>();
+	superRoles = new HashSet<OWLProperty<?, ?>>();
+	disjointRoles = new HashSet<OWLProperty<?, ?>>();
 	normalize(ontology);
     }
 
@@ -126,7 +124,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     @Override
-    public Set<OWLProperty> getDisjointRoles() {
+    public Set<OWLProperty<?, ?>> getDisjointRoles() {
 	return disjointRoles;
     }
 
@@ -169,7 +167,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     @Override
-    public Set<OWLProperty> getSubRoles() {
+    public Set<OWLProperty<?, ?>> getSubRoles() {
 	return subRoles;
     }
 
@@ -179,7 +177,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     @Override
-    public Set<OWLProperty> getSuperRoles() {
+    public Set<OWLProperty<?, ?>> getSuperRoles() {
 	return superRoles;
     }
 
@@ -189,7 +187,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     @Override
-    public Set<OWLPropertyExpression> getUnsatisfiableRoles() {
+    public Set<OWLPropertyExpression<?, ?>> getUnsatisfiableRoles() {
 	return unsatisfiableRoles;
     }
 
@@ -204,7 +202,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     @Override
-    public boolean isSub(OWLPropertyExpression pe) {
+    public boolean isSub(OWLPropertyExpression<?, ?> pe) {
 	return subRoles.contains(pe);
     }
 
@@ -214,7 +212,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     @Override
-    public boolean isSuper(OWLPropertyExpression pe) {
+    public boolean isSuper(OWLPropertyExpression<?, ?> pe) {
 	return superRoles.contains(pe);
     }
 
@@ -362,8 +360,8 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     private void normalize(OWLSubPropertyAxiom<?> alpha) {
-	final OWLPropertyExpression q1 = alpha.getSubProperty();
-	final OWLPropertyExpression q2 = alpha.getSuperProperty();
+	final OWLPropertyExpression<?, ?> q1 = alpha.getSubProperty();
+	final OWLPropertyExpression<?, ?> q2 = alpha.getSuperProperty();
 	subRoles.add(DLUtils.getRoleName(q1));
 	superRoles.add(DLUtils.getRoleName(q2));
 	if (q1.isBottomEntity() || q2.isTopEntity() || q1.isTopEntity())
@@ -383,21 +381,21 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     }
 
     // TODO refactor
-    private <P extends OWLPropertyExpression> void normalizeDisjunction(
+    private <P extends OWLPropertyExpression<?, ?>> void normalizeDisjunction(
 	    OWLNaryPropertyAxiom<P> alpha) {
 	hasDisjunction = true;
 	final Set<P> props = alpha.getProperties();
 	final Iterator<P> propsIt1 = props.iterator();
 	while (propsIt1.hasNext()) {
-	    final OWLPropertyExpression q1 = propsIt1.next();
-	    final OWLProperty p = DLUtils.getRoleName(q1);
+	    final OWLPropertyExpression<?, ?> q1 = propsIt1.next();
+	    final OWLProperty<?, ?> p = DLUtils.getRoleName(q1);
 	    disjointRoles.add(p);
 	    subRoles.add(p);
 	    if (q1.isBottomEntity())
 		continue;
 	    final Iterator<P> propsIt2 = props.iterator();
 	    while (propsIt2.hasNext()) {
-		final OWLPropertyExpression q2 = propsIt2.next();
+		final OWLPropertyExpression<?, ?> q2 = propsIt2.next();
 		if (q2.isBottomEntity())
 		    continue;
 		if (!q1.equals(q2))
