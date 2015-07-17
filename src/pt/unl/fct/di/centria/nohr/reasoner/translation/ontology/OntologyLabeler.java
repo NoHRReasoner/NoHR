@@ -60,9 +60,11 @@ public class OntologyLabeler {
      */
     public OntologyLabeler(OWLOntology ont,
 	    OWLAnnotationProperty annotationProperty) {
+	System.out.println("ontology labeler");
 	ontology = ont;
-	// ontologyLabel = annotationProperty;
+	System.out.println("ontology = ont");
 	ontologyID = getOntologyID();
+	System.out.println("getOntologyID");
     }
 
     /**
@@ -84,24 +86,24 @@ public class OntologyLabeler {
 		else
 		    return getLabel(
 			    ((OWLSubPropertyChainAxiomImpl) entity)
-				    .getSuperProperty(),
+			    .getSuperProperty(),
 			    1);
 	} else if (entity instanceof OWLObjectPropertyAssertionAxiomImpl)
 	    switch (numInList) {
 	    case 1:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-				.getProperty(),
+			.getProperty(),
 			1);
 	    case 2:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-				.getSubject(),
+			.getSubject(),
 			1);
 	    case 3:
 		return getLabel(
 			((OWLObjectPropertyAssertionAxiomImpl) entity)
-				.getObject(),
+			.getObject(),
 			1);
 	    }
 	return getLabel(entity.toString(), numInList);
@@ -267,7 +269,7 @@ public class OntologyLabeler {
 		result = result.replaceAll("\\.", "");
 		if (Character.isUpperCase(result.charAt(0)))
 		    result = result.substring(0, 1).toLowerCase()
-			    + result.substring(1);
+		    + result.substring(1);
 	    } else if (rule.contains(OntologyLabeler.altDelimeter))
 		result = rule.split(OntologyLabeler.altDelimeter)[numInList]
 			.split(">")[0];
@@ -298,13 +300,19 @@ public class OntologyLabeler {
      */
     private String getOntologyID() {
 	try {
+	    System.out.println("getOntologyID");
 	    final String _ = ontology.getOntologyID().getOntologyIRI()
 		    .toString();
+	    System.out.println("getOntologyIRI");
 	    return _.contains("/") ? _.substring(0, _.lastIndexOf("/")) + "/"
 		    : "";
 
 	} catch (final NullPointerException e) {
+	    System.out.println("NullPointerException");
 	    return "";
+	} catch (final Exception e) {
+	    System.err.println(e.getMessage());
+	    return null;
 	}
 
     }

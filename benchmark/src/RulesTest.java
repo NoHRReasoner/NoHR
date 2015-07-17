@@ -58,15 +58,16 @@ public class RulesTest {
 	    Tracer.info("additional rule file: " + file.getName());
 	    Tracer.info(l + " rules added");
 	}
+	// ontology.setResultFileName(file.getName());
 	file = null;
     }
 
     public static void main(String[] args) throws OWLOntologyCreationException,
 	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
 	    CloneNotSupportedException, UnsupportedAxiomTypeException {
-	if (args.length != 4) {
+	if (args.length != 3) {
 	    System.out
-	    .println("expected arguments: <ontology> <programs directory> <queries file> <runs>");
+	    .println("expected arguments: <ontology> <programs directory> <queries file>");
 	    System.exit(1);
 	}
 
@@ -75,7 +76,6 @@ public class RulesTest {
 	final QueryConfigParser queriesParser = new QueryConfigParser();
 	final Path queriesFile = FileSystems.getDefault().getPath(args[2])
 		.toAbsolutePath();
-	final int runs = Integer.valueOf(args[3]);
 	Vector queries = null;
 	try {
 	    queries = queriesParser.createQueryList(queriesFile.toString());
@@ -84,7 +84,7 @@ public class RulesTest {
 	}
 
 	utils.Tracer.open("loading", "queries");
-	for (int run = 1; run <= runs; run++) {
+	for (int run = 1; run <= 5; run++) {
 	    Tracer.setRun(run);
 	    final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
 	    final Path ontologyFile = FileSystems.getDefault().getPath(args[0])

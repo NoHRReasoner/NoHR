@@ -53,12 +53,15 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
 	    IOException, CloneNotSupportedException, UnsupportedOWLProfile {
 	super(ontology);
+	System.out.println("super");
 	normalizedOntology = new QLNormalizedOntologyImpl(ontology);
 	graph = new BasicTBoxGraph(normalizedOntology);
 	hasDisjunctions = normalizedOntology.hasDisjointStatement();
 	originalAxiomsTranslator = new QLOriginalAxiomsTranslator(ontology);
 	doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(ontology);
+	System.out.println("attributions");
 	translate();
+	System.out.println("translation");
     }
 
     @Override
