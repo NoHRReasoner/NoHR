@@ -39,7 +39,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
 
+import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -47,8 +49,9 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
+import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 
-public class HybridQueryViewComponent extends AbstractOWLViewComponent {
+public class QueryViewComponent extends AbstractHybridViewComponent {
     // implements OWLModelManagerListener {
 
     class QueryWorker extends SwingWorker<Void, Void> {
@@ -58,35 +61,27 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 	@Override
 	public Void doInBackground() {
 	    try {
-		if (isNeedToQuery || !hasVariables) {
-		    disableValuationCheckBoxes();
-		    isShowProgress = true;
-		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-			    final int delay = 750; // milliseconds
-			    final ActionListener taskPerformer = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-				    if (isShowProgress)
-					progressFrame.setVisible(true);
-				}
-			    };
-			    new Timer(delay, taskPerformer).start();
-			}
-		    });
-		    textField.selectAll();
-		    textField.requestFocus();
-		    final Query query = Parser.parseQuery(textField.getText());
-		    fillTable(query, nohr.queryAll(query));
+		disableValuationCheckBoxes();
+		isShowProgress = true;
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		    @Override
+		    public void run() {
+			final int delay = 750; // milliseconds
+			final ActionListener taskPerformer = new ActionListener() {
+			    @Override
+			    public void actionPerformed(ActionEvent evt) {
+				if (isShowProgress)
+				    progressFrame.setVisible(true);
+			    }
+			};
+			new Timer(delay, taskPerformer).start();
+		    }
+		});
+		textField.selectAll();
+		textField.requestFocus();
+		final Query query = Parser.parseQuery(textField.getText());
+		fillTable(query, nohr.queryAll(query));
 
-		} else {
-		    fillNoAnswersTable("Please check at least one valuation option!");
-		    // union.logger.Logger.log("");
-		    // nohr.reasoner.ontologyTranslation.Logger.log("Please check at least one valuation option!");
-		    // nohr.reasoner.ontologyTranslation.Logger.log(""):w
-		    ;
-		}
 	    } catch (final Exception e) {
 		progressFrame.setVisible(false);
 		e.printStackTrace();
@@ -116,7 +111,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
     private final List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
     private String filter;
     private boolean hasVariables;
-    private boolean isNeedToQuery;
+    // private boolean isNeedToQuery;
     private boolean isShowAllSolutions = true;
     private boolean isShowProgress;
     // private JLabel progressLabel;
@@ -206,8 +201,7 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 		progressFrame.setLocationByPlatform(true);
 		progressFrame.setUndecorated(true);
 		progressFrame.setContentPane(progressPanel);
-		progressFrame
-			.setLocationRelativeTo(HybridQueryViewComponent.this);
+		progressFrame.setLocationRelativeTo(QueryViewComponent.this);
 		// progressFrame.setVisible(true);
 	    }
 	});
@@ -565,7 +559,11 @@ public class HybridQueryViewComponent extends AbstractOWLViewComponent {
 
     private void startQueryEngine() {
 	try {
-	    nohr = new HybridKB(getOWLModelManager().getActiveOntology());
+	    System.out.println("start query engine");
+	    final OWLModelManager modelManager = getOWLModelManager();
+	    final OWLOntology ontology = modelManager.getActiveOntology();
+	    final RuleBase ruleBase = getRuleBase();
+	    nohr = new HybridKB(ontology, ruleBase);
 	} catch (final Exception e) {
 	    textArea.append(e.getMessage() + System.lineSeparator());
 	}

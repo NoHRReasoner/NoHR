@@ -1,6 +1,7 @@
 package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -44,15 +45,15 @@ public class RuleImpl implements Rule {
 	if (!(obj instanceof RuleImpl))
 	    return false;
 	final RuleImpl other = (RuleImpl) obj;
-	if (body == null) {
-	    if (other.body != null)
-		return false;
-	} else if (!body.equals(other.body))
-	    return false;
 	if (head == null) {
 	    if (other.head != null)
 		return false;
 	} else if (!head.equals(other.head))
+	    return false;
+	if (body == null) {
+	    if (other.body != null)
+		return false;
+	} else if (!Arrays.equals(body, other.body))
 	    return false;
 	return true;
     }
@@ -110,7 +111,7 @@ public class RuleImpl implements Rule {
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result + (body == null ? 0 : body.hashCode());
+	result = prime * result + (body == null ? 0 : Arrays.hashCode(body));
 	result = prime * result + (head == null ? 0 : head.hashCode());
 	return result;
     }

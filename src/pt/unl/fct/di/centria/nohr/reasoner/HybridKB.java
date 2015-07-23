@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
@@ -28,7 +29,6 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.EscapeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.RulesDuplication;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.UnescapeVisitor;
@@ -46,17 +46,15 @@ public class HybridKB implements OWLOntologyChangeListener {
 
     private boolean hasOntologyChanges;
 
-    private boolean hasRulesChanges;
-
     private final OWLOntology ontology;
 
     private OntologyTranslation ontologyTranslation;
 
     private final QueryProcessor queryProcessor;
 
-    private final Set<Rule> rules;
+    private final RuleBase ruleBase;
 
-    private final Set<Rule> rulesTranslation;
+    private final Set<Rule> rulesDuplication;
 
     private final XSBDatabase xsbDatabase;
 
@@ -64,10 +62,10 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
 	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
 	    UnsupportedAxiomTypeException {
-	this(ontology, new HashSet<Rule>());
+	this(ontology, new RuleBase());
     }
 
-    public HybridKB(final OWLOntology ontology, final Set<Rule> rules)
+    public HybridKB(final OWLOntology ontology, final RuleBase ruleBase)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
 	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
 	    UnsupportedAxiomTypeException {
@@ -76,27 +74,17 @@ public class HybridKB implements OWLOntologyChangeListener {
 	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(
 		System.getenv("XSB_BIN_DIRECTORY"), "xsb"));
 	queryProcessor = new QueryProcessor(xsbDatabase);
-	this.rules = new HashSet<Rule>(rules);
-	rulesTranslation = new HashSet<Rule>();
+	this.ruleBase = ruleBase;
+	rulesDuplication = new HashSet<Rule>();
 	this.ontology.getOWLOntologyManager().addOntologyChangeListener(this);
-	hasRulesChanges = true;
-	Rules.hasChanges = true;
-	ontology.getOWLOntologyManager().addOntologyChangeListener(this);
     }
 
-    public void add(Rule rule) {
-	rules.add(rule);
-	hasRulesChanges = true;
-    }
-
-    public void addAll(Collection<Rule> rules) {
-	rules.addAll(rules);
-	hasRulesChanges = true;
-    }
-
-    public void clearRules() {
-	rules.clear();
-	hasRulesChanges = true;
+    public HybridKB(final RuleBase ruleBase)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
+	this(OWLManager.createOWLOntologyManager().createOntology(),
+		new RuleBase());
     }
 
     public void dispose() {
@@ -131,12 +119,19 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    writer.write(rule + ".");
 	    writer.newLine();
 	}
-	for (final Rule rule : rulesTranslation) {
+	for (final Rule rule : rulesDuplication) {
 	    writer.write(rule + ".");
 	    writer.newLine();
 	}
 	writer.close();
 	return file;
+    }
+
+    /**
+     * @return the ruleBase
+     */
+    public RuleBase getRuleBase() {
+	return ruleBase;
     }
 
     @Override
@@ -158,18 +153,17 @@ public class HybridKB implements OWLOntologyChangeListener {
 		    .createOntologyTranslation(ontology);
 	    RuntimesLogger.stop("ontology processing", "loading");
 	}
-	if (hasRulesChanges
+	System.out.println(ruleBase);
+	System.out.println(ruleBase.hasChanges());
+	System.out.println(ruleBase.getRules());
+	if (ruleBase.hasChanges(true)
 		|| ontologyTranslation.hasDisjunctions() != hasDisjunctions) {
 	    RuntimesLogger.start("rules parsing");
-	    rulesTranslation.clear();
-	    for (final Rule rule : rules)
-		// final boolean negateHead = ontologyTranslation
-		// .getNegativeHeadsPredicates().contains(
-		// rule.getHead().getPredicate());
-		Collections.addAll(rulesTranslation,
+	    rulesDuplication.clear();
+	    for (final Rule rule : ruleBase.getRules())
+		Collections.addAll(rulesDuplication,
 			RulesDuplication.duplicate(rule, true));
 	    RuntimesLogger.stop("rules parsing", "loading");
-	    hasRulesChanges = false;
 	}
 	RuntimesLogger.start("file writing");
 	final File xsbFile = generateTranslationFile();
@@ -182,17 +176,51 @@ public class HybridKB implements OWLOntologyChangeListener {
 	hasDisjunctions = ontologyTranslation.hasDisjunctions();
     }
 
-    public Collection<Answer> queryAll(Query query)
+    public Answer query(Query query) throws OWLOntologyCreationException,
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    CloneNotSupportedException, UnsupportedAxiomTypeException {
+	return query(query, true, true, true);
+    }
+
+    public Answer query(Query query, boolean trueAnswer,
+	    boolean undefinedAnswers, boolean inconsistentAnswers)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
 	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
 	    UnsupportedAxiomTypeException {
-	if (hasOntologyChanges || Rules.hasChanges)
+	if (hasOntologyChanges || ruleBase.hasChanges())
 	    preprocess();
 	final Visitor escapeVisitor = new EscapeVisitor();
 	final Visitor unescapeVisitor = new UnescapeVisitor();
 	RuntimesLogger.start("query");
+	final Query escapedQuery = query.acept(escapeVisitor);
+	final Answer answer = queryProcessor.query(escapedQuery,
+		hasDisjunctions, trueAnswer, undefinedAnswers,
+		hasDisjunctions ? inconsistentAnswers : false);
+	RuntimesLogger.stop("query", "queries");
+	return answer.acept(unescapeVisitor);
+    }
+
+    public Collection<Answer> queryAll(Query query)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomTypeException {
+	return queryAll(query, true, true, true);
+    }
+
+    public Collection<Answer> queryAll(Query query, boolean trueAnswer,
+	    boolean undefinedAnswers, boolean inconsistentAnswers)
+		    throws OWLOntologyCreationException, OWLOntologyStorageException,
+		    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
+		    UnsupportedAxiomTypeException {
+	if (hasOntologyChanges || ruleBase.hasChanges())
+	    preprocess();
+	final Visitor escapeVisitor = new EscapeVisitor();
+	final Visitor unescapeVisitor = new UnescapeVisitor();
+	RuntimesLogger.start("query");
+	final Query escapedQuery = query.acept(escapeVisitor);
 	final Collection<Answer> answers = queryProcessor.queryAll(
-		query.acept(escapeVisitor), hasDisjunctions);
+		escapedQuery, hasDisjunctions, trueAnswer, undefinedAnswers,
+		hasDisjunctions ? inconsistentAnswers : false);
 	RuntimesLogger.stop("query", "queries");
 	final Collection<Answer> result = new LinkedList<Answer>();
 	for (final Answer ans : answers)
@@ -200,19 +228,9 @@ public class HybridKB implements OWLOntologyChangeListener {
 	return result;
     }
 
-    public void remove(Rule rule) {
-	rules.remove(rule);
-	hasRulesChanges = true;
-    }
-
-    public void removeAll(Collection<Rule> rules) {
-	rules.removeAll(rules);
-	hasRulesChanges = true;
-    }
-
     private Set<Predicate> rulesTabledPredicates() {
 	final Set<Predicate> result = new HashSet<Predicate>();
-	for (final Rule rule : rulesTranslation)
+	for (final Rule rule : rulesDuplication)
 	    for (final Literal literal : rule.getNegativeBody())
 		result.add(literal.getPredicate());
 	return result;

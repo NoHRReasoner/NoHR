@@ -20,8 +20,8 @@
             </CNode>
         </HSNode>
         <CNode>
-            <Component label="NoHR rules manager">
-                <Property id="pluginId" value="pt.unl.fct.di.centria.nohr.plugin.RulesManagerViewComponent"/>
+            <Component label="NoHR rules">
+                <Property id="pluginId" value="pt.unl.fct.di.centria.nohr.plugin.RulesViewComponent"/>
             </Component>
         </CNode>
     </VSNode>

@@ -11,14 +11,14 @@
                 </Component>
             </CNode>
             <CNode>
-                <Component label="NoHR rules manager">
+                <Component label="NoHR Rules">
                     <Property id="pluginId" value="pt.unl.fct.di.centria.nohr.plugin.RulesViewComponent"/>
                 </Component>
             </CNode>
         </HSNode>
         <CNode>
-            <Component label="NoHR query view">
-                <Property id="pluginId" value="pt.unl.fct.di.centria.nohr.plugin.HybridQueryViewComponent"/>
+            <Component label="NoHR Query">
+                <Property id="pluginId" value="pt.unl.fct.di.centria.nohr.plugin.QueryViewComponent"/>
             </Component>
         </CNode>
     </VSNode>

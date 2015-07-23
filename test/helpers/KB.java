@@ -61,8 +61,8 @@ public class KB {
     private final Map<String, OWLObjectProperty> roles;
 
     public KB() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-	    CloneNotSupportedException, UnsupportedAxiomTypeException {
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	om = OWLManager.createOWLOntologyManager();
 	df = om.getOWLDataFactory();
 	ont = om.createOntology(IRI.generateDocumentIRI());
@@ -118,7 +118,7 @@ public class KB {
 	if (!rule.endsWith("."))
 	    rule += ".";
 	final pt.unl.fct.di.centria.nohr.model.Rule r = Parser.parseRule(rule);
-	hybridKB.add(r);
+	hybridKB.getRuleBase().add(r);
     }
 
     public void addSubsumption(OWLClassExpression b1, OWLClassExpression b2) {

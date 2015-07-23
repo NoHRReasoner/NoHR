@@ -3,38 +3,44 @@ package pt.unl.fct.di.centria.nohr.plugin;
 import java.awt.BorderLayout;
 
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
 
-import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
+import pt.unl.fct.di.centria.nohr.plugin.rules.RuleEditor;
+import pt.unl.fct.di.centria.nohr.plugin.rules.RuleListModel;
+import pt.unl.fct.di.centria.nohr.plugin.rules.RulesList;
 
-//import org.apache.log4j.Logger;
-//import org.protege.owl.example.Metrics;
+public class RulesViewComponent extends AbstractHybridViewComponent {
 
-public class RulesViewComponent extends AbstractOWLViewComponent {
-    private static final long serialVersionUID = -4515710047558710080L;
+    private static RuleListModel ruleListModel;
 
-    // private static final Logger log =
-    // Logger.getLogger(RulesViewComponent.class);
+    /**
+     *
+     */
+    private static final long serialVersionUID = 6087261708132206489L;
 
-    // private Metrics metricsComponent;
-    private JTextArea _textArea;
-
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.protege.editor.core.Disposable#dispose()
+     */
     @Override
-    protected void disposeOWLView() {
-	Rules.dispose();
+    public void disposeOWLView() {
+	// TODO Auto-generated method stub
+
+    }
+
+    private RuleListModel getRuleListModel() {
+	if (ruleListModel == null)
+	    ruleListModel = new RuleListModel(
+		    new RuleEditor(getOWLEditorKit()), getRuleBase());
+	return ruleListModel;
     }
 
     @Override
-    protected void initialiseOWLView() throws Exception {
-	setLayout(new BorderLayout(12, 12));
-	// add(metricsComponent, BorderLayout.BEFORE_FIRST_LINE);
-
-	_textArea = new JTextArea();
-	final JScrollPane jScrollPane = new JScrollPane(_textArea);
-	setBorder(new EmptyBorder(0, 10, 0, 10));
-	Rules.addListener(_textArea);
+    public void initialiseOWLView() throws Exception {
+	setLayout(new BorderLayout());
+	final RuleEditor ruleEditor = new RuleEditor(getOWLEditorKit());
+	final RulesList ruleList = new RulesList(ruleEditor, getRuleListModel());
+	final JScrollPane jScrollPane = new JScrollPane(ruleList);
 	add(jScrollPane, BorderLayout.CENTER);
     }
-
 }
