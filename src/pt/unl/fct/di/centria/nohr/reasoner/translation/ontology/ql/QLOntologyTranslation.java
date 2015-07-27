@@ -53,15 +53,12 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 	    throws OWLOntologyCreationException, OWLOntologyStorageException,
 	    IOException, CloneNotSupportedException, UnsupportedOWLProfile {
 	super(ontology);
-	System.out.println("super");
 	normalizedOntology = new QLNormalizedOntologyImpl(ontology);
 	graph = new BasicTBoxGraph(normalizedOntology);
 	hasDisjunctions = normalizedOntology.hasDisjointStatement();
 	originalAxiomsTranslator = new QLOriginalAxiomsTranslator(ontology);
 	doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(ontology);
-	System.out.println("attributions");
 	translate();
-	System.out.println("translation");
     }
 
     @Override
@@ -75,7 +72,8 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 		.getDisjointConcepts())
 	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(b, X)
 		    .getPredicate());
-	for (final OWLPropertyExpression<?, ?> q : normalizedOntology.getSubRoles())
+	for (final OWLPropertyExpression<?, ?> q : normalizedOntology
+		.getSubRoles())
 	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(q, X, Y)
 		    .getPredicate());
 	for (final OWLPropertyExpression<?, ?> q : normalizedOntology
@@ -176,7 +174,8 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 		result.addAll(axiomsTranslator
 			.translate((OWLDisjointDataPropertiesAxiom) d));
 
-	for (final OWLPropertyExpression<?, ?> ope : normalizedOntology.getRoles())
+	for (final OWLPropertyExpression<?, ?> ope : normalizedOntology
+		.getRoles())
 	    if (ope instanceof OWLObjectPropertyExpression) {
 		final OWLObjectProperty p = ((OWLObjectPropertyExpression) ope)
 			.getNamedProperty();

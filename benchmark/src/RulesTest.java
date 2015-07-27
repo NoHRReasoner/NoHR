@@ -23,8 +23,8 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
-import pt.unl.fct.di.centria.nohr.plugin.Rules;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
@@ -38,8 +38,8 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 public class RulesTest {
 
-    private static void loadRules(Path path) throws IOException {
-	Rules.resetRules();
+    private static void loadRules(HybridKB nohr, Path path) throws IOException,
+	    PrologParserException {
 	File file = path.toFile();
 	if (file.exists()) {
 	    final FileInputStream fstream = new FileInputStream(file);
@@ -51,7 +51,8 @@ public class RulesTest {
 	    int l = 0;
 	    while ((strLine = br.readLine()) != null)
 		if (strLine.length() > 0) {
-		    Rules.addRule(strLine);
+		    final Rule rule = Parser.parseRule(strLine);
+		    nohr.getRuleBase().add(rule);
 		    l++;
 		}
 	    in.close();
@@ -63,11 +64,11 @@ public class RulesTest {
     }
 
     public static void main(String[] args) throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-	    CloneNotSupportedException, UnsupportedAxiomTypeException {
+    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	if (args.length != 3) {
 	    System.out
-	    .println("expected arguments: <ontology> <programs directory> <queries file>");
+		    .println("expected arguments: <ontology> <programs directory> <queries file>");
 	    System.exit(1);
 	}
 
@@ -105,7 +106,6 @@ public class RulesTest {
 	    }
 	    RuntimesLogger.stop("ontology loading", "loading");
 	    final HybridKB nohr = new HybridKB(ontology);
-	    Rules.resetRules();
 	    final Iterator<?> queriesIt1 = queries.iterator();
 	    while (queriesIt1.hasNext()) {
 		final QuerySpecification querySpecification = (QuerySpecification) queriesIt1
@@ -134,9 +134,9 @@ public class RulesTest {
 			try {
 			    return Integer.valueOf(
 				    o1.getFileName().toString()
-				    .replaceFirst(".p", "")).compareTo(
-					    Integer.valueOf(o2.getFileName().toString()
-						    .replaceFirst(".p", "")));
+					    .replaceFirst(".p", "")).compareTo(
+				    Integer.valueOf(o2.getFileName().toString()
+					    .replaceFirst(".p", "")));
 			} catch (final NumberFormatException e) {
 			    System.err.println("program names must be numbers");
 			    System.exit(1);
@@ -148,8 +148,8 @@ public class RulesTest {
 		    RuntimesLogger.setDataset(name
 			    + "+"
 			    + progFile.getFileName().toString()
-			    .replaceFirst(".p", ""));
-		    loadRules(progFile);
+				    .replaceFirst(".p", ""));
+		    loadRules(nohr, progFile);
 		    queries.iterator();
 		    for (int i = 0; i < queries.size(); i++) {
 			final QuerySpecification querySpecification = (QuerySpecification) queries

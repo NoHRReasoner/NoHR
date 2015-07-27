@@ -11,6 +11,11 @@ public class VariableImpl implements Variable {
     }
 
     @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
+    @Override
     public Variable acept(Visitor visitor) {
 	return visitor.visit(this);
     }
@@ -32,7 +37,7 @@ public class VariableImpl implements Variable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -42,7 +47,7 @@ public class VariableImpl implements Variable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -69,7 +74,7 @@ public class VariableImpl implements Variable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

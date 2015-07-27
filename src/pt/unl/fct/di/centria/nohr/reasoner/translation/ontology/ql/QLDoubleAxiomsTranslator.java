@@ -40,9 +40,9 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     Atom existTr(OWLObjectPropertyExpression q, Variable X) {
 	if (q instanceof OWLObjectProperty)
-	    return atom(doubDomPred(sym(q)), X);
+	    return atom(doubDomPred((OWLObjectProperty) q), X);
 	else
-	    return atom(doubRanPred(sym(q)), X);
+	    return atom(doubRanPred(q.getNamedProperty()), X);
     }
 
     Atom tr(OWLClassExpression c, Variable x) {
@@ -99,9 +99,7 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     @Override
     public Rule translateDomain(OWLObjectProperty p) {
-	final String pSym = sym(p);
-	return rule(atom(doubDomPred(pSym), X),
-		atom(doubPred(pSym, 2), X, var()));
+	return rule(atom(doubDomPred(p), X), atom(doubPred(p), X, var()));
     }
 
     @Override
@@ -118,9 +116,7 @@ public class QLDoubleAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     @Override
     public Rule translateRange(OWLObjectProperty p) {
-	final String pSym = sym(p);
-	return rule(atom(doubRanPred(pSym), X),
-		atom(doubPred(pSym, 2), var(), X));
+	return rule(atom(doubRanPred(p), X), atom(doubPred(p), var(), X));
     }
 
     @Override

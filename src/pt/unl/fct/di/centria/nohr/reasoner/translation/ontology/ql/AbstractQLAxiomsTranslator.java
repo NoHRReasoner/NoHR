@@ -48,7 +48,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTr
  *
  */
 public abstract class AbstractQLAxiomsTranslator extends
-AbstractAxiomsTranslator {
+	AbstractAxiomsTranslator {
 
     private int opeNewCount = 0;
 
@@ -58,7 +58,7 @@ AbstractAxiomsTranslator {
 
     protected Atom negTr(OWLClassExpression c, Variable x) {
 	if (c instanceof OWLClass)
-	    return atom(negPred(sym((OWLClass) c), 1), x);
+	    return atom(negPred((OWLClass) c), x);
 	else if (c instanceof OWLObjectSomeValuesFrom)
 	    return negTr(((OWLObjectSomeValuesFrom) c).getProperty(), x,
 		    var("_"));
@@ -69,18 +69,18 @@ AbstractAxiomsTranslator {
 
     protected Atom negTr(OWLPropertyExpression<?, ?> r, Variable x, Variable y) {
 	if (r instanceof OWLObjectProperty)
-	    return atom(negPred(sym(r), 2), x, y);
+	    return atom(negPred(r), x, y);
 	else if (r instanceof OWLDataProperty)
-	    return atom(negPred(sym(r), 2), x, y);
+	    return atom(negPred(r), x, y);
 	else
-	    return atom(negPred(sym(r), 2), y, x);
+	    return atom(negPred(r), y, x);
     }
 
     protected Atom negTrExist(OWLObjectPropertyExpression q, Variable X) {
 	if (q instanceof OWLObjectProperty)
-	    return atom(negPred(sym(q), 2), X, var("_"));
+	    return atom(negPred(q), X, var("_"));
 	else
-	    return atom(negPred(sym(q), 2), var("_"), X);
+	    return atom(negPred(q), var("_"), X);
     }
 
     private OWLObjectProperty newConcept() {
@@ -97,34 +97,34 @@ AbstractAxiomsTranslator {
 
     protected Atom tr(OWLClassExpression c, Variable x, boolean doub) {
 	if (c instanceof OWLClass)
-	    return atom(pred(sym((OWLClass) c), 1, doub), x);
+	    return atom(pred((OWLClass) c, doub), x);
 	else if (c instanceof OWLObjectSomeValuesFrom) {
 	    final OWLObjectPropertyExpression q = ((OWLObjectSomeValuesFrom) c)
 		    .getProperty();
 	    if (q instanceof OWLObjectProperty)
-		return atom(domPred(sym(q), doub), x);
+		return atom(domPred(q, doub), x);
 	    else
-		return atom(ranPred(sym(q), doub), x);
+		return atom(ranPred(q, doub), x);
 	} else if (c instanceof OWLObjectComplementOf) {
 	    final OWLClassExpression b = ((OWLObjectComplementOf) c)
 		    .getOperand();
 	    if (b instanceof OWLClass)
-		return atom(negPred(sym((OWLClass) b), 1), x);
+		return atom(negPred((OWLClass) b), x);
 	    else if (b instanceof OWLObjectSomeValuesFrom)
 		return negTr(((OWLObjectSomeValuesFrom) b).getProperty(), x,
 			var("_"));
 	}
-	throw new IllegalArgumentException("c must be an valid concept");
+	throw new IllegalArgumentException();
     }
 
     protected Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y,
 	    boolean doub) {
 	if (r instanceof OWLObjectProperty)
-	    return atom(pred(sym(r), 2, doub), x, y);
+	    return atom(pred(r, doub), x, y);
 	else if (r instanceof OWLDataProperty)
-	    return atom(pred(sym(r), 2, doub), x, y);
+	    return atom(pred(r, doub), x, y);
 	else
-	    return atom(pred(sym(r), 2, doub), y, x);
+	    return atom(pred(r, doub), y, x);
     }
 
     public Set<Rule> translate(OWLDisjointClassesAxiom alpha) {
@@ -178,8 +178,8 @@ AbstractAxiomsTranslator {
     protected abstract Set<Rule> translateDisjunction(OWLClassExpression b1,
 	    OWLClassExpression b2);
 
-    protected abstract Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1,
-	    OWLPropertyExpression<?, ?> q2);
+    protected abstract Set<Rule> translateDisjunction(
+	    OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
 
     public abstract Rule translateDomain(OWLObjectProperty p);
 
@@ -235,8 +235,8 @@ AbstractAxiomsTranslator {
 	return result;
     }
 
-    protected abstract Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1,
-	    OWLPropertyExpression<?, ?> q2);
+    protected abstract Set<Rule> translateSubsumption(
+	    OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
 
     public Rule translateUnsatisfaible(OWLClass a) {
 	return rule(negTr(a, X));

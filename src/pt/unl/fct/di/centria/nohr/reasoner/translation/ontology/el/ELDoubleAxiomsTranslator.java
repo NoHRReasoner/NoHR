@@ -4,8 +4,11 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+
 import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
 import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +28,6 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 
 /**
  * @author nunocosta
@@ -42,18 +44,17 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 
     Atom negTr(Literal b) {
 	final Predicate pred0 = b.getPredicate();
-	final Predicate pred = Predicates.negPred(pred0.getSymbol(),
-		pred0.getArity());
+	final Predicate pred = negPred(pred0);
 	return atom(pred, b.getAtom().getArguments());
     }
 
     Atom negTr(OWLClass c, Variable x) {
-	final Predicate pred = Predicates.negPred(sym(c), 1);
+	final Predicate pred = negPred(c);
 	return atom(pred, x);
     }
 
     Atom negTr(OWLProperty<?, ?> p, Variable x, Variable y) {
-	final Predicate pred = Predicates.negPred(sym(p), 2);
+	final Predicate pred = negPred(p);
 	return atom(pred, x, y);
     }
 
@@ -95,7 +96,7 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	result.add(rule(tr(s, X, Y), body));
 	for (final Literal r : chainTr) {
 	    body = new HashSet<Literal>(chainTr);
-			body.add(negTr(s,X,Y));
+	    body.add(negTr(s, X, Y));
 	    body.remove(r);
 	    result.add(rule(negTr(r), body));
 	}
@@ -135,7 +136,8 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 
     // (r1)
     @Override
-    protected Set<Rule> translateSubsumption(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
+    protected Set<Rule> translateSubsumption(OWLProperty<?, ?> r,
+	    OWLProperty<?, ?> s) {
 	return ruleSet(
 		rule(tr(r, X, Y), tr(s, X, Y), negLiteral(negTr(r, X, Y))),
 		rule(negTr(r, X, Y), negTr(s, X, Y)));

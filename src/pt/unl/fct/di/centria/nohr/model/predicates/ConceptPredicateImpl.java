@@ -15,18 +15,27 @@ import pt.unl.fct.di.centria.nohr.model.Visitor;
  * @author nunocosta
  *
  */
-public class MetaPredicateImpl implements MetaPredicate {
+public class ConceptPredicateImpl implements Predicate {
 
-    protected final Predicate predicate;
-    protected final PredicateType type;
+    private final OWLClass concept;
 
-    MetaPredicateImpl(Predicate predicate, PredicateType type) {
-	Objects.requireNonNull(predicate);
-	Objects.requireNonNull(type);
-	this.predicate = predicate;
-	this.type = type;
+    /**
+     *
+     */
+    ConceptPredicateImpl(OWLClass concept) {
+	Objects.requireNonNull(concept);
+	Objects.requireNonNull(concept.getIRI().getFragment(),
+		"concept: must have a valid IRI (with a fragment)");
+	this.concept = concept;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct
+     * .di.centria.nohr.model.FormatVisitor)
+     */
     @Override
     public String acept(FormatVisitor visitor) {
 	return visitor.visit(this);
@@ -51,7 +60,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public OWLClass asConcept() {
-	return predicate.asConcept();
+	return concept;
     }
 
     /*
@@ -61,7 +70,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public OWLProperty<?, ?> asRole() {
-	return predicate.asRole();
+	throw new ClassCastException();
     }
 
     /*
@@ -72,12 +81,12 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public String asRulePredicate() {
-	return predicate.asRulePredicate();
+	throw new ClassCastException();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -86,12 +95,10 @@ public class MetaPredicateImpl implements MetaPredicate {
 	    return true;
 	if (obj == null)
 	    return false;
-	if (!(obj instanceof MetaPredicateImpl))
+	if (!(obj instanceof ConceptPredicateImpl))
 	    return false;
-	final MetaPredicateImpl other = (MetaPredicateImpl) obj;
-	if (type != other.type)
-	    return false;
-	if (!predicate.equals(other.predicate))
+	final ConceptPredicateImpl other = (ConceptPredicateImpl) obj;
+	if (!concept.getIRI().equals(other.concept.getIRI()))
 	    return false;
 	return true;
     }
@@ -103,45 +110,17 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public int getArity() {
-	return predicate.getArity();
-    }
-
-    @Override
-    public String getName() {
-	return predicate.getSymbol() + "/" + predicate.getArity();
+	return 1;
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate#getPredicate()
+     * 
+     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getName()
      */
     @Override
-    public Predicate getPredicate() {
-	return predicate;
-    }
-
-    @Override
-    public char getPrefix() {
-	switch (type) {
-	case ORIGINAL:
-	    return 'a';
-	case DOUBLE:
-	    return 'd';
-	case ORIGINAL_DOMAIN:
-	    return 'e';
-	case ORIGINAL_RANGE:
-	    return 'f';
-	case DOUBLE_DOMAIN:
-	    return 'g';
-	case DOUBLED_RANGE:
-	    return 'h';
-	case NEGATIVE:
-	    return 'n';
-	default:
-	    return (char) 0;
-	}
+    public String getName() {
+	return getSymbol() + "/" + getArity();
     }
 
     /*
@@ -151,25 +130,19 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public String getSymbol() {
-	return getPrefix() + predicate.getSymbol();
-    }
-
-    @Override
-    public PredicateType getType() {
-	return type;
+	return concept.getIRI().getFragment();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result + type.hashCode();
-	result = prime * result + predicate.hashCode();
+	result = prime * result + concept.getIRI().hashCode();
 	return result;
     }
 
@@ -180,7 +153,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public boolean isConcept() {
-	return predicate.isConcept();
+	return true;
     }
 
     /*
@@ -190,7 +163,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public boolean isRole() {
-	return predicate.isRole();
+	return false;
     }
 
     /*
@@ -201,12 +174,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public boolean isRulePredicate() {
-	return isRulePredicate();
-    }
-
-    @Override
-    public String toString() {
-	return getSymbol();
+	return false;
     }
 
 }

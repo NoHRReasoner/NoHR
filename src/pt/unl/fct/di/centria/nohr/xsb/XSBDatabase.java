@@ -14,6 +14,7 @@ import java.util.TreeMap;
 
 import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
@@ -27,6 +28,8 @@ import com.declarativa.interprolog.util.IPException;
 
 public class XSBDatabase {
 
+    protected final FormatVisitor formatVisitor;
+
     private SolutionIterator lastSolutionsIterator;
 
     protected final Path xsbBinDirectory;
@@ -35,6 +38,7 @@ public class XSBDatabase {
 
     public XSBDatabase(Path xsbPath) throws IPException {
 	xsbBinDirectory = xsbPath.toAbsolutePath();
+	formatVisitor = new XSBFormatVisitor();
 	startXsbEngine();
     }
 
@@ -84,7 +88,7 @@ public class XSBDatabase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#finalize()
      */
     @Override
@@ -100,10 +104,11 @@ public class XSBDatabase {
     public boolean hasAnswers(Query query, Boolean trueAnswers) {
 	String goal;
 	if (trueAnswers == null)
-	    goal = query.toString();
+	    goal = query.acept(formatVisitor);
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("call_tv((%s),%s)", query, truth);
+	    goal = String.format("call_tv((%s),%s)",
+		    query.acept(formatVisitor), truth);
 	}
 	return xsbEngine.deterministicGoal(goal);
     }
@@ -120,11 +125,12 @@ public class XSBDatabase {
 	final String vars = Utils.concat(",", query.getVariables());
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("detGoal([%s],(%s),TM)", vars, query);
+	    goal = String.format("detGoal([%s],(%s),TM)", vars,
+		    query.acept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String
-		    .format("detGoal([%s],(%s),%s,TM)", vars, query, truth);
+	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars,
+		    query.acept(formatVisitor), truth);
 	}
 	final Map<Variable, Integer> varsIdx = variablesIndex(query
 		.getVariables());
@@ -182,11 +188,12 @@ public class XSBDatabase {
 	final String vars = Utils.concat(",", query.getVariables());
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("detGoal([%s],(%s),TM)", vars, query);
+	    goal = String.format("detGoal([%s],(%s),TM)", vars,
+		    query.acept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String
-		    .format("detGoal([%s],(%s),%s,TM)", vars, query, truth);
+	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars,
+		    query.acept(formatVisitor), truth);
 	}
 	final Object[] bindings = xsbEngine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
@@ -204,11 +211,12 @@ public class XSBDatabase {
 	final String vars = Utils.concat(",", query.getVariables());
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars, query);
+	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars,
+		    query.acept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("nonDetGoal([%s],(%s),%s,TM)", vars, query,
-		    truth);
+	    goal = String.format("nonDetGoal([%s],(%s),%s,TM)", vars,
+		    query.acept(formatVisitor), truth);
 	}
 	final Object[] bindings = xsbEngine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)

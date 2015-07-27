@@ -153,7 +153,7 @@ public abstract class QueryTest extends Object {
     // (a1), (s1), (n1)
     @Test
     public final void cln2() throws OWLOntologyCreationException, IOException,
-    PrologParserException {
+	    PrologParserException {
 	kb.clear();
 	final OWLClass a1 = kb.getConcept("a1");
 	final OWLClass a2 = kb.getConcept("a2");
@@ -171,7 +171,7 @@ public abstract class QueryTest extends Object {
     // (a1), (a2), (s2), (n1)
     @Test
     public final void cln3() throws OWLOntologyCreationException, IOException,
-    PrologParserException {
+	    PrologParserException {
 	kb.clear();
 	final OWLObjectProperty p1 = kb.getRole("p1");
 	final OWLObjectProperty p2 = kb.getRole("p2");
@@ -198,7 +198,7 @@ public abstract class QueryTest extends Object {
 	kb.addSubsumption(a2, a1);
 	try {
 	    new HybridKB(kb.getOntology())
-	    .queryAll(Parser.parseQuery("p1(X)."));
+		    .queryAll(Parser.parseQuery("p1(X)."));
 	} catch (final Exception e) {
 	    fail(e.getMessage());
 	}
@@ -207,7 +207,7 @@ public abstract class QueryTest extends Object {
     // (a1), (n1)
     @Test
     public final void conceptDisjunction() throws OWLOntologyCreationException,
-	    IOException, PrologParserException {
+    IOException, PrologParserException {
 	kb.clear();
 	final OWLClass a1 = kb.getConcept("a1");
 	final OWLClass a2 = kb.getConcept("a2");
@@ -296,7 +296,7 @@ public abstract class QueryTest extends Object {
     // (a1), (n1)
     @Test
     public final void inconsistentRules() throws OWLOntologyCreationException,
-    IOException, PrologParserException {
+	    IOException, PrologParserException {
 	kb.clear();
 	final OWLClass a1 = kb.getConcept("a1");
 	final OWLClass a2 = kb.getConcept("a2");

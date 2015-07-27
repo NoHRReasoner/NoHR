@@ -10,6 +10,18 @@ public class ConstantImpl implements Constant {
 	this.symbol = symbol;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.FormatVisitable#acept(pt.unl.fct.di.
+     * centria.nohr.model.FormatVisitor)
+     */
+    @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
     @Override
     public Constant acept(Visitor visitor) {
 	return visitor.visit(this);
@@ -112,7 +124,7 @@ public class ConstantImpl implements Constant {
 
     @Override
     public String toString() {
-	return "'" + symbol + "'";
+	return symbol;
     }
 
 }

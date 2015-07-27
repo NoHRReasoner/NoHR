@@ -7,7 +7,6 @@ import java.awt.event.MouseListener;
 import org.protege.editor.core.ui.list.MList;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 
 public class RulesList extends MList {
 

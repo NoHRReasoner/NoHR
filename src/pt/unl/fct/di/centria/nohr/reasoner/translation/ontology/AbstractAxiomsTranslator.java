@@ -20,10 +20,8 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
@@ -55,18 +53,14 @@ public abstract class AbstractAxiomsTranslator {
 		.getOWLDataFactory();
 	ontologyLabeler = new OntologyLabeler(ontology,
 		dataFactory
-			.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
-				.getIRI()));
+		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
+			.getIRI()));
     }
 
     protected Set<Rule> ruleSet(Rule... rules) {
 	final Set<Rule> result = new HashSet<Rule>();
 	Collections.addAll(result, rules);
 	return result;
-    }
-
-    protected String sym(OWLClass c) {
-	return ontologyLabeler.getLabel(c, 1);
     }
 
     protected String sym(OWLIndividual i) {
@@ -82,14 +76,6 @@ public abstract class AbstractAxiomsTranslator {
 	    return null;
     }
 
-    protected String sym(OWLPropertyExpression<?, ?> r) {
-	if (r instanceof OWLObjectPropertyExpression)
-	    return ontologyLabeler.getLabel(
-		    ((OWLObjectPropertyExpression) r).getNamedProperty(), 1);
-	else
-	    return ontologyLabeler.getLabel((OWLDataProperty) r, 1);
-    }
-
     public abstract Set<Rule> translate(OWLClassAssertionAxiom alpha);
 
     public abstract Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha);
@@ -99,17 +85,16 @@ public abstract class AbstractAxiomsTranslator {
 	if (!(c instanceof OWLClass))
 	    throw new IllegalArgumentException(
 		    "assertion's concepts must be atomic");
-	final String aSym = sym((OWLClass) c);
-	final Predicate a = doubPred(aSym, 1);
-	final Predicate na = negPred(aSym, 1);
+	final Predicate a = doubPred((OWLClass) c);
+	final Predicate na = negPred((OWLClass) c);
 	final Constant i = cons(sym(alpha.getIndividual()));
 	return ruleSet(rule(atom(a, i), negLiteral(na, i)));
     }
 
     public Set<Rule> translateDouble(OWLPropertyAssertionAxiom<?, ?> alpha) {
-	final String aSym = sym(alpha.getProperty());
-	final Predicate p = doubPred(aSym, 2);
-	final Predicate np = negPred(aSym, 2);
+	final OWLPropertyExpression<?, ?> role = alpha.getProperty();
+	final Predicate p = doubPred(role);
+	final Predicate np = negPred(role);
 	final Constant i1 = cons(sym(alpha.getSubject()));
 	final Constant i2 = cons(sym(alpha.getObject()));
 	return ruleSet(rule(atom(p, i1, i2), negLiteral(np, i1, i2)));
@@ -121,7 +106,7 @@ public abstract class AbstractAxiomsTranslator {
 	    throw new IllegalAccessError("assertion's concepts must be atomic");
 	if (c.isTopEntity() || c.isBottomEntity())
 	    return ruleSet();
-	final Predicate a = origPred(sym((OWLClass) c), 1);
+	final Predicate a = origPred((OWLClass) c);
 	final Constant i = cons(sym(alpha.getIndividual()));
 	return ruleSet(rule(atom(a, i)));
     }
@@ -130,7 +115,7 @@ public abstract class AbstractAxiomsTranslator {
 	final OWLPropertyExpression<?, ?> ope = alpha.getProperty();
 	if (ope.isTopEntity() || ope.isBottomEntity())
 	    return ruleSet();
-	final Predicate p = origPred(sym(alpha.getProperty()), 2);
+	final Predicate p = origPred(alpha.getProperty());
 	final Constant i1 = cons(sym(alpha.getSubject()));
 	final Constant i2 = cons(sym(alpha.getObject()));
 	return ruleSet(rule(atom(p, i1, i2)));

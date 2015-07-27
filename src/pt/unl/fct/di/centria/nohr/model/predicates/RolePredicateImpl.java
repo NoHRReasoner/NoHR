@@ -15,18 +15,27 @@ import pt.unl.fct.di.centria.nohr.model.Visitor;
  * @author nunocosta
  *
  */
-public class MetaPredicateImpl implements MetaPredicate {
+public class RolePredicateImpl implements Predicate {
 
-    protected final Predicate predicate;
-    protected final PredicateType type;
+    private final OWLProperty<?, ?> role;
 
-    MetaPredicateImpl(Predicate predicate, PredicateType type) {
-	Objects.requireNonNull(predicate);
-	Objects.requireNonNull(type);
-	this.predicate = predicate;
-	this.type = type;
+    /**
+     *
+     */
+    RolePredicateImpl(OWLProperty<?, ?> role) {
+	Objects.requireNonNull(role);
+	Objects.requireNonNull(role.getIRI().getFragment(),
+		"must have a valid IRI (with fragment)");
+	this.role = role;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct
+     * .di.centria.nohr.model.FormatVisitor)
+     */
     @Override
     public String acept(FormatVisitor visitor) {
 	return visitor.visit(this);
@@ -34,7 +43,7 @@ public class MetaPredicateImpl implements MetaPredicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct
      * .di.centria.nohr.model.Visitor)
@@ -46,33 +55,33 @@ public class MetaPredicateImpl implements MetaPredicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asConcept()
      */
     @Override
     public OWLClass asConcept() {
-	return predicate.asConcept();
+	throw new ClassCastException();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRole()
      */
     @Override
     public OWLProperty<?, ?> asRole() {
-	return predicate.asRole();
+	return role;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRulePredicate()
      */
     @Override
     public String asRulePredicate() {
-	return predicate.asRulePredicate();
+	throw new ClassCastException();
     }
 
     /*
@@ -86,77 +95,42 @@ public class MetaPredicateImpl implements MetaPredicate {
 	    return true;
 	if (obj == null)
 	    return false;
-	if (!(obj instanceof MetaPredicateImpl))
+	if (!(obj instanceof RolePredicateImpl))
 	    return false;
-	final MetaPredicateImpl other = (MetaPredicateImpl) obj;
-	if (type != other.type)
-	    return false;
-	if (!predicate.equals(other.predicate))
+	final RolePredicateImpl other = (RolePredicateImpl) obj;
+	if (!role.getIRI().equals(other.role.getIRI()))
 	    return false;
 	return true;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getArity()
      */
     @Override
     public int getArity() {
-	return predicate.getArity();
-    }
-
-    @Override
-    public String getName() {
-	return predicate.getSymbol() + "/" + predicate.getArity();
+	return 2;
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate#getPredicate()
+     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getName()
      */
     @Override
-    public Predicate getPredicate() {
-	return predicate;
-    }
-
-    @Override
-    public char getPrefix() {
-	switch (type) {
-	case ORIGINAL:
-	    return 'a';
-	case DOUBLE:
-	    return 'd';
-	case ORIGINAL_DOMAIN:
-	    return 'e';
-	case ORIGINAL_RANGE:
-	    return 'f';
-	case DOUBLE_DOMAIN:
-	    return 'g';
-	case DOUBLED_RANGE:
-	    return 'h';
-	case NEGATIVE:
-	    return 'n';
-	default:
-	    return (char) 0;
-	}
+    public String getName() {
+	return getSymbol() + "/" + getArity();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getSymbol()
      */
     @Override
     public String getSymbol() {
-	return getPrefix() + predicate.getSymbol();
-    }
-
-    @Override
-    public PredicateType getType() {
-	return type;
+	return role.getIRI().getFragment();
     }
 
     /*
@@ -168,45 +142,39 @@ public class MetaPredicateImpl implements MetaPredicate {
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result + type.hashCode();
-	result = prime * result + predicate.hashCode();
+	result = prime * result + role.getIRI().hashCode();
 	return result;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isConcept()
      */
     @Override
     public boolean isConcept() {
-	return predicate.isConcept();
+	return false;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRole()
      */
     @Override
     public boolean isRole() {
-	return predicate.isRole();
+	return true;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRulePredicate()
      */
     @Override
     public boolean isRulePredicate() {
-	return isRulePredicate();
-    }
-
-    @Override
-    public String toString() {
-	return getSymbol();
+	return false;
     }
 
 }

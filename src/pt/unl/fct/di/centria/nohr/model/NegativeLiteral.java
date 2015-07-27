@@ -5,4 +5,6 @@ public interface NegativeLiteral extends Literal {
     @Override
     public NegativeLiteral acept(Visitor visitor);
 
+    public boolean isExistentiallyNegative();
+
 }

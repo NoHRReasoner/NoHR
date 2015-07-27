@@ -7,10 +7,10 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  * @author nunocosta
  *
  */
-public class DoubleDomainPredicate extends MetaPredicateImpl {
+public class DoubleDomainPredicate extends RoleMetaPredicateImpl {
 
-    DoubleDomainPredicate(String symbol) {
-	super(symbol, 1, PredicateType.DOUBLE_DOMAIN, 'g');
+    DoubleDomainPredicate(RolePredicateImpl rolePredicate) {
+	super(rolePredicate, PredicateType.DOUBLE_DOMAIN);
     }
 
 }

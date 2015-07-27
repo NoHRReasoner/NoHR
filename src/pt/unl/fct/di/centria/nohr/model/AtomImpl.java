@@ -19,6 +19,18 @@ public class AtomImpl implements Atom {
 	this.arguments = arguments;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.FormatVisitable#acept(pt.unl.fct.di.
+     * centria.nohr.model.FormatVisitor)
+     */
+    @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
     @Override
     public Atom acept(Visitor visitor) {
 	final Predicate pred = predicate.acept(visitor);
@@ -44,7 +56,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nohr.model.Atom#apply(nohr.model.Substitution)
      */
     @Override
@@ -129,7 +141,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see nohr.model.Atom#getVariables()
      */
     @Override
@@ -143,7 +155,7 @@ public class AtomImpl implements Atom {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

@@ -60,11 +60,8 @@ public class OntologyLabeler {
      */
     public OntologyLabeler(OWLOntology ont,
 	    OWLAnnotationProperty annotationProperty) {
-	System.out.println("ontology labeler");
 	ontology = ont;
-	System.out.println("ontology = ont");
 	ontologyID = getOntologyID();
-	System.out.println("getOntologyID");
     }
 
     /**
@@ -300,18 +297,14 @@ public class OntologyLabeler {
      */
     private String getOntologyID() {
 	try {
-	    System.out.println("getOntologyID");
 	    final String _ = ontology.getOntologyID().getOntologyIRI()
 		    .toString();
-	    System.out.println("getOntologyIRI");
 	    return _.contains("/") ? _.substring(0, _.lastIndexOf("/")) + "/"
 		    : "";
 
 	} catch (final NullPointerException e) {
-	    System.out.println("NullPointerException");
 	    return "";
 	} catch (final Exception e) {
-	    System.err.println(e.getMessage());
 	    return null;
 	}
 

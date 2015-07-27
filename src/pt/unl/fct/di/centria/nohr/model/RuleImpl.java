@@ -24,6 +24,11 @@ public class RuleImpl implements Rule {
     }
 
     @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
+    @Override
     public Rule acept(Visitor visitor) {
 	final List<Literal> body = new LinkedList<Literal>();
 	for (final Literal literal : this.body)
@@ -123,7 +128,6 @@ public class RuleImpl implements Rule {
 
     @Override
     public String toString() {
-	return head + (body.length == 0 ? "" : ":-") + Utils.concat(",", body);
+	return head + (isFact() ? "" : " :- ") + Utils.concat(", ", body);
     }
-
 }

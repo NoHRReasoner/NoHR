@@ -38,7 +38,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTr
  *
  */
 public abstract class AbstractELAxiomsTranslator extends
-	AbstractAxiomsTranslator {
+AbstractAxiomsTranslator {
 
     protected static final Variable X = var("X");
     protected static final Variable Y = var("Y");
@@ -72,7 +72,7 @@ public abstract class AbstractELAxiomsTranslator extends
     }
 
     protected Atom tr(OWLClass c, Variable x, boolean doub) {
-	final Predicate pred = Predicates.pred(sym(c), 1, doub);
+	final Predicate pred = Predicates.pred(c, doub);
 	return atom(pred, x);
     }
 
@@ -81,14 +81,15 @@ public abstract class AbstractELAxiomsTranslator extends
 	if (ce.isOWLThing())
 	    return atomsList();
 	else if (ce instanceof OWLClass && !ce.isOWLThing())
-	    return atomsList(tr((OWLClass) ce, x, doub));
+	    return atomsList(tr(ce.asOWLClass(), x, doub));
 	else if (ce instanceof OWLObjectIntersectionOf) {
 	    final Set<OWLClassExpression> ops = ce.asConjunctSet();
 	    for (final OWLClassExpression op : ops)
 		result.addAll(tr(op, x, doub));
 	} else if (ce instanceof OWLObjectSomeValuesFrom) {
 	    final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) ce;
-	    final OWLProperty<?, ?> p = (OWLProperty<?, ?>) some.getProperty();
+	    final OWLProperty<?, ?> p = some.getProperty()
+		    .asOWLObjectProperty();
 	    final OWLClassExpression filler = some.getFiller();
 	    result.add(tr(p, X, Y, doub));
 	    result.addAll(tr(filler, Y, doub));
@@ -96,9 +97,9 @@ public abstract class AbstractELAxiomsTranslator extends
 	return result;
     }
 
-    protected Atom tr(OWLProperty<?, ?> pe, Variable x, Variable y, boolean doub) {
-	final Predicate pred = Predicates.pred(sym(pe), 2, doub);
-	if (pe instanceof OWLProperty)
+    protected Atom tr(OWLProperty<?, ?> p, Variable x, Variable y, boolean doub) {
+	final Predicate pred = Predicates.pred(p, doub);
+	if (p instanceof OWLProperty)
 	    return atom(pred, x, y);
 	return null;
     }

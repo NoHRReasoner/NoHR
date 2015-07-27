@@ -40,7 +40,6 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
 
 import org.protege.editor.owl.model.OWLModelManager;
-import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
@@ -559,7 +558,6 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 
     private void startQueryEngine() {
 	try {
-	    System.out.println("start query engine");
 	    final OWLModelManager modelManager = getOWLModelManager();
 	    final OWLOntology ontology = modelManager.getActiveOntology();
 	    final RuleBase ruleBase = getRuleBase();

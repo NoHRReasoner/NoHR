@@ -1,6 +1,3 @@
-/**
- *
- */
 package pt.unl.fct.di.centria.nohr.model.predicates;
 
 import java.util.Objects;
@@ -11,20 +8,21 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 
-/**
- * @author nunocosta
- *
- */
-public class MetaPredicateImpl implements MetaPredicate {
+public class RulePredicateImpl implements Predicate {
 
-    protected final Predicate predicate;
-    protected final PredicateType type;
+    protected final int arity;
 
-    MetaPredicateImpl(Predicate predicate, PredicateType type) {
-	Objects.requireNonNull(predicate);
-	Objects.requireNonNull(type);
-	this.predicate = predicate;
-	this.type = type;
+    protected final String symbol;
+
+    RulePredicateImpl(String symbol, int arity) {
+	Objects.requireNonNull(symbol);
+	if (symbol.length() <= 0)
+	    throw new IllegalArgumentException(
+		    "symbol: can't be an empty string");
+	if (arity < 0)
+	    throw new IllegalArgumentException("arity: must be positive");
+	this.symbol = symbol;
+	this.arity = arity;
     }
 
     @Override
@@ -32,13 +30,6 @@ public class MetaPredicateImpl implements MetaPredicate {
 	return visitor.visit(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct
-     * .di.centria.nohr.model.Visitor)
-     */
     @Override
     public Predicate acept(Visitor visitor) {
 	return visitor.visit(this);
@@ -51,7 +42,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public OWLClass asConcept() {
-	return predicate.asConcept();
+	throw new ClassCastException();
     }
 
     /*
@@ -61,7 +52,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public OWLProperty<?, ?> asRole() {
-	return predicate.asRole();
+	throw new ClassCastException();
     }
 
     /*
@@ -72,7 +63,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public String asRulePredicate() {
-	return predicate.asRulePredicate();
+	return symbol;
     }
 
     /*
@@ -86,77 +77,29 @@ public class MetaPredicateImpl implements MetaPredicate {
 	    return true;
 	if (obj == null)
 	    return false;
-	if (!(obj instanceof MetaPredicateImpl))
+	if (!(obj instanceof RulePredicateImpl))
 	    return false;
-	final MetaPredicateImpl other = (MetaPredicateImpl) obj;
-	if (type != other.type)
+	final RulePredicateImpl other = (RulePredicateImpl) obj;
+	if (arity != other.arity)
 	    return false;
-	if (!predicate.equals(other.predicate))
+	if (!symbol.equals(other.symbol))
 	    return false;
 	return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getArity()
-     */
     @Override
     public int getArity() {
-	return predicate.getArity();
+	return arity;
     }
 
     @Override
     public String getName() {
-	return predicate.getSymbol() + "/" + predicate.getArity();
+	return symbol + "/" + arity;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate#getPredicate()
-     */
-    @Override
-    public Predicate getPredicate() {
-	return predicate;
-    }
-
-    @Override
-    public char getPrefix() {
-	switch (type) {
-	case ORIGINAL:
-	    return 'a';
-	case DOUBLE:
-	    return 'd';
-	case ORIGINAL_DOMAIN:
-	    return 'e';
-	case ORIGINAL_RANGE:
-	    return 'f';
-	case DOUBLE_DOMAIN:
-	    return 'g';
-	case DOUBLED_RANGE:
-	    return 'h';
-	case NEGATIVE:
-	    return 'n';
-	default:
-	    return (char) 0;
-	}
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getSymbol()
-     */
     @Override
     public String getSymbol() {
-	return getPrefix() + predicate.getSymbol();
-    }
-
-    @Override
-    public PredicateType getType() {
-	return type;
+	return symbol;
     }
 
     /*
@@ -168,8 +111,8 @@ public class MetaPredicateImpl implements MetaPredicate {
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result + type.hashCode();
-	result = prime * result + predicate.hashCode();
+	result = prime * result + arity;
+	result = prime * result + symbol.hashCode();
 	return result;
     }
 
@@ -180,7 +123,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public boolean isConcept() {
-	return predicate.isConcept();
+	return false;
     }
 
     /*
@@ -190,7 +133,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public boolean isRole() {
-	return predicate.isRole();
+	return false;
     }
 
     /*
@@ -201,12 +144,12 @@ public class MetaPredicateImpl implements MetaPredicate {
      */
     @Override
     public boolean isRulePredicate() {
-	return isRulePredicate();
+	return true;
     }
 
     @Override
     public String toString() {
-	return getSymbol();
+	return symbol;
     }
 
 }

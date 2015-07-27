@@ -32,6 +32,18 @@ public class AnswerImpl implements Answer {
      * 
      * @see
      * pt.unl.fct.di.centria.nohr.model.Answer#acept(pt.unl.fct.di.centria.nohr
+     * .model.FormatVisitor)
+     */
+    @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.Answer#acept(pt.unl.fct.di.centria.nohr
      * .model.Visitor)
      */
     @Override
@@ -43,6 +55,17 @@ public class AnswerImpl implements Answer {
 	for (final Term val : values)
 	    vals.add(val.acept(visitor));
 	return new AnswerImpl(query, truthValue, vals, varsIdx);
+    }
+
+    @Override
+    public List<Literal> apply() {
+	final Map<Variable, Term> substitution = new HashMap<Variable, Term>();
+	for (final Entry<Variable, Integer> entry : variablesIndex.entrySet())
+	    substitution.put(entry.getKey(), values.get(entry.getValue()));
+	final List<Literal> literals = new LinkedList<Literal>();
+	for (final Literal literal : query.getLiterals())
+	    literals.add(literal.apply(substitution));
+	return literals;
     }
 
     /*
@@ -116,13 +139,7 @@ public class AnswerImpl implements Answer {
 
     @Override
     public String toString() {
-	final Map<Variable, Term> substitution = new HashMap<Variable, Term>();
-	for (final Entry<Variable, Integer> entry : variablesIndex.entrySet())
-	    substitution.put(entry.getKey(), values.get(entry.getValue()));
-	final List<Literal> literals = new LinkedList<Literal>();
-	for (final Literal literal : query.getLiterals())
-	    literals.add(literal.apply(substitution));
-	return Utils.concat(",", literals);
+	return Utils.concat(",", apply());
     }
 
 }

@@ -7,10 +7,10 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  * @author nunocosta
  *
  */
-public class DoubleRangePredicate extends MetaPredicateImpl {
+public class DoubleRangePredicate extends RoleMetaPredicateImpl {
 
-    DoubleRangePredicate(String symbol) {
-	super(symbol, 1, PredicateType.DOUBLED_RANGE, 'h');
+    DoubleRangePredicate(RolePredicateImpl rolePredicate) {
+	super(rolePredicate, PredicateType.DOUBLED_RANGE);
     }
 
 }

@@ -24,6 +24,11 @@ public class QueryImpl implements Query {
     }
 
     @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
+    @Override
     public Query acept(Visitor visitor) {
 	final List<Literal> lits = new LinkedList<Literal>();
 	final List<Variable> vars = new LinkedList<Variable>();
@@ -152,7 +157,7 @@ public class QueryImpl implements Query {
 
     @Override
     public String toString() {
-	return Utils.concat(",", literals);
+	final String vars = Utils.concat(",", variables);
+	return "q(" + vars + "):-" + Utils.concat(",", literals);
     }
-
 }

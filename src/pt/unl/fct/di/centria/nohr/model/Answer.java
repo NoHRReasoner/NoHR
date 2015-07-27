@@ -2,13 +2,18 @@ package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 
-public interface Answer {
+public interface Answer extends FormatVisitable {
+
+    @Override
+    public String acept(FormatVisitor visitor);
 
     /**
      * @param deHashVisitor
      * @return
      */
     public Answer acept(Visitor visitor);
+
+    public List<Literal> apply();
 
     @Override
     public boolean equals(Object obj);

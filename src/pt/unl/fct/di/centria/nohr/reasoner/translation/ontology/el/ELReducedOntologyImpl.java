@@ -21,6 +21,7 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -201,6 +202,10 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 
     private final boolean hasDisjunction;
 
+    private int maxNameLength = -1;
+
+    private int newConceptCount = 0;
+
     private final OWLOntology ontology;
 
     private final Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions;
@@ -344,9 +349,21 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private OWLClass newConcept() {
-	final IRI iri = IRI.generateDocumentIRI();
 	final OWLDataFactory df = ontology.getOWLOntologyManager()
 		.getOWLDataFactory();
+	final String ontologyIRI = ontology.getOntologyID().getOntologyIRI()
+		.toString();
+	if (maxNameLength == -1)
+	    for (final OWLEntity entity : ontology.getSignature()) {
+		final int len = entity.getIRI().getFragment().length();
+		if (len > maxNameLength)
+		    maxNameLength = len;
+	    }
+	final StringBuilder sb = new StringBuilder(maxNameLength + 10);
+	for (int i = 0; i < maxNameLength; i++)
+	    sb.append('0');
+	sb.append(newConceptCount++);
+	final IRI iri = IRI.create(ontologyIRI + "#", sb.toString());
 	return df.getOWLClass(iri);
     }
 

@@ -14,6 +14,11 @@ public class ListTermImpl implements Term {
     }
 
     @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
+    @Override
     public Term acept(Visitor visitor) {
 	final List<Term> list = new LinkedList<Term>();
 	for (final Term term : termList)
@@ -55,7 +60,7 @@ public class ListTermImpl implements Term {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

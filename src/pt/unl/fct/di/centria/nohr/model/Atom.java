@@ -8,6 +8,9 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 public interface Atom extends Literal {
 
     @Override
+    public String acept(FormatVisitor visit);
+
+    @Override
     public Atom acept(Visitor visitor);
 
     @Override

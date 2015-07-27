@@ -5,7 +5,7 @@ import java.util.Map;
 
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
-public interface Literal {
+public interface Literal extends FormatVisitable {
 
     public Literal acept(Visitor visitor);
 

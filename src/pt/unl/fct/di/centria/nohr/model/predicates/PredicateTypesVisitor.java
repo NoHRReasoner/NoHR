@@ -1,6 +1,7 @@
 package pt.unl.fct.di.centria.nohr.model.predicates;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.ListTermImpl;
@@ -50,8 +51,11 @@ public class PredicateTypesVisitor implements Visitor {
 
     @Override
     public Predicate visit(Predicate pred) {
-	return Predicates
-		.pred(pred.getSymbol(), pred.getArity(), predicateType);
+	if (pred.isConcept())
+	    pred(pred.asConcept(), predicateType);
+	else if (pred.isRole())
+	    pred(pred.asRole(), predicateType);
+	return pred(pred.asRulePredicate(), pred.getArity(), predicateType);
     }
 
     @Override

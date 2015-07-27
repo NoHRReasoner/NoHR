@@ -5,7 +5,7 @@ import java.util.Set;
 
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
-public interface Rule {
+public interface Rule extends FormatVisitable {
 
     public Rule acept(Visitor visitor);
 

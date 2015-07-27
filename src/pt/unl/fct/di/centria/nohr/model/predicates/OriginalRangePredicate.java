@@ -7,10 +7,10 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  * @author nunocosta
  *
  */
-public class OriginalRangePredicate extends MetaPredicateImpl {
+public class OriginalRangePredicate extends RoleMetaPredicateImpl {
 
-    public OriginalRangePredicate(String symbol) {
-	super(symbol, 1, PredicateType.ORIGINAL_RANGE, 'f');
+    OriginalRangePredicate(RolePredicateImpl rolePredicate) {
+	super(rolePredicate, PredicateType.ORIGINAL_RANGE);
     }
 
 }

@@ -12,12 +12,12 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateImpl;
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 
-public class EscapeVisitor implements Visitor {
+public class UnquoteVisitor implements Visitor {
 
-    public EscapeVisitor() {
+    public UnquoteVisitor() {
     }
 
     @Override
@@ -30,8 +30,7 @@ public class EscapeVisitor implements Visitor {
 	if (constant.isNumber())
 	    return constant;
 	else
-	    return cons(OntologyLabeler.escapeAtom(constant.asString()));
-
+	    return cons(OntologyLabeler.unescapeAtom(constant.asString()));
     }
 
     @Override
@@ -51,7 +50,7 @@ public class EscapeVisitor implements Visitor {
 
     @Override
     public Predicate visit(Predicate pred) {
-	return new PredicateImpl(OntologyLabeler.escapeAtom(pred.getSymbol()),
+	return Predicates.pred(OntologyLabeler.unescapeAtom(pred.getSymbol()),
 		pred.getArity());
     }
 

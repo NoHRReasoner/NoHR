@@ -24,18 +24,19 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.EscapeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.RulesDuplication;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.UnescapeVisitor;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.UnquoteVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
+import pt.unl.fct.di.centria.nohr.xsb.XSBFormatVisitor;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class HybridKB implements OWLOntologyChangeListener {
@@ -111,16 +112,18 @@ public class HybridKB implements OWLOntologyChangeListener {
 	final Set<Predicate> tabled = new HashSet<Predicate>();
 	tabled.addAll(ontologyTranslation.getTabledPredicates());
 	tabled.addAll(rulesTabledPredicates());
+	final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
 	for (final Predicate predicate : tabled) {
-	    writer.write(":- table " + predicate.getName() + " as subsumptive.");
+	    writer.write(":- table " + predicate.acept(xsbFormatedVisitor)
+		    + "/" + predicate.getArity() + "as subsumptive.");
 	    writer.newLine();
 	}
 	for (final Rule rule : ontologyTranslation.getTranslation()) {
-	    writer.write(rule + ".");
+	    writer.write(rule.acept(xsbFormatedVisitor));
 	    writer.newLine();
 	}
 	for (final Rule rule : rulesDuplication) {
-	    writer.write(rule + ".");
+	    writer.write(rule.acept(xsbFormatedVisitor));
 	    writer.newLine();
 	}
 	writer.close();
@@ -153,9 +156,6 @@ public class HybridKB implements OWLOntologyChangeListener {
 		    .createOntologyTranslation(ontology);
 	    RuntimesLogger.stop("ontology processing", "loading");
 	}
-	System.out.println(ruleBase);
-	System.out.println(ruleBase.hasChanges());
-	System.out.println(ruleBase.getRules());
 	if (ruleBase.hasChanges(true)
 		|| ontologyTranslation.hasDisjunctions() != hasDisjunctions) {
 	    RuntimesLogger.start("rules parsing");
@@ -189,15 +189,13 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    UnsupportedAxiomTypeException {
 	if (hasOntologyChanges || ruleBase.hasChanges())
 	    preprocess();
-	final Visitor escapeVisitor = new EscapeVisitor();
-	final Visitor unescapeVisitor = new UnescapeVisitor();
 	RuntimesLogger.start("query");
-	final Query escapedQuery = query.acept(escapeVisitor);
-	final Answer answer = queryProcessor.query(escapedQuery,
-		hasDisjunctions, trueAnswer, undefinedAnswers,
+
+	final Answer answer = queryProcessor.query(query, hasDisjunctions,
+		trueAnswer, undefinedAnswers,
 		hasDisjunctions ? inconsistentAnswers : false);
 	RuntimesLogger.stop("query", "queries");
-	return answer.acept(unescapeVisitor);
+	return answer.acept(new UnquoteVisitor());
     }
 
     public Collection<Answer> queryAll(Query query)
@@ -214,17 +212,16 @@ public class HybridKB implements OWLOntologyChangeListener {
 		    UnsupportedAxiomTypeException {
 	if (hasOntologyChanges || ruleBase.hasChanges())
 	    preprocess();
-	final Visitor escapeVisitor = new EscapeVisitor();
-	final Visitor unescapeVisitor = new UnescapeVisitor();
 	RuntimesLogger.start("query");
-	final Query escapedQuery = query.acept(escapeVisitor);
-	final Collection<Answer> answers = queryProcessor.queryAll(
-		escapedQuery, hasDisjunctions, trueAnswer, undefinedAnswers,
+	RuntimesLogger.info("querying: " + query);
+	final Collection<Answer> answers = queryProcessor.queryAll(query,
+		hasDisjunctions, trueAnswer, undefinedAnswers,
 		hasDisjunctions ? inconsistentAnswers : false);
 	RuntimesLogger.stop("query", "queries");
 	final Collection<Answer> result = new LinkedList<Answer>();
+	final Visitor unquoteVisitor = new UnquoteVisitor();
 	for (final Answer ans : answers)
-	    result.add(ans.acept(unescapeVisitor));
+	    result.add(ans.acept(unquoteVisitor));
 	return result;
     }
 

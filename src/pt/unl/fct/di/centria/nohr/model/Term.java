@@ -2,7 +2,7 @@ package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 
-public interface Term {
+public interface Term extends FormatVisitable {
 
     public Term acept(Visitor visitor);
 

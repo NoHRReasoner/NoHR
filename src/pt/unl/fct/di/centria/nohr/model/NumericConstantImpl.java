@@ -22,6 +22,11 @@ public class NumericConstantImpl implements Constant {
     }
 
     @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
+    @Override
     public Constant acept(Visitor visit) {
 	return visit.visit(this);
     }
@@ -106,6 +111,5 @@ public class NumericConstantImpl implements Constant {
     @Override
     public String toString() {
 	return number.toString();
-	// return String.valueOf(number.doubleValue());
     }
 }

@@ -38,9 +38,9 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     private Atom existTr(OWLObjectPropertyExpression q, Variable X) {
 	if (q instanceof OWLObjectProperty)
-	    return atom(origDomPred(sym(q)), X);
+	    return atom(origDomPred(q), X);
 	else
-	    return atom(origRanPred(sym(q)), X);
+	    return atom(origRanPred(q), X);
     }
 
     private Atom tr(OWLClassExpression c, Variable x) {
@@ -81,9 +81,7 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     @Override
     public Rule translateDomain(OWLObjectProperty p) {
-	final String pSym = sym(p);
-	return rule(atom(origDomPred(pSym), X),
-		atom(origPred(pSym, 2), X, var()));
+	return rule(atom(origDomPred(p), X), atom(origPred(p), X, var()));
     }
 
     @Override
@@ -95,9 +93,7 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     @Override
     public Rule translateRange(OWLObjectProperty p) {
-	final String pSym = sym(p);
-	return rule(atom(origRanPred(pSym), X),
-		atom(origPred(pSym, 2), var(), X));
+	return rule(atom(origRanPred(p), X), atom(origPred(p), var(), X));
     }
 
     @Override

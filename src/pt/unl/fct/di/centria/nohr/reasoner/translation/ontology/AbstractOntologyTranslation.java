@@ -23,7 +23,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLOntologyTra
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public abstract class AbstractOntologyTranslation implements
-	OntologyTranslation {
+OntologyTranslation {
 
     public static Profiles profile = null;
 
@@ -34,16 +34,12 @@ public abstract class AbstractOntologyTranslation implements
 	final OWLAnnotationProperty labelAnnotation = ontology
 		.getOWLOntologyManager().getOWLDataFactory()
 		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
-	System.out.println("label annotation");
 	final OntologyLabeler ontologyLabel = new OntologyLabeler(ontology,
 		labelAnnotation);
-	System.out.println("ontology label created");
 	switch (getTranslationProfile(ontology)) {
 	case OWL2_QL:
-	    System.out.println("profile is QL");
 	    return new QLOntologyTranslation(ontology, ontologyLabel);
 	case OWL2_EL:
-	    System.out.println("profile is EL");
 	    return new ELOntologyTranslation(ontology, ontologyLabel);
 	default:
 	    return null;
@@ -52,23 +48,14 @@ public abstract class AbstractOntologyTranslation implements
 
     public static Profiles getTranslationProfile(OWLOntology ontology)
 	    throws UnsupportedOWLProfile {
-	System.out.println("0");
-	if (AbstractOntologyTranslation.profile != null) {
-	    System.out.println("0 a)");
+	if (AbstractOntologyTranslation.profile != null)
 	    return AbstractOntologyTranslation.profile;
-	}
 	final OWL2ELProfile elProfile = new OWL2ELProfile();
-	System.out.println("1");
 	final OWL2QLProfile qlProfile = new OWL2QLProfile();
-	System.out.println("2");
 	final OWLProfileReport elReport = elProfile.checkOntology(ontology);
-	System.out.println("3");
 	final OWLProfileReport qlRerport = qlProfile.checkOntology(ontology);
-	System.out.println("4");
 	final boolean isEL = elReport.isInProfile();
-	System.out.println("5");
 	final boolean isQL = qlRerport.isInProfile();
-	System.out.println("6");
 	if (!isEL && !isQL)
 	    throw new UnsupportedOWLProfile(qlRerport.getViolations());
 	RuntimesLogger.logBool("OWL EL", isEL);

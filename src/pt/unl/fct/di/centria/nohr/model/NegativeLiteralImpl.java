@@ -18,6 +18,11 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
     }
 
     @Override
+    public String acept(FormatVisitor visitor) {
+	return visitor.visit(this);
+    }
+
+    @Override
     public NegativeLiteral acept(Visitor visitor) {
 	return new NegativeLiteralImpl(visitor.visit(atom));
     }
@@ -92,6 +97,18 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 	return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.NegativeLiteral#isExistentiallyNegative
+     * ()
+     */
+    @Override
+    public boolean isExistentiallyNegative() {
+	return existentially;
+    }
+
     @Override
     public boolean isNegative() {
 	return true;
@@ -104,8 +121,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
     @Override
     public String toString() {
-	final String expr = existentially ? "not_exists(%s)" : "tnot(%s)";
-	return String.format(expr, atom);
+	return "not " + atom;
     }
 
 }

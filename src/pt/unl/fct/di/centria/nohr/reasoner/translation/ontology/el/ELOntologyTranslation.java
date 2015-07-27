@@ -5,6 +5,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import java.io.IOException;
 import java.util.List;
 
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -54,6 +55,8 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
 	for (final OWLSubClassOfAxiom axiom : reducedOntology
 		.getConceptSubsumptions()) {
 	    final OWLClassExpression ce1 = axiom.getSubClass();
+	    assert ce1 instanceof OWLClass ? ce1.asOWLClass().getIRI()
+		    .getFragment() != null : true : axiom;
 	    for (final Literal b : doubleAxiomsTranslator.tr(ce1, var()))
 		negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(b)
 			.getPredicate());

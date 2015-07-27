@@ -51,6 +51,28 @@ public class Model {
 		argumentsList);
     }
 
+    public static <E extends FormatVisitable> String concat(String sep,
+	    E[] objs, FormatVisitor visitor) {
+	final StringBuffer sb = new StringBuffer();
+	String sepToken = "";
+	for (final FormatVisitable obj : objs) {
+	    sb.append(sepToken + obj.acept(visitor));
+	    sepToken = sep;
+	}
+	return new String(sb);
+    }
+
+    public static <E extends FormatVisitable> String concat(String sep,
+	    List<E> objs, FormatVisitor visitor) {
+	final StringBuffer sb = new StringBuffer();
+	String sepToken = "";
+	for (final FormatVisitable obj : objs) {
+	    sb.append(sepToken + obj.acept(visitor));
+	    sepToken = sep;
+	}
+	return new String(sb);
+    }
+
     public static Constant cons(Number n) {
 	return new NumericConstantImpl(n);
     }
