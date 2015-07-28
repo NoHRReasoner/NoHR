@@ -102,7 +102,7 @@ public class VariableImpl implements Variable {
 
     @Override
     public String toString() {
-	return symbol;
+	return "?" + symbol;
     }
 
 }

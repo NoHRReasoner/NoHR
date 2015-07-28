@@ -117,6 +117,10 @@ public class Parser {
 	return parseRule((PrologStructure) parser.nextSentence(rule));
     }
 
+    public static Rule parseRule(String rule, boolean prologSyntax) {
+	return null;
+    }
+
     private final PrologCharDataSource src;
 
     public Parser(Reader reader) {

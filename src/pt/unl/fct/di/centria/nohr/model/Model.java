@@ -15,8 +15,7 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 
 public class Model {
 
-    public static Answer ans(Query query, TruthValue truthValue,
-	    List<Term> values) {
+    public static Answer ans(Query query, TruthValue truthValue, List<Term> values) {
 	final Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
 	final int i = 0;
 	for (final Variable var : query.getVariables())
@@ -24,9 +23,13 @@ public class Model {
 	return new AnswerImpl(query, truthValue, values, varsIdx);
     }
 
-    public static Answer ans(Query query, TruthValue truthValue,
-	    List<Term> values, Map<Variable, Integer> variablesIndex) {
+    public static Answer ans(Query query, TruthValue truthValue, List<Term> values,
+	    Map<Variable, Integer> variablesIndex) {
 	return new AnswerImpl(query, truthValue, values, variablesIndex);
+    }
+
+    public static Atom atom(Predicate predicate) {
+	return new AtomImpl(predicate, Collections.<Term> emptyList());
     }
 
     public static Atom atom(Predicate predicate, List<Term> arguments) {
@@ -40,19 +43,16 @@ public class Model {
     }
 
     public static Atom atom(String predicate, List<Term> arguments) {
-	return new AtomImpl(Predicates.pred(predicate, arguments.size()),
-		arguments);
+	return new AtomImpl(Predicates.pred(predicate, arguments.size()), arguments);
     }
 
     public static Atom atom(String predicate, Term... arguments) {
 	final List<Term> argumentsList = new LinkedList<Term>();
 	Collections.addAll(argumentsList, arguments);
-	return new AtomImpl(Predicates.pred(predicate, arguments.length),
-		argumentsList);
+	return new AtomImpl(Predicates.pred(predicate, arguments.length), argumentsList);
     }
 
-    public static <E extends FormatVisitable> String concat(String sep,
-	    E[] objs, FormatVisitor visitor) {
+    public static <E extends FormatVisitable> String concat(String sep, E[] objs, FormatVisitor visitor) {
 	final StringBuffer sb = new StringBuffer();
 	String sepToken = "";
 	for (final FormatVisitable obj : objs) {
@@ -62,8 +62,7 @@ public class Model {
 	return new String(sb);
     }
 
-    public static <E extends FormatVisitable> String concat(String sep,
-	    List<E> objs, FormatVisitor visitor) {
+    public static <E extends FormatVisitable> String concat(String sep, List<E> objs, FormatVisitor visitor) {
 	final StringBuffer sb = new StringBuffer();
 	String sepToken = "";
 	for (final FormatVisitable obj : objs) {
@@ -99,12 +98,10 @@ public class Model {
 	return new NegativeLiteralImpl(atom, existentially);
     }
 
-    public static NegativeLiteral negLiteral(Predicate pred,
-	    boolean existentially, Term... args) {
+    public static NegativeLiteral negLiteral(Predicate pred, boolean existentially, Term... args) {
 	final List<Term> argsList = new LinkedList<Term>();
 	Collections.addAll(argsList, args);
-	return new NegativeLiteralImpl(new AtomImpl(pred, argsList),
-		existentially);
+	return new NegativeLiteralImpl(new AtomImpl(pred, argsList), existentially);
     }
 
     public static NegativeLiteral negLiteral(Predicate pred, Term... args) {
