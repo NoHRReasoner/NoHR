@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
@@ -10,7 +10,12 @@ package pt.unl.fct.di.centria.nohr.parsing;
 public class ParseExcpetion extends Exception {
 
     /**
-     * 
+     *
+     */
+    private static final long serialVersionUID = 222524131072855061L;
+
+    /**
+     *
      */
     public ParseExcpetion() {
 	// TODO Auto-generated constructor stub
@@ -21,14 +26,6 @@ public class ParseExcpetion extends Exception {
      */
     public ParseExcpetion(String message) {
 	super(message);
-	// TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param cause
-     */
-    public ParseExcpetion(Throwable cause) {
-	super(cause);
 	// TODO Auto-generated constructor stub
     }
 
@@ -47,9 +44,16 @@ public class ParseExcpetion extends Exception {
      * @param enableSuppression
      * @param writableStackTrace
      */
-    public ParseExcpetion(String message, Throwable cause,
-	    boolean enableSuppression, boolean writableStackTrace) {
+    public ParseExcpetion(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 	super(message, cause, enableSuppression, writableStackTrace);
+	// TODO Auto-generated constructor stub
+    }
+
+    /**
+     * @param cause
+     */
+    public ParseExcpetion(Throwable cause) {
+	super(cause);
 	// TODO Auto-generated constructor stub
     }
 

@@ -32,9 +32,8 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
 	super(ontology);
     }
 
-    Set<Literal> tr(List<OWLObjectPropertyExpression> chain, Variable x,
-	    Variable y) {
-	return tr(chain, x, y);
+    List<Atom> tr(List<OWLObjectPropertyExpression> chain, Variable x, Variable y) {
+	return tr(chain, x, y, false);
     }
 
     Atom tr(OWLClass c, Variable x) {
@@ -60,8 +59,7 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     @Override
-    protected Set<Rule> translateSubsumption(
-	    List<OWLObjectPropertyExpression> pes1, OWLObjectProperty p2) {
+    protected Set<Rule> translateSubsumption(List<OWLObjectPropertyExpression> pes1, OWLObjectProperty p2) {
 	return ruleSet(rule(tr(p2, X, Y), tr(pes1, X, Y)));
     }
 

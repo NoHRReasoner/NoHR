@@ -22,6 +22,7 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
@@ -49,12 +50,9 @@ public abstract class AbstractAxiomsTranslator {
      */
     public AbstractAxiomsTranslator(OWLOntology ontology) {
 	this.ontology = ontology;
-	final OWLDataFactory dataFactory = ontology.getOWLOntologyManager()
-		.getOWLDataFactory();
+	final OWLDataFactory dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
 	ontologyLabeler = new OntologyLabeler(ontology,
-		dataFactory
-		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL
-			.getIRI()));
+		dataFactory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()));
     }
 
     protected Set<Rule> ruleSet(Rule... rules) {
@@ -83,8 +81,7 @@ public abstract class AbstractAxiomsTranslator {
     public Set<Rule> translateDouble(OWLClassAssertionAxiom alpha) {
 	final OWLClassExpression c = alpha.getClassExpression();
 	if (!(c instanceof OWLClass))
-	    throw new IllegalArgumentException(
-		    "assertion's concepts must be atomic");
+	    throw new IllegalArgumentException("assertion's concepts must be atomic");
 	final Predicate a = doubPred((OWLClass) c);
 	final Predicate na = negPred((OWLClass) c);
 	final Constant i = cons(sym(alpha.getIndividual()));
@@ -102,6 +99,8 @@ public abstract class AbstractAxiomsTranslator {
 
     public Set<Rule> translateOriginal(OWLClassAssertionAxiom alpha) {
 	final OWLClassExpression c = alpha.getClassExpression();
+	if (c instanceof OWLObjectSomeValuesFrom)
+	    return ruleSet();
 	if (!(c instanceof OWLClass))
 	    throw new IllegalAccessError("assertion's concepts must be atomic");
 	if (c.isTopEntity() || c.isBottomEntity())

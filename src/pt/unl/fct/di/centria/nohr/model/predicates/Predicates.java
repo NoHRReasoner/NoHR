@@ -29,10 +29,8 @@ public class Predicates {
 	    throw new IllegalArgumentException();
     }
 
-    public static Predicate domPred(OWLPropertyExpression<?, ?> role,
-	    boolean doub) {
-	final RolePredicateImpl rolePredicate = new RolePredicateImpl(
-		atomic(role));
+    public static Predicate domPred(OWLPropertyExpression<?, ?> role, boolean doub) {
+	final RolePredicateImpl rolePredicate = new RolePredicateImpl(atomic(role));
 	if (doub)
 	    return new DoubleDomainPredicate(rolePredicate);
 	else
@@ -67,7 +65,10 @@ public class Predicates {
 	return new NegativePredicate(new RolePredicateImpl(atomic(role)));
     }
 
-    public static Predicate negPred(Predicate pred) {
+    public static Predicate negPred(Predicate predicate) {
+	Predicate pred = predicate;
+	if (predicate instanceof MetaPredicateImpl)
+	    pred = ((MetaPredicate) predicate).getPredicate();
 	return new NegativePredicate(pred);
     }
 
@@ -131,8 +132,7 @@ public class Predicates {
 	    return new OriginalPredicate(new RolePredicateImpl(atomic(role)));
     }
 
-    public static Predicate pred(OWLPropertyExpression<?, ?> role,
-	    PredicateType type) {
+    public static Predicate pred(OWLPropertyExpression<?, ?> role, PredicateType type) {
 	final RolePredicateImpl predicate = new RolePredicateImpl(atomic(role));
 	switch (type) {
 	case DOUBLE:
@@ -179,13 +179,11 @@ public class Predicates {
 	}
     }
 
-    public static Predicate ranPred(OWLPropertyExpression<?, ?> role,
-	    boolean doub) {
+    public static Predicate ranPred(OWLPropertyExpression<?, ?> role, boolean doub) {
 	if (doub)
 	    return new DoubleRangePredicate(new RolePredicateImpl(atomic(role)));
 	else
-	    return new OriginalRangePredicate(new RolePredicateImpl(
-		    atomic(role)));
+	    return new OriginalRangePredicate(new RolePredicateImpl(atomic(role)));
     }
 
 }

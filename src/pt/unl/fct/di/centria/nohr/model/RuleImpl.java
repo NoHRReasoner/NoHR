@@ -18,7 +18,7 @@ public class RuleImpl implements Rule {
 
     private final Atom head;
 
-    RuleImpl(Atom head, List<Literal> body) {
+    RuleImpl(Atom head, List<? extends Literal> body) {
 	this.head = head;
 	this.body = body.toArray(new Literal[] {});
     }
@@ -95,7 +95,7 @@ public class RuleImpl implements Rule {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nohr.model.Rule#getPredicates()
      */
     @Override

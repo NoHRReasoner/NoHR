@@ -1,3 +1,4 @@
+
 /**
  *
  */
@@ -59,8 +60,7 @@ public class QueryProcessorTest extends QueryProcessor {
      * @throws Exception
      */
     public QueryProcessorTest() throws Exception {
-	super(new XSBDatabase(FileSystems.getDefault().getPath(
-		System.getenv("XSB_BIN_DIRECTORY"), "xsb")));
+	super(new XSBDatabase(FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb")));
     }
 
     private List<Term> l(Term... elems) {
@@ -83,6 +83,86 @@ public class QueryProcessorTest extends QueryProcessor {
     public void tearDown() throws Exception {
     }
 
+    @Test
+    public final void testHasAnswer() {
+	final Variable var = var("X");
+	// true true
+	Query q = Model.query(atom("p", var));
+	xsbDatabase.add("ap(a)");
+	xsbDatabase.add("dp(a)");
+	assertTrue(hasAnswer(q, true));
+	assertTrue(hasAnswer(q, true, true, false, false));
+	assertFalse(hasAnswer(q, true, false, true, false));
+	assertFalse(hasAnswer(q, true, false, false, true));
+	assertTrue(hasAnswer(q, false));
+	assertTrue(hasAnswer(q, false, true, false, false));
+	assertFalse(hasAnswer(q, false, false, true, false));
+	// true undefined
+	q = Model.query(atom("q", var));
+	xsbDatabase.add("aq(b)");
+	xsbDatabase.table("dq/1");
+	xsbDatabase.add("dq(b):-tnot(dq(b))");
+	assertTrue(hasAnswer(q, true, true, false, false));
+	assertFalse(hasAnswer(q, true, false, true, false));
+	assertFalse(hasAnswer(q, true, false, false, true));
+	assertTrue(hasAnswer(q, false));
+	assertTrue(hasAnswer(q, false, true, false, false));
+	assertFalse(hasAnswer(q, false, false, true, false));
+	// true false
+	q = Model.query(atom("r", var));
+	xsbDatabase.add("ar(c)");
+	xsbDatabase.add("dr(o)");
+	assertTrue(hasAnswer(q, true));
+	assertFalse(hasAnswer(q, true, true, false, false));
+	assertFalse(hasAnswer(q, true, false, true, false));
+	assertTrue(hasAnswer(q, true, false, false, true));
+	assertTrue(hasAnswer(q, false));
+	assertTrue(hasAnswer(q, false, true, false, false));
+	assertFalse(hasAnswer(q, false, false, true, false));
+	// undefined true
+	q = Model.query(atom("s", var));
+	xsbDatabase.table("as/1");
+	xsbDatabase.add("as(d):-tnot(as(d))");
+	xsbDatabase.add("ds(d)");
+	assertTrue(hasAnswer(q, true));
+	assertTrue(hasAnswer(q, true, true, false, false));
+	assertFalse(hasAnswer(q, true, false, true, false));
+	assertFalse(hasAnswer(q, true, false, false, true));
+	assertTrue(hasAnswer(q, false));
+	assertFalse(hasAnswer(q, false, true, false, false));
+	assertTrue(hasAnswer(q, false, false, true, false));
+	// undefined undefined
+	q = Model.query(atom("t", var));
+	xsbDatabase.table("at/1");
+	xsbDatabase.add("at(e):-tnot(at(e))");
+	xsbDatabase.table("dt/1");
+	xsbDatabase.add("dt(e):-tnot(at(e))");
+	assertTrue(hasAnswer(q, true));
+	assertFalse(hasAnswer(q, true, true, false, false));
+	assertTrue(hasAnswer(q, true, false, true, false));
+	assertFalse(hasAnswer(q, true, false, false, true));
+	assertTrue(hasAnswer(q, false));
+	assertFalse(hasAnswer(q, false, true, false, false));
+	assertTrue(hasAnswer(q, false, false, true, false));
+	// undefined false
+	q = Model.query(atom("u", var));
+	xsbDatabase.table("au/1");
+	xsbDatabase.add("au(f):-tnot(au(f))");
+	xsbDatabase.add("du(o)");
+	assertFalse(hasAnswer(q, true));
+	assertFalse(hasAnswer(q, true, true, false, false));
+	assertFalse(hasAnswer(q, true, false, true, false));
+	assertFalse(hasAnswer(q, true, false, false, true));
+	assertTrue(hasAnswer(q, false));
+	assertFalse(hasAnswer(q, false, true, false, false));
+	assertTrue(hasAnswer(q, false, false, true, false));
+	// false false
+	q = Model.query(atom("v", var));
+	xsbDatabase.add("av(o)");
+	xsbDatabase.add("dv(l)");
+	assertFalse(hasAnswer(q, true, true, true, false));
+    }
+
     /**
      * Test method for
      * {@link nohr.reasoner.QueryProcessor#lazilyQuery(pt.unl.fct.di.centria.nohr.model.Query)}
@@ -92,8 +172,7 @@ public class QueryProcessorTest extends QueryProcessor {
     // wrong when original answer is UNDEFINED and the doubled answer is TRUE
     public final void testLazilyQuery() {
 
-	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(
-		System.getenv("XSB_BIN_DIRECTORY")));
+	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY")));
 
 	xsbDatabase.table("ap/1");
 	xsbDatabase.table("dp/1");
@@ -133,8 +212,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	final Variable var = var("X");
 	final Query q = Model.query(atom("p", var));
 
-	Iterator<Answer> ans = lazilyQuery(q, true, true, true, true)
-		.iterator();
+	Iterator<Answer> ans = lazilyQuery(q, true, true, true, true).iterator();
 	assertTrue(ans.hasNext());
 	assertEquals(ans.next(), ans(q, TruthValue.TRUE, l(cons("a"))));
 	assertTrue(ans.hasNext());
@@ -324,34 +402,28 @@ public class QueryProcessorTest extends QueryProcessor {
 	Collection<Answer> ans = queryAll(q, true, true, true, true);
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
-		l(cons("c")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(cons("c")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
-		l(cons("e")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(cons("e")))));
 	Assert.assertTrue(ans.size() == 5);
 
 	ans = queryAll(q, true, true, true, false);
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
-		l(cons("e")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(cons("e")))));
 	Assert.assertTrue(ans.size() == 4);
 
 	ans = queryAll(q, true, true, false, true);
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
-		l(cons("c")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(cons("c")))));
 	Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
 	Assert.assertTrue(ans.size() == 4);
 
 	ans = queryAll(q, true, false, true, true);
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
-		l(cons("c")))));
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
-		l(cons("e")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(cons("c")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(cons("e")))));
 	Assert.assertTrue(ans.size() == 2);
 
 	ans = queryAll(q, true, true, false, false);
@@ -361,13 +433,11 @@ public class QueryProcessorTest extends QueryProcessor {
 	Assert.assertTrue(ans.size() == 3);
 
 	ans = queryAll(q, true, false, true, false);
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED,
-		l(cons("e")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(cons("e")))));
 	Assert.assertTrue(ans.size() == 1);
 
 	ans = queryAll(q, true, false, false, true);
-	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT,
-		l(cons("c")))));
+	Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(cons("c")))));
 	Assert.assertTrue(ans.size() == 1);
 
     }

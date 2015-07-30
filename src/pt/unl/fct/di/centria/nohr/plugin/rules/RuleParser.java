@@ -6,8 +6,6 @@ package pt.unl.fct.di.centria.nohr.plugin.rules;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
-
 /**
  * @author nunocosta
  *
@@ -22,10 +20,6 @@ public class RuleParser {
 	private Token(int begin, int end) {
 	    this.begin = begin;
 	    this.end = end;
-	}
-
-	String get() {
-	    return string.substring(begin, end);
 	}
     }
 

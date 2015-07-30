@@ -58,9 +58,8 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 	return atom(pred, x, y);
     }
 
-    Set<Literal> tr(List<OWLObjectPropertyExpression> chain, Variable x,
-	    Variable y) {
-	return tr(chain, x, y);
+    List<Atom> tr(List<OWLObjectPropertyExpression> chain, Variable x, Variable y) {
+	return tr(chain, x, y, true);
     }
 
     Atom tr(OWLClass c, Variable x) {
@@ -87,10 +86,9 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 
     // (r2)
     @Override
-    protected Set<Rule> translateSubsumption(
-	    List<OWLObjectPropertyExpression> chain, OWLObjectProperty s) {
+    protected Set<Rule> translateSubsumption(List<OWLObjectPropertyExpression> chain, OWLObjectProperty s) {
 	final Set<Rule> result = new HashSet<Rule>();
-	final Set<Literal> chainTr = tr(chain, X, Y);
+	final List<Atom> chainTr = tr(chain, X, Y);
 	Set<Literal> body = new HashSet<Literal>(chainTr);
 	body.add(negLiteral(negTr(s, X, Y)));
 	result.add(rule(tr(s, X, Y), body));
@@ -136,10 +134,8 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 
     // (r1)
     @Override
-    protected Set<Rule> translateSubsumption(OWLProperty<?, ?> r,
-	    OWLProperty<?, ?> s) {
-	return ruleSet(
-		rule(tr(r, X, Y), tr(s, X, Y), negLiteral(negTr(r, X, Y))),
+    protected Set<Rule> translateSubsumption(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
+	return ruleSet(rule(tr(r, X, Y), tr(s, X, Y), negLiteral(negTr(r, X, Y))),
 		rule(negTr(r, X, Y), negTr(s, X, Y)));
     }
 }

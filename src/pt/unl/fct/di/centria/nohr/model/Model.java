@@ -1,5 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,7 +30,10 @@ public class Model {
     }
 
     public static Atom atom(Predicate predicate) {
-	return new AtomImpl(predicate, Collections.<Term> emptyList());
+	final List<Term> args = new ArrayList<Term>(predicate.getArity());
+	for (int i = 0; i < predicate.getArity(); i++)
+	    args.add(var());
+	return new AtomImpl(predicate, args);
     }
 
     public static Atom atom(Predicate predicate, List<Term> arguments) {
@@ -132,7 +136,7 @@ public class Model {
 	return query(literalList);
     }
 
-    public static Rule rule(Atom head, List<Literal> body) {
+    public static Rule rule(Atom head, List<? extends Literal> body) {
 	return new RuleImpl(head, body);
     }
 

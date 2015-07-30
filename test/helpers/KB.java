@@ -3,6 +3,7 @@ package helpers;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,10 +16,12 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
@@ -27,6 +30,8 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -37,8 +42,6 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntology;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntologyImpl;
-
-import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 public class KB {
 
@@ -60,9 +63,8 @@ public class KB {
 
     private final Map<String, OWLObjectProperty> roles;
 
-    public KB() throws OWLOntologyCreationException,
-    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-    CloneNotSupportedException, UnsupportedAxiomTypeException {
+    public KB() throws OWLOntologyCreationException, OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException, UnsupportedAxiomTypeException {
 	om = OWLManager.createOWLOntologyManager();
 	df = om.getOWLDataFactory();
 	ont = om.createOntology(IRI.generateDocumentIRI());
@@ -85,33 +87,48 @@ public class KB {
 	om.addAxioms(ont, axioms);
     }
 
-    public void addAssertion(OWLClass concept, OWLIndividual individual) {
+    public void addAssertion(OWLClassExpression concept, OWLIndividual individual) {
 	om.addAxiom(ont, df.getOWLClassAssertionAxiom(concept, individual));
     }
 
-    public void addAssertion(OWLDataProperty dataProperty, OWLIndividual ind1,
-	    String literal) {
-	om.addAxiom(ont, df.getOWLDataPropertyAssertionAxiom(dataProperty,
-		ind1, literal));
+    public void addAssertion(OWLDataProperty dataProperty, OWLIndividual ind1, String literal) {
+	om.addAxiom(ont, df.getOWLDataPropertyAssertionAxiom(dataProperty, ind1, literal));
     }
 
-    public void addAssertion(OWLObjectProperty role, OWLIndividual ind1,
-	    OWLIndividual ind2) {
-	om.addAxiom(ont,
-		df.getOWLObjectPropertyAssertionAxiom(role, ind1, ind2));
+    public void addAssertion(OWLObjectProperty role, OWLIndividual ind1, OWLIndividual ind2) {
+	om.addAxiom(ont, df.getOWLObjectPropertyAssertionAxiom(role, ind1, ind2));
     }
 
     public void addAxiom(OWLAxiom axiom) {
 	om.addAxiom(ont, axiom);
     }
 
+    public void addDisjunction(OWLClassExpression... b) {
+	om.addAxiom(ont, df.getOWLDisjointClassesAxiom(b));
+    }
+
     public void addDisjunction(OWLClassExpression b1, OWLClassExpression b2) {
 	om.addAxiom(ont, df.getOWLDisjointClassesAxiom(b1, b2));
     }
 
-    public void addDisjunction(OWLObjectPropertyExpression q1,
-	    OWLObjectPropertyExpression q2) {
+    public void addDisjunction(OWLObjectPropertyExpression q1, OWLObjectPropertyExpression q2) {
 	om.addAxiom(ont, df.getOWLDisjointObjectPropertiesAxiom(q1, q2));
+    }
+
+    public void addDomain(OWLObjectProperty ope, OWLClassExpression ce) {
+	addAxiom(getDataFactory().getOWLObjectPropertyDomainAxiom(ope, ce));
+    }
+
+    public void addEquivalence(OWLDataPropertyExpression sub, OWLDataPropertyExpression sup) {
+	addAxiom(getDataFactory().getOWLEquivalentDataPropertiesAxiom(sub, sup));
+    }
+
+    public void addEquivalence(OWLObjectPropertyExpression sub, OWLObjectPropertyExpression sup) {
+	addAxiom(getDataFactory().getOWLEquivalentObjectPropertiesAxiom(sub, sup));
+    }
+
+    public void addNegativeAssertion(OWLObjectPropertyExpression ope, OWLIndividual i1, OWLIndividual i2) {
+	addAxiom(getDataFactory().getOWLNegativeObjectPropertyAssertionAxiom(ope, i1, i2));
     }
 
     public void addRule(String rule) throws IOException, PrologParserException {
@@ -121,27 +138,47 @@ public class KB {
 	hybridKB.getRuleBase().add(r);
     }
 
+    public void addSubsumption(List<? extends OWLObjectPropertyExpression> chain, OWLObjectPropertyExpression q2) {
+	om.addAxiom(ont, df.getOWLSubPropertyChainOfAxiom(chain, q2));
+    }
+
     public void addSubsumption(OWLClassExpression b1, OWLClassExpression b2) {
 	om.addAxiom(ont, df.getOWLSubClassOfAxiom(b1, b2));
     }
 
-    public void addSubsumption(OWLObjectPropertyExpression q1,
-	    OWLObjectPropertyExpression q2) {
+    /**
+     * @param d1
+     * @param d2
+     */
+    public void addSubsumption(OWLDataProperty d1, OWLDataProperty d2) {
+	addAxiom(getDataFactory().getOWLSubDataPropertyOfAxiom(d1, d2));
+    }
+
+    public void addSubsumption(OWLObjectPropertyExpression q1, OWLObjectPropertyExpression q2) {
 	om.addAxiom(ont, df.getOWLSubObjectPropertyOfAxiom(q1, q2));
     }
 
+    public void addTransitive(OWLObjectPropertyExpression ope) {
+	addAxiom(getDataFactory().getOWLTransitiveObjectPropertyAxiom(ope));
+    }
+
     public void clear() {
-	final Set<OWLDeclarationAxiom> declarationAxioms = ont
-		.getAxioms(AxiomType.DECLARATION);
+	final Set<OWLDeclarationAxiom> declarationAxioms = ont.getAxioms(AxiomType.DECLARATION);
 	om.removeAxioms(ont, ont.getAxioms());
 	om.addAxioms(ont, declarationAxioms);
 	try {
 	    hybridKB = new HybridKB(ont);
-	} catch (OWLOntologyCreationException | OWLOntologyStorageException
-		| UnsupportedOWLProfile | IOException
+	} catch (OWLOntologyCreationException | OWLOntologyStorageException | UnsupportedOWLProfile | IOException
 		| CloneNotSupportedException | UnsupportedAxiomTypeException e) {
 	    e.printStackTrace();
 	}
+    }
+
+    /**
+     * @return
+     */
+    public OWLClassExpression getBottom() {
+	return ont.getOWLOntologyManager().getOWLDataFactory().getOWLNothing();
     }
 
     public OWLClassExpression getComplement(OWLClassExpression ce) {
@@ -167,6 +204,10 @@ public class KB {
 	for (int i = 0; i < n; i++)
 	    result[i] = getConcept();
 	return result;
+    }
+
+    public OWLObjectIntersectionOf getConjunction(OWLClassExpression... concepts) {
+	return getDataFactory().getOWLObjectIntersectionOf(concepts);
     }
 
     public OWLDataFactory getDataFactory() {
@@ -203,10 +244,12 @@ public class KB {
 	return IRI.create(ontIRI + "#" + name);
     }
 
-    public OWLObjectSomeValuesFrom getExistential(
-	    OWLObjectPropertyExpression owlObjectPropertyExpression) {
-	return df.getOWLObjectSomeValuesFrom(owlObjectPropertyExpression,
-		df.getOWLThing());
+    public OWLObjectSomeValuesFrom getExistential(OWLObjectPropertyExpression owlObjectPropertyExpression) {
+	return df.getOWLObjectSomeValuesFrom(owlObjectPropertyExpression, df.getOWLThing());
+    }
+
+    public OWLObjectSomeValuesFrom getExistential(OWLObjectPropertyExpression role, OWLClassExpression filler) {
+	return df.getOWLObjectSomeValuesFrom(role, filler);
     }
 
     public OWLObjectSomeValuesFrom getExistential(String roleName) {
@@ -299,10 +342,29 @@ public class KB {
 	return String.format(ruleFormat, args);
     }
 
+    /**
+     * @return
+     */
+    public OWLClassExpression getTop() {
+	return ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
+    }
+
+    public boolean hasAnswer(String query)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException, UnsupportedAxiomTypeException, PrologParserException {
+	return hasAnswer(query, true, true, true);
+    }
+
+    public boolean hasAnswer(String query, boolean trueAnswers, boolean undefinedAnswers, boolean inconsistentAnswers)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException, UnsupportedAxiomTypeException, PrologParserException {
+	final Query q = Parser.parseQuery(query);
+	return hybridKB.hasAnswer(q, trueAnswers, undefinedAnswers, inconsistentAnswers);
+    }
+
     public Collection<Answer> queryAll(String query)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-	    UnsupportedAxiomTypeException, PrologParserException {
+	    throws OWLOntologyCreationException, OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+	    CloneNotSupportedException, UnsupportedAxiomTypeException, PrologParserException {
 	final Query q = Parser.parseQuery(query);
 	return hybridKB.queryAll(q);
     }

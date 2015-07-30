@@ -12,19 +12,19 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import pt.unl.fct.di.centria.nohr.Utils;
-import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.model.Variable;
-
 import com.declarativa.interprolog.AbstractPrologEngine;
 import com.declarativa.interprolog.SolutionIterator;
 import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
+
+import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.Model;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.TruthValue;
+import pt.unl.fct.di.centria.nohr.model.Variable;
 
 public class XSBDatabase {
 
@@ -51,8 +51,7 @@ public class XSBDatabase {
 	xsbEngine.deterministicGoal("assert((" + rule + "))");
     }
 
-    private void addAnswer(TermModel valuesList,
-	    Map<List<Term>, TruthValue> answers) {
+    private void addAnswer(TermModel valuesList, Map<List<Term>, TruthValue> answers) {
 	final TermModel[] termsList = valuesList.flatList();
 	final List<Term> vals = new ArrayList<Term>(termsList.length);
 	for (int i = 1; i < termsList.length; i++)
@@ -62,8 +61,7 @@ public class XSBDatabase {
 
     }
 
-    private Answer answer(Query query, Map<Variable, Integer> varsIdx,
-	    TermModel valuesList) {
+    private Answer answer(Query query, Map<Variable, Integer> varsIdx, TermModel valuesList) {
 	final TermModel[] termsList = valuesList.flatList();
 	final TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
 	final List<Term> vals = new ArrayList<Term>(termsList.length);
@@ -107,8 +105,7 @@ public class XSBDatabase {
 	    goal = query.acept(formatVisitor);
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("call_tv((%s),%s)",
-		    query.acept(formatVisitor), truth);
+	    goal = String.format("call_tv((%s),%s)", query.acept(formatVisitor), truth);
 	}
 	return xsbEngine.deterministicGoal(goal);
     }
@@ -122,18 +119,15 @@ public class XSBDatabase {
 	    lastSolutionsIterator.cancel();
 	    lastSolutionsIterator = null;
 	}
-	final String vars = Utils.concat(",", query.getVariables());
+	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("detGoal([%s],(%s),TM)", vars,
-		    query.acept(formatVisitor));
+	    goal = String.format("detGoal([%s],(%s),TM)", vars, query.acept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars,
-		    query.acept(formatVisitor), truth);
+	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars, query.acept(formatVisitor), truth);
 	}
-	final Map<Variable, Integer> varsIdx = variablesIndex(query
-		.getVariables());
+	final Map<Variable, Integer> varsIdx = variablesIndex(query.getVariables());
 	final SolutionIterator solutions = xsbEngine.goal(goal, "[TM]");
 	lastSolutionsIterator = solutions;
 	final XSBDatabase xsbDatabase = this;
@@ -185,21 +179,18 @@ public class XSBDatabase {
     }
 
     public Answer query(Query query, Boolean trueAnswers) {
-	final String vars = Utils.concat(",", query.getVariables());
+	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("detGoal([%s],(%s),TM)", vars,
-		    query.acept(formatVisitor));
+	    goal = String.format("detGoal([%s],(%s),TM)", vars, query.acept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars,
-		    query.acept(formatVisitor), truth);
+	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars, query.acept(formatVisitor), truth);
 	}
 	final Object[] bindings = xsbEngine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
 	    return null;
-	return answer(query, variablesIndex(query.getVariables()),
-		(TermModel) bindings[0]);
+	return answer(query, variablesIndex(query.getVariables()), (TermModel) bindings[0]);
     }
 
     public Map<List<Term>, TruthValue> queryAll(Query query) {
@@ -208,15 +199,13 @@ public class XSBDatabase {
 
     public Map<List<Term>, TruthValue> queryAll(Query query, Boolean trueAnswers) {
 	final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
-	final String vars = Utils.concat(",", query.getVariables());
+	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars,
-		    query.acept(formatVisitor));
+	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars, query.acept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("nonDetGoal([%s],(%s),%s,TM)", vars,
-		    query.acept(formatVisitor), truth);
+	    goal = String.format("nonDetGoal([%s],(%s),%s,TM)", vars, query.acept(formatVisitor), truth);
 	}
 	final Object[] bindings = xsbEngine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)

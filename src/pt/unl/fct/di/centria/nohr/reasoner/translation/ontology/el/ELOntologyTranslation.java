@@ -36,11 +36,9 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
 
     private final ELReducedOntology reducedOntology;
 
-    public ELOntologyTranslation(OWLOntology ontology,
-	    OntologyLabeler ontologyLabel) throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, IOException,
-	    CloneNotSupportedException, UnsupportedOWLProfile,
-	    UnsupportedAxiomTypeException {
+    public ELOntologyTranslation(OWLOntology ontology, OntologyLabeler ontologyLabel)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, CloneNotSupportedException,
+	    UnsupportedOWLProfile, UnsupportedAxiomTypeException {
 	super(ontology);
 	originalAxiomsTranslator = new ELOriginalAxiomsTranslator(ontology);
 	doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(ontology);
@@ -52,37 +50,24 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
 
     @Override
     protected void computeNegativeHeadsPredicates() {
-	for (final OWLSubClassOfAxiom axiom : reducedOntology
-		.getConceptSubsumptions()) {
+	for (final OWLSubClassOfAxiom axiom : reducedOntology.getConceptSubsumptions()) {
 	    final OWLClassExpression ce1 = axiom.getSubClass();
-	    assert ce1 instanceof OWLClass ? ce1.asOWLClass().getIRI()
-		    .getFragment() != null : true : axiom;
+	    assert ce1 instanceof OWLClass ? ce1.asOWLClass().getIRI().getFragment() != null : true : axiom;
 	    for (final Literal b : doubleAxiomsTranslator.tr(ce1, var()))
-		negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(b)
-			.getPredicate());
+		negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(b).getPredicate());
 	}
-	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology
-		.getRoleSubsumptions()) {
-	    final OWLObjectProperty op1 = axiom.getSubProperty()
-		    .asOWLObjectProperty();
-	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(),
-		    var()).getPredicate());
+	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions()) {
+	    final OWLObjectProperty op1 = axiom.getSubProperty().asOWLObjectProperty();
+	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(), var()).getPredicate());
 	}
-	for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology
-		.getDataSubsuptions()) {
-	    final OWLDataProperty op1 = axiom.getSubProperty()
-		    .asOWLDataProperty();
-	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(),
-		    var()).getPredicate());
+	for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology.getDataSubsuptions()) {
+	    final OWLDataProperty op1 = axiom.getSubProperty().asOWLDataProperty();
+	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(), var()).getPredicate());
 	}
-	for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology
-		.getChainSubsumptions()) {
-	    final List<OWLObjectPropertyExpression> chain = axiom
-		    .getPropertyChain();
-	    for (final Literal r : doubleAxiomsTranslator.tr(chain, var(),
-		    var()))
-		negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(r)
-			.getPredicate());
+	for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology.getChainSubsumptions()) {
+	    final List<OWLObjectPropertyExpression> chain = axiom.getPropertyChain();
+	    for (final Literal r : doubleAxiomsTranslator.tr(chain, var(), var()))
+		negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(r).getPredicate());
 	}
     }
 
@@ -106,29 +91,21 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
     }
 
     private void translate(AbstractELAxiomsTranslator axiomTranslator) {
-	for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology
-		.getChainSubsumptions())
+	for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology.getChainSubsumptions())
 	    rules.addAll(axiomTranslator.translate(axiom));
-	for (final OWLClassAssertionAxiom assertion : reducedOntology
-		.getConceptAssertions())
+	for (final OWLClassAssertionAxiom assertion : reducedOntology.getConceptAssertions())
 	    rules.addAll(axiomTranslator.translate(assertion));
-	for (final OWLSubClassOfAxiom axiom : reducedOntology
-		.getConceptSubsumptions())
+	for (final OWLSubClassOfAxiom axiom : reducedOntology.getConceptSubsumptions())
 	    rules.addAll(axiomTranslator.translate(axiom));
-	for (final OWLDataPropertyAssertionAxiom assertion : reducedOntology
-		.getDataAssertion())
+	for (final OWLDataPropertyAssertionAxiom assertion : reducedOntology.getDataAssertion())
 	    rules.addAll(axiomTranslator.translate(assertion));
-	for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology
-		.getDataSubsuptions())
+	for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology.getDataSubsuptions())
 	    rules.addAll(axiomTranslator.translate(axiom));
-	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology
-		.getRoleSubsumptions())
+	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions())
 	    rules.addAll(axiomTranslator.translate(axiom));
-	for (final OWLObjectPropertyAssertionAxiom assertion : reducedOntology
-		.getRoleAssertions())
+	for (final OWLObjectPropertyAssertionAxiom assertion : reducedOntology.getRoleAssertions())
 	    rules.addAll(axiomTranslator.translate(assertion));
-	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology
-		.getRoleSubsumptions())
+	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions())
 	    rules.addAll(axiomTranslator.translate(axiom));
     }
 }

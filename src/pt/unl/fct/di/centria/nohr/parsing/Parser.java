@@ -72,8 +72,8 @@ public class Parser {
 	return parseAtom(struct);
     }
 
-    private static void parseLiteralsList(PrologStructure struct,
-	    List<Literal> literals) throws IOException, PrologParserException {
+    private static void parseLiteralsList(PrologStructure struct, List<Literal> literals)
+	    throws IOException, PrologParserException {
 	final String functor = struct.getFunctor().getText();
 	if (!functor.equals(","))
 	    literals.add(parseLiteral(struct));
@@ -83,26 +83,20 @@ public class Parser {
 	}
     }
 
-    public static Query parseQuery(String string) throws IOException,
-    PrologParserException {
-	final PrologStructure rootStructure = (PrologStructure) parser
-		.nextSentence(string);
+    public static Query parseQuery(String string) throws IOException, PrologParserException {
+	final PrologStructure rootStructure = (PrologStructure) parser.nextSentence(string);
 	final List<Literal> literals = new LinkedList<Literal>();
 	parseLiteralsList(rootStructure, literals);
 	return query(literals);
     }
 
-    private static Rule parseRule(PrologStructure structure)
-	    throws IOException, PrologParserException {
-	if (structure.getArity() < 1 || structure.getArity() > 1
-		&& !structure.getFunctor().getText().equals(":-"))
-	    throw new IllegalArgumentException("isn't a rule");
+    private static Rule parseRule(PrologStructure structure) throws IOException, PrologParserException {
 	final Atom head;
-	if (structure.getArity() == 1)
+	if (!structure.getFunctor().getText().equals(":-")) {
 	    head = (Atom) parseLiteral(structure);
-	else
-	    head = (Atom) parseLiteral((PrologStructure) structure
-		    .getElement(0));
+	    return rule(head);
+	}
+	head = (Atom) parseLiteral((PrologStructure) structure.getElement(0));
 	final List<Literal> body = new LinkedList<Literal>();
 	if (structure.getArity() > 1) {
 	    final AbstractPrologTerm bodyTerm = structure.getElement(1);
@@ -112,8 +106,7 @@ public class Parser {
 	return rule(head, body);
     }
 
-    public static Rule parseRule(String rule) throws IOException,
-    PrologParserException {
+    public static Rule parseRule(String rule) throws IOException, PrologParserException {
 	return parseRule((PrologStructure) parser.nextSentence(rule));
     }
 
@@ -128,8 +121,7 @@ public class Parser {
     }
 
     public Rule nextRule() throws IOException, PrologParserException {
-	final PrologStructure struct = (PrologStructure) parser
-		.nextSentence(src);
+	final PrologStructure struct = (PrologStructure) parser.nextSentence(src);
 	if (struct == null)
 	    return null;
 	return parseRule(struct);
