@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
+import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex;
 
 public class Model {
 
@@ -48,6 +49,10 @@ public class Model {
 
     public static Atom atom(String predicate, List<Term> arguments) {
 	return new AtomImpl(Predicates.pred(predicate, arguments.size()), arguments);
+    }
+
+    public static Atom atom(String predicate, List<Term> arguments, OntologyIndex ontologyIndex) {
+	return new AtomImpl(Predicates.pred(predicate, arguments.size(), ontologyIndex), arguments);
     }
 
     public static Atom atom(String predicate, Term... arguments) {

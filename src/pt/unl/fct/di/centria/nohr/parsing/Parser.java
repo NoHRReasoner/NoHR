@@ -3,12 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.query;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -20,6 +15,7 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex;
 
 import com.igormaznitsa.prologparser.PrologCharDataSource;
 import com.igormaznitsa.prologparser.PrologParser;
@@ -35,9 +31,38 @@ import com.igormaznitsa.prologparser.terms.PrologStructure;
  */
 public class Parser {
 
-    private static final PrologParser parser = new PrologParser(null);
+    private final PrologParser parser = new PrologParser(null);
 
-    private static Atom parseAtom(final PrologStructure struct) {
+    private final PrologCharDataSource src;
+
+    private final OntologyIndex ontologyIndex;
+
+    public Parser() {
+	this(null, null);
+    }
+
+    public Parser(OntologyIndex ontologyIndex) {
+	this(null, ontologyIndex);
+    }
+
+    public Parser(Reader reader, OntologyIndex ontologyIndex) {
+	if (reader != null)
+	    src = new PrologCharDataSource(reader);
+	else
+	    src = null;
+	this.ontologyIndex = ontologyIndex;
+    }
+
+    public Rule nextRule() throws IOException, PrologParserException {
+	if (src == null)
+	    return null;
+	final PrologStructure struct = (PrologStructure) parser.nextSentence(src);
+	if (struct == null)
+	    return null;
+	return parseRule(struct);
+    }
+
+    private Atom parseAtom(final PrologStructure struct) {
 	final String pred = struct.getFunctor().getText();
 	final List<Term> args = new LinkedList<Term>();
 	for (int i = 0; i < struct.getArity(); i++) {
@@ -62,17 +87,20 @@ public class Parser {
 		break;
 	    }
 	}
-	return atom(pred, args);
+	if (ontologyIndex != null)
+	    return atom(pred, args, ontologyIndex);
+	else
+	    return atom(pred, args);
     }
 
-    private static Literal parseLiteral(PrologStructure struct) {
+    private Literal parseLiteral(PrologStructure struct) {
 	final String pred = struct.getFunctor().getText();
 	if (pred.equals("tnot"))
 	    return negLiteral(parseAtom((PrologStructure) struct.getElement(0)));
 	return parseAtom(struct);
     }
 
-    private static void parseLiteralsList(PrologStructure struct, List<Literal> literals)
+    private void parseLiteralsList(PrologStructure struct, List<Literal> literals)
 	    throws IOException, PrologParserException {
 	final String functor = struct.getFunctor().getText();
 	if (!functor.equals(","))
@@ -83,14 +111,14 @@ public class Parser {
 	}
     }
 
-    public static Query parseQuery(String string) throws IOException, PrologParserException {
+    public Query parseQuery(String string) throws IOException, PrologParserException {
 	final PrologStructure rootStructure = (PrologStructure) parser.nextSentence(string);
 	final List<Literal> literals = new LinkedList<Literal>();
 	parseLiteralsList(rootStructure, literals);
 	return query(literals);
     }
 
-    private static Rule parseRule(PrologStructure structure) throws IOException, PrologParserException {
+    private Rule parseRule(PrologStructure structure) throws IOException, PrologParserException {
 	final Atom head;
 	if (!structure.getFunctor().getText().equals(":-")) {
 	    head = (Atom) parseLiteral(structure);
@@ -106,25 +134,8 @@ public class Parser {
 	return rule(head, body);
     }
 
-    public static Rule parseRule(String rule) throws IOException, PrologParserException {
+    public Rule parseRule(String rule) throws IOException, PrologParserException {
 	return parseRule((PrologStructure) parser.nextSentence(rule));
-    }
-
-    public static Rule parseRule(String rule, boolean prologSyntax) {
-	return null;
-    }
-
-    private final PrologCharDataSource src;
-
-    public Parser(Reader reader) {
-	src = new PrologCharDataSource(reader);
-    }
-
-    public Rule nextRule() throws IOException, PrologParserException {
-	final PrologStructure struct = (PrologStructure) parser.nextSentence(src);
-	if (struct == null)
-	    return null;
-	return parseRule(struct);
     }
 
 }

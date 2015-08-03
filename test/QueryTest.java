@@ -1,34 +1,16 @@
-import static org.junit.Assert.*;
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import helpers.KB;
-
 import java.io.IOException;
-import java.util.Collection;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
-import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.parsing.Parser;
-import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
+
+import helpers.KB;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
-
-import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 /**
  *
@@ -38,454 +20,266 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
  * @author nunocosta
  *
  */
-public abstract class QueryTest extends Object {
+public abstract class QueryTest extends KB {
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public QueryTest(Profiles profile) throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    UnsupportedOWLProfile, IOException, CloneNotSupportedException, UnsupportedAxiomTypeException {
+	super();
+	AbstractOntologyTranslation.profile = profile;
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-    }
-
-    protected KB kb;
-
-    protected void assertAnswer(String query, String... expectedAns) {
-	try {
-	    if (!query.endsWith("."))
-		query = query + ".";
-	    final Collection<Answer> result = kb.queryAll(query);
-	    assertNotNull("should't have null result", result);
-	    assertEquals("should have exactly one answer", 1, result.size());
-	    final Answer ans = result.iterator().next();
-	    int i = 0;
-	    for (final Term val : ans.getValues())
-		assertEquals("sould be the expected constant", cons(expectedAns[i++]), val);
-	} catch (final IOException e) {
-	    fail(e.getMessage());
-	} catch (final PrologParserException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedOWLProfile e) {
-	    fail("ontology is not QL nor EL!\n" + e.getMessage());
-	} catch (final InconsistentOntologyException e) {
-	    fail("inconsistent ontology");
-	} catch (final OWLOntologyCreationException e) {
-	    fail(e.getMessage());
-	} catch (final OWLOntologyStorageException e) {
-	    fail(e.getMessage());
-	} catch (final CloneNotSupportedException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedAxiomTypeException e) {
-	    fail(e.getMessage());
-	}
-    }
-
-    protected void assertConsistent(String query) {
-	try {
-	    if (!query.endsWith("."))
-		query = query + ".";
-	    final Collection<Answer> result = kb.queryAll(query);
-	    assertNotNull("should't hava null result", result);
-	    assertEquals("should have exactly one answer", 1, result.size());
-	    final Answer ans = result.iterator().next();
-	    assertFalse("sould be consistent", ans.getValuation() == TruthValue.INCONSISTENT);
-	} catch (final IOException e) {
-	    fail(e.getMessage());
-	} catch (final PrologParserException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedOWLProfile e) {
-	    fail("ontology is not QL nor EL!\n" + e.getMessage());
-	} catch (final InconsistentOntologyException e) {
-	    fail("inconsistent ontology");
-	} catch (final OWLOntologyCreationException e) {
-	    fail(e.getMessage());
-	} catch (final OWLOntologyStorageException e) {
-	    fail(e.getMessage());
-	} catch (final CloneNotSupportedException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedAxiomTypeException e) {
-	    fail(e.getMessage());
-	}
-
-    }
-
-    protected void assertHasAnswer(String query) {
-	assertHasAnswer(query, true, true, true);
-    }
-
-    protected void assertHasAnswer(String query, boolean trueAnswers, boolean undefinedAnswers,
-	    boolean inconsistentAnswers) {
-	try {
-	    if (!query.endsWith("."))
-		query = query + ".";
-	    assertTrue("should have answers", kb.hasAnswer(query, trueAnswers, undefinedAnswers, inconsistentAnswers));
-	} catch (final IOException e) {
-	    fail(e.getMessage());
-	} catch (final PrologParserException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedOWLProfile e) {
-	    fail("ontology is not QL nor EL!\n" + e.getMessage());
-	} catch (final InconsistentOntologyException e) {
-	    fail("inconsistent ontology");
-	} catch (final OWLOntologyCreationException e) {
-	    fail(e.getMessage());
-	} catch (final OWLOntologyStorageException e) {
-	    fail(e.getMessage());
-	} catch (final CloneNotSupportedException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedAxiomTypeException e) {
-	    fail(e.getMessage());
-	}
-    }
-
-    protected void assertHasNoAnswer(String query) {
-	assertHasNoAnswer(query, true, true, true);
-    }
-
-    protected void assertHasNoAnswer(String query, boolean trueAnswers, boolean undefinedAnswers,
-	    boolean inconsistentAnswers) {
-	try {
-	    if (!query.endsWith("."))
-		query = query + ".";
-	    assertFalse("should have no answers",
-		    kb.hasAnswer(query, trueAnswers, undefinedAnswers, inconsistentAnswers));
-	} catch (final IOException e) {
-	    fail(e.getMessage());
-	} catch (final PrologParserException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedOWLProfile e) {
-	    fail("ontology is not QL nor EL!\n" + e.getMessage());
-	} catch (final InconsistentOntologyException e) {
-	    fail("inconsistent ontology");
-	} catch (final OWLOntologyCreationException e) {
-	    fail(e.getMessage());
-	} catch (final OWLOntologyStorageException e) {
-	    fail(e.getMessage());
-	} catch (final CloneNotSupportedException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedAxiomTypeException e) {
-	    fail(e.getMessage());
-	}
-    }
-
-    protected void assertInconsistent(String query) {
-	try {
-	    if (!query.endsWith("."))
-		query = query + ".";
-	    final Collection<Answer> result = kb.queryAll(query);
-	    assertNotNull("shouldn't have null result", result);
-	    assertEquals("should have exactly one answer", 1, result.size());
-	    final Answer ans = result.iterator().next();
-	    assertEquals("sould be inconsistent", TruthValue.INCONSISTENT, ans.getValuation());
-	} catch (final IOException e) {
-	    fail(e.getMessage());
-	} catch (final PrologParserException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedOWLProfile e) {
-	    fail("ontology is not QL nor EL!\n" + e.getMessage());
-	} catch (final InconsistentOntologyException e) {
-	    e.printStackTrace();
-	    fail("inconsistent ontology");
-	} catch (final OWLOntologyCreationException e) {
-	    fail(e.getMessage());
-	} catch (final OWLOntologyStorageException e) {
-	    fail(e.getMessage());
-	} catch (final CloneNotSupportedException e) {
-	    fail(e.getMessage());
-	} catch (final UnsupportedAxiomTypeException e) {
-	    fail(e.getMessage());
-	}
-    }
-
-    @Test
-    public final void atomicSubconceptOfBottom() throws IOException, PrologParserException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	kb.addRule("a1(a)");
-	kb.addSubsumption(a1, kb.getBottom());
-	assertInconsistent("a1(a)");
-    }
-
-    // (a1), (s1), (n1)
-    // (a1), (c1), (i2.1)
-    @Test
-    public final void cln2() throws OWLOntologyCreationException, IOException, PrologParserException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	final OWLClass a3 = kb.getConcept("a3");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(a1, a);
-	kb.addRule("a3(X):-a1(X)");
-	assertConsistent("a3(X)");
-	kb.addSubsumption(a1, a2);
-	assertConsistent("a3(X)");
-	kb.addDisjunction(a2, a3);
-	assertInconsistent("a3(X)");
-    }
-
-    // (a1), (a2), (s2), (n1)
-    // (a1), (a2), (c1), (r1), (i2.2)
-    @Test
-    public final void cln3() throws OWLOntologyCreationException, IOException, PrologParserException {
-	kb.clear();
-	final OWLObjectProperty p1 = kb.getRole("p1");
-	final OWLObjectProperty p2 = kb.getRole("p2");
-	final OWLClass A = kb.getConcept("A");
-	final OWLIndividual a = kb.getIndividual("a");
-	final OWLIndividual b = kb.getIndividual("b");
-	kb.addAssertion(A, a);
-	kb.addAssertion(p1, a, b);
-	kb.addRule("p2(X,Y):-p1(X,Y)");
-	assertConsistent("p2(X,Y)");
-	kb.addSubsumption(p1, p2);
-	assertConsistent("p2(X,Y)");
-	kb.addDisjunction(A, kb.getExistential(p2));
-	assertInconsistent("p2(X,Y)");
-    }
-
-    // (s1)
-    @Test
-    public final void conceptCycle() throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	kb.addSubsumption(a1, a2);
-	kb.addSubsumption(a2, a1);
-	try {
-	    new HybridKB(kb.getOntology()).queryAll(Parser.parseQuery("p1(X)."));
-	} catch (final Exception e) {
-	    fail(e.getMessage());
-	}
-    }
-
-    // (a1), (n1)
-    // (a1), (i2.1)
-    @Test
-    public final void conceptDisjunction() throws OWLOntologyCreationException, IOException, PrologParserException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(a1, a);
-	kb.addRule("a2(X):-a1(X)");
-	kb.addDisjunction(a1, a2);
-	assertInconsistent("a2(X)");
-    }
-
-    // (a1), (s1)
-    @Test
-    public final void conceptSubsumption() throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(a1, a);
-	kb.addSubsumption(a1, a2);
-	assertAnswer("a2(X)", "a");
-    }
-
-    //
+    // (s1.1), (s1.3)
     // (a1), (c1), (c1'), (i2.1)
     @Test
-    public final void conceptSubsumptionContrapositive() throws IOException, PrologParserException {
-	kb.clear();
-	final OWLClass a0 = kb.getConcept("a0");
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	kb.addRule("a0(a)");
-	kb.addRule("u(a):-tnot(u(a))");
-	kb.addRule("a1(X):-u(X)");
-	kb.addSubsumption(a1, a2);
-	assertHasAnswer("a1(a)", false, true, false);
-	assertHasNoAnswer("a1(a)", true, false, false);
-	kb.addDisjunction(a0, a2);
-	assertHasNoAnswer("a1(a)");
+    public final void conceptContrapositive() {
+	clear();
+	//
+	subConcept("a1", "a2");
+	disjointConcepts("a3", "a2");
+	//
+	rule("a3(a)");
+	//
+	assertNegative("a1(a)");
+    }
+
+    // concepts tabling
+    @Test
+    public final void conceptCycle() {
+	clear();
+	subConcept("a1", "a2");
+	subConcept("a2", "a1");
+	//
+	assertFalse("a1(X)");
+    }
+
+    // (a1.1), (n1.1)
+    // (a1), (i2.1)
+    @Test
+    public final void conceptDisjunction() {
+	clear();
+	typeOf("a1", "a");
+	disjointConcepts("a1", "a2");
+	//
+	assertNegative("a2(a)");
+    }
+
+    // (a1.1), (s1.1)
+    @Test
+    public final void conceptSubsumption() {
+	clear();
+	typeOf("a1", "a");
+	subConcept("a1", "a2");
+	//
+	assertTrue("a2(a)");
     }
 
     @Test
-    public final void dataPropertyAssertions() throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLDataProperty d1 = kb.getDataRole("d1");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(d1, a, "l");
-	assertAnswer("d1(X,Y)", "a", "l");
+    public final void dataAssertions() {
+	clear();
+	value("d1", "a", "l");
+	//
+	assertTrue("d1(a,l)");
     }
 
-    // (a1), (n1)
-    // (a1), (i2.2)
     @Test
-    public final void existentialDisjunction() throws OWLOntologyCreationException, IOException, PrologParserException {
-	kb.clear();
-	final OWLObjectProperty p1 = kb.getRole("p1");
-	final OWLClass a2 = kb.getConcept("a2");
-	final OWLIndividual a = kb.getIndividual("a");
-	final OWLIndividual b = kb.getIndividual("b");
-	kb.addAssertion(p1, a, b);
-	kb.addRule("a2(X):-p1(X,_)");
-	assertConsistent("a2(X)");
-	kb.addDisjunction(kb.getExistential(p1), a2);
-	assertInconsistent("a2(X)");
+    public void dataEquivalence() {
+	clear();
+	value("d1", "i1", "l1");
+	value("d2", "i2", "l2");
+	equivalentData("d1", "d2");
+	assertTrue("d1(i2,l2), d2(i1, l1)");
     }
 
-    // (a1), (s1)
     @Test
-    public final void existentialSubsumption() throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLObjectProperty p2 = kb.getRole("p2");
-	final OWLClass a3 = kb.getConcept("a3");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(a1, a);
-	kb.addSubsumption(a1, kb.getExistential(p2));
-	kb.addSubsumption(kb.getExistential(p2), a3);
-	assertAnswer("a3(X)", "a");
+    public void dataSubsumption() {
+	clear();
+	value("d1", "i", "l");
+	subData("d1", "d2");
+	assertTrue("d2(i,l)");
     }
 
-    // (a1), (n1), (s1), (s2),
+    @Test
+    public void disjointConcepts() throws IOException, PrologParserException {
+	disjointConcepts(conc("a1"), conc("a2"), conc("a3"), top());
+	rule("a1(i)");
+	rule("a2(i)");
+	rule("a3(i)");
+	assertInconsistent("a1(i)");
+	assertInconsistent("a2(i)");
+	assertInconsistent("a2(i)");
+    }
+
+    @Test
+    public void equivalentConcepts() {
+	typeOf("a1", "i1");
+	typeOf("a2", "i2");
+	equivalentConcepts("a1", "a2");
+	assertTrue("a1(i2), a2(i1)");
+    }
+
+    // (a2.1), (n1.1)
+    // (a2), (i2.2)
+    @Test
+    public final void existentialDisjunction() {
+	clear();
+	object("p1", "a", "b");
+	disjointConcepts(some("p1"), conc("a2"));
+	//
+	assertNegative("a2(a)");
+    }
+
+    // (a1.1), (s1.1)
+    @Test
+    public final void existentialSubsumption() {
+	clear();
+	typeOf("a1", "a");
+	subConcept(conc("a1"), some("p2"));
+	subConcept(some("p2"), conc("a3"));
+	//
+	assertTrue("a3(a)");
+    }
+
+    // (a1.1), (n1.1), (s1.1), (s1.2), (s2.1), (s2.2)
     // (a1), (c1), (r1)
     @Test
-    public final void inconsistencePropagation()
-	    throws OWLOntologyCreationException, IOException, PrologParserException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	final OWLObjectProperty p3 = kb.getRole("p3");
-	final OWLObjectProperty p4 = kb.getRole("p4");
-	final OWLClass a5 = kb.getConcept("a5");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(a1, a);
-	kb.addDisjunction(a1, a2);
-	kb.addRule("a2(X):-a1(X)");
-	kb.addSubsumption(a2, kb.getExistential(p3));
-	kb.addSubsumption(p3, p4);
-	kb.addSubsumption(kb.getExistential(p4), a5);
-	assertInconsistent("a5(X)");
+    public final void inconsistencePropagation() {
+	clear();
+	typeOf("a1", "a");
+	disjointConcepts("a1", "a2");
+	subConcept(conc("a2"), some("p3"));
+	subRole("p3", "p4");
+	subConcept(some("p4"), conc("a5"));
+	//
+	rule("a2(X):-a1(X)");
+	//
+	assertInconsistent("a5(a)");
     }
 
-    // (a1), (n1)
+    // (a1.1), (n1.2)
+    // rules, rule duplication
     @Test
-    public final void inconsistentRules() throws OWLOntologyCreationException, IOException, PrologParserException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(a1, a);
-	kb.addDisjunction(a2, a1);
-	kb.addRule("a2(X):-a1(X)");
-	kb.addRule("a3(X):-a2(X)");
-	kb.addRule("a1(X):-a3(X)");
-	assertInconsistent("a3(a)");
-	assertInconsistent("a2(a)");
+    public final void inconsistentRules() {
+	clear();
+	typeOf("a1", "a");
+	disjointConcepts("a2", "a1");
+	//
+	rule("a2(X):-a1(X)");
+	rule("a3(X):-a2(X)");
+	rule("a1(X):-a3(X)");
+	//
+	assertInconsistent("a2(a), a3(a)");
     }
 
-    // (a1), (s1), (s2)
+    // (a1.1), (a1.2), (s1.1), (s1.2), (s2.4.1), (s2.5.1)
     // (a1), (c1), (r1), [cls]
     @Test
-    public final void indirectExistentialSubsumption() throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLObjectProperty p2 = kb.getRole("p2");
-	final OWLObjectProperty p3 = kb.getRole("p3");
-	final OWLClass a4 = kb.getConcept("a4");
-	final OWLIndividual a = kb.getIndividual("a");
-	kb.addAssertion(a1, a);
-	kb.addSubsumption(a1, kb.getExistential(p2));
-	kb.addSubsumption(p2, p3);
-	kb.addSubsumption(kb.getExistential(p3), a4);
-	assertAnswer("a4(X)", new String[] { "a" });
+    public final void indirectExistentialSubsumption() {
+	clear();
+	subConcept(conc("a0"), bottom());
+	typeOf("a1", "a");
+	subConcept(conc("a1"), some("p2"));
+	subRole("p2", "p3");
+	subConcept(some("p3"), conc("a4"));
+	//
+	assertTrue("a4(a)");
     }
 
     @Test
-    public final void nonDefinedBodyPredicates() throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	kb.addSubsumption(a1, a2);
-	test("a2(X).");
+    public void leftTop() {
+	clear();
+	subConcept(top(), conc("a1"));
+	assertTrue("a1(a)");
     }
 
-    // (s2)
     @Test
-    public final void roleCycle() throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLObjectProperty p1 = kb.getRole("p1");
-	final OWLObjectProperty p2 = kb.getRole("p2");
-	kb.addSubsumption(p1, p2);
-	kb.addSubsumption(p2, p1);
-	test("p1(X,Y).");
+    public final void nonDefinedBodyPredicates() {
+	clear();
+	subConcept("a1", "a2");
+	//
+	assertFalse("a2(X).");
     }
 
-    // (s2)
     @Test
-    public final void roleSubsumption() throws OWLOntologyCreationException {
-	kb.clear();
-	final OWLObjectProperty p1 = kb.getRole("p1");
-	final OWLObjectProperty p2 = kb.getRole("p2");
-	final OWLIndividual a = kb.getIndividual("a");
-	final OWLIndividual b = kb.getIndividual("b");
-	kb.addAssertion(p1, a, b);
-	kb.addSubsumption(p1, p2);
-	assertAnswer("p2(X,Y)", "a", "b");
+    public final void rightBottom() {
+	clear();
+	subConcept(conc("a1"), bottom());
+	//
+	assertNegative("a1(a)");
     }
 
-    //
+    @Test
+    public void rightConjunctionNormalization() {
+	clear();
+	typeOf("a1", "i");
+	subConcept(conc("a1"), conj("a2", "a3", "a4"));
+	assertTrue("a2(i), a3(i), a4(i)");
+    }
+
+    // (s2.3), (n1.2),
     // (a1), (r1), (r1'), (i2)
     @Test
-    public final void ruleSubsumptionContrapositive() throws IOException, PrologParserException {
-	kb.clear();
-	final OWLObjectProperty p1 = kb.getRole("p1");
-	final OWLObjectProperty p2 = kb.getRole("p2");
-	final OWLClass a0 = kb.getConcept("a0");
-	kb.addRule("a0(a)");
-	kb.addRule("u(a, b):-tnot(u(a, b))");
-	kb.addRule("p1(X, Y):-u(X, Y)");
-	kb.addSubsumption(p1, p2);
-	assertHasAnswer("p1(a, b)", false, true, false);
-	assertHasNoAnswer("a1(a, b)", true, false, false);
-	kb.addDisjunction(a0, kb.getExistential(p2));
-	assertHasNoAnswer("a1(a, b)");
+    public final void roleContrapositive() {
+	clear();
+	subRole("p1", "p2");
+	disjointConcepts(some("p2"), conc("a3"));
+	//
+	rule("a3(a)");
+	//
+	assertNegative("p1(a, b)");
     }
 
-    @Before
-    public void setUp() throws Exception {
-	AbstractOntologyTranslation.profile = Profiles.OWL2_QL;
-	kb = new KB();
+    // roles tabling
+    @Test
+    public final void roleCycle() {
+	clear();
+	subConcept("p1", "p2");
+	subConcept("p2", "p1");
+	//
+	assertFalse("p1(X,Y).");
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @Test
+    public void roleDomain() {
+	clear();
+	object("r", "i1", "i2");
+	domain("r", "a");
+	assertTrue("a(i1)");
     }
 
-    private void test(String query) {
-	try {
-	    new HybridKB(kb.getOntology()).queryAll(Parser.parseQuery(query));
-	} catch (final Exception e) {
-	    fail(e.getMessage());
-	}
+    @Test
+    public void roleEquivalence() {
+	clear();
+	object("r1", "i1", "i1");
+	object("r2", "i2", "i2");
+	equivalentRoles("r1", "r2");
+	assertTrue("r1(i2, i2), r2(i1, i1)");
     }
 
-    // (i1) (a1) (s1)
+    // (a1.1) (s2.1)
+    @Test
+    public final void roleSubsumption() {
+	clear();
+	object("p1", "a", "b");
+	subRole("p1", "p2");
+	//
+	assertTrue("p2(a,b)");
+    }
+
+    public void tearDown() {
+    }
+
+    // (a1.1) (i1)
     // (a1) (c1) (i2.1)
     @Test
-    public final void unsatisfiableConcepts() throws OWLOntologyCreationException, IOException, PrologParserException {
-	kb.clear();
-	final OWLClass a1 = kb.getConcept("a1");
-	final OWLClass a2 = kb.getConcept("a2");
-	final OWLClass a3 = kb.getConcept("a3");
-	kb.addRule("a1(a).");
-	kb.addSubsumption(a1, a2);
-	kb.addSubsumption(a2, a1);
-	kb.addSubsumption(a3, a2);
-	kb.addDisjunction(a1, a2);
-	kb.addRule("a3(X):-a1(X).");
-	assertInconsistent("a3(X)");
+    public final void unsatisfiableConcepts() {
+	clear();
+	rule("a1(a)");
+	subConcept("a1", "a2");
+	subConcept("a2", "a1");
+	subConcept("a3", "a2");
+	disjointConcepts("a1", "a2");
+	//
+	assertNegative("a3(a)");
     }
 
 }

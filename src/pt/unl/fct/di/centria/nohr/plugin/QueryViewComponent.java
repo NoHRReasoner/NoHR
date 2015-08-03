@@ -48,6 +48,7 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
+import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 
 public class QueryViewComponent extends AbstractHybridViewComponent {
@@ -78,7 +79,8 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 		});
 		textField.selectAll();
 		textField.requestFocus();
-		final Query query = Parser.parseQuery(textField.getText());
+		final Parser parser = new Parser(new OntologyIndexImpl(getOWLModelManager().getActiveOntology()));
+		final Query query = parser.parseQuery(textField.getText());
 		fillTable(query, nohr.queryAll(query));
 
 	    } catch (final Exception e) {
@@ -185,11 +187,9 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 		final JPanel panel = new JPanel(new GridBagLayout());
 		progressLabel = new JLabel("Processing", SwingConstants.CENTER);
 		//
-		progressLabel.setBorder(BorderFactory
-			.createTitledBorder("Query"));
-		progressLabel.setFont(new Font(progressLabel.getFont()
-			.getFontName(), Font.PLAIN, progressLabel.getFont()
-			.getSize() + 4));
+		progressLabel.setBorder(BorderFactory.createTitledBorder("Query"));
+		progressLabel.setFont(new Font(progressLabel.getFont().getFontName(), Font.PLAIN,
+			progressLabel.getFont().getSize() + 4));
 		panel.add(progressLabel, c);
 		c.gridy = 1;
 		panel.add(progressBar, c);
@@ -226,8 +226,7 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	    }
 
 	    private void updateText(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER
-			&& textField.getText().length() > 0)
+		if (e.getKeyCode() == KeyEvent.VK_ENTER && textField.getText().length() > 0)
 		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -406,11 +405,8 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 			    for (final Term t : answer.getValues())
 				row.add(t.toString());
 			    row.add(answer.getValuation().name().toLowerCase());
-			    if (!hasVariables
-				    || filter == null
-				    || filter.length() == 0
-				    || filter.contains(answer.getValuation()
-					    .name().toLowerCase()))
+			    if (!hasVariables || filter == null || filter.length() == 0
+				    || filter.contains(answer.getValuation().name().toLowerCase()))
 				tableModel.addRow(row);
 			    if (!isShowAllSolutions && table.getRowCount() > 0)
 				break;

@@ -50,12 +50,13 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
 
     @Override
     protected void computeNegativeHeadsPredicates() {
-	for (final OWLSubClassOfAxiom axiom : reducedOntology.getConceptSubsumptions()) {
-	    final OWLClassExpression ce1 = axiom.getSubClass();
-	    assert ce1 instanceof OWLClass ? ce1.asOWLClass().getIRI().getFragment() != null : true : axiom;
-	    for (final Literal b : doubleAxiomsTranslator.tr(ce1, var()))
-		negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(b).getPredicate());
-	}
+	for (final OWLSubClassOfAxiom axiom : reducedOntology.getConceptSubsumptions())
+	    if (!axiom.getSuperClass().isOWLThing()) {
+		final OWLClassExpression ce1 = axiom.getSubClass();
+		assert ce1 instanceof OWLClass ? ce1.asOWLClass().getIRI().getFragment() != null : true : axiom;
+		for (final Literal b : doubleAxiomsTranslator.tr(ce1, var()))
+		    negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(b).getPredicate());
+	    }
 	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions()) {
 	    final OWLObjectProperty op1 = axiom.getSubProperty().asOWLObjectProperty();
 	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(), var()).getPredicate());

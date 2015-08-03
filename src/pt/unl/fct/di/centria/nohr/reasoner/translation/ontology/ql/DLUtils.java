@@ -26,14 +26,20 @@ public class DLUtils {
     }
 
     public static boolean isAtomic(OWLObjectPropertyExpression prop) {
-	return prop instanceof OWLObjectProperty;
+	return prop.getSimplified() instanceof OWLObjectProperty;
     }
 
     public static boolean isExistential(OWLClassExpression cls) {
 	return cls instanceof OWLObjectSomeValuesFrom;
     }
 
-    public static boolean isInverse(OWLPropertyExpression<?, ?> p) {
-	return p instanceof OWLObjectInverseOf;
+    public static boolean isInverse(OWLPropertyExpression<?, ?> q) {
+	if (q instanceof OWLDataPropertyExpression)
+	    return false;
+	if (q instanceof OWLObjectPropertyExpression) {
+	    final OWLObjectPropertyExpression p = (OWLObjectPropertyExpression) q;
+	    return p.getSimplified() instanceof OWLObjectInverseOf;
+	}
+	return false;
     }
 }

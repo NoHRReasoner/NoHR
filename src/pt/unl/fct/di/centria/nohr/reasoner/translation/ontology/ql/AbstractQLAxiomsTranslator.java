@@ -47,8 +47,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTr
  * @author nunocosta
  *
  */
-public abstract class AbstractQLAxiomsTranslator extends
-	AbstractAxiomsTranslator {
+public abstract class AbstractQLAxiomsTranslator extends AbstractAxiomsTranslator {
 
     private int opeNewCount = 0;
 
@@ -60,11 +59,9 @@ public abstract class AbstractQLAxiomsTranslator extends
 	if (c instanceof OWLClass)
 	    return atom(negPred((OWLClass) c), x);
 	else if (c instanceof OWLObjectSomeValuesFrom)
-	    return negTr(((OWLObjectSomeValuesFrom) c).getProperty(), x,
-		    var("_"));
+	    return negTr(((OWLObjectSomeValuesFrom) c).getProperty(), x, var("_"));
 	else
-	    throw new IllegalArgumentException(
-		    "c must be an atomic or existential class");
+	    throw new IllegalArgumentException("c must be an atomic or existential class");
     }
 
     protected Atom negTr(OWLPropertyExpression<?, ?> r, Variable x, Variable y) {
@@ -89,36 +86,30 @@ public abstract class AbstractQLAxiomsTranslator extends
     }
 
     private OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression ope) {
-	final OWLDataFactory dataFactory = ontology.getOWLOntologyManager()
-		.getOWLDataFactory();
-	return dataFactory.getOWLObjectSomeValuesFrom(ope,
-		dataFactory.getOWLThing());
+	final OWLDataFactory dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
+	return dataFactory.getOWLObjectSomeValuesFrom(ope, dataFactory.getOWLThing());
     }
 
     protected Atom tr(OWLClassExpression c, Variable x, boolean doub) {
 	if (c instanceof OWLClass)
 	    return atom(pred((OWLClass) c, doub), x);
 	else if (c instanceof OWLObjectSomeValuesFrom) {
-	    final OWLObjectPropertyExpression q = ((OWLObjectSomeValuesFrom) c)
-		    .getProperty();
+	    final OWLObjectPropertyExpression q = ((OWLObjectSomeValuesFrom) c).getProperty();
 	    if (q instanceof OWLObjectProperty)
 		return atom(domPred(q, doub), x);
 	    else
 		return atom(ranPred(q, doub), x);
 	} else if (c instanceof OWLObjectComplementOf) {
-	    final OWLClassExpression b = ((OWLObjectComplementOf) c)
-		    .getOperand();
+	    final OWLClassExpression b = ((OWLObjectComplementOf) c).getOperand();
 	    if (b instanceof OWLClass)
 		return atom(negPred((OWLClass) b), x);
 	    else if (b instanceof OWLObjectSomeValuesFrom)
-		return negTr(((OWLObjectSomeValuesFrom) b).getProperty(), x,
-			var("_"));
+		return negTr(((OWLObjectSomeValuesFrom) b).getProperty(), x, var("_"));
 	}
 	throw new IllegalArgumentException();
     }
 
-    protected Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y,
-	    boolean doub) {
+    protected Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y, boolean doub) {
 	if (r instanceof OWLObjectProperty)
 	    return atom(pred(r, doub), x, y);
 	else if (r instanceof OWLDataProperty)
@@ -138,8 +129,7 @@ public abstract class AbstractQLAxiomsTranslator extends
 
     public Set<Rule> translate(OWLDisjointDataPropertiesAxiom alpha) {
 	final Set<Rule> result = new HashSet<Rule>();
-	final List<OWLDataPropertyExpression> ops = new LinkedList<OWLDataPropertyExpression>(
-		alpha.getProperties());
+	final List<OWLDataPropertyExpression> ops = new LinkedList<OWLDataPropertyExpression>(alpha.getProperties());
 	for (int i = 0; i < ops.size(); i++)
 	    for (final int j = i + 1; i < ops.size(); i++)
 		result.addAll(translateDisjunction(ops.get(i), ops.get(j)));
@@ -172,14 +162,11 @@ public abstract class AbstractQLAxiomsTranslator extends
 	return result;
     }
 
-    protected abstract Set<Rule> translateBasicSubsumption(
-	    OWLClassExpression b1, OWLClassExpression b2);
+    protected abstract Set<Rule> translateBasicSubsumption(OWLClassExpression b1, OWLClassExpression b2);
 
-    protected abstract Set<Rule> translateDisjunction(OWLClassExpression b1,
-	    OWLClassExpression b2);
+    protected abstract Set<Rule> translateDisjunction(OWLClassExpression b1, OWLClassExpression b2);
 
-    protected abstract Set<Rule> translateDisjunction(
-	    OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
+    protected abstract Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
 
     public abstract Rule translateDomain(OWLObjectProperty p);
 
@@ -189,14 +176,12 @@ public abstract class AbstractQLAxiomsTranslator extends
 
     public abstract Rule translateRange(OWLSubObjectPropertyOfAxiom alpha);
 
-    protected Set<Rule> translateSubsumption(OWLClassExpression ce1,
-	    OWLClassExpression ce2) {
-	if (ce1.isTopEntity() || ce1.isBottomEntity() || ce2.isTopEntity())
+    protected Set<Rule> translateSubsumption(OWLClassExpression ce1, OWLClassExpression ce2) {
+	if (ce1.isBottomEntity() || ce2.isTopEntity())
 	    return ruleSet();
 	if (ce2.isBottomEntity())
 	    return ruleSet(translateUnsatisfaible((OWLClass) ce1));
-	if (ce1 instanceof OWLDataSomeValuesFrom
-		|| ce2 instanceof OWLDataSomeValuesFrom)
+	if (ce1 instanceof OWLDataSomeValuesFrom || ce2 instanceof OWLDataSomeValuesFrom)
 	    return ruleSet();
 	if (ce2 instanceof OWLObjectComplementOf)
 	    return translateSubsumption(ce1, (OWLObjectComplementOf) ce2);
@@ -205,13 +190,11 @@ public abstract class AbstractQLAxiomsTranslator extends
 	return translateBasicSubsumption(ce1, ce2);
     }
 
-    protected Set<Rule> translateSubsumption(OWLClassExpression b1,
-	    OWLObjectComplementOf c2) {
+    protected Set<Rule> translateSubsumption(OWLClassExpression b1, OWLObjectComplementOf c2) {
 	return translateDisjunction(b1, c2.getOperand());
     }
 
-    protected Set<Rule> translateSubsumption(OWLClassExpression b1,
-	    OWLObjectIntersectionOf c2) {
+    protected Set<Rule> translateSubsumption(OWLClassExpression b1, OWLObjectIntersectionOf c2) {
 	final List<OWLClassExpression> ops = c2.getOperandsAsList();
 	final Set<Rule> result = new HashSet<Rule>();
 	for (final OWLClassExpression bi : ops)
@@ -219,12 +202,10 @@ public abstract class AbstractQLAxiomsTranslator extends
 	return result;
     }
 
-    protected Set<Rule> translateSubsumption(OWLClassExpression ce1,
-	    OWLObjectSomeValuesFrom ce2) {
+    protected Set<Rule> translateSubsumption(OWLClassExpression ce1, OWLObjectSomeValuesFrom ce2) {
 	final OWLObjectPropertyExpression ope = ce2.getProperty();
 	final OWLObjectPropertyExpression opeNew = newConcept();
-	final OWLObjectPropertyExpression invOpeNew = opeNew
-		.getInverseProperty();
+	final OWLObjectPropertyExpression invOpeNew = opeNew.getInverseProperty();
 	final OWLClassExpression c = ce2.getFiller();
 	if (c.isOWLThing())
 	    return translateBasicSubsumption(ce1, ce2);
@@ -235,8 +216,7 @@ public abstract class AbstractQLAxiomsTranslator extends
 	return result;
     }
 
-    protected abstract Set<Rule> translateSubsumption(
-	    OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
+    protected abstract Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
 
     public Rule translateUnsatisfaible(OWLClass a) {
 	return rule(negTr(a, X));

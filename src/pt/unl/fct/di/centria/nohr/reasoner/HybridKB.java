@@ -136,11 +136,6 @@ public class HybridKB implements OWLOntologyChangeListener {
 	return ruleBase;
     }
 
-    public boolean hasAnswer(Query query) throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException, UnsupportedAxiomTypeException {
-	return hasAnswer(query, true, true, true);
-    }
-
     public boolean hasAnswer(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
 	    throws OWLOntologyCreationException, OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
 	    CloneNotSupportedException, UnsupportedAxiomTypeException {
@@ -170,7 +165,9 @@ public class HybridKB implements OWLOntologyChangeListener {
 	    RuntimesLogger.stop("ontology processing", "loading");
 	}
 	if (ruleBase.hasChanges(true) || ontologyTranslation.hasDisjunctions() != hasDisjunctions) {
-	    RuntimesLogger.start("rules parsing");
+	    if (hasOntologyChanges)
+
+		RuntimesLogger.start("rules parsing");
 	    rulesDuplication.clear();
 	    for (final Rule rule : ruleBase.getRules())
 		Collections.addAll(rulesDuplication, RulesDuplication.duplicate(rule, true));

@@ -55,18 +55,15 @@ public class ParserTest {
     @Test
     public final void testParseQuery() {
 	try {
+	    final Parser parser = new Parser();
 	    final Variable X = var("X");
-	    Assert.assertEquals(Parser.parseQuery("p(X)."), query(atom("p", X)));
-	    Assert.assertEquals(Parser.parseQuery("p(a)."),
-		    query(atom("p", cons("a"))));
-	    Assert.assertEquals(Parser.parseQuery("p(X), q(X), r(X)."),
+	    Assert.assertEquals(parser.parseQuery("p(X)."), query(atom("p", X)));
+	    Assert.assertEquals(parser.parseQuery("p(a)."), query(atom("p", cons("a"))));
+	    Assert.assertEquals(parser.parseQuery("p(X), q(X), r(X)."),
 		    query(atom("p", X), atom("q", X), atom("r", X)));
-	    Assert.assertEquals(Parser.parseQuery("p(a, b, c)."),
-		    query(atom("p", cons("a"), cons("b"), cons("c"))));
-	    Assert.assertEquals(Parser.parseQuery("p(1)."),
-		    query(atom("p", cons(1))));
-	    Assert.assertEquals(Parser.parseQuery("p(1.1)."),
-		    query(atom("p", cons(1.1))));
+	    Assert.assertEquals(parser.parseQuery("p(a, b, c)."), query(atom("p", cons("a"), cons("b"), cons("c"))));
+	    Assert.assertEquals(parser.parseQuery("p(1)."), query(atom("p", cons(1))));
+	    Assert.assertEquals(parser.parseQuery("p(1.1)."), query(atom("p", cons(1.1))));
 
 	} catch (final PrologParserException e) {
 	    Assert.fail(e.getLocalizedMessage());
@@ -84,6 +81,6 @@ public class ParserTest {
 	// cons("a")), negLiteral(pred("z", 1), var("X")), negLiteral(pred("w",
 	// 1), var("Y")));
 	// final Rule actualRule =
-	// Parser.parseRule("p(X,Y,Z):-q(X,Y),r(a),tnot(z(X)),tnot(w(Y))."));
+	// parser.parseRule("p(X,Y,Z):-q(X,Y),r(a),tnot(z(X)),tnot(w(Y))."));
     }
 }

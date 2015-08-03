@@ -131,8 +131,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
     private OWLObjectProperty getNewRole(int hashCode) {
 	final String fragment = String.valueOf(hashCode);
 	final IRI ruleIri = IRI.create(ontologyIRI + "#" + fragment);
-	final OWLDataFactory df = ontology.getOWLOntologyManager()
-		.getOWLDataFactory();
+	final OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
 	return df.getOWLObjectProperty(ruleIri);
     }
 
@@ -218,15 +217,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private void normalize(OWLAsymmetricObjectPropertyAxiom alpha) {
 	final OWLObjectPropertyExpression q = alpha.getProperty();
-	normalizeDisjunction(df.getOWLDisjointObjectPropertiesAxiom(q, q
-		.getInverseProperty().getSimplified()));
-    }
-
-    private void normalize(OWLIrreflexiveObjectPropertyAxiom alpha) {
-	final OWLObjectPropertyExpression q = alpha.getProperty();
-	normalize(df.getOWLSubClassOfAxiom(some(q),
-		some(q.getInverseProperty()).getObjectComplementOf()));
-
+	normalizeDisjunction(df.getOWLDisjointObjectPropertiesAxiom(q, q.getInverseProperty().getSimplified()));
     }
 
     private void normalize(OWLObjectPropertyRangeAxiom alpha) {
@@ -237,86 +228,54 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private void normalize(OWLOntology ontology) {
 	RuntimesLogger.start("ontology normalization");
-	for (final OWLSubClassOfAxiom a : ontology
-		.getAxioms(AxiomType.SUBCLASS_OF))
+	for (final OWLSubClassOfAxiom a : ontology.getAxioms(AxiomType.SUBCLASS_OF))
 	    normalize(a);
-	for (final OWLSubObjectPropertyOfAxiom a : ontology
-		.getAxioms(AxiomType.SUB_OBJECT_PROPERTY))
+	for (final OWLSubObjectPropertyOfAxiom a : ontology.getAxioms(AxiomType.SUB_OBJECT_PROPERTY))
 	    normalize(a);
-	for (final OWLDisjointObjectPropertiesAxiom a : ontology
-		.getAxioms(AxiomType.DISJOINT_OBJECT_PROPERTIES))
+	for (final OWLDisjointObjectPropertiesAxiom a : ontology.getAxioms(AxiomType.DISJOINT_OBJECT_PROPERTIES))
 	    normalizeDisjunction(a);
-	for (final OWLEquivalentClassesAxiom a : ontology
-		.getAxioms(AxiomType.EQUIVALENT_CLASSES))
+	for (final OWLEquivalentClassesAxiom a : ontology.getAxioms(AxiomType.EQUIVALENT_CLASSES))
 	    for (final OWLSubClassOfAxiom s : a.asOWLSubClassOfAxioms())
 		normalize(s);
-	for (final OWLDisjointClassesAxiom a : ontology
-		.getAxioms(AxiomType.DISJOINT_CLASSES))
+	for (final OWLDisjointClassesAxiom a : ontology.getAxioms(AxiomType.DISJOINT_CLASSES))
 	    for (final OWLSubClassOfAxiom s : a.asOWLSubClassOfAxioms())
 		normalize(s);
-	for (final OWLInverseObjectPropertiesAxiom a : ontology
-		.getAxioms(AxiomType.INVERSE_OBJECT_PROPERTIES))
-	    for (final OWLSubObjectPropertyOfAxiom s : a
-		    .asSubObjectPropertyOfAxioms())
+	for (final OWLInverseObjectPropertiesAxiom a : ontology.getAxioms(AxiomType.INVERSE_OBJECT_PROPERTIES))
+	    for (final OWLSubObjectPropertyOfAxiom s : a.asSubObjectPropertyOfAxioms())
 		normalize(s);
-	for (final OWLEquivalentObjectPropertiesAxiom a : ontology
-		.getAxioms(AxiomType.EQUIVALENT_OBJECT_PROPERTIES))
-	    for (final OWLSubObjectPropertyOfAxiom s : a
-		    .asSubObjectPropertyOfAxioms())
+	for (final OWLEquivalentObjectPropertiesAxiom a : ontology.getAxioms(AxiomType.EQUIVALENT_OBJECT_PROPERTIES))
+	    for (final OWLSubObjectPropertyOfAxiom s : a.asSubObjectPropertyOfAxioms())
 		normalize(s);
-	for (final OWLObjectPropertyDomainAxiom a : ontology
-		.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN))
+	for (final OWLObjectPropertyDomainAxiom a : ontology.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN))
 	    normalize(a.asOWLSubClassOfAxiom());
-	for (final OWLObjectPropertyRangeAxiom a : ontology
-		.getAxioms(AxiomType.OBJECT_PROPERTY_RANGE))
+	for (final OWLObjectPropertyRangeAxiom a : ontology.getAxioms(AxiomType.OBJECT_PROPERTY_RANGE))
 	    normalize(a);
-	for (final OWLSymmetricObjectPropertyAxiom a : ontology
-		.getAxioms(AxiomType.SYMMETRIC_OBJECT_PROPERTY))
+	for (final OWLSymmetricObjectPropertyAxiom a : ontology.getAxioms(AxiomType.SYMMETRIC_OBJECT_PROPERTY))
 	    for (final OWLSubObjectPropertyOfAxiom s : a.asSubPropertyAxioms())
 		normalize(s);
-	for (final OWLReflexiveObjectPropertyAxiom a : ontology
-		.getAxioms(AxiomType.REFLEXIVE_OBJECT_PROPERTY))
+	for (final OWLAsymmetricObjectPropertyAxiom a : ontology.getAxioms(AxiomType.ASYMMETRIC_OBJECT_PROPERTY))
 	    normalize(a);
-	for (final OWLIrreflexiveObjectPropertyAxiom a : ontology
-		.getAxioms(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY))
+	for (final OWLSubDataPropertyOfAxiom a : ontology.getAxioms(AxiomType.SUB_DATA_PROPERTY))
 	    normalize(a);
-	for (final OWLAsymmetricObjectPropertyAxiom a : ontology
-		.getAxioms(AxiomType.ASYMMETRIC_OBJECT_PROPERTY))
-	    normalize(a);
-	for (final OWLSubDataPropertyOfAxiom a : ontology
-		.getAxioms(AxiomType.SUB_DATA_PROPERTY))
-	    normalize(a);
-	for (final OWLDisjointDataPropertiesAxiom a : ontology
-		.getAxioms(AxiomType.DISJOINT_DATA_PROPERTIES))
+	for (final OWLDisjointDataPropertiesAxiom a : ontology.getAxioms(AxiomType.DISJOINT_DATA_PROPERTIES))
 	    normalizeDisjunction(a);
-	for (final OWLEquivalentDataPropertiesAxiom a : ontology
-		.getAxioms(AxiomType.EQUIVALENT_DATA_PROPERTIES))
-	    for (final OWLSubDataPropertyOfAxiom s : a
-		    .asSubDataPropertyOfAxioms())
+	for (final OWLEquivalentDataPropertiesAxiom a : ontology.getAxioms(AxiomType.EQUIVALENT_DATA_PROPERTIES))
+	    for (final OWLSubDataPropertyOfAxiom s : a.asSubDataPropertyOfAxioms())
 		normalize(s);
 	RuntimesLogger.stop("ontology normalization", "loading");
-    }
-
-    private void normalize(OWLReflexiveObjectPropertyAxiom alpha) {
-	final OWLObjectPropertyExpression q = alpha.getProperty();
-	normalize(df.getOWLSubClassOfAxiom(some(q),
-		some(q.getInverseProperty())));
-	normalize(df.getOWLSubClassOfAxiom(some(q.getInverseProperty()),
-		some(q)));
     }
 
     private void normalize(OWLSubClassOfAxiom alpha) {
 	final OWLClassExpression b = alpha.getSubClass();
 	final OWLClassExpression c = alpha.getSuperClass();
-	if (b.isOWLNothing() || c.isOWLThing() || b.isOWLThing()
-		&& !(c instanceof OWLObjectComplementOf))
+	if (b.isOWLNothing() || c.isOWLThing())
 	    return;
-	if (b instanceof OWLDataSomeValuesFrom
-		|| c instanceof OWLDataSomeValuesFrom)
+	if (b instanceof OWLDataSomeValuesFrom || c instanceof OWLDataSomeValuesFrom)
 	    return;
-	if (c.isOWLNothing()) // BASE CASE
+	if (c.isOWLNothing()) { // BASE CASE
 	    unsatisfiableConcepts.add(b);
-	else if (c instanceof OWLClass) { // BASE CASE
+	    hasDisjunction = true;
+	} else if (c instanceof OWLClass) { // BASE CASE
 	    subConcepts.add(b);
 	    superConcepts.add(c);
 	    conceptSubsumptions.add(alpha);
@@ -352,8 +311,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	    } else {
 		final OWLObjectProperty pnew = getNewRole(alpha.hashCode());
 		normalize(df.getOWLSubObjectPropertyOfAxiom(pnew, q));
-		normalize(df.getOWLSubClassOfAxiom(
-			some(pnew.getInverseProperty()), a));
+		normalize(df.getOWLSubClassOfAxiom(some(pnew.getInverseProperty()), a));
 		normalize(df.getOWLSubClassOfAxiom(b, some(pnew)));
 	    }
 	}
@@ -364,25 +322,20 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	final OWLPropertyExpression<?, ?> q2 = alpha.getSuperProperty();
 	subRoles.add(DLUtils.getRoleName(q1));
 	superRoles.add(DLUtils.getRoleName(q2));
-	if (q1.isBottomEntity() || q2.isTopEntity() || q1.isTopEntity())
+	if (q1.isBottomEntity() || q2.isTopEntity())
 	    return;
 	if (q2.isBottomEntity())
 	    unsatisfiableRoles.add(q1);
-	else if (q1 instanceof OWLObjectPropertyExpression
-		&& q2 instanceof OWLObjectPropertyExpression)
-	    roleSubsumptions.add(df.getOWLSubObjectPropertyOfAxiom(
-		    (OWLObjectPropertyExpression) q1,
+	else if (q1 instanceof OWLObjectPropertyExpression && q2 instanceof OWLObjectPropertyExpression)
+	    roleSubsumptions.add(df.getOWLSubObjectPropertyOfAxiom((OWLObjectPropertyExpression) q1,
 		    (OWLObjectPropertyExpression) q2));
-	else if (q1 instanceof OWLDataPropertyExpression
-		&& q2 instanceof OWLDataPropertyExpression)
-	    roleSubsumptions.add(df.getOWLSubDataPropertyOfAxiom(
-		    (OWLDataPropertyExpression) q1,
-		    (OWLDataPropertyExpression) q2));
+	else if (q1 instanceof OWLDataPropertyExpression && q2 instanceof OWLDataPropertyExpression)
+	    roleSubsumptions.add(
+		    df.getOWLSubDataPropertyOfAxiom((OWLDataPropertyExpression) q1, (OWLDataPropertyExpression) q2));
     }
 
     // TODO refactor
-    private <P extends OWLPropertyExpression<?, ?>> void normalizeDisjunction(
-	    OWLNaryPropertyAxiom<P> alpha) {
+    private <P extends OWLPropertyExpression<?, ?>> void normalizeDisjunction(OWLNaryPropertyAxiom<P> alpha) {
 	hasDisjunction = true;
 	final Set<P> props = alpha.getProperties();
 	final Iterator<P> propsIt1 = props.iterator();
@@ -403,26 +356,19 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 			unsatisfiableRoles.add(q2);
 		    else if (q2.isTopEntity())
 			unsatisfiableRoles.add(q2);
-		    else if (q1 instanceof OWLObjectPropertyExpression
-			    && q2 instanceof OWLObjectPropertyExpression)
-			roleDisjunctions.add(df
-				.getOWLDisjointObjectPropertiesAxiom(
-					(OWLObjectPropertyExpression) q1,
-					(OWLObjectPropertyExpression) q2));
-		    else if (q1 instanceof OWLDataPropertyExpression
-			    && q2 instanceof OWLDataPropertyExpression)
-			roleDisjunctions.add(df
-				.getOWLDisjointDataPropertiesAxiom(
-					(OWLDataPropertyExpression) q1,
-					(OWLDataPropertyExpression) q2));
+		    else if (q1 instanceof OWLObjectPropertyExpression && q2 instanceof OWLObjectPropertyExpression)
+			roleDisjunctions.add(df.getOWLDisjointObjectPropertiesAxiom((OWLObjectPropertyExpression) q1,
+				(OWLObjectPropertyExpression) q2));
+		    else if (q1 instanceof OWLDataPropertyExpression && q2 instanceof OWLDataPropertyExpression)
+			roleDisjunctions.add(df.getOWLDisjointDataPropertiesAxiom((OWLDataPropertyExpression) q1,
+				(OWLDataPropertyExpression) q2));
 	    }
 	}
 
     }
 
     private OWLClassExpression some(OWLObjectPropertyExpression q) {
-	return df.getOWLObjectSomeValuesFrom(q.getSimplified(),
-		df.getOWLThing());
+	return df.getOWLObjectSomeValuesFrom(q.getSimplified(), df.getOWLThing());
     }
 
 }

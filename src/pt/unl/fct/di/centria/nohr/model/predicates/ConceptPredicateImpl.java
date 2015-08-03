@@ -24,14 +24,13 @@ public class ConceptPredicateImpl implements Predicate {
      */
     ConceptPredicateImpl(OWLClass concept) {
 	Objects.requireNonNull(concept);
-	Objects.requireNonNull(concept.getIRI().getFragment(),
-		"concept: must have a valid IRI (with a fragment)");
+	Objects.requireNonNull(concept.getIRI().getFragment(), "concept: must have a valid IRI (with a fragment)");
 	this.concept = concept;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct
      * .di.centria.nohr.model.FormatVisitor)
@@ -43,7 +42,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct
      * .di.centria.nohr.model.Visitor)
@@ -55,7 +54,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asConcept()
      */
     @Override
@@ -65,7 +64,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRole()
      */
     @Override
@@ -75,7 +74,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRulePredicate()
      */
@@ -105,7 +104,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getArity()
      */
     @Override
@@ -115,7 +114,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getName()
      */
     @Override
@@ -125,7 +124,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getSymbol()
      */
     @Override
@@ -148,7 +147,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isConcept()
      */
     @Override
@@ -158,7 +157,7 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRole()
      */
     @Override
@@ -168,13 +167,23 @@ public class ConceptPredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRulePredicate()
      */
     @Override
     public boolean isRulePredicate() {
 	return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return getSymbol();
     }
 
 }

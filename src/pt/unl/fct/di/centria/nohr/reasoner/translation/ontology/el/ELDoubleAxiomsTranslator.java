@@ -10,6 +10,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,12 +89,13 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
     @Override
     protected Set<Rule> translateSubsumption(List<OWLObjectPropertyExpression> chain, OWLObjectProperty s) {
 	final Set<Rule> result = new HashSet<Rule>();
-	final List<Atom> chainTr = tr(chain, X, Y);
-	Set<Literal> body = new HashSet<Literal>(chainTr);
+	List<Atom> chainTr = tr(chain, X, Y);
+	List<Literal> body = new ArrayList<Literal>(chainTr);
 	body.add(negLiteral(negTr(s, X, Y)));
 	result.add(rule(tr(s, X, Y), body));
-	for (final Literal r : chainTr) {
-	    body = new HashSet<Literal>(chainTr);
+	for (final Literal r : tr(chain, X, Y, false)) {
+	    chainTr = tr(chain, X, Y, false);
+	    body = new ArrayList<Literal>(chainTr);
 	    body.add(negTr(s, X, Y));
 	    body.remove(r);
 	    result.add(rule(negTr(r), body));

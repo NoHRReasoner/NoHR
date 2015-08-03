@@ -9,6 +9,8 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
+import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex;
+
 /**
  * @author nunocosta
  *
@@ -163,6 +165,20 @@ public class Predicates {
 	    return new DoublePredicate(new RulePredicateImpl(symbol, arity));
 	else
 	    return new OriginalPredicate(new RulePredicateImpl(symbol, arity));
+    }
+
+    public static Predicate pred(String symbol, int arity, OntologyIndex ontologyIndex) {
+	if (arity == 1) {
+	    final OWLClass concept = ontologyIndex.getConcept(symbol);
+	    if (concept != null)
+		return pred(concept);
+	}
+	if (arity == 2) {
+	    final OWLProperty<?, ?> role = ontologyIndex.getRole(symbol);
+	    if (role != null)
+		return pred(role);
+	}
+	return pred(symbol, arity);
     }
 
     public static Predicate pred(String symbol, int arity, PredicateType type) {

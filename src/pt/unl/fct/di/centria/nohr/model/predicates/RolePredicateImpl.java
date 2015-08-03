@@ -24,8 +24,7 @@ public class RolePredicateImpl implements Predicate {
      */
     RolePredicateImpl(OWLProperty<?, ?> role) {
 	Objects.requireNonNull(role);
-	Objects.requireNonNull(role.getIRI().getFragment(),
-		"must have a valid IRI (with fragment)");
+	Objects.requireNonNull(role.getIRI().getFragment(), "must have a valid IRI (with fragment)");
 	this.role = role;
     }
 
@@ -86,7 +85,7 @@ public class RolePredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -135,7 +134,7 @@ public class RolePredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -175,6 +174,16 @@ public class RolePredicateImpl implements Predicate {
     @Override
     public boolean isRulePredicate() {
 	return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return getSymbol();
     }
 
 }

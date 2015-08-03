@@ -22,32 +22,29 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAx
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLOntologyTranslation;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
-public abstract class AbstractOntologyTranslation implements
-OntologyTranslation {
+public abstract class AbstractOntologyTranslation implements OntologyTranslation {
 
     public static Profiles profile = null;
 
-    public static OntologyTranslation createOntologyTranslation(
-	    OWLOntology ontology) throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
+    public static OntologyTranslation createOntologyTranslation(OWLOntology ontology)
+	    throws OWLOntologyCreationException, OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
 	    CloneNotSupportedException, UnsupportedAxiomTypeException {
-	final OWLAnnotationProperty labelAnnotation = ontology
-		.getOWLOntologyManager().getOWLDataFactory()
+	final OWLAnnotationProperty labelAnnotation = ontology.getOWLOntologyManager().getOWLDataFactory()
 		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
-	final OntologyLabeler ontologyLabel = new OntologyLabeler(ontology,
-		labelAnnotation);
+	final OntologyLabeler ontologyLabel = new OntologyLabeler(ontology, labelAnnotation);
 	switch (getTranslationProfile(ontology)) {
 	case OWL2_QL:
+	    System.out.println("OWL2_QL");
 	    return new QLOntologyTranslation(ontology, ontologyLabel);
 	case OWL2_EL:
+	    System.out.println("OWL2_EL");
 	    return new ELOntologyTranslation(ontology, ontologyLabel);
 	default:
 	    return null;
 	}
     }
 
-    public static Profiles getTranslationProfile(OWLOntology ontology)
-	    throws UnsupportedOWLProfile {
+    public static Profiles getTranslationProfile(OWLOntology ontology) throws UnsupportedOWLProfile {
 	if (AbstractOntologyTranslation.profile != null)
 	    return AbstractOntologyTranslation.profile;
 	final OWL2ELProfile elProfile = new OWL2ELProfile();
@@ -77,10 +74,8 @@ OntologyTranslation {
 
     protected final Set<Predicate> tabledPredicates;
 
-    public AbstractOntologyTranslation(OWLOntology ontology)
-	    throws IOException, OWLOntologyCreationException,
-	    OWLOntologyStorageException, CloneNotSupportedException,
-	    UnsupportedOWLProfile {
+    public AbstractOntologyTranslation(OWLOntology ontology) throws IOException, OWLOntologyCreationException,
+	    OWLOntologyStorageException, CloneNotSupportedException, UnsupportedOWLProfile {
 	this.ontology = ontology;
 	rules = new HashSet<Rule>();
 	tabledPredicates = new HashSet<Predicate>();

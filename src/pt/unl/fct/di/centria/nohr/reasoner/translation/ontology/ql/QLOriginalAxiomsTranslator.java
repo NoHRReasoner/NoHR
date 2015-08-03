@@ -37,7 +37,7 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
     }
 
     private Atom existTr(OWLObjectPropertyExpression q, Variable X) {
-	if (q instanceof OWLObjectProperty)
+	if (!DLUtils.isInverse(q))
 	    return atom(origDomPred(q), X);
 	else
 	    return atom(origRanPred(q), X);
@@ -62,20 +62,19 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
     }
 
     @Override
-    protected Set<Rule> translateBasicSubsumption(OWLClassExpression b1,
-	    OWLClassExpression b2) {
+    protected Set<Rule> translateBasicSubsumption(OWLClassExpression b1, OWLClassExpression b2) {
+	if (b1.isOWLThing())
+	    return ruleSet(rule(tr(b2, X)));
 	return ruleSet(rule(tr(b2, X), tr(b1, X)));
     }
 
     @Override
-    protected Set<Rule> translateDisjunction(OWLClassExpression b1,
-	    OWLClassExpression owlClassExpression) {
+    protected Set<Rule> translateDisjunction(OWLClassExpression b1, OWLClassExpression owlClassExpression) {
 	return ruleSet();
     }
 
     @Override
-    protected Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1,
-	    OWLPropertyExpression<?, ?> q2) {
+    protected Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
 	return ruleSet();
     }
 
@@ -98,18 +97,17 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
 
     @Override
     public Rule translateRange(OWLSubObjectPropertyOfAxiom alpha) {
-	final OWLObjectPropertyExpression q1 = alpha.getSubProperty()
-		.getInverseProperty();
-	final OWLObjectPropertyExpression q2 = alpha.getSuperProperty()
-		.getInverseProperty();
+	final OWLObjectPropertyExpression q1 = alpha.getSubProperty().getInverseProperty();
+	final OWLObjectPropertyExpression q2 = alpha.getSuperProperty().getInverseProperty();
 	return rule(existTr(q2, X), existTr(q1, X));
     }
 
     @Override
-    protected Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1,
-	    OWLPropertyExpression<?, ?> q2) {
-	if (q1.isTopEntity() || q1.isBottomEntity() || q2.isTopEntity())
+    protected Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
+	if (q1.isBottomEntity() || q2.isTopEntity())
 	    return ruleSet();
+	if (q1.isTopEntity())
+	    return ruleSet(rule(tr(q2, X, Y)));
 	if (q2.isBottomEntity())
 	    return ruleSet(translateUnsatisfaible((OWLProperty<?, ?>) q1));
 	return ruleSet(rule(tr(q2, X, Y), tr(q1, X, Y)));
