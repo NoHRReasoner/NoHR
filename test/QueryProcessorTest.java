@@ -12,6 +12,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +27,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.declarativa.interprolog.util.IPException;
+
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -34,6 +37,7 @@ import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.reasoner.QueryProcessor;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
+import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
  * @author nunocosta
@@ -60,7 +64,7 @@ public class QueryProcessorTest extends QueryProcessor {
      * @throws Exception
      */
     public QueryProcessorTest() throws Exception {
-	super(new XSBDatabase(FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb")));
+	super(new XSBDatabase(FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb").toFile()));
     }
 
     private List<Term> l(Term... elems) {
@@ -167,12 +171,16 @@ public class QueryProcessorTest extends QueryProcessor {
      * Test method for
      * {@link nohr.reasoner.QueryProcessor#lazilyQuery(pt.unl.fct.di.centria.nohr.model.Query)}
      * .
+     *
+     * @throws IOException
+     * @throws IPException
+     * @throws XSBDatabaseCreationException
      */
     // TODO fix QueryProcessor.lazilyQuery()
     // wrong when original answer is UNDEFINED and the doubled answer is TRUE
-    public final void testLazilyQuery() {
+    public final void testLazilyQuery() throws IPException, IOException, XSBDatabaseCreationException {
 
-	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY")));
+	xsbDatabase = new XSBDatabase(FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY")).toFile());
 
 	xsbDatabase.table("ap/1");
 	xsbDatabase.table("dp/1");

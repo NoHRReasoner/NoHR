@@ -7,6 +7,7 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -21,7 +22,6 @@ import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
@@ -34,18 +34,27 @@ import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 //TODO refactor
 
 public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
+
+    public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[] {
+	    AxiomType.ASYMMETRIC_OBJECT_PROPERTY, AxiomType.CLASS_ASSERTION, AxiomType.DATA_PROPERTY_ASSERTION,
+	    AxiomType.DECLARATION, AxiomType.DISJOINT_CLASSES, AxiomType.DISJOINT_DATA_PROPERTIES,
+	    AxiomType.DISJOINT_OBJECT_PROPERTIES, AxiomType.EQUIVALENT_CLASSES, AxiomType.EQUIVALENT_DATA_PROPERTIES,
+	    AxiomType.EQUIVALENT_OBJECT_PROPERTIES, AxiomType.INVERSE_OBJECT_PROPERTIES,
+	    AxiomType.OBJECT_PROPERTY_ASSERTION, AxiomType.OBJECT_PROPERTY_DOMAIN, AxiomType.OBJECT_PROPERTY_RANGE,
+	    AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY, AxiomType.SUBCLASS_OF,
+	    AxiomType.SYMMETRIC_OBJECT_PROPERTY };
 
     private final Set<OWLDisjointClassesAxiom> conceptDisjunctions;
 
@@ -79,7 +88,11 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
     private final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles;
 
-    public QLNormalizedOntologyImpl(OWLOntology ontology) {
+    public QLNormalizedOntologyImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
+	final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(ontology.getAxioms(),
+		SUPPORTED_AXIOM_TYPES);
+	if (unsupportedAxioms.size() > 0)
+	    throw new UnsupportedAxiomsException(unsupportedAxioms);
 	this.ontology = ontology;
 	ontologyIRI = ontology.getOntologyID().getOntologyIRI();
 	df = ontology.getOWLOntologyManager().getOWLDataFactory();

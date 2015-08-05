@@ -7,6 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
+
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -85,8 +90,25 @@ public class Model {
 	return new NumericConstantImpl(n);
     }
 
+    public static Constant cons(OWLIndividual individual) {
+	return new IndividualConstantImpl(individual);
+    }
+
+    public static Constant cons(OWLLiteral literal) {
+	return new LiteralConstant(literal);
+    }
+
+    public static Constant cons(OWLPropertyAssertionObject object) {
+	if (object instanceof OWLIndividual)
+	    return cons((OWLIndividual) object);
+	else if (object instanceof OWLLiteral)
+	    return cons((OWLLiteral) object);
+	else
+	    return null;
+    }
+
     public static Constant cons(String symbol) {
-	return new ConstantImpl(symbol);
+	return new StringConstantImpl(symbol);
     }
 
     public static Term list(List<Term> terms) {

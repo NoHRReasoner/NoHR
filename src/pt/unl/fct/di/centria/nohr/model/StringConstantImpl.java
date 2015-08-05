@@ -2,11 +2,14 @@ package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 
-public class ConstantImpl implements Constant {
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
+
+public class StringConstantImpl implements Constant {
 
     private final String symbol;
 
-    ConstantImpl(String symbol) {
+    StringConstantImpl(String symbol) {
 	this.symbol = symbol;
     }
 
@@ -42,6 +45,26 @@ public class ConstantImpl implements Constant {
 	throw new ClassCastException();
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#asOWLIndividual()
+     */
+    @Override
+    public OWLIndividual asOWLIndividual() {
+	throw new ClassCastException();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#asOWLLiteral()
+     */
+    @Override
+    public OWLLiteral asOWLLiteral() {
+	throw new ClassCastException();
+    }
+
     @Override
     public String asString() {
 	return symbol;
@@ -66,7 +89,7 @@ public class ConstantImpl implements Constant {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -75,9 +98,9 @@ public class ConstantImpl implements Constant {
 	    return true;
 	if (obj == null)
 	    return false;
-	if (!(obj instanceof ConstantImpl))
+	if (!(obj instanceof StringConstantImpl))
 	    return false;
-	final ConstantImpl other = (ConstantImpl) obj;
+	final StringConstantImpl other = (StringConstantImpl) obj;
 	if (symbol == null) {
 	    if (other.symbol != null)
 		return false;
@@ -88,7 +111,7 @@ public class ConstantImpl implements Constant {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -111,10 +134,39 @@ public class ConstantImpl implements Constant {
 	return false;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#isOWLIndividual()
+     */
+    @Override
+    public boolean isOWLIndividual() {
+	return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#isOWLLiteral()
+     */
+    @Override
+    public boolean isOWLLiteral() {
+	return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#isString()
+     */
+    @Override
+    public boolean isString() {
+	return true;
+    }
+
     @Override
     public boolean isTruthValue() {
-	return symbol.equals("true") || symbol.equals("undefined")
-		|| symbol.equals("false");
+	return symbol.equals("true") || symbol.equals("undefined") || symbol.equals("false");
     }
 
     @Override

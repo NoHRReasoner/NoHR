@@ -1,3 +1,4 @@
+
 /**
  *
  */
@@ -22,9 +23,12 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
+import com.declarativa.interprolog.util.IPException;
+
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.BasicTBoxGraph;
+import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
  * @author nunocosta
@@ -52,16 +56,18 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void conceptsAncestors() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-	    CloneNotSupportedException, UnsupportedAxiomTypeException {
+    public final void conceptsAncestors() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -70,8 +76,7 @@ public class TBoxGraphTest {
 	kb.subConcept(a[3], a[2]);
 	final Set<OWLClassExpression> expectedAncestors = set(a[1], a[2], a[3]);
 	// Test
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
 	final Set<OWLClassExpression> ancestors = graph.getAncestors(a[0]);
 	Assert.assertEquals(expectedAncestors, ancestors);
     }
@@ -82,17 +87,18 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void conceptsAncestorsWithCycles()
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-	    UnsupportedAxiomTypeException {
+    public final void conceptsAncestorsWithCycles() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -102,8 +108,7 @@ public class TBoxGraphTest {
 	kb.subConcept(a[0], a[3]);
 	final Set<OWLClassExpression> expectedAncestors = set(a);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
 	Set<OWLClassExpression> ancestors;
 	// Tests
 	for (int i = 0; i < 4; i++) {
@@ -118,17 +123,18 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void conceptsPredecessors()
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-	    UnsupportedAxiomTypeException {
+    public final void conceptsPredecessors() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 6);
@@ -139,8 +145,7 @@ public class TBoxGraphTest {
 	kb.subConcept(a[4], kb.some(p[1]));
 	kb.subConcept(kb.some(p[2]), kb.some(p[3]));
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
 	// Test1
 	Set<OWLClassExpression> predecessors = graph.getPredecessors(a[2]);
 	Assert.assertEquals(set(a[0], a[1]), predecessors);
@@ -175,31 +180,28 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void irreflexiveRolesFromConceptDisjunction()
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-	    UnsupportedAxiomTypeException {
+    public final void irreflexiveRolesFromConceptDisjunction() throws OWLOntologyCreationException,
+	    OWLOntologyStorageException, OWLProfilesViolationsException, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 2);
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 1);
 	kb.subConcept(kb.some(p[0]), a[0]);
-	kb.subConcept(
-		kb.some(kb.inv((OWLObjectProperty) p[0])),
-		a[1]);
+	kb.subConcept(kb.some(kb.inv((OWLObjectProperty) p[0])), a[1]);
 	kb.disjointConcepts(a[0], a[1]);
 	final Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
-	final Set<OWLObjectProperty> irreflexiveRoles = graph
-		.getIrreflexiveRoles();
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final Set<OWLObjectProperty> irreflexiveRoles = graph.getIrreflexiveRoles();
 	// Test
 	Assert.assertEquals(expectedIrreflexiveRoles, irreflexiveRoles);
     }
@@ -210,17 +212,18 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void irreflexiveRolesFromRoleDisjunction()
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-	    UnsupportedAxiomTypeException {
+    public final void irreflexiveRolesFromRoleDisjunction() throws OWLOntologyCreationException,
+	    OWLOntologyStorageException, OWLProfilesViolationsException, IOException, CloneNotSupportedException,
+	    UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
 	kb.subRole(p[0], p[1]);
@@ -228,10 +231,8 @@ public class TBoxGraphTest {
 	kb.disjointRoles(p[1], p[2]);
 	final Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
-	final Set<OWLObjectProperty> irreflexiveRoles = graph
-		.getIrreflexiveRoles();
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final Set<OWLObjectProperty> irreflexiveRoles = graph.getIrreflexiveRoles();
 	// Test
 	Assert.assertEquals(expectedIrreflexiveRoles, irreflexiveRoles);
     }
@@ -242,29 +243,28 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void rolesAncestors() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-	    CloneNotSupportedException, UnsupportedAxiomTypeException {
+    public final void rolesAncestors() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	// Data
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
 	kb.subRole(p[1], p[0]);
 	kb.subRole(p[2], p[1]);
 	kb.subRole(p[3], p[2]);
-	final Set<OWLObjectPropertyExpression> expectedAncestors = set(p[1],
-		p[2], p[3]);
+	final Set<OWLObjectPropertyExpression> expectedAncestors = set(p[1], p[2], p[3]);
 	// Test
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
-	final Set<OWLPropertyExpression<?, ?>> ancestors = graph
-		.getAncestors(p[0]);
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final Set<OWLPropertyExpression<?, ?>> ancestors = graph.getAncestors(p[0]);
 	Assert.assertEquals(expectedAncestors, ancestors);
     }
 
@@ -274,17 +274,18 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void rolesAncestorsWithCycles()
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-	    UnsupportedAxiomTypeException {
+    public final void rolesAncestorsWithCycles() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	// Data
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
@@ -294,8 +295,7 @@ public class TBoxGraphTest {
 	kb.subRole(p[0], p[3]);
 	final Set<OWLObjectPropertyExpression> expectedAncestors = set(p);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
 	Set<OWLPropertyExpression<?, ?>> ancestors;
 	// Tests
 	for (int i = 0; i < 4; i++) {
@@ -311,16 +311,18 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void rolesPredecessors() throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-	    CloneNotSupportedException, UnsupportedAxiomTypeException {
+    public final void rolesPredecessors() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	// Data
 	final KB kb = new KB();
 	final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 9);
@@ -328,28 +330,21 @@ public class TBoxGraphTest {
 	kb.subRole(p[1], p[2]);
 	kb.subRole(kb.inv((OWLObjectProperty) p[3]), p[4]);
 	kb.subRole(p[5], kb.inv((OWLObjectProperty) p[6]));
-	kb.subRole(kb.inv((OWLObjectProperty) p[7]),
-		kb.inv((OWLObjectProperty) p[8]));
+	kb.subRole(kb.inv((OWLObjectProperty) p[7]), kb.inv((OWLObjectProperty) p[8]));
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
 	// Test1
-	Set<OWLPropertyExpression<?, ?>> predecessors = graph
-		.getPredecessors(p[2]);
+	Set<OWLPropertyExpression<?, ?>> predecessors = graph.getPredecessors(p[2]);
 	Assert.assertEquals(set(p[0], p[1]), predecessors);
 	// Test2
 	predecessors = graph.getPredecessors(p[4]);
-	Assert.assertEquals(set(kb.inv((OWLObjectProperty) p[3])),
-		predecessors);
+	Assert.assertEquals(set(kb.inv((OWLObjectProperty) p[3])), predecessors);
 	// Test3
-	predecessors = graph.getPredecessors(kb
-		.inv((OWLObjectProperty) p[6]));
+	predecessors = graph.getPredecessors(kb.inv((OWLObjectProperty) p[6]));
 	Assert.assertEquals(set(p[5]), predecessors);
 	// Test4
-	predecessors = graph.getPredecessors(kb
-		.inv((OWLObjectProperty) p[8]));
-	Assert.assertEquals(set(kb.inv((OWLObjectProperty) p[7])),
-		predecessors);
+	predecessors = graph.getPredecessors(kb.inv((OWLObjectProperty) p[8]));
+	Assert.assertEquals(set(kb.inv((OWLObjectProperty) p[7])), predecessors);
     }
 
     private <T> Set<T> set(@SuppressWarnings("unchecked") T... elems) {
@@ -380,17 +375,18 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void unsatisfiableEntities1()
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-	    UnsupportedAxiomTypeException {
+    public final void unsatisfiableEntities1() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -401,16 +397,12 @@ public class TBoxGraphTest {
 	kb.subRole(p[0], p[1]);
 	kb.subRole(p[0], p[2]);
 	kb.disjointRoles(p[1], p[2]);
-	final Set<OWLEntity> expectedUnsatisfiableEntities = set(
-		(OWLEntity) a[0], (OWLEntity) p[0]);
+	final Set<OWLEntity> expectedUnsatisfiableEntities = set((OWLEntity) a[0], (OWLEntity) p[0]);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
-	final Set<OWLEntity> unsatisfiableEntities = graph
-		.getUnsatisfiableEntities();
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final Set<OWLEntity> unsatisfiableEntities = graph.getUnsatisfiableEntities();
 	// Test
-	Assert.assertEquals(expectedUnsatisfiableEntities,
-		unsatisfiableEntities);
+	Assert.assertEquals(expectedUnsatisfiableEntities, unsatisfiableEntities);
     }
 
     /**
@@ -419,17 +411,18 @@ public class TBoxGraphTest {
      * .
      *
      * @throws OWLOntologyCreationException
-     * @throws UnsupportedAxiomTypeException
+     * @throws UnsupportedAxiomsException
      * @throws CloneNotSupportedException
      * @throws IOException
-     * @throws UnsupportedOWLProfile
+     * @throws OWLProfilesViolationsException
      * @throws OWLOntologyStorageException
+     * @throws XSBDatabaseCreationException
+     * @throws IPException
      */
     @Test
-    public final void unsatisfiableEntities2()
-	    throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-	    UnsupportedAxiomTypeException {
+    public final void unsatisfiableEntities2() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	// Data
 	final KB kb = new KB();
 	final OWLClassExpression[] a = createAtomicConcepts(kb, 3);
@@ -442,17 +435,13 @@ public class TBoxGraphTest {
 	kb.subRole(p[1], p[0]);
 	kb.subRole(p[2], p[1]);
 	kb.disjointRoles(p[0], p[1]);
-	final Set<OWLEntity> expectedUnsatisfiableEntities = set(
-		(OWLEntity) a[0], (OWLEntity) a[1], (OWLEntity) a[2],
+	final Set<OWLEntity> expectedUnsatisfiableEntities = set((OWLEntity) a[0], (OWLEntity) a[1], (OWLEntity) a[2],
 		(OWLEntity) p[0], (OWLEntity) p[1], (OWLEntity) p[2]);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(
-		kb.getQLNormalizedOntology());
-	final Set<OWLEntity> unsatisfiableEntities = graph
-		.getUnsatisfiableEntities();
+	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final Set<OWLEntity> unsatisfiableEntities = graph.getUnsatisfiableEntities();
 	// Test
-	Assert.assertEquals(expectedUnsatisfiableEntities,
-		unsatisfiableEntities);
+	Assert.assertEquals(expectedUnsatisfiableEntities, unsatisfiableEntities);
     }
 
 }

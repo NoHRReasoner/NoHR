@@ -52,10 +52,11 @@ public class PredicateTypesVisitor implements Visitor {
     @Override
     public Predicate visit(Predicate pred) {
 	if (pred.isConcept())
-	    pred(pred.asConcept(), predicateType);
+	    return pred(pred.asConcept(), predicateType);
 	else if (pred.isRole())
-	    pred(pred.asRole(), predicateType);
-	return pred(pred.asRulePredicate(), pred.getArity(), predicateType);
+	    return pred(pred.asRole(), predicateType);
+	else
+	    return pred(pred.asRulePredicate(), pred.getArity(), predicateType);
     }
 
     @Override

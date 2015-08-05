@@ -47,6 +47,7 @@ import org.semanticweb.owlapi.util.InferredClassAssertionAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
@@ -133,7 +134,6 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 		final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) ce1;
 		final OWLObjectPropertyExpression ope = some.getProperty();
 		final Set<OWLClassExpression> fillerConj = some.getFiller().asConjunctSet();
-		// if (fillerConj.size() > 1) {
 		final Set<OWLClassExpression> normFillerConj = new HashSet<OWLClassExpression>();
 		for (final OWLClassExpression ci : fillerConj)
 		    if (isExistential(ci)) {
@@ -145,7 +145,6 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 			normFillerConj.add(ci);
 		if (changed)
 		    newAxioms.add(subsumption(some(ope, conj(normFillerConj)), ce2));
-		// }
 	    }
 	    return changed;
 	}
@@ -173,12 +172,12 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 	}
     }
 
-    // private static final AxiomType<?>[] UNSUPP_TYPES = new AxiomType[] {
-    // AxiomType.REFLEXIVE_OBJECT_PROPERTY,
-    // AxiomType.OBJECT_PROPERTY_RANGE, AxiomType.DATA_PROPERTY_DOMAIN,
-    // AxiomType.DATA_PROPERTY_RANGE, AxiomType.SAME_INDIVIDUAL,
-    // AxiomType.DIFFERENT_INDIVIDUALS,
-    // AxiomType.FUNCTIONAL_DATA_PROPERTY, AxiomType.HAS_KEY };
+    public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[] { AxiomType.CLASS_ASSERTION,
+	    AxiomType.DATA_PROPERTY_ASSERTION, AxiomType.DECLARATION, AxiomType.DISJOINT_CLASSES,
+	    AxiomType.EQUIVALENT_CLASSES, AxiomType.EQUIVALENT_DATA_PROPERTIES, AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
+	    AxiomType.OBJECT_PROPERTY_ASSERTION, AxiomType.OBJECT_PROPERTY_DOMAIN, AxiomType.SUB_DATA_PROPERTY,
+	    AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY, AxiomType.SUB_PROPERTY_CHAIN_OF,
+	    AxiomType.SUBCLASS_OF, AxiomType.TRANSITIVE_OBJECT_PROPERTY };
 
     private final Set<OWLSubPropertyChainOfAxiom> chainSubsumptions;
 
@@ -194,11 +193,11 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
 
     private final Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions;
 
-    public ELReducedOntologyImpl(OWLOntology ontology)
-	    throws OWLOntologyCreationException, UnsupportedAxiomTypeException {
-	// for (final AxiomType<?> type : UNSUPP_TYPES)
-	// if (ontology.getAxiomCount(type) > 1)
-	// throw new UnsupportedAxiomTypeException(type);
+    public ELReducedOntologyImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
+	final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(ontology.getAxioms(),
+		SUPPORTED_AXIOM_TYPES);
+	if (unsupportedAxioms.size() > 0)
+	    throw new UnsupportedAxiomsException(unsupportedAxioms);
 	this.ontology = ontology;
 	final Set<OWLClassAssertionAxiom> conceptAssertions = ontology.getAxioms(AxiomType.CLASS_ASSERTION);
 	final Set<OWLSubClassOfAxiom> conceptSubsumptions = conceptSubsumptions(ontology);
@@ -354,15 +353,20 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private OWLOntology norm(Set<OWLClassAssertionAxiom> conceptAssertions, Set<OWLSubClassOfAxiom> conceptSubsumptions,
-	    Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions) throws OWLOntologyCreationException {
+	    Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions) {
 	final OWLOntologyManager om = ontology.getOWLOntologyManager();
-	final OWLOntology result = om.createOntology();
-	norm(conceptAssertions, new ConceptAssertionsNormalizer());
-	norm(conceptSubsumptions);
-	om.addAxioms(result, conceptAssertions);
-	om.addAxioms(result, conceptSubsumptions);
-	om.addAxioms(result, roleSubsumptions);
-	return result;
+	try {
+	    final OWLOntology result = om.createOntology();
+	    norm(conceptAssertions, new ConceptAssertionsNormalizer());
+	    norm(conceptSubsumptions);
+	    om.addAxioms(result, conceptAssertions);
+	    om.addAxioms(result, conceptSubsumptions);
+	    om.addAxioms(result, roleSubsumptions);
+	    return result;
+	} catch (final OWLOntologyCreationException e) {
+	    throw new RuntimeException(e);
+	}
+
     }
 
     private void norm(Set<OWLSubClassOfAxiom> axioms) {
@@ -400,8 +404,7 @@ public class ELReducedOntologyImpl implements ELReducedOntology {
     }
 
     private OWLOntology reducedOntology(Set<OWLClassAssertionAxiom> conceptAssertions,
-	    Set<OWLSubClassOfAxiom> conceptSubsumptions, Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions)
-		    throws OWLOntologyCreationException {
+	    Set<OWLSubClassOfAxiom> conceptSubsumptions, Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions) {
 	final OWLOntology result = norm(conceptAssertions, conceptSubsumptions, roleSubsumptions);
 	classify(result);
 	return result;

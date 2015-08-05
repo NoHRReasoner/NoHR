@@ -9,7 +9,6 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 
 import org.protege.editor.core.ui.list.MListSectionHeader;
-
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 
@@ -71,7 +70,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.ListModel#getElementAt(int)
      */
     @Override
@@ -81,7 +80,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.ListModel#getSize()
      */
     @Override

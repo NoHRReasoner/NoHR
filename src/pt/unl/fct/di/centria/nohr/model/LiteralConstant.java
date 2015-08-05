@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
@@ -5,48 +8,73 @@ import java.util.List;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
-public class NumericConstantImpl implements Constant {
+/**
+ * @author nunocosta
+ *
+ */
+public class LiteralConstant implements Constant {
 
-    private final Number number;
+    private final OWLLiteral literal;
 
-    NumericConstantImpl(Number number) {
-	final double dval = number.doubleValue();
-	if (number.shortValue() == dval)
-	    number = number.shortValue();
-	else if (number.intValue() == dval)
-	    number = number.intValue();
-	else if (number.longValue() == dval)
-	    number = number.longValue();
-	else if (number.floatValue() == dval)
-	    number = number.floatValue();
-	else
-	    number = number.doubleValue();
-	this.number = number;
+    /**
+     *
+     */
+    public LiteralConstant(OWLLiteral literal) {
+	this.literal = literal;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.FormatVisitable#acept(pt.unl.fct.di.
+     * centria.nohr.model.FormatVisitor)
+     */
     @Override
     public String acept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.Constant#acept(pt.unl.fct.di.centria.
+     * nohr.model.Visitor)
+     */
     @Override
-    public Constant acept(Visitor visit) {
-	return visit.visit(this);
+    public Constant acept(Visitor visitor) {
+	return visitor.visit(this);
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Term#asConstant()
+     */
     @Override
     public Constant asConstant() {
-	throw new ClassCastException();
+	return this;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Term#asList()
+     */
     @Override
     public List<Term> asList() {
 	throw new ClassCastException();
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#asNumber()
+     */
     @Override
     public Number asNumber() {
-	return number;
+	throw new ClassCastException();
     }
 
     /*
@@ -66,59 +94,67 @@ public class NumericConstantImpl implements Constant {
      */
     @Override
     public OWLLiteral asOWLLiteral() {
-	throw new ClassCastException();
+	return literal;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#asString()
+     */
     @Override
     public String asString() {
-	throw new ClassCastException();
+	return literal.getLiteral();
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#asTruthValue()
+     */
     @Override
     public TruthValue asTruthValue() {
 	throw new ClassCastException();
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Term#asVariable()
+     */
     @Override
     public Variable asVariable() {
 	throw new ClassCastException();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-	if (this == obj)
-	    return true;
-	if (obj == null)
-	    return false;
-	if (getClass() != obj.getClass())
-	    return false;
-	final NumericConstantImpl other = (NumericConstantImpl) obj;
-	if (number == null) {
-	    if (other.number != null)
-		return false;
-	} else if (number.doubleValue() != other.number.doubleValue())
-	    return false;
-	return true;
-    }
-
-    @Override
-    public int hashCode() {
-	return number.hashCode();
-    }
-
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Term#isConstant()
+     */
     @Override
     public boolean isConstant() {
 	return true;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Term#isList()
+     */
     @Override
     public boolean isList() {
 	return false;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#isNumber()
+     */
     @Override
     public boolean isNumber() {
-	return true;
+	return false;
     }
 
     /*
@@ -138,7 +174,7 @@ public class NumericConstantImpl implements Constant {
      */
     @Override
     public boolean isOWLLiteral() {
-	return false;
+	return true;
     }
 
     /*
@@ -148,21 +184,27 @@ public class NumericConstantImpl implements Constant {
      */
     @Override
     public boolean isString() {
-	return false;
+	return true;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Constant#isTruthValue()
+     */
     @Override
     public boolean isTruthValue() {
 	return false;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see pt.unl.fct.di.centria.nohr.model.Term#isVariable()
+     */
     @Override
     public boolean isVariable() {
 	return false;
     }
 
-    @Override
-    public String toString() {
-	return number.toString();
-    }
 }

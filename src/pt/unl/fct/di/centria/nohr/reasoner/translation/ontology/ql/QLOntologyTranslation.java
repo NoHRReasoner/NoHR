@@ -1,6 +1,5 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,8 +18,6 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -31,9 +28,8 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
@@ -49,8 +45,7 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 
     private final QLOriginalAxiomsTranslator originalAxiomsTranslator;
 
-    public QLOntologyTranslation(OWLOntology ontology, OntologyLabeler ol) throws OWLOntologyCreationException,
-	    OWLOntologyStorageException, IOException, CloneNotSupportedException, UnsupportedOWLProfile {
+    public QLOntologyTranslation(OWLOntology ontology) throws UnsupportedAxiomsException {
 	super(ontology);
 	normalizedOntology = new QLNormalizedOntologyImpl(ontology);
 	graph = new BasicTBoxGraph(normalizedOntology);

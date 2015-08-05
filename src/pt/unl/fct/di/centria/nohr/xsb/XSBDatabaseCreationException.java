@@ -1,30 +1,30 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.parsing;
+package pt.unl.fct.di.centria.nohr.xsb;
 
 /**
  * @author nunocosta
  *
  */
-public class ParseExcpetion extends Exception {
+public class XSBDatabaseCreationException extends Exception {
 
     /**
      *
      */
-    private static final long serialVersionUID = 222524131072855061L;
+    private static final long serialVersionUID = -5376164449185180022L;
 
     /**
      *
      */
-    public ParseExcpetion() {
+    public XSBDatabaseCreationException() {
 	// TODO Auto-generated constructor stub
     }
 
     /**
      * @param message
      */
-    public ParseExcpetion(String message) {
+    public XSBDatabaseCreationException(String message) {
 	super(message);
 	// TODO Auto-generated constructor stub
     }
@@ -33,7 +33,7 @@ public class ParseExcpetion extends Exception {
      * @param message
      * @param cause
      */
-    public ParseExcpetion(String message, Throwable cause) {
+    public XSBDatabaseCreationException(String message, Throwable cause) {
 	super(message, cause);
 	// TODO Auto-generated constructor stub
     }
@@ -44,7 +44,8 @@ public class ParseExcpetion extends Exception {
      * @param enableSuppression
      * @param writableStackTrace
      */
-    public ParseExcpetion(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public XSBDatabaseCreationException(String message, Throwable cause, boolean enableSuppression,
+	    boolean writableStackTrace) {
 	super(message, cause, enableSuppression, writableStackTrace);
 	// TODO Auto-generated constructor stub
     }
@@ -52,7 +53,7 @@ public class ParseExcpetion extends Exception {
     /**
      * @param cause
      */
-    public ParseExcpetion(Throwable cause) {
+    public XSBDatabaseCreationException(Throwable cause) {
 	super(cause);
 	// TODO Auto-generated constructor stub
     }

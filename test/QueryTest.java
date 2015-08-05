@@ -4,13 +4,15 @@ import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
+import com.declarativa.interprolog.util.IPException;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import helpers.KB;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
+import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
  *
@@ -23,7 +25,8 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAx
 public abstract class QueryTest extends KB {
 
     public QueryTest(Profiles profile) throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException, UnsupportedAxiomTypeException {
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	super();
 	AbstractOntologyTranslation.profile = profile;
     }

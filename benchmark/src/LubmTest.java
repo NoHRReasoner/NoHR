@@ -8,10 +8,10 @@ import java.util.Vector;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 import ubt.api.QueryConfigParser;
 import ubt.api.QuerySpecification;
@@ -95,8 +95,8 @@ public class LubmTest {
     private static void run(final Test test, final Path data,
 	    final Vector<QuerySpecification> queries, int u)
 		    throws OWLOntologyCreationException, OWLOntologyStorageException,
-		    UnsupportedOWLProfile, IOException, CloneNotSupportedException,
-		    UnsupportedAxiomTypeException, PrologParserException, Exception {
+		    OWLProfilesViolationsException, IOException, CloneNotSupportedException,
+		    UnsupportedAxiomsException, PrologParserException, Exception {
 	RuntimesLogger.setDataset(String.valueOf(u));
 	final LubmRepository nohrRepository = new LubmRepository(data,
 		test.getOutputDir());

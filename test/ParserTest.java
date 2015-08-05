@@ -13,7 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.parsing.Parser;
+import pt.unl.fct.di.centria.nohr.parsing.XSBParser;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
@@ -55,7 +55,7 @@ public class ParserTest {
     @Test
     public final void testParseQuery() {
 	try {
-	    final Parser parser = new Parser();
+	    final XSBParser parser = new XSBParser();
 	    final Variable X = var("X");
 	    Assert.assertEquals(parser.parseQuery("p(X)."), query(atom("p", X)));
 	    Assert.assertEquals(parser.parseQuery("p(a)."), query(atom("p", cons("a"))));

@@ -1,5 +1,6 @@
 package helpers;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,21 +11,15 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
-import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -34,23 +29,22 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.model.OWLReflexiveObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
+import com.declarativa.interprolog.util.IPException;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
+import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.parsing.Parser;
+import pt.unl.fct.di.centria.nohr.parsing.XSBParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
+import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntology;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntologyImpl;
+import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 public class KB {
 
@@ -62,36 +56,31 @@ public class KB {
 
     private HybridKB hybridKB;
 
-    private Parser parser;
+    private XSBParser parser;
 
     private final Map<String, OWLIndividual> individuals;
-
-    private final OntologyLabeler ol;
-
-    private final OWLOntologyManager om;
 
     private final OWLOntology ontology;
 
     private final Map<String, OWLObjectProperty> roles;
 
-    public KB() throws OWLOntologyCreationException, OWLOntologyStorageException, UnsupportedOWLProfile, IOException,
-	    CloneNotSupportedException, UnsupportedAxiomTypeException {
-	om = OWLManager.createOWLOntologyManager();
+    public KB() throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
+	    IOException, CloneNotSupportedException, UnsupportedAxiomsException, IPException,
+	    XSBDatabaseCreationException {
+	final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
 	df = om.getOWLDataFactory();
 	ontology = om.createOntology(IRI.generateDocumentIRI());
-	final OWLAnnotationProperty lblAnnotProp = om.getOWLDataFactory()
-		.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
-	ol = new OntologyLabeler(om.createOntology(), lblAnnotProp);
 	concepts = new HashMap<String, OWLClass>();
 	roles = new HashMap<String, OWLObjectProperty>();
 	dataRoles = new HashMap<String, OWLDataProperty>();
 	individuals = new HashMap<String, OWLIndividual>();
-	hybridKB = new HybridKB(ontology);
-	parser = new Parser(new OntologyIndexImpl(ontology));
+	hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology.getAxioms());
+	parser = new XSBParser(new OntologyIndexImpl(ontology));
     }
 
     private void addAxiom(OWLAxiom axiom) {
-	om.addAxiom(ontology, axiom);
+	ontology.getOWLOntologyManager().addAxiom(ontology, axiom);
+	hybridKB.addAxiom(axiom);
     }
 
     public void assertFalse(String query) {
@@ -106,7 +95,7 @@ public class KB {
 
     public void assertNegative(String query) {
 	try {
-	    final Parser parser = new Parser(new OntologyIndexImpl(ontology));
+	    final XSBParser parser = new XSBParser(new OntologyIndexImpl(ontology));
 	    if (!query.endsWith("."))
 		query += ".";
 	    final Query q = parser.parseQuery(query);
@@ -146,16 +135,27 @@ public class KB {
     }
 
     public void clear() {
-	final Set<OWLDeclarationAxiom> declarationAxioms = ontology.getAxioms(AxiomType.DECLARATION);
-	om.removeAxioms(ontology, ontology.getAxioms());
-	om.addAxioms(ontology, declarationAxioms);
+	// final Set<OWLDeclarationAxiom> declarationAxioms =
+	// ontology.getAxioms(AxiomType.DECLARATION);
 	try {
-	    hybridKB = new HybridKB(ontology);
-	    parser = new Parser(new OntologyIndexImpl(ontology));
-	} catch (OWLOntologyCreationException | OWLOntologyStorageException | UnsupportedOWLProfile | IOException
-		| CloneNotSupportedException | UnsupportedAxiomTypeException e) {
+	    hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")));
+	} catch (final IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (final OWLProfilesViolationsException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (final UnsupportedAxiomsException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (final IPException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (final XSBDatabaseCreationException e) {
+	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+	parser = new XSBParser(new OntologyIndexImpl(ontology));
     }
 
     public OWLClassExpression complement(OWLClassExpression concept) {
@@ -166,18 +166,18 @@ public class KB {
 	return df.getOWLObjectComplementOf(conc(conceptName));
     }
 
-    public OWLClass concept() {
-	return conc("a" + concepts.size());
-    }
-
     public OWLClass conc(String name) {
 	OWLClass concept = concepts.get(name);
 	if (concept == null) {
 	    concept = df.getOWLClass(getEntityIRI(name));
-	    om.addAxiom(ontology, df.getOWLDeclarationAxiom(concept));
+	    addAxiom(df.getOWLDeclarationAxiom(concept));
 	    concepts.put(name, concept);
 	}
 	return concept;
+    }
+
+    public OWLClass concept() {
+	return conc("a" + concepts.size());
     }
 
     private Set<OWLClass> concepts(String... conceptNames) {
@@ -199,7 +199,7 @@ public class KB {
 	OWLDataProperty dataRole = dataRoles.get(name);
 	if (dataRole == null) {
 	    dataRole = df.getOWLDataProperty(getEntityIRI(name));
-	    om.addAxiom(ontology, df.getOWLDeclarationAxiom(dataRole));
+	    addAxiom(df.getOWLDeclarationAxiom(dataRole));
 	    dataRoles.put(name, dataRole);
 	}
 	return dataRole;
@@ -213,7 +213,7 @@ public class KB {
     }
 
     public void disjointConcepts(OWLClassExpression... concepts) {
-	om.addAxiom(ontology, df.getOWLDisjointClassesAxiom(concepts));
+	addAxiom(df.getOWLDisjointClassesAxiom(concepts));
     }
 
     public void disjointConcepts(String... conceptNames) {
@@ -221,7 +221,7 @@ public class KB {
     }
 
     public void disjointRoles(OWLObjectPropertyExpression... ope) {
-	om.addAxiom(ontology, df.getOWLDisjointObjectPropertiesAxiom(ope));
+	addAxiom(df.getOWLDisjointObjectPropertiesAxiom(ope));
     }
 
     public void disjointRoles(String... roleNames) {
@@ -265,7 +265,7 @@ public class KB {
 	    Assert.fail(e.getMessage());
 	if (e instanceof PrologParserException)
 	    Assert.fail(e.getMessage());
-	if (e instanceof UnsupportedOWLProfile)
+	if (e instanceof OWLProfilesViolationsException)
 	    Assert.fail("ontology is not QL nor EL!\n" + e.getMessage());
 	if (e instanceof InconsistentOntologyException)
 	    Assert.fail("inconsistent ontology");
@@ -275,7 +275,7 @@ public class KB {
 	    Assert.fail(e.getMessage());
 	if (e instanceof CloneNotSupportedException)
 	    Assert.fail(e.getMessage());
-	if (e instanceof UnsupportedAxiomTypeException)
+	if (e instanceof UnsupportedAxiomsException)
 	    Assert.fail(e.getMessage());
     }
 
@@ -308,24 +308,16 @@ public class KB {
 
     String getLabel(Object obj) {
 	if (obj instanceof OWLEntity)
-	    return getLabel((OWLEntity) obj);
+	    return getLabel(obj);
 	else if (obj instanceof OWLIndividual)
-	    return getLabel((OWLIndividual) obj);
+	    return getLabel(obj);
 	else if (obj instanceof OWLLiteral)
-	    return OntologyLabeler.escapeAtom(((OWLLiteral) obj).getLiteral());
+	    return Utils.escapeAtom(((OWLLiteral) obj).getLiteral());
 	else
 	    return null;
     }
 
-    String getLabel(OWLEntity e) {
-	return ol.getLabel(e, 1);
-    }
-
-    String getLabel(OWLIndividual i) {
-	return ol.getLabel(i, 1);
-    }
-
-    public QLNormalizedOntology getQLNormalizedOntology() {
+    public QLNormalizedOntology getQLNormalizedOntology() throws UnsupportedAxiomsException {
 	return new QLNormalizedOntologyImpl(ontology);
     }
 
@@ -380,7 +372,7 @@ public class KB {
     }
 
     public void object(OWLObjectProperty role, OWLIndividual ind1, OWLIndividual ind2) {
-	om.addAxiom(ontology, df.getOWLObjectPropertyAssertionAxiom(role, ind1, ind2));
+	addAxiom(df.getOWLObjectPropertyAssertionAxiom(role, ind1, ind2));
     }
 
     public void object(String roleName, String subjectIndividualName, String individualName) {
@@ -404,7 +396,7 @@ public class KB {
 	OWLObjectProperty role = roles.get(name);
 	if (role == null) {
 	    role = df.getOWLObjectProperty(getEntityIRI(name));
-	    om.addAxiom(ontology, df.getOWLDeclarationAxiom(role));
+	    addAxiom(df.getOWLDeclarationAxiom(role));
 	    roles.put(name, role);
 	}
 	return role;
@@ -449,7 +441,7 @@ public class KB {
     }
 
     public void subConcept(OWLClassExpression b1, OWLClassExpression b2) {
-	om.addAxiom(ontology, df.getOWLSubClassOfAxiom(b1, b2));
+	addAxiom(df.getOWLSubClassOfAxiom(b1, b2));
     }
 
     public void subConcept(String subName, String superName) {
@@ -469,11 +461,11 @@ public class KB {
     }
 
     public void subRole(List<? extends OWLObjectPropertyExpression> chain, OWLObjectPropertyExpression q2) {
-	om.addAxiom(ontology, df.getOWLSubPropertyChainOfAxiom(chain, q2));
+	addAxiom(df.getOWLSubPropertyChainOfAxiom(chain, q2));
     }
 
     public void subRole(OWLObjectPropertyExpression q1, OWLObjectPropertyExpression q2) {
-	om.addAxiom(ontology, df.getOWLSubObjectPropertyOfAxiom(q1, q2));
+	addAxiom(df.getOWLSubObjectPropertyOfAxiom(q1, q2));
     }
 
     public void subRole(String subName, String superName) {
@@ -515,7 +507,7 @@ public class KB {
     }
 
     public void typeOf(OWLClassExpression concept, OWLIndividual individual) {
-	om.addAxiom(ontology, df.getOWLClassAssertionAxiom(concept, individual));
+	addAxiom(df.getOWLClassAssertionAxiom(concept, individual));
     }
 
     public void typeOf(String conceptName, String individualName) {
@@ -523,7 +515,7 @@ public class KB {
     }
 
     public void value(OWLDataProperty role, OWLIndividual ind1, String litral) {
-	om.addAxiom(ontology, df.getOWLDataPropertyAssertionAxiom(role, ind1, df.getOWLLiteral(litral)));
+	addAxiom(df.getOWLDataPropertyAssertionAxiom(role, ind1, df.getOWLLiteral(litral)));
     }
 
     public void value(String dataRoleName, String subjectIndividualName, String literal) {

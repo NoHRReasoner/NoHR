@@ -54,7 +54,7 @@ class RuleListItem implements MListItem {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

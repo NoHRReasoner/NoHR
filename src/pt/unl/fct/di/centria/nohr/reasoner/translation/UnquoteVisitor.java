@@ -1,6 +1,8 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
+
+import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.ListTermImpl;
@@ -13,7 +15,6 @@ import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
 
 public class UnquoteVisitor implements Visitor {
 
@@ -30,7 +31,7 @@ public class UnquoteVisitor implements Visitor {
 	if (constant.isNumber())
 	    return constant;
 	else
-	    return cons(OntologyLabeler.unescapeAtom(constant.asString()));
+	    return cons(Utils.unescapeAtom(constant.asString()));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class UnquoteVisitor implements Visitor {
 
     @Override
     public Predicate visit(Predicate pred) {
-	return Predicates.pred(OntologyLabeler.unescapeAtom(pred.getSymbol()),
+	return Predicates.pred(Utils.unescapeAtom(pred.getSymbol()),
 		pred.getArity());
     }
 

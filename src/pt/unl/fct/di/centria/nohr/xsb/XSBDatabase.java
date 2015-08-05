@@ -3,14 +3,24 @@ package pt.unl.fct.di.centria.nohr.xsb;
 import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 
 import java.io.File;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.declarativa.interprolog.AbstractPrologEngine;
 import com.declarativa.interprolog.SolutionIterator;
@@ -32,12 +42,13 @@ public class XSBDatabase {
 
     private SolutionIterator lastSolutionsIterator;
 
-    protected final Path xsbBinDirectory;
+    protected final File xsbBinDirectory;
 
     protected AbstractPrologEngine xsbEngine;
 
-    public XSBDatabase(Path xsbPath) throws IPException {
-	xsbBinDirectory = xsbPath.toAbsolutePath();
+    public XSBDatabase(File xsbBinDirectory) throws IPException, XSBDatabaseCreationException {
+	Objects.requireNonNull(xsbBinDirectory);
+	this.xsbBinDirectory = xsbBinDirectory;
 	formatVisitor = new XSBFormatVisitor();
 	startXsbEngine();
     }
@@ -77,7 +88,43 @@ public class XSBDatabase {
     }
 
     public void clear() {
-	startXsbEngine();
+	try {
+	    startXsbEngine();
+	} catch (IPException | XSBDatabaseCreationException e) {
+	    throw new RuntimeException(e);
+	}
+    }
+
+    private XSBSubprocessEngine createXSBSubprocessEngine() throws IPException, XSBDatabaseCreationException {
+	XSBSubprocessEngine result = null;
+	final ExecutorService executor = Executors.newSingleThreadExecutor();
+	final Future<XSBSubprocessEngine> future = executor.submit(new Callable<XSBSubprocessEngine>() {
+
+	    @Override
+	    public XSBSubprocessEngine call() throws Exception {
+		return new XSBSubprocessEngine(xsbBinDirectory.toPath().toAbsolutePath().toString());
+	    }
+	});
+
+	try {
+	    result = future.get(3, TimeUnit.SECONDS);
+	} catch (final TimeoutException e) {
+	    // Without the below cancel the thread will continue to live
+	    // even though the timeout exception thrown.
+	    future.cancel(false);
+	    throw new XSBDatabaseCreationException();
+	} catch (final InterruptedException e) {
+	    throw new RuntimeException(e);
+	} catch (final ExecutionException e) {
+	    final Throwable cause = e.getCause();
+	    if (cause instanceof IPException)
+		throw (IPException) cause;
+	    else
+		throw new RuntimeException(e);
+	}
+
+	executor.shutdownNow();
+	return result;
     }
 
     public void dispose() {
@@ -216,12 +263,12 @@ public class XSBDatabase {
 	return answers;
     }
 
-    protected void startXsbEngine() throws IPException {
+    protected void startXsbEngine() throws IPException, XSBDatabaseCreationException {
 	if (xsbEngine != null) {
 	    xsbEngine.shutdown();
 	    xsbEngine = null;
 	}
-	xsbEngine = new XSBSubprocessEngine(xsbBinDirectory.toString());
+	xsbEngine = createXSBSubprocessEngine();
 	final XSBDatabase self = this;
 	xsbEngine.consultFromPackage("startup", self);
 	xsbEngine.deterministicGoal("set_prolog_flag(unknown, fail)");

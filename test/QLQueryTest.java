@@ -4,10 +4,13 @@ import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
+import com.declarativa.interprolog.util.IPException;
+
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
+import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
  *
@@ -19,8 +22,9 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAx
  */
 public class QLQueryTest extends QueryTest {
 
-    public QLQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException, UnsupportedOWLProfile,
-	    IOException, CloneNotSupportedException, UnsupportedAxiomTypeException {
+    public QLQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	super(Profiles.OWL2_QL);
     }
 

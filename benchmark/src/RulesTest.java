@@ -24,22 +24,25 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.parsing.Parser;
+import pt.unl.fct.di.centria.nohr.parsing.XSBParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.UnsupportedAxiomTypeException;
+import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 import ubt.api.QueryConfigParser;
 import ubt.api.QuerySpecification;
 
+import com.declarativa.interprolog.util.IPException;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 public class RulesTest {
 
-    private static void loadRules(HybridKB nohr, Parser parser, Path path) throws IOException, PrologParserException {
+    private static void loadRules(HybridKB nohr, XSBParser parser, Path path)
+	    throws IOException, PrologParserException {
 	File file = path.toFile();
 	if (file.exists()) {
 	    final FileInputStream fstream = new FileInputStream(file);
@@ -63,7 +66,8 @@ public class RulesTest {
     }
 
     public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    UnsupportedOWLProfile, IOException, CloneNotSupportedException, UnsupportedAxiomTypeException {
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	if (args.length != 3) {
 	    System.out.println("expected arguments: <ontology> <programs directory> <queries file>");
 	    System.exit(1);
@@ -97,8 +101,8 @@ public class RulesTest {
 		e.printStackTrace();
 	    }
 	    RuntimesLogger.stop("ontology loading", "loading");
-	    final HybridKB nohr = new HybridKB(ontology);
-	    final Parser parser = new Parser(new OntologyIndexImpl(ontology));
+	    final HybridKB nohr = new HybridKB(new File(System.getProperty("XSB_BIN_DIRECTORY")), ontology.getAxioms());
+	    final XSBParser parser = new XSBParser(new OntologyIndexImpl(ontology));
 	    final Iterator<?> queriesIt1 = queries.iterator();
 	    while (queriesIt1.hasNext()) {
 		final QuerySpecification querySpecification = (QuerySpecification) queriesIt1.next();

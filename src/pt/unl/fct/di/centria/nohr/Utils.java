@@ -23,4 +23,12 @@ public class Utils {
 	}
 	return new String(sb);
     }
+
+    public static String escapeAtom(String atom) {
+        return atom.replaceAll("'", "''");
+    }
+
+    public static String unescapeAtom(String atom) {
+        return atom.replaceAll("''", "'");
+    }
 }

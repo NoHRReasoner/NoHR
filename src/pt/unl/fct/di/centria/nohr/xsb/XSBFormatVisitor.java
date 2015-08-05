@@ -29,9 +29,8 @@ public class XSBFormatVisitor implements FormatVisitor {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.Answer)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.Answer)
      */
     @Override
     public String visit(Answer answer) {
@@ -41,9 +40,8 @@ public class XSBFormatVisitor implements FormatVisitor {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.Atom)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.Atom)
      */
     @Override
     public String visit(Atom atom) {
@@ -55,9 +53,8 @@ public class XSBFormatVisitor implements FormatVisitor {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.Constant)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.Constant)
      */
     @Override
     public String visit(Constant constant) {
@@ -69,9 +66,8 @@ public class XSBFormatVisitor implements FormatVisitor {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.ListTermImpl)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.ListTermImpl)
      */
     @Override
     public String visit(ListTermImpl listTermImpl) {
@@ -80,30 +76,26 @@ public class XSBFormatVisitor implements FormatVisitor {
 
     @Override
     public String visit(MetaPredicate metaPredicate) {
-	return quoted(metaPredicate.getPrefix()
-		+ metaPredicate.getPredicate().getSymbol());
+	return quoted(metaPredicate.getPrefix() + metaPredicate.getPredicate().getSymbol());
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.NegativeLiteral)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.NegativeLiteral)
      */
     @Override
     public String visit(NegativeLiteral literal) {
-	final String format = literal.isExistentiallyNegative() ? "not_exists(%s)"
-		: "tnot(%s)";
+	final String format = literal.isExistentiallyNegative() ? "not_exists(%s)" : "tnot(%s)";
 	return String.format(format, literal.getAtom().acept(this));
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.predicates.Predicate)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.predicates.Predicate)
      */
     @Override
     public String visit(Predicate predicate) {
@@ -113,9 +105,8 @@ public class XSBFormatVisitor implements FormatVisitor {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.Query)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.Query)
      */
     @Override
     public String visit(Query query) {
@@ -125,9 +116,8 @@ public class XSBFormatVisitor implements FormatVisitor {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.Rule)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.Rule)
      */
     @Override
     public String visit(Rule rule) {
@@ -142,9 +132,8 @@ public class XSBFormatVisitor implements FormatVisitor {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria
-     * .nohr.model.Variable)
+     * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.
+     * centria .nohr.model.Variable)
      */
     @Override
     public String visit(Variable variable) {

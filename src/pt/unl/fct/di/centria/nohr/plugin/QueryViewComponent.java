@@ -5,13 +5,21 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -24,7 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -39,20 +46,69 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.DefaultCaret;
 
-import org.protege.editor.owl.model.OWLModelManager;
+import org.protege.editor.core.ui.error.ErrorLogPanel;
+import org.protege.editor.owl.model.event.EventType;
+import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
+import org.protege.editor.owl.model.event.OWLModelManagerListener;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyChange;
+import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
+
+import com.declarativa.interprolog.util.IPException;
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.parsing.Parser;
+import pt.unl.fct.di.centria.nohr.parsing.XSBParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 public class QueryViewComponent extends AbstractHybridViewComponent {
-    // implements OWLModelManagerListener {
+
+    class NoHRCreatorWorker extends SwingWorker<Void, Void> {
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see javax.swing.SwingWorker#doInBackground()
+	 */
+	@Override
+	protected Void doInBackground() throws Exception {
+	    startQueryEngine(getOWLModelManager().getActiveOntology().getAxioms());
+	    return null;
+	}
+
+    }
+
+    class OntologyChangesListener implements OWLOntologyChangeListener {
+
+	private final OWLOntology ontology;
+
+	/**
+	 *
+	 */
+	public OntologyChangesListener(OWLOntology ontology) {
+	    this.ontology = ontology;
+	}
+
+	@Override
+	public void ontologiesChanged(List<? extends OWLOntologyChange> changes) throws OWLException {
+	    for (final OWLOntologyChange change : changes)
+		if (change.getOntology() == ontology)
+		    if (change.isAddAxiom())
+			nohr.addAxiom(change.getAxiom());
+		    else if (change.isRemoveAxiom())
+			nohr.removeAxiom(change.getAxiom());
+	}
+    }
 
     class QueryWorker extends SwingWorker<Void, Void> {
 	/*
@@ -60,42 +116,8 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	 */
 	@Override
 	public Void doInBackground() {
-	    try {
-		disableValuationCheckBoxes();
-		isShowProgress = true;
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		    @Override
-		    public void run() {
-			final int delay = 750; // milliseconds
-			final ActionListener taskPerformer = new ActionListener() {
-			    @Override
-			    public void actionPerformed(ActionEvent evt) {
-				if (isShowProgress)
-				    progressFrame.setVisible(true);
-			    }
-			};
-			new Timer(delay, taskPerformer).start();
-		    }
-		});
-		textField.selectAll();
-		textField.requestFocus();
-		final Parser parser = new Parser(new OntologyIndexImpl(getOWLModelManager().getActiveOntology()));
-		final Query query = parser.parseQuery(textField.getText());
-		fillTable(query, nohr.queryAll(query));
-
-	    } catch (final Exception e) {
-		progressFrame.setVisible(false);
-		e.printStackTrace();
-	    }
+	    query();
 	    return null;
-	}
-
-	/*
-	 * Executed in event dispatching thread
-	 */
-	@Override
-	public void done() {
-	    progressFrame.setVisible(false);
 	}
     }
 
@@ -109,25 +131,44 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	nohr = null;
     }
 
+    private Query query;
     private final List<JCheckBox> checkBoxs = new ArrayList<JCheckBox>();
     private String filter;
     private boolean hasVariables;
     // private boolean isNeedToQuery;
     private boolean isShowAllSolutions = true;
-    private boolean isShowProgress;
     // private JLabel progressLabel;
     private JFrame progressFrame;
     private JLabel progressLabel;
     private QueryWorker queryWorker;
     private JPanel settingsPanel;
     private TableRowSorter<DefaultTableModel> sorter;
+
     private JTable table;
 
     private final DefaultTableCellRenderer tableHeaderRenderer = new DefaultTableCellRenderer();
 
     private DefaultTableModel tableModel;
 
-    private JTextField textField;
+    private JTextField queryField;
+
+    private XSBParser parser;
+
+    private final OWLModelManagerListener modelManagerListner = new OWLModelManagerListener() {
+
+	@Override
+	public void handleChange(OWLModelManagerChangeEvent env) {
+	    if (env.isType(EventType.ACTIVE_ONTOLOGY_CHANGED))
+		startQueryEngine(env.getSource().getActiveOntology().getAxioms());
+
+	}
+    };
+
+    private OntologyChangesListener ontologyChangesListner;
+
+    private JButton executeButton;
+
+    private boolean started;
 
     private void addChbListners(JCheckBox button) {
 	checkBoxs.add(button);
@@ -138,25 +179,6 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	    }
 	});
 
-    }
-
-    protected JButton addProcessButton() {
-	final JButton button = new JButton("Execute");
-	button.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		if (textField.getText().length() > 0)
-		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-			    queryWorker = new QueryWorker();
-			    queryWorker.execute();
-			}
-		    });
-	    }
-	});
-
-	return button;
     }
 
     private void addProgressFrame() {
@@ -207,39 +229,6 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 
     }
 
-    protected JTextField addQueryField() {
-	textField = new JTextField();
-	textField.addKeyListener(new KeyListener() {
-	    @Override
-	    public void keyPressed(KeyEvent e) {
-		updateText(e);
-	    }
-
-	    @Override
-	    public void keyReleased(KeyEvent e) {
-
-	    }
-
-	    @Override
-	    public void keyTyped(KeyEvent e) {
-
-	    }
-
-	    private void updateText(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER && textField.getText().length() > 0)
-		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-			    queryWorker = new QueryWorker();
-			    queryWorker.execute();
-			}
-		    });
-	    }
-	});
-
-	return textField;
-    }
-
     protected JPanel addSettingsPanel() {
 	final JPanel settingsPanel = new JPanel(new GridBagLayout());
 
@@ -264,7 +253,7 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	    @Override
 	    public void actionPerformed(ActionEvent ae) {
 		isShowAllSolutions = false;
-		if (textField.getText().length() > 0)
+		if (queryField.getText().length() > 0)
 		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -280,7 +269,7 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	    @Override
 	    public void actionPerformed(ActionEvent ae) {
 		isShowAllSolutions = true;
-		if (textField.getText().length() > 0)
+		if (queryField.getText().length() > 0)
 		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -327,6 +316,24 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	return settingsPanel;
     }
 
+    private boolean canExecute() {
+	if (NoHRPreferences.getInstance().getXSBBinDirectory() == null)
+	    return false;
+	if (query == null)
+	    return false;
+	if (nohr == null) {
+	    new NoHRCreatorWorker().execute();
+	    if (nohr == null)
+		return false;
+	}
+	return true;
+    }
+
+    // private void disableValuationCheckBoxes() {
+    // for (final JCheckBox checkBox : checkBoxs)
+    // checkBox.setEnabled(false);
+    // }
+
     private void clearTable(final boolean isAddEnumeration) {
 	SwingUtilities.invokeLater(new Runnable() {
 	    @Override
@@ -342,14 +349,73 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 
     }
 
-    private void disableValuationCheckBoxes() {
-	for (final JCheckBox checkBox : checkBoxs)
-	    checkBox.setEnabled(false);
+    protected JButton createExecuteButton() {
+	final JButton button = new JButton("Execute");
+	button.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		if (queryField.getText().length() > 0)
+		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+			    queryWorker = new QueryWorker();
+			    queryWorker.execute();
+			}
+		    });
+	    }
+	});
+
+	return button;
+    }
+
+    protected JTextField createQueryField() {
+	queryField = new JTextField();
+	queryField.addKeyListener(new KeyListener() {
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+		updateText(e);
+	    }
+
+	    @Override
+	    public void keyReleased(KeyEvent e) {
+
+	    }
+
+	    @Override
+	    public void keyTyped(KeyEvent e) {
+
+	    }
+
+	    private void updateText(KeyEvent e) {
+		try {
+		    query = parser.parseQuery(queryField.getText());
+		    queryField.setBackground(Color.WHITE);
+		    executeButton.setEnabled(canExecute());
+		} catch (final IOException e1) {
+		    // TODO Auto-generated catch block
+		    e1.printStackTrace();
+		} catch (final PrologParserException e1) {
+		    queryField.setBackground(Color.RED);
+		}
+		if (e.getKeyCode() == KeyEvent.VK_ENTER && queryField.getText().length() > 0)
+		    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+			    queryWorker = new QueryWorker();
+			    queryWorker.execute();
+			}
+		    });
+	    }
+	});
+
+	return queryField;
     }
 
     @Override
     protected void disposeOWLView() {
 	nohr = null;
+	getOWLModelManager().removeListener(modelManagerListner);
+	getOWLModelManager().removeOntologyChangeListener(ontologyChangesListner);
     }
 
     private void enableValuationCheckBoxes() {
@@ -380,74 +446,58 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
     }
 
     private void fillTable(Query query, final Collection<Answer> answers) {
-	try {
-	    isShowProgress = false;
 
-	    hasVariables = !query.getVariables().isEmpty();
+	hasVariables = !query.getVariables().isEmpty();
 
-	    clearTable(hasVariables);
+	clearTable(hasVariables);
 
-	    for (final Variable var : query.getVariables())
-		SwingUtilities.invokeLater(new Runnable() {
-		    @Override
-		    public void run() {
-			tableModel.addColumn(var.toString());
+	for (final Variable var : query.getVariables())
+	    SwingUtilities.invokeLater(new Runnable() {
+		@Override
+		public void run() {
+		    tableModel.addColumn(var.toString());
+		}
+	    });
+	if (!answers.isEmpty()) {
+	    SwingUtilities.invokeLater(new Runnable() {
+		@Override
+		public void run() {
+		    for (final Answer answer : answers) {
+			final Vector<String> row = new Vector<String>();
+			if (hasVariables)
+			    row.add(Integer.toString(table.getRowCount() + 1));
+			for (final Term t : answer.getValues())
+			    row.add(t.toString());
+			row.add(answer.getValuation().name().toLowerCase());
+			if (!hasVariables || filter == null || filter.length() == 0
+				|| filter.contains(answer.getValuation().name().toLowerCase()))
+			    tableModel.addRow(row);
+			if (!isShowAllSolutions && table.getRowCount() > 0)
+			    break;
 		    }
-		});
-	    if (!answers.isEmpty()) {
-		SwingUtilities.invokeLater(new Runnable() {
-		    @Override
-		    public void run() {
-			for (final Answer answer : answers) {
-			    final Vector<String> row = new Vector<String>();
-			    if (hasVariables)
-				row.add(Integer.toString(table.getRowCount() + 1));
-			    for (final Term t : answer.getValues())
-				row.add(t.toString());
-			    row.add(answer.getValuation().name().toLowerCase());
-			    if (!hasVariables || filter == null || filter.length() == 0
-				    || filter.contains(answer.getValuation().name().toLowerCase()))
-				tableModel.addRow(row);
-			    if (!isShowAllSolutions && table.getRowCount() > 0)
-				break;
-			}
-		    }
-		});
-		if (hasVariables)
-		    setFirstColumnWidth();
-	    } else
-		SwingUtilities.invokeLater(new Runnable() {
-		    @Override
-		    public void run() {
-			if (table.getRowCount() == 0)
-			    fillNoAnswersTable("");
-		    }
-		});
-	} catch (final Exception e) {
-	    fillNoAnswersTable("");
-	} finally {
+		}
+	    });
+	    if (hasVariables)
+		setFirstColumnWidth();
+	} else
+	    SwingUtilities.invokeLater(new Runnable() {
+		@Override
+		public void run() {
+		    if (table.getRowCount() == 0)
+			fillNoAnswersTable("");
+		}
+	    });
 
-	    enableValuationCheckBoxes();
-	}
+	enableValuationCheckBoxes();
 
     }
 
-    // @Override
-    // public void handleChange(OWLModelManagerChangeEvent event) {
-    // if (event
-    // .isType(org.protege.editor.owl.model.event.EventType.ACTIVE_ONTOLOGY_CHANGED))
-    // try {
-    // nohr = new HybridKB(getOWLModelManager()
-    // .getOWLOntologyManager(), getOWLModelManager()
-    // .getActiveOntology(), getOWLModelManager()
-    // .getReasoner());
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
-
     @Override
     protected void initialiseOWLView() {
+	ontologyChangesListner = new OntologyChangesListener(getOWLModelManager().getActiveOntology());
+	getOWLModelManager().addListener(modelManagerListner);
+	getOWLModelManager().addOntologyChangeListener(ontologyChangesListner);
+	parser = new XSBParser(new OntologyIndexImpl(getOWLModelManager().getActiveOntology()));
 	setLayout(new BorderLayout(12, 12));
 	final JPanel panel = new JPanel(new GridBagLayout());
 
@@ -466,34 +516,35 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	subC.gridheight = 1;
 	subC.weightx = 1;
 	subC.ipady = 0;
-	JScrollPane scrollPane;
+	// JScrollPane scrollPane;
 
 	final JPanel queryPanel = new JPanel(new GridBagLayout());
 	queryPanel.setBorder(BorderFactory.createTitledBorder("Query"));
 	c.gridy = 1;
 	c.weighty = 0.3;
 	subC.ipady = 10;
-	queryPanel.add(addQueryField(), subC);
+	queryPanel.add(createQueryField(), subC);
 	c.gridy = 2;
 	c.weighty = 0.3;
 	subC.fill = GridBagConstraints.NONE;
 	subC.gridy = 1;
 	subC.ipady = 0;
 	subC.anchor = GridBagConstraints.WEST;
-	queryPanel.add(addProcessButton(), subC);
+	executeButton = createExecuteButton();
+	queryPanel.add(executeButton, subC);
 	panel.add(queryPanel, c);
 	subC.ipady = 0;
 	subC.fill = GridBagConstraints.BOTH;
 
 	final JPanel resultPanel = new JPanel(new GridBagLayout());
 
-	final JPanel tabPanel = new JPanel(new GridBagLayout());
-	final JPanel outputPanel = new JPanel(new GridBagLayout());
+	// final JPanel tabPanel = new JPanel(new GridBagLayout());
+	// final JPanel outputPanel = new JPanel(new GridBagLayout());
 
-	final JTabbedPane tabbedPane = new JTabbedPane();
-	tabbedPane.setTabPlacement(SwingConstants.TOP);
-	tabbedPane.setBorder(BorderFactory.createTitledBorder("Output"));
-	tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+	// final JTabbedPane tabbedPane = new JTabbedPane();
+	// tabbedPane.setTabPlacement(SwingConstants.TOP);
+	// tabbedPane.setBorder(BorderFactory.createTitledBorder("Output"));
+	// tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 	c.gridy = 3;
 	c.weighty = 3;
 
@@ -504,28 +555,28 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	final DefaultCaret caret = (DefaultCaret) textArea.getCaret();
 	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-	scrollPane = new JScrollPane(textArea);
-	outputPanel.add(scrollPane, subC);
+	// scrollPane = new JScrollPane(textArea);
+	// outputPanel.add(scrollPane, subC);
 
 	tableModel = new DefaultTableModel();
 	sorter = new TableRowSorter<DefaultTableModel>(tableModel);
 	table = new JTable(tableModel);
-	// table.setAutoResizeMode( JTable.AUTO_RESIZE_ALL_COLUMNS );
 	table.setRowHeight(30);
 	table.setRowSorter(sorter);
 	table.setFillsViewportHeight(true);
 	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	tableHeaderRenderer.setBackground(new Color(239, 198, 46));
 	final JScrollPane tableSrollPane = new JScrollPane(table);
-	tabbedPane.addTab("Result", tableSrollPane);
-	tabbedPane.addTab("Log", outputPanel);
-	tabPanel.add(tabbedPane, subC);
+	// tabbedPane.addTab("Result", tableSrollPane);
+	// tabbedPane.addTab("Log", outputPanel);
+	// tabPanel.add(tabbedPane, subC);
 	subC.gridx = 0;
 	subC.gridwidth = 1;
 	subC.gridheight = 1;
 	subC.gridy = 0;
 	subC.weightx = 0.95;
-	resultPanel.add(tabPanel, subC);
+	// resultPanel.add(tabPanel, subC);
+	resultPanel.add(tableSrollPane, subC);
 	subC.anchor = GridBagConstraints.NORTHWEST;
 	subC.gridx = 1;
 	subC.weightx = 0.05;
@@ -536,10 +587,78 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	panel.add(resultPanel, c);
 
 	add(panel, BorderLayout.CENTER);
-	startQueryEngine();
+
+	new NoHRCreatorWorker().execute();
+
 	addProgressFrame();
-	textField.requestFocus();
-	textField.requestFocusInWindow();
+	queryField.requestFocus();
+	queryField.requestFocusInWindow();
+
+	executeButton.setEnabled(NoHRPreferences.getInstance().getXSBBinDirectory() != null);
+
+	addMouseListener(new MouseListener() {
+
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	    }
+
+	    @Override
+	    public void mouseEntered(MouseEvent e) {
+		executeButton.setEnabled(canExecute());
+
+	    }
+
+	    @Override
+	    public void mouseExited(MouseEvent e) {
+	    }
+
+	    @Override
+	    public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	    }
+
+	    @Override
+	    public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	    }
+	});
+
+	addFocusListener(new FocusListener() {
+
+	    @Override
+	    public void focusGained(FocusEvent e) {
+		executeButton.setEnabled(canExecute());
+
+	    }
+
+	    @Override
+	    public void focusLost(FocusEvent e) {
+
+	    }
+	});
+
+    }
+
+    private void query() {
+	try {
+	    fillTable(query, nohr.queryAll(query));
+	} catch (final IOException e) {
+	    MessageDialogs.translationFileProblems(QueryViewComponent.this, e);
+	} catch (final UnsupportedAxiomsException e) {
+	    final boolean ignore = MessageDialogs.violations(QueryViewComponent.this, e);
+	    if (ignore) {
+		for (final OWLAxiom axiom : e.getUnsupportedAxioms())
+		    nohr.removeAxiom(axiom);
+		System.out.println("retry");
+		query();
+	    }
+	} catch (final RuntimeException e) {
+	    ErrorLogPanel.showErrorDialog(e);
+	}
     }
 
     private void setFirstColumnWidth() {
@@ -552,14 +671,33 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	});
     }
 
-    private void startQueryEngine() {
+    private void startQueryEngine(Set<OWLAxiom> axioms) {
+	final File xsbBinDirectory = NoHRPreferences.getInstance().getXSBBinDirectory();
+	if (xsbBinDirectory == null) {
+	    MessageDialogs.xsbBinDirectoryNotDefined(this);
+	    return;
+	}
+	final AxiomType<?>[] annotationTypes = new AxiomType<?>[] { AxiomType.ANNOTATION_ASSERTION,
+		AxiomType.ANNOTATION_PROPERTY_DOMAIN, AxiomType.ANNOTATION_PROPERTY_RANGE,
+		AxiomType.SUB_ANNOTATION_PROPERTY_OF };
+	axioms = AxiomType.getAxiomsWithoutTypes(axioms, annotationTypes);
+	final RuleBase ruleBase = getRuleBase();
 	try {
-	    final OWLModelManager modelManager = getOWLModelManager();
-	    final OWLOntology ontology = modelManager.getActiveOntology();
-	    final RuleBase ruleBase = getRuleBase();
-	    nohr = new HybridKB(ontology, ruleBase);
-	} catch (final Exception e) {
-	    textArea.append(e.getMessage() + System.lineSeparator());
+	    nohr = new HybridKB(xsbBinDirectory, axioms, ruleBase);
+	} catch (final IOException e) {
+	    MessageDialogs.translationFileProblems(this, e);
+	} catch (final UnsupportedAxiomsException e) {
+	    final boolean ignore = MessageDialogs.violations(this, e);
+	    if (ignore) {
+		axioms.removeAll(e.getUnsupportedAxioms());
+		startQueryEngine(axioms);
+	    }
+	} catch (final IPException e) {
+	    MessageDialogs.xsbProblems(this, e);
+	} catch (final RuntimeException e) {
+	    ErrorLogPanel.showErrorDialog(e);
+	} catch (final XSBDatabaseCreationException e) {
+	    MessageDialogs.xsbDatabaseCreationProblems(this, e);
 	}
     }
 
@@ -568,7 +706,7 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
      * box.
      */
     private void tableFilterAnswer() {
-	if (textField.getText().length() > 0)
+	if (queryField.getText().length() > 0)
 	    javax.swing.SwingUtilities.invokeLater(new Runnable() {
 		@Override
 		public void run() {

@@ -2,7 +2,6 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.semanticweb.owlapi.model.OWLClass;
@@ -14,16 +13,13 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedOWLProfile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyLabeler;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
@@ -36,9 +32,7 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
 
     private final ELReducedOntology reducedOntology;
 
-    public ELOntologyTranslation(OWLOntology ontology, OntologyLabeler ontologyLabel)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException, IOException, CloneNotSupportedException,
-	    UnsupportedOWLProfile, UnsupportedAxiomTypeException {
+    public ELOntologyTranslation(OWLOntology ontology) throws UnsupportedAxiomsException {
 	super(ontology);
 	originalAxiomsTranslator = new ELOriginalAxiomsTranslator(ontology);
 	doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(ontology);
