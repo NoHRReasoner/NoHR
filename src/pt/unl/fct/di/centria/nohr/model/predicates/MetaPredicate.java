@@ -12,7 +12,7 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 public interface MetaPredicate extends Predicate {
 
     @Override
-    public String acept(FormatVisitor visitor);
+    public String accept(FormatVisitor visitor);
 
     public Predicate getPredicate();
 

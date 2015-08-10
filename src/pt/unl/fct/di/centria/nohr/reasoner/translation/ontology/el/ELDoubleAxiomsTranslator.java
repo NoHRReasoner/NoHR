@@ -44,7 +44,7 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
     }
 
     Atom negTr(Literal b) {
-	final Predicate pred0 = b.getPredicate();
+	final Predicate pred0 = b.getFunctor();
 	final Predicate pred = negPred(pred0);
 	return atom(pred, b.getAtom().getArguments());
     }

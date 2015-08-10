@@ -7,47 +7,67 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import pt.unl.fct.di.centria.nohr.Utils;
+import pt.unl.fct.di.centria.nohr.StringUtils;
 
+/**
+ * Implementation of {@link Answer}.
+ *
+ * @author Nuno Costa
+ *
+ */
 public class AnswerImpl implements Answer {
 
+    /**
+     * The query to which the answer applies.
+     */
     private final Query query;
 
+    /**
+     * The truth value of the answer.
+     */
     private final TruthValue truthValue;
 
+    /**
+     * The list of terms to which each query's variable is mapped.
+     */
     private final List<Term> values;
 
+    /**
+     * The mapping between the query's variables and the position in
+     * {@link #values} where the terms to which those variables are mapped
+     * appear.
+     */
     private final Map<Variable, Integer> variablesIndex;
 
-    AnswerImpl(Query query, TruthValue truthValue, List<Term> values,
-	    Map<Variable, Integer> variablesIndex) {
+    /**
+     * Constructs an answer to a specified query, with the specified truth value
+     * and substitution.
+     *
+     * @param query
+     *            the query to which the answer applies.
+     * @param truthValue
+     *            the truth value of the answer.
+     * @param values
+     *            the list of terms to which each query's variable is mapped.
+     * @param variablesIndex
+     *            the mapping between the query's variables and the position in
+     *            {@code values} where the terms to which those variables are
+     *            mapped appear.
+     */
+    AnswerImpl(Query query, TruthValue truthValue, List<Term> values, Map<Variable, Integer> variablesIndex) {
 	this.query = query;
 	this.truthValue = truthValue;
 	this.values = values;
 	this.variablesIndex = variablesIndex;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.Answer#acept(pt.unl.fct.di.centria.nohr
-     * .model.FormatVisitor)
-     */
     @Override
-    public String acept(FormatVisitor visitor) {
+    public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.Answer#acept(pt.unl.fct.di.centria.nohr
-     * .model.Visitor)
-     */
     @Override
-    public Answer acept(Visitor visitor) {
+    public Answer acept(ModelVisitor visitor) {
 	final Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
 	final List<Term> vals = new ArrayList<Term>();
 	for (final Entry<Variable, Integer> entry : variablesIndex.entrySet())
@@ -68,11 +88,6 @@ public class AnswerImpl implements Answer {
 	return literals;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
 	if (this == obj)
@@ -112,34 +127,23 @@ public class AnswerImpl implements Answer {
 	return values.get(variablesIndex.get(var));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see pt.unl.fct.di.centria.nohr.model.Answer#getValues()
-     */
     @Override
     public List<Term> getValues() {
 	return values;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result
-		+ (truthValue == null ? 0 : truthValue.hashCode());
+	result = prime * result + (truthValue == null ? 0 : truthValue.hashCode());
 	result = prime * result + (values == null ? 0 : values.hashCode());
 	return result;
     }
 
     @Override
     public String toString() {
-	return Utils.concat(",", apply());
+	return StringUtils.concat(",", apply());
     }
 
 }

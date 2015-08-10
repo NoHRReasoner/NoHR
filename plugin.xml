@@ -1,7 +1,11 @@
 <?xml version="1.0" ?>
 
 <plugin> 	
-   <extension id="QueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
+   <extension id="NoHRPreferences" point="org.protege.editor.core.application.preferencespanel">
+      <label value="NoHR Preferences"></label>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.NoHRPreferencesPanel"></class>
+   </extension>
+  <extension id="QueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
       <label value="NoHR Query"></label>
       <headerColor value="@org.protege.classcolor"/>
       <class value="pt.unl.fct.di.centria.nohr.plugin.QueryViewComponent"></class>

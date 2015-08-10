@@ -1,9 +1,9 @@
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
+
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.query;
 import static pt.unl.fct.di.centria.nohr.model.Model.*;
-
-import java.io.IOException;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -12,10 +12,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.parsing.XSBParser;
-
-import com.igormaznitsa.prologparser.exceptions.PrologParserException;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 
 /**
  *
@@ -53,34 +53,28 @@ public class ParserTest {
     }
 
     @Test
-    public final void testParseQuery() {
+    public final void testParseQuery() throws Throwable {
 	try {
-	    final XSBParser parser = new XSBParser();
+	    final NoHRParser parser = new NoHRParser();
 	    final Variable X = var("X");
-	    Assert.assertEquals(parser.parseQuery("p(X)."), query(atom("p", X)));
-	    Assert.assertEquals(parser.parseQuery("p(a)."), query(atom("p", cons("a"))));
-	    Assert.assertEquals(parser.parseQuery("p(X), q(X), r(X)."),
-		    query(atom("p", X), atom("q", X), atom("r", X)));
-	    Assert.assertEquals(parser.parseQuery("p(a, b, c)."), query(atom("p", cons("a"), cons("b"), cons("c"))));
-	    Assert.assertEquals(parser.parseQuery("p(1)."), query(atom("p", cons(1))));
-	    Assert.assertEquals(parser.parseQuery("p(1.1)."), query(atom("p", cons(1.1))));
-
-	} catch (final PrologParserException e) {
-	    Assert.fail(e.getLocalizedMessage());
-	    e.printStackTrace();
-	} catch (final IOException e) {
-	    Assert.fail(e.getLocalizedMessage());
-	    e.printStackTrace();
+	    Assert.assertEquals(query(atom("p", X)), parser.parseQuery("p(?X)"));
+	    Assert.assertEquals(query(atom("p", cons("a"))), parser.parseQuery("p(a)"));
+	    Assert.assertEquals(query(atom("p", X), atom("q", X), atom("r", X)),
+		    parser.parseQuery("p(?X),  q(?X), r(?X)"));
+	    Assert.assertEquals(query(atom("p", cons("a"), cons("b"), cons("c"))), parser.parseQuery("p(a, b ,  c)"));
+	    Assert.assertEquals(query(atom("p", cons(1))), parser.parseQuery("p(1)"));
+	    Assert.assertEquals(query(atom("p", cons(1.1))), parser.parseQuery("p(1.1)"));
+	} catch (final ExceptionInInitializerError e) {
+	    throw e.getCause();
 	}
     }
 
     @Test
-    public void testParseRule() {
-	// final Rule expectedRule = rule(atom(pred("p", 3), var("X"), var("Y"),
-	// var("Z")), atom(pred("q", 2), var("X"), var("Y")), atom(pred("r", 1),
-	// cons("a")), negLiteral(pred("z", 1), var("X")), negLiteral(pred("w",
-	// 1), var("Y")));
-	// final Rule actualRule =
-	// parser.parseRule("p(X,Y,Z):-q(X,Y),r(a),tnot(z(X)),tnot(w(Y))."));
+    public void testParseRule() throws ParseException {
+	final NoHRParser parser = new NoHRParser();
+	final Rule expectedRule = rule(atom("p", var("X"), var("Y"), var("Z")), atom("q", var("X"), var("Y")),
+		atom("r", cons("a")), negLiteral("z", var("X")), negLiteral(pred("w", 1), var("Y")));
+	final Rule actualRule = parser.parseRule("p(?X, ?Y,  ?Z) :- q(?X, ?Y),r(a), not z(?X),  not w(?Y)");
+	Assert.assertEquals(expectedRule, actualRule);
     }
 }

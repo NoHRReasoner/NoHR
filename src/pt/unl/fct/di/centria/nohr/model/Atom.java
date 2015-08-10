@@ -1,52 +1,22 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import java.util.List;
-import java.util.Map;
-
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+
+/**
+ * Represent an rule atom <i>P(t<sub>1</sub>, ..., t<sub>n</sub>)</i>, where
+ * <i>P</i> is a predicate and each <i> t<sub>i</sub>, with 1&le;i&le;n </i>, a
+ * term.
+ *
+ * @see Predicate
+ * @see Term
+ *
+ * @author Nuno Costa
+ *
+ */
 
 public interface Atom extends Literal {
 
     @Override
-    public String acept(FormatVisitor visit);
-
-    @Override
-    public Atom acept(Visitor visitor);
-
-    @Override
-    public Atom apply(Map<Variable, Term> substitution);
-
-    /**
-     * @param sub
-     * @return
-     */
-    @Override
-    public Atom apply(Substitution sub);
-
-    @Override
-    public Atom apply(Variable var, Term term);
-
-    @Override
-    public boolean equals(Object obj);
-
-    public List<Term> getArguments();
-
-    public int getArity();
-
-    @Override
-    public Predicate getPredicate();
-
-    /**
-     * @return
-     *
-     */
-    @Override
-    public List<Variable> getVariables();
-
-    @Override
-    public boolean isGrounded();
-
-    @Override
-    public String toString();
+    public Atom acept(ModelVisitor visitor);
 
 }

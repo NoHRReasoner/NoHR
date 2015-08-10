@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -32,7 +31,7 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.NegativePredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.RulesDuplication;
@@ -128,21 +127,21 @@ public class HybridKB {
 	tabled.addAll(rulesTabledPredicates());
 	final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
 	for (final Predicate predicate : tabled) {
-	    writer.write(":- table " + predicate.acept(xsbFormatedVisitor) + "/" + predicate.getArity()
+	    writer.write(":- table " + predicate.accept(xsbFormatedVisitor) + "/" + predicate.getArity()
 		    + " as subsumptive.");
 	    writer.newLine();
 	    if (predicate instanceof NegativePredicate
 		    && !ontologyTranslation.getNegativeHeadsPredicates().contains(predicate)) {
-		writer.write(atom(predicate).acept(xsbFormatedVisitor) + " :- fail.");
+		writer.write(atom(predicate).accept(xsbFormatedVisitor) + " :- fail.");
 		writer.newLine();
 	    }
 	}
 	for (final Rule rule : ontologyTranslation.getTranslation()) {
-	    writer.write(rule.acept(xsbFormatedVisitor));
+	    writer.write(rule.accept(xsbFormatedVisitor));
 	    writer.newLine();
 	}
 	for (final Rule rule : rulesDuplication) {
-	    writer.write(rule.acept(xsbFormatedVisitor));
+	    writer.write(rule.accept(xsbFormatedVisitor));
 	    writer.newLine();
 	}
 	writer.close();
@@ -210,23 +209,22 @@ public class HybridKB {
 	return answer.acept(new UnquoteVisitor());
     }
 
-    public Collection<Answer> queryAll(Query query)
+    public List<Answer> queryAll(Query query)
 	    throws OWLProfilesViolationsException, UnsupportedAxiomsException, IOException {
 	return queryAll(query, true, true, true);
     }
 
-    public Collection<Answer> queryAll(Query query, boolean trueAnswer, boolean undefinedAnswers,
-	    boolean inconsistentAnswers)
-		    throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
+    public List<Answer> queryAll(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
+	    throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
 	if (hasOntologyChanges || ruleBase.hasChanges())
 	    preprocess();
 	RuntimesLogger.start("query");
 	RuntimesLogger.info("querying: " + query);
-	final Collection<Answer> answers = queryProcessor.queryAll(query, hasDisjunctions, trueAnswer, undefinedAnswers,
+	final List<Answer> answers = queryProcessor.queryAll(query, hasDisjunctions, trueAnswer, undefinedAnswers,
 		hasDisjunctions ? inconsistentAnswers : false);
 	RuntimesLogger.stop("query", "queries");
-	final Collection<Answer> result = new LinkedList<Answer>();
-	final Visitor unquoteVisitor = new UnquoteVisitor();
+	final List<Answer> result = new LinkedList<Answer>();
+	final ModelVisitor unquoteVisitor = new UnquoteVisitor();
 	for (final Answer ans : answers)
 	    result.add(ans.acept(unquoteVisitor));
 	return result;
@@ -243,7 +241,7 @@ public class HybridKB {
 	final Set<Predicate> result = new HashSet<Predicate>();
 	for (final Rule rule : rulesDuplication)
 	    for (final Literal literal : rule.getNegativeBody())
-		result.add(literal.getPredicate());
+		result.add(literal.getFunctor());
 	return result;
     }
 

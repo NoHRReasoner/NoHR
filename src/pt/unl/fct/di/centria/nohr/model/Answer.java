@@ -2,31 +2,60 @@ package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 
+/**
+ * An answer to a query. Represents substitution (i.e. a mapping between
+ * variables and terms) for a query's literal list corresponding to an answer to
+ * that query.
+ *
+ * @see pt.unl.fct.di.centria.nohr.model.Query Query
+ * @see pt.unl.fct.di.centria.nohr.model.Literal Literal
+ *
+ * @author Nuno Costa
+ *
+ */
+
 public interface Answer extends FormatVisitable {
 
-    @Override
-    public String acept(FormatVisitor visitor);
+    public Answer acept(ModelVisitor visitor);
 
     /**
-     * @param deHashVisitor
-     * @return
+     * Apply the answer's substitution to query.
+     *
+     * @return the query's literal list with each variable replaced by the
+     *         corresponding answer's term.
      */
-    public Answer acept(Visitor visitor);
-
     public List<Literal> apply();
 
-    @Override
-    public boolean equals(Object obj);
-
+    /**
+     * Returns the query to which the answer corresponds.
+     *
+     * @return the query to which the answer corresponds.
+     */
     public Query getQuery();
 
+    /**
+     * Returns the truth value of the answer.
+     *
+     * @return the truth value of the answer.
+     */
     public TruthValue getValuation();
 
-    public Term getValue(Variable var);
+    /**
+     * Returns the term to which a variable is mapped.
+     *
+     * @param variable
+     *            the variable.
+     *
+     * @return the term to which variable {@code variable} is mapped.
+     */
+    public Term getValue(Variable variable);
 
+    /**
+     * Returns the list of terms to which each query's variable is mapped, in
+     * the same order that those variables appear in that query (see
+     * {@link pt.unl.fct.di.centria.nohr.model.Query#getVariables()} ).
+     *
+     * @return the list of terms to which query's variables are mapped.
+     */
     public List<Term> getValues();
-
-    @Override
-    public String toString();
-
 }

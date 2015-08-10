@@ -9,7 +9,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
 /**
  * @author nunocosta
@@ -28,7 +28,7 @@ public class MetaPredicateImpl implements MetaPredicate {
     }
 
     @Override
-    public String acept(FormatVisitor visitor) {
+    public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
@@ -40,7 +40,7 @@ public class MetaPredicateImpl implements MetaPredicate {
      * .di.centria.nohr.model.Visitor)
      */
     @Override
-    public Predicate acept(Visitor visitor) {
+    public Predicate acept(ModelVisitor visitor) {
 	return visitor.visit(this);
     }
 

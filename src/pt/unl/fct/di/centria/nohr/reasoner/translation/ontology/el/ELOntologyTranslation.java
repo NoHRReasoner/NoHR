@@ -49,20 +49,20 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
 		final OWLClassExpression ce1 = axiom.getSubClass();
 		assert ce1 instanceof OWLClass ? ce1.asOWLClass().getIRI().getFragment() != null : true : axiom;
 		for (final Literal b : doubleAxiomsTranslator.tr(ce1, var()))
-		    negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(b).getPredicate());
+		    negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(b).getFunctor());
 	    }
 	for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions()) {
 	    final OWLObjectProperty op1 = axiom.getSubProperty().asOWLObjectProperty();
-	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(), var()).getPredicate());
+	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(), var()).getFunctor());
 	}
 	for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology.getDataSubsuptions()) {
 	    final OWLDataProperty op1 = axiom.getSubProperty().asOWLDataProperty();
-	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(), var()).getPredicate());
+	    negativeHeadsPredicates.add(doubleAxiomsTranslator.tr(op1, var(), var()).getFunctor());
 	}
 	for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology.getChainSubsumptions()) {
 	    final List<OWLObjectPropertyExpression> chain = axiom.getPropertyChain();
 	    for (final Literal r : doubleAxiomsTranslator.tr(chain, var(), var()))
-		negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(r).getPredicate());
+		negativeHeadsPredicates.add(doubleAxiomsTranslator.negTr(r).getFunctor());
 	}
     }
 

@@ -2,21 +2,35 @@ package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 
+/**
+ * Implementation of {@link Variable}.
+ *
+ * @author Nuno Costa
+ *
+ */
 public class VariableImpl implements Variable {
 
+    /**
+     * The symbol that represents this variable.
+     */
     private final String symbol;
 
+    /**
+     * Constructs a symbol with a specified symbol
+     *
+     * @param symbol
+     */
     VariableImpl(String symbol) {
 	this.symbol = symbol;
     }
 
     @Override
-    public String acept(FormatVisitor visitor) {
+    public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
     @Override
-    public Variable acept(Visitor visitor) {
+    public Variable acept(ModelVisitor visitor) {
 	return visitor.visit(this);
     }
 
@@ -35,21 +49,11 @@ public class VariableImpl implements Variable {
 	return this;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
     @Override
     public int compareTo(Variable o) {
 	return symbol.compareTo(o.getSymbol());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
 	if (this == obj)
@@ -72,11 +76,6 @@ public class VariableImpl implements Variable {
 	return symbol;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
 	final int prime = 31;

@@ -24,7 +24,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.parsing.XSBParser;
+import pt.unl.fct.di.centria.nohr.parsing.StandarPrologParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
@@ -41,7 +41,7 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 public class RulesTest {
 
-    private static void loadRules(HybridKB nohr, XSBParser parser, Path path)
+    private static void loadRules(HybridKB nohr, StandarPrologParser parser, Path path)
 	    throws IOException, PrologParserException {
 	File file = path.toFile();
 	if (file.exists()) {
@@ -102,7 +102,7 @@ public class RulesTest {
 	    }
 	    RuntimesLogger.stop("ontology loading", "loading");
 	    final HybridKB nohr = new HybridKB(new File(System.getProperty("XSB_BIN_DIRECTORY")), ontology.getAxioms());
-	    final XSBParser parser = new XSBParser(new OntologyIndexImpl(ontology));
+	    final StandarPrologParser parser = new StandarPrologParser(new OntologyIndexImpl(ontology));
 	    final Iterator<?> queriesIt1 = queries.iterator();
 	    while (queriesIt1.hasNext()) {
 		final QuerySpecification querySpecification = (QuerySpecification) queriesIt1.next();

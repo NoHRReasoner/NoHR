@@ -153,7 +153,7 @@ public abstract class QueryTest extends KB {
 	subRole("p3", "p4");
 	subConcept(some("p4"), conc("a5"));
 	//
-	rule("a2(X):-a1(X)");
+	rule("a2(?X):-a1(?X)");
 	//
 	assertInconsistent("a5(a)");
     }
@@ -166,9 +166,9 @@ public abstract class QueryTest extends KB {
 	typeOf("a1", "a");
 	disjointConcepts("a2", "a1");
 	//
-	rule("a2(X):-a1(X)");
-	rule("a3(X):-a2(X)");
-	rule("a1(X):-a3(X)");
+	rule("a2(?X):-a1(?X)");
+	rule("a3(?X):-a2(?X)");
+	rule("a1(?X):-a3(?X)");
 	//
 	assertInconsistent("a2(a), a3(a)");
     }
@@ -199,7 +199,7 @@ public abstract class QueryTest extends KB {
 	clear();
 	subConcept("a1", "a2");
 	//
-	assertFalse("a2(X).");
+	assertFalse("a2(?X).");
     }
 
     @Test

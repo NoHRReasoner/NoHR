@@ -8,39 +8,50 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import pt.unl.fct.di.centria.nohr.Utils;
+import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
+/**
+ * Implementation of {@link Rule}.
+ *
+ * @author Nuno Costa
+ *
+ */
 public class RuleImpl implements Rule {
 
     // TODO positive body vs negative body
+    /** The literals at the body of the rule. */
     private final Literal[] body;
 
+    /** The head of the rule */
     private final Atom head;
 
+    /**
+     * Constructs a rule with a specified atom as head a literals list has body.
+     *
+     * @param head
+     *            the head of the rule.
+     * @param body
+     *            the list of literals at the body of the rule.
+     */
     RuleImpl(Atom head, List<? extends Literal> body) {
 	this.head = head;
 	this.body = body.toArray(new Literal[] {});
     }
 
     @Override
-    public String acept(FormatVisitor visitor) {
+    public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
     @Override
-    public Rule acept(Visitor visitor) {
+    public Rule acept(ModelVisitor visitor) {
 	final List<Literal> body = new LinkedList<Literal>();
 	for (final Literal literal : this.body)
 	    body.add(visitor.visit(literal));
-	return new RuleImpl(visitor.visit(head), body);
+	return new RuleImpl(visitor.visit(head).getAtom(), body);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
 	if (this == obj)
@@ -93,25 +104,6 @@ public class RuleImpl implements Rule {
 	return result;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see nohr.model.Rule#getPredicates()
-     */
-    @Override
-    public Set<Predicate> getPredicates() {
-	final Set<Predicate> predicates = new HashSet<Predicate>();
-	predicates.add(head.getAtom().getPredicate());
-	for (final Literal literal : body)
-	    predicates.add(literal.getAtom().getPredicate());
-	return predicates;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
 	final int prime = 31;
@@ -128,6 +120,6 @@ public class RuleImpl implements Rule {
 
     @Override
     public String toString() {
-	return head + (isFact() ? "" : " :- ") + Utils.concat(", ", body);
+	return head + (isFact() ? "" : " :- ") + StringUtils.concat(", ", body);
     }
 }

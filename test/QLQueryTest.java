@@ -34,7 +34,7 @@ public class QLQueryTest extends QueryTest {
 	object("p1", "a", "b");
 	asymmetric("p1");
 	//
-	assertNegative("p1(b, a)");
+	assertNegative("p1(b,a)");
     }
 
     // (a1.1), (s1.1), (n1.1)
@@ -46,7 +46,7 @@ public class QLQueryTest extends QueryTest {
 	subConcept("a1", "a2");
 	disjointConcepts("a2", "a3");
 	//
-	assertInconsistent("a1(a), a3(a)");
+	assertInconsistent("a1(a),a3(a)");
     }
 
     // (a1.1), (a2.1), (s2.3), (n1.1)
@@ -58,7 +58,7 @@ public class QLQueryTest extends QueryTest {
 	subRole("p1", "p2");
 	disjointConcepts(some("p2"), conc("a3"));
 	//
-	assertInconsistent("p1(a,b), a3(a)");
+	assertInconsistent("p1(a,b),a3(a)");
     }
 
     // (a1.1), (a2.1), (s2.3), (n1.1)
@@ -70,7 +70,7 @@ public class QLQueryTest extends QueryTest {
 	subRole("p1", "p2");
 	disjointConcepts(some(inv("p2")), conc("a1"));
 	//
-	assertInconsistent("p1(a,b), a1(b)");
+	assertInconsistent("p1(a,b),a1(b)");
     }
 
     // (a2.1), (s2.3), (n2.1), (n2.2)
@@ -147,7 +147,7 @@ public class QLQueryTest extends QueryTest {
 	subConcept(some("p1"), conc("a2"));
 	subConcept(some(inv("p1")), conc("a3"));
 	//
-	assertTrue("a2(a), a3(b)");
+	assertTrue("a2(a),a3(b)");
     }
 
     @Test
@@ -155,7 +155,7 @@ public class QLQueryTest extends QueryTest {
 	clear();
 	subRole(topRole(), role("p1"));
 	subData(topData(), data("d1"));
-	assertTrue("p1(a, b), d1(a, b)");
+	assertTrue("p1(a,b),d1(a,b)");
     }
 
     @Test
@@ -186,7 +186,7 @@ public class QLQueryTest extends QueryTest {
 	subConcept(conc("a0"), some("p1", "a1"));
 	disjointConcepts(conc("a0"), some("p1", "a1"));
 	//
-	assertNegative("p1(a, b), a1(a)");
+	assertNegative("p1(a,b),a1(a)");
     }
 
     // inverse role predicates tabling

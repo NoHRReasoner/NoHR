@@ -5,10 +5,23 @@ import java.util.List;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
+/**
+ * Implementation of a numeric {@link Constant}.
+ *
+ * @author Nuno Costa
+ *
+ */
 public class NumericConstantImpl implements Constant {
 
+    /** The number that this constant represents */
     private final Number number;
 
+    /**
+     * Constructs a numeric constant with a specified number.
+     *
+     * @param number
+     *            the number.
+     */
     NumericConstantImpl(Number number) {
 	final double dval = number.doubleValue();
 	if (number.shortValue() == dval)
@@ -25,12 +38,12 @@ public class NumericConstantImpl implements Constant {
     }
 
     @Override
-    public String acept(FormatVisitor visitor) {
+    public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
     @Override
-    public Constant acept(Visitor visit) {
+    public Constant acept(ModelVisitor visit) {
 	return visit.visit(this);
     }
 
@@ -49,28 +62,18 @@ public class NumericConstantImpl implements Constant {
 	return number;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asOWLIndividual()
-     */
     @Override
     public OWLIndividual asOWLIndividual() {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asOWLLiteral()
-     */
     @Override
     public OWLLiteral asOWLLiteral() {
 	throw new ClassCastException();
     }
 
     @Override
-    public String asString() {
+    public String asRuleConstant() {
 	throw new ClassCastException();
     }
 
@@ -121,33 +124,18 @@ public class NumericConstantImpl implements Constant {
 	return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isOWLIndividual()
-     */
     @Override
     public boolean isOWLIndividual() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isOWLLiteral()
-     */
     @Override
     public boolean isOWLLiteral() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isString()
-     */
     @Override
-    public boolean isString() {
+    public boolean isRuleConstant() {
 	return false;
     }
 

@@ -62,10 +62,10 @@ public abstract class AbstractOntologyTranslation implements OntologyTranslation
     }
 
     protected void addTabledPredicates(Rule rule) {
-	final Predicate headPred = rule.getHead().getPredicate();
+	final Predicate headPred = rule.getHead().getFunctor();
 	tabledPredicates.add(headPred);
 	for (final Literal negLiteral : rule.getNegativeBody())
-	    tabledPredicates.add(negLiteral.getPredicate());
+	    tabledPredicates.add(negLiteral.getFunctor());
     }
 
     protected abstract void computeNegativeHeadsPredicates();

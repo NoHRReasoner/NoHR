@@ -9,199 +9,114 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
 /**
- * @author nunocosta
+ * Implementation of ontology literal {@link Constant}.
+ *
+ * @author Nuno Costa
  *
  */
 public class LiteralConstant implements Constant {
 
+    /**
+     * The OWL literal.
+     */
     private final OWLLiteral literal;
 
     /**
+     * Constructs a constant with a specified OWL literal.
      *
+     * @param literal
+     *            the OWL literal
      */
     public LiteralConstant(OWLLiteral literal) {
 	this.literal = literal;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitable#acept(pt.unl.fct.di.
-     * centria.nohr.model.FormatVisitor)
-     */
     @Override
-    public String acept(FormatVisitor visitor) {
+    public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.Constant#acept(pt.unl.fct.di.centria.
-     * nohr.model.Visitor)
-     */
     @Override
-    public Constant acept(Visitor visitor) {
+    public Constant acept(ModelVisitor visitor) {
 	return visitor.visit(this);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Term#asConstant()
-     */
     @Override
     public Constant asConstant() {
 	return this;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Term#asList()
-     */
     @Override
+
     public List<Term> asList() {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asNumber()
-     */
     @Override
     public Number asNumber() {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asOWLIndividual()
-     */
     @Override
     public OWLIndividual asOWLIndividual() {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asOWLLiteral()
-     */
     @Override
     public OWLLiteral asOWLLiteral() {
 	return literal;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asString()
-     */
     @Override
-    public String asString() {
+    public String asRuleConstant() {
 	return literal.getLiteral();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asTruthValue()
-     */
     @Override
     public TruthValue asTruthValue() {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Term#asVariable()
-     */
     @Override
     public Variable asVariable() {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Term#isConstant()
-     */
     @Override
     public boolean isConstant() {
 	return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Term#isList()
-     */
     @Override
     public boolean isList() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isNumber()
-     */
     @Override
     public boolean isNumber() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isOWLIndividual()
-     */
     @Override
     public boolean isOWLIndividual() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isOWLLiteral()
-     */
     @Override
     public boolean isOWLLiteral() {
 	return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isString()
-     */
     @Override
-    public boolean isString() {
+    public boolean isRuleConstant() {
 	return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isTruthValue()
-     */
     @Override
     public boolean isTruthValue() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Term#isVariable()
-     */
     @Override
     public boolean isVariable() {
 	return false;

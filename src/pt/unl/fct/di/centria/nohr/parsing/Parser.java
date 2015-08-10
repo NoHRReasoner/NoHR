@@ -12,7 +12,7 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
  */
 public interface Parser {
 
-    public Query parseQuery(String str);
+    public Query parseQuery(String str) throws ParseException;
 
     public Rule parseRule(String srt) throws ParseException;
 

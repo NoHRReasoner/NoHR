@@ -9,11 +9,9 @@ import java.nio.file.Path;
 
 import javax.swing.JOptionPane;
 
-import org.protege.editor.core.ui.error.ErrorLogPanel;
-
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.Utils;
+import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
@@ -42,7 +40,7 @@ public class MessageDialogs {
     }
 
     public static boolean violations(Component parent, UnsupportedAxiomsException exception) {
-	final String unsupportedList = Utils.concat(", ", exception.getUnsupportedAxioms().toArray());
+	final String unsupportedList = StringUtils.concat(", ", exception.getUnsupportedAxioms().toArray());
 	return JOptionPane.showConfirmDialog(parent,
 		"The following axioms aren't supported:" + System.lineSeparator() + unsupportedList
 			+ System.lineSeparator() + "Do you want proceed ignoring them?",

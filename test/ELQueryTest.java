@@ -103,8 +103,8 @@ public class ELQueryTest extends QueryTest {
 	clear();
 	subConcept(conc("a"), bottom());
 	subConcept("b", "a");
-	rule("b(a) :- tnot(c(a))");
-	rule("c(a) :- tnot(b(a))");
+	rule("b(a) :- not c(a))");
+	rule("c(a) :- not b(a))");
 	//
 	assertTrue("c(a)");
 	assertFalse("b(a)");

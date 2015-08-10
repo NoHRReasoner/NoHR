@@ -4,6 +4,7 @@ import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.ListTerm;
 import pt.unl.fct.di.centria.nohr.model.ListTermImpl;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
@@ -11,9 +12,9 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
-public class PredicateTypesVisitor implements Visitor {
+public class PredicateTypesVisitor implements ModelVisitor {
 
     private final PredicateType predicateType;
 
@@ -22,20 +23,15 @@ public class PredicateTypesVisitor implements Visitor {
     }
 
     @Override
-    public Atom visit(Atom atom) {
-	return atom.acept(this);
-    }
-
-    @Override
     public Constant visit(Constant constant) {
 	if (constant.isNumber())
 	    return cons(constant.asNumber().toString());
 	else
-	    return cons(constant.asString());
+	    return cons(constant.asRuleConstant());
     }
 
     @Override
-    public Term visit(ListTermImpl list) {
+    public Term visit(ListTerm list) {
 	return list;
     }
 

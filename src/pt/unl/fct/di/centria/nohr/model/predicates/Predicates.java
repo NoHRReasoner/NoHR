@@ -168,6 +168,8 @@ public class Predicates {
     }
 
     public static Predicate pred(String symbol, int arity, OntologyIndex ontologyIndex) {
+	if (ontologyIndex == null)
+	    return pred(symbol, arity);
 	if (arity == 1) {
 	    final OWLClass concept = ontologyIndex.getConcept(symbol);
 	    if (concept != null)

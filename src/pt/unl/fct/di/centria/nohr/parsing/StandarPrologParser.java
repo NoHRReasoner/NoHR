@@ -21,7 +21,6 @@ import com.igormaznitsa.prologparser.PrologCharDataSource;
 import com.igormaznitsa.prologparser.PrologParser;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 import com.igormaznitsa.prologparser.terms.AbstractPrologTerm;
-import com.igormaznitsa.prologparser.terms.PrologAtom;
 import com.igormaznitsa.prologparser.terms.PrologFloatNumber;
 import com.igormaznitsa.prologparser.terms.PrologIntegerNumber;
 import com.igormaznitsa.prologparser.terms.PrologStructure;
@@ -31,7 +30,7 @@ import com.igormaznitsa.prologparser.terms.PrologTermType;
  * @author nunocosta
  *
  */
-public class XSBParser {
+public class StandarPrologParser {
 
     private final PrologParser parser = new PrologParser(null);
 
@@ -39,15 +38,15 @@ public class XSBParser {
 
     private final OntologyIndex ontologyIndex;
 
-    public XSBParser() {
+    public StandarPrologParser() {
 	this(null, null);
     }
 
-    public XSBParser(OntologyIndex ontologyIndex) {
+    public StandarPrologParser(OntologyIndex ontologyIndex) {
 	this(null, ontologyIndex);
     }
 
-    public XSBParser(Reader reader, OntologyIndex ontologyIndex) {
+    public StandarPrologParser(Reader reader, OntologyIndex ontologyIndex) {
 	if (reader != null)
 	    src = new PrologCharDataSource(reader);
 	else

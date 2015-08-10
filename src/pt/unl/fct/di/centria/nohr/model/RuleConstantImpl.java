@@ -5,28 +5,36 @@ import java.util.List;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
-public class StringConstantImpl implements Constant {
+/**
+ * Implementation of rule {@link Constant}.
+ *
+ * @author Nuno Costa
+ *
+ */
+public class RuleConstantImpl implements Constant {
 
+    /**
+     * The symbol that represents this constant.
+     */
     private final String symbol;
 
-    StringConstantImpl(String symbol) {
+    /**
+     * Constructs a rule constant with a specified symbol.
+     *
+     * @param symbol
+     *            the symbol.
+     */
+    RuleConstantImpl(String symbol) {
 	this.symbol = symbol;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitable#acept(pt.unl.fct.di.
-     * centria.nohr.model.FormatVisitor)
-     */
     @Override
-    public String acept(FormatVisitor visitor) {
+    public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
     @Override
-    public Constant acept(Visitor visitor) {
+    public Constant acept(ModelVisitor visitor) {
 	return visitor.visit(this);
     }
 
@@ -45,28 +53,18 @@ public class StringConstantImpl implements Constant {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asOWLIndividual()
-     */
     @Override
     public OWLIndividual asOWLIndividual() {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#asOWLLiteral()
-     */
     @Override
     public OWLLiteral asOWLLiteral() {
 	throw new ClassCastException();
     }
 
     @Override
-    public String asString() {
+    public String asRuleConstant() {
 	return symbol;
     }
 
@@ -87,20 +85,15 @@ public class StringConstantImpl implements Constant {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
 	if (this == obj)
 	    return true;
 	if (obj == null)
 	    return false;
-	if (!(obj instanceof StringConstantImpl))
+	if (!(obj instanceof RuleConstantImpl))
 	    return false;
-	final StringConstantImpl other = (StringConstantImpl) obj;
+	final RuleConstantImpl other = (RuleConstantImpl) obj;
 	if (symbol == null) {
 	    if (other.symbol != null)
 		return false;
@@ -134,33 +127,18 @@ public class StringConstantImpl implements Constant {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isOWLIndividual()
-     */
     @Override
     public boolean isOWLIndividual() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isOWLLiteral()
-     */
     @Override
     public boolean isOWLLiteral() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.Constant#isString()
-     */
     @Override
-    public boolean isString() {
+    public boolean isRuleConstant() {
 	return true;
     }
 

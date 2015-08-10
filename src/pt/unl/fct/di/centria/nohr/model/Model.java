@@ -6,15 +6,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
-
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
@@ -60,6 +56,10 @@ public class Model {
 	return new AtomImpl(Predicates.pred(predicate, arguments.size(), ontologyIndex), arguments);
     }
 
+    public static Atom atom(String predicate, OntologyIndex ontologyIndex) {
+	return atom(predicate, Collections.<Term> emptyList(), ontologyIndex);
+    }
+
     public static Atom atom(String predicate, Term... arguments) {
 	final List<Term> argumentsList = new LinkedList<Term>();
 	Collections.addAll(argumentsList, arguments);
@@ -70,7 +70,7 @@ public class Model {
 	final StringBuffer sb = new StringBuffer();
 	String sepToken = "";
 	for (final FormatVisitable obj : objs) {
-	    sb.append(sepToken + obj.acept(visitor));
+	    sb.append(sepToken + obj.accept(visitor));
 	    sepToken = sep;
 	}
 	return new String(sb);
@@ -80,7 +80,7 @@ public class Model {
 	final StringBuffer sb = new StringBuffer();
 	String sepToken = "";
 	for (final FormatVisitable obj : objs) {
-	    sb.append(sepToken + obj.acept(visitor));
+	    sb.append(sepToken + obj.accept(visitor));
 	    sepToken = sep;
 	}
 	return new String(sb);
@@ -108,7 +108,12 @@ public class Model {
     }
 
     public static Constant cons(String symbol) {
-	return new StringConstantImpl(symbol);
+	try {
+	    final Double number = Double.valueOf(symbol);
+	    return cons(number);
+	} catch (final NumberFormatException e) {
+	    return new RuleConstantImpl(symbol);
+	}
     }
 
     public static Term list(List<Term> terms) {
@@ -141,6 +146,16 @@ public class Model {
 	return new NegativeLiteralImpl(new AtomImpl(pred, argsList));
     }
 
+    public static NegativeLiteral negLiteral(String pred, boolean existentially, Term... args) {
+	final List<Term> argsList = new LinkedList<Term>();
+	Collections.addAll(argsList, args);
+	return new NegativeLiteralImpl(atom(pred, argsList), existentially);
+    }
+
+    public static NegativeLiteral negLiteral(String pred, Term... args) {
+	return negLiteral(pred, false, args);
+    }
+
     public static Query query(List<Literal> literalList) {
 	final List<Variable> vars = new LinkedList<Variable>();
 	for (final Literal literal : literalList)
@@ -158,7 +173,6 @@ public class Model {
 
     public static Query query(Literal... literals) {
 	final List<Literal> literalList = new LinkedList<Literal>();
-	new LinkedList<Variable>();
 	Collections.addAll(literalList, literals);
 	return query(literalList);
     }
@@ -176,25 +190,6 @@ public class Model {
     public static Rule rule(Atom head, Set<Literal> body) {
 	final List<Literal> bodyList = new LinkedList<Literal>(body);
 	return new RuleImpl(head, bodyList);
-    }
-
-    public static Substitution subs(Map<Variable, Term> map) {
-	final SortedMap<Variable, Integer> varsIdx = new TreeMap<Variable, Integer>();
-	final Term[] vals = new Term[map.size()];
-	int i = 0;
-	for (final Entry<Variable, Term> entry : map.entrySet()) {
-	    varsIdx.put(entry.getKey(), i);
-	    vals[i++] = entry.getValue();
-	}
-	return new SubstitutionImpl(varsIdx, vals);
-    }
-
-    public static Substitution subs(Variable var, Term term) {
-	final SortedMap<Variable, Integer> varsIdx = new TreeMap<Variable, Integer>();
-	final Term[] vals = new Term[1];
-	varsIdx.put(var, 0);
-	vals[0] = term;
-	return new SubstitutionImpl(varsIdx, vals);
     }
 
     public static Variable var() {

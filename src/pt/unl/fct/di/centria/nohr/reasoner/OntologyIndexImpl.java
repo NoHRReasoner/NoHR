@@ -31,45 +31,40 @@ public class OntologyIndexImpl implements OntologyIndex {
 	roles = new HashMap<>();
 	individuals = new HashMap<>();
 	for (final OWLClass c : ontology.getClassesInSignature())
-	    concepts.put(c.getIRI().getFragment(), c);
+	    addConcept(c);
 	for (final OWLProperty<?, ?> r : ontology.getObjectPropertiesInSignature())
-	    roles.put(r.getIRI().getFragment(), r);
+	    addRole(r);
 	for (final OWLProperty<?, ?> d : ontology.getDataPropertiesInSignature())
-	    roles.put(d.getIRI().getFragment(), d);
+	    addRole(d);
 	for (final OWLIndividual i : ontology.getIndividualsInSignature())
-	    individuals.put(i.toStringID(), i);
+	    addIndividual(i);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex#getConcept(java.lang.
-     * String)
-     */
+    @Override
+    public void addConcept(OWLClass concept) {
+	concepts.put(concept.getIRI().getFragment(), concept);
+    }
+
+    @Override
+    public void addIndividual(OWLIndividual individual) {
+	individuals.put(individual.toStringID(), individual);
+    }
+
+    @Override
+    public void addRole(OWLProperty<?, ?> role) {
+	roles.put(role.getIRI().getFragment(), role);
+    }
+
     @Override
     public OWLClass getConcept(String symbol) {
 	return concepts.get(symbol);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex#getIndividual(java.lang
-     * .String)
-     */
     @Override
     public OWLIndividual getIndividual(String symbol) {
 	return individuals.get(symbol);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex#getRole(java.lang.
-     * String)
-     */
     @Override
     public OWLProperty<?, ?> getRole(String symbol) {
 	return roles.get(symbol);

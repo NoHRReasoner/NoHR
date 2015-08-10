@@ -16,7 +16,7 @@ public class ParserSingleton {
 
     public static Parser getParser() {
 	if (parser == null)
-	    parser = new NoHRParser();
+	    parser = new NoHRParser(null);
 	return parser;
     }
 

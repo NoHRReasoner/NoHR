@@ -3,7 +3,6 @@ package pt.unl.fct.di.centria.nohr.xsb;
 import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -149,10 +146,10 @@ public class XSBDatabase {
     public boolean hasAnswers(Query query, Boolean trueAnswers) {
 	String goal;
 	if (trueAnswers == null)
-	    goal = query.acept(formatVisitor);
+	    goal = query.accept(formatVisitor);
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("call_tv((%s),%s)", query.acept(formatVisitor), truth);
+	    goal = String.format("call_tv((%s),%s)", query.accept(formatVisitor), truth);
 	}
 	return xsbEngine.deterministicGoal(goal);
     }
@@ -169,10 +166,10 @@ public class XSBDatabase {
 	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("detGoal([%s],(%s),TM)", vars, query.acept(formatVisitor));
+	    goal = String.format("detGoal([%s],(%s),TM)", vars, query.accept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars, query.acept(formatVisitor), truth);
+	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars, query.accept(formatVisitor), truth);
 	}
 	final Map<Variable, Integer> varsIdx = variablesIndex(query.getVariables());
 	final SolutionIterator solutions = xsbEngine.goal(goal, "[TM]");
@@ -229,10 +226,10 @@ public class XSBDatabase {
 	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("detGoal([%s],(%s),TM)", vars, query.acept(formatVisitor));
+	    goal = String.format("detGoal([%s],(%s),TM)", vars, query.accept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars, query.acept(formatVisitor), truth);
+	    goal = String.format("detGoal([%s],(%s),%s,TM)", vars, query.accept(formatVisitor), truth);
 	}
 	final Object[] bindings = xsbEngine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)
@@ -249,10 +246,10 @@ public class XSBDatabase {
 	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
 	String goal;
 	if (trueAnswers == null)
-	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars, query.acept(formatVisitor));
+	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars, query.accept(formatVisitor));
 	else {
 	    final String truth = trueAnswers ? "true" : "undefined";
-	    goal = String.format("nonDetGoal([%s],(%s),%s,TM)", vars, query.acept(formatVisitor), truth);
+	    goal = String.format("nonDetGoal([%s],(%s),%s,TM)", vars, query.accept(formatVisitor), truth);
 	}
 	final Object[] bindings = xsbEngine.deterministicGoal(goal, "[TM]");
 	if (bindings == null)

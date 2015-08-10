@@ -34,10 +34,12 @@ import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import com.declarativa.interprolog.util.IPException;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
-import pt.unl.fct.di.centria.nohr.Utils;
+import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.parsing.XSBParser;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.centria.nohr.parsing.ParseException;
+import pt.unl.fct.di.centria.nohr.parsing.StandarPrologParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
@@ -56,7 +58,7 @@ public class KB {
 
     private HybridKB hybridKB;
 
-    private XSBParser parser;
+    private NoHRParser parser;
 
     private final Map<String, OWLIndividual> individuals;
 
@@ -75,7 +77,7 @@ public class KB {
 	dataRoles = new HashMap<String, OWLDataProperty>();
 	individuals = new HashMap<String, OWLIndividual>();
 	hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology.getAxioms());
-	parser = new XSBParser(new OntologyIndexImpl(ontology));
+	parser = new NoHRParser(new OntologyIndexImpl(ontology));
     }
 
     private void addAxiom(OWLAxiom axiom) {
@@ -95,7 +97,7 @@ public class KB {
 
     public void assertNegative(String query) {
 	try {
-	    final XSBParser parser = new XSBParser(new OntologyIndexImpl(ontology));
+	    final StandarPrologParser parser = new StandarPrologParser(new OntologyIndexImpl(ontology));
 	    if (!query.endsWith("."))
 		query += ".";
 	    final Query q = parser.parseQuery(query);
@@ -155,7 +157,7 @@ public class KB {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
-	parser = new XSBParser(new OntologyIndexImpl(ontology));
+	parser = new NoHRParser(new OntologyIndexImpl(ontology));
     }
 
     public OWLClassExpression complement(OWLClassExpression concept) {
@@ -312,7 +314,7 @@ public class KB {
 	else if (obj instanceof OWLIndividual)
 	    return getLabel(obj);
 	else if (obj instanceof OWLLiteral)
-	    return Utils.escapeAtom(((OWLLiteral) obj).getLiteral());
+	    return ((OWLLiteral) obj).getLiteral();
 	else
 	    return null;
     }
@@ -411,16 +413,17 @@ public class KB {
 
     public void rule(String rule) {
 
+	if (!rule.endsWith("."))
+	    rule += ".";
+	pt.unl.fct.di.centria.nohr.model.Rule r;
 	try {
-	    if (!rule.endsWith("."))
-		rule += ".";
-	    pt.unl.fct.di.centria.nohr.model.Rule r;
 	    r = parser.parseRule(rule);
-
 	    hybridKB.getRuleBase().add(r);
-	} catch (IOException | PrologParserException e) {
-	    fail(e);
+	} catch (final ParseException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
+
     }
 
     public OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression owlObjectPropertyExpression) {

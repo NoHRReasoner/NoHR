@@ -1,38 +1,53 @@
 package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.LinkedList;
+
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import pt.unl.fct.di.centria.nohr.Utils;
+import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
+/**
+ * Implementation of {@link Atom}
+ *
+ * @author Nuno Costa
+ *
+ */
 public class AtomImpl implements Atom {
 
+    /**
+     * The list of arguments.
+     */
     private final List<Term> arguments;
 
+    /**
+     * The functor predicate.
+     */
     private final Predicate predicate;
 
+    /**
+     * Constructs an atom with a specified predicate as functor and list of
+     * terms as arguments.
+     *
+     * @param predicate
+     *            the functor predicate.
+     * @param arguments
+     *            the arguments list.
+     */
     AtomImpl(Predicate predicate, List<Term> arguments) {
 	this.predicate = predicate;
 	this.arguments = arguments;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.FormatVisitable#acept(pt.unl.fct.di.
-     * centria.nohr.model.FormatVisitor)
-     */
     @Override
-    public String acept(FormatVisitor visitor) {
+    public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
     @Override
-    public Atom acept(Visitor visitor) {
+    public Atom acept(ModelVisitor visitor) {
 	final Predicate pred = predicate.acept(visitor);
 	final List<Term> args = new LinkedList<Term>();
 	for (final Term term : arguments)
@@ -49,25 +64,6 @@ public class AtomImpl implements Atom {
 	    if (substitution.containsKey(t)) {
 		argsIt.remove();
 		argsIt.add(substitution.get(t));
-	    }
-	}
-	return new AtomImpl(predicate, args);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see nohr.model.Atom#apply(nohr.model.Substitution)
-     */
-    @Override
-    public Atom apply(Substitution sub) {
-	final List<Term> args = new LinkedList<Term>(arguments);
-	final ListIterator<Term> argsIt = args.listIterator();
-	while (argsIt.hasNext()) {
-	    final Term t = argsIt.next();
-	    if (sub.getVariables().contains(t)) {
-		argsIt.remove();
-		argsIt.add(sub.getValue((Variable) t));
 	    }
 	}
 	return new AtomImpl(predicate, args);
@@ -135,15 +131,10 @@ public class AtomImpl implements Atom {
     }
 
     @Override
-    public Predicate getPredicate() {
+    public Predicate getFunctor() {
 	return predicate;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see nohr.model.Atom#getVariables()
-     */
     @Override
     public List<Variable> getVariables() {
 	final List<Variable> result = new LinkedList<Variable>();
@@ -153,19 +144,12 @@ public class AtomImpl implements Atom {
 	return result;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = 1;
-	result = prime * result
-		+ (arguments == null ? 0 : arguments.hashCode());
-	result = prime * result
-		+ (predicate == null ? 0 : predicate.hashCode());
+	result = prime * result + (arguments == null ? 0 : arguments.hashCode());
+	result = prime * result + (predicate == null ? 0 : predicate.hashCode());
 	return result;
     }
 
@@ -189,7 +173,7 @@ public class AtomImpl implements Atom {
 
     @Override
     public String toString() {
-	return predicate + "(" + Utils.concat(",", arguments) + ")";
+	return predicate + "(" + StringUtils.concat(",", arguments) + ")";
     }
 
 }

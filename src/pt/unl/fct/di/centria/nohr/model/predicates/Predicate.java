@@ -5,14 +5,14 @@ import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitable;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
 public interface Predicate extends FormatVisitable {
 
     @Override
-    public String acept(FormatVisitor visitor);
+    public String accept(FormatVisitor visitor);
 
-    public Predicate acept(Visitor visitor);
+    public Predicate acept(ModelVisitor visitor);
 
     public OWLClass asConcept();
 

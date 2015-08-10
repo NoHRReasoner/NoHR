@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
 import javax.swing.JButton;

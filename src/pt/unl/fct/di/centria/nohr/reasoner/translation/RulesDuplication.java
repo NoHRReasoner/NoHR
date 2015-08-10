@@ -9,7 +9,7 @@ import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypesVisitor;
 
@@ -21,9 +21,9 @@ public class RulesDuplication {
 
     public static Rule[] duplicate(Rule rule, boolean negateHead) {
 	final Rule[] result = new Rule[2];
-	final Visitor originalEncoder = new PredicateTypesVisitor(
+	final ModelVisitor originalEncoder = new PredicateTypesVisitor(
 		PredicateType.ORIGINAL);
-	final Visitor doubleEncoder = new PredicateTypesVisitor(PredicateType.DOUBLE);
+	final ModelVisitor doubleEncoder = new PredicateTypesVisitor(PredicateType.DOUBLE);
 	final Atom head = rule.getHead();
 	final List<Atom> positiveBody = rule.getPositiveBody();
 	final List<Literal> negativeBody = rule.getNegativeBody();
@@ -42,7 +42,7 @@ public class RulesDuplication {
 	    i++;
 	}
 	if (negateHead) {
-	    final Visitor negativeEncoder = new PredicateTypesVisitor(
+	    final ModelVisitor negativeEncoder = new PredicateTypesVisitor(
 		    PredicateType.NEGATIVE);
 	    doubleBody[i] = Model.negLiteral(head.acept(negativeEncoder));
 	}

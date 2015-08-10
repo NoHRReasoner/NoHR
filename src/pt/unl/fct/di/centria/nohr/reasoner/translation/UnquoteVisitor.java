@@ -2,9 +2,9 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 
-import pt.unl.fct.di.centria.nohr.Utils;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.ListTerm;
 import pt.unl.fct.di.centria.nohr.model.ListTermImpl;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
@@ -12,18 +12,20 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 
-public class UnquoteVisitor implements Visitor {
+public class UnquoteVisitor implements ModelVisitor {
 
-    public UnquoteVisitor() {
+    /*
+     *
+     */
+    public static String unescapeAtom(String atom) {
+	return atom.replaceAll("''", "'");
     }
 
-    @Override
-    public Atom visit(Atom atom) {
-	return atom.acept(this);
+    public UnquoteVisitor() {
     }
 
     @Override
@@ -31,11 +33,11 @@ public class UnquoteVisitor implements Visitor {
 	if (constant.isNumber())
 	    return constant;
 	else
-	    return cons(Utils.unescapeAtom(constant.asString()));
+	    return cons(UnquoteVisitor.unescapeAtom(constant.asRuleConstant()));
     }
 
     @Override
-    public Term visit(ListTermImpl list) {
+    public Term visit(ListTerm list) {
 	return list;
     }
 
@@ -51,8 +53,7 @@ public class UnquoteVisitor implements Visitor {
 
     @Override
     public Predicate visit(Predicate pred) {
-	return Predicates.pred(Utils.unescapeAtom(pred.getSymbol()),
-		pred.getArity());
+	return Predicates.pred(UnquoteVisitor.unescapeAtom(pred.getSymbol()), pred.getArity());
     }
 
     @Override

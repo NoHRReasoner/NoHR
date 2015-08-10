@@ -1,19 +1,21 @@
 package pt.unl.fct.di.centria.nohr.model;
 
+/**
+ * Represents variable.
+ *
+ * @author Nuno Costa
+ *
+ */
+
 public interface Variable extends Term, Comparable<Variable> {
 
     @Override
-    public Variable acept(Visitor visitor);
+    Variable acept(ModelVisitor visitor);
 
-    @Override
-    public boolean equals(Object obj);
-
+    /**
+     * Returns the symbol that represents this variable.
+     *
+     * @return the symbol that represents this variable.
+     */
     public String getSymbol();
-
-    @Override
-    public int hashCode();
-
-    @Override
-    public String toString();
-
 }

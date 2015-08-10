@@ -19,7 +19,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.parsing.XSBParser;
+import pt.unl.fct.di.centria.nohr.parsing.StandarPrologParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
@@ -46,7 +46,7 @@ public class LubmRepository {
 
     int universities = 0;
 
-    private XSBParser parser;
+    private StandarPrologParser parser;
 
     public LubmRepository() {
     }
@@ -120,7 +120,7 @@ public class LubmRepository {
 	inManager = null;
 	outManager = null;
 	nohrQuery = new HybridKB(new File(System.getProperty("XSB_BIN_DIRECTORY")), outOntology.getAxioms());
-	parser = new XSBParser(new OntologyIndexImpl(outOntology));
+	parser = new StandarPrologParser(new OntologyIndexImpl(outOntology));
 	outOntology = null;
 	System.gc();
 	return true;

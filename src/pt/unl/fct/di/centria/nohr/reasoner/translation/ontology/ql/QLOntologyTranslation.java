@@ -60,20 +60,20 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
 	final Variable X = Model.var("X");
 	final Variable Y = Model.var("Y");
 	for (final OWLClassExpression b : normalizedOntology.getSubConcepts())
-	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(b, X).getPredicate());
+	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(b, X).getFunctor());
 	for (final OWLClassExpression b : normalizedOntology.getDisjointConcepts())
-	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(b, X).getPredicate());
+	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(b, X).getFunctor());
 	for (final OWLPropertyExpression<?, ?> q : normalizedOntology.getSubRoles())
-	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(q, X, Y).getPredicate());
+	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(q, X, Y).getFunctor());
 	for (final OWLPropertyExpression<?, ?> q : normalizedOntology.getDisjointRoles())
-	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(q, X, Y).getPredicate());
+	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(q, X, Y).getFunctor());
 	for (final OWLEntity e : graph.getUnsatisfiableEntities())
 	    if (e instanceof OWLClass)
-		negativeHeadsPredicates.add(originalAxiomsTranslator.negTr((OWLClass) e, X).getPredicate());
+		negativeHeadsPredicates.add(originalAxiomsTranslator.negTr((OWLClass) e, X).getFunctor());
 	    else if (e instanceof OWLProperty)
-		negativeHeadsPredicates.add(originalAxiomsTranslator.negTr((OWLProperty<?, ?>) e, X, Y).getPredicate());
+		negativeHeadsPredicates.add(originalAxiomsTranslator.negTr((OWLProperty<?, ?>) e, X, Y).getFunctor());
 	for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
-	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(p, X, Y).getPredicate());
+	    negativeHeadsPredicates.add(originalAxiomsTranslator.negTr(p, X, Y).getFunctor());
     }
 
     @Override
