@@ -163,7 +163,7 @@ public class XSBDatabase {
 	    lastSolutionsIterator.cancel();
 	    lastSolutionsIterator = null;
 	}
-	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
+	final String vars = Model.concat(query.getVariables(), formatVisitor, ",");
 	String goal;
 	if (trueAnswers == null)
 	    goal = String.format("detGoal([%s],(%s),TM)", vars, query.accept(formatVisitor));
@@ -223,7 +223,7 @@ public class XSBDatabase {
     }
 
     public Answer query(Query query, Boolean trueAnswers) {
-	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
+	final String vars = Model.concat(query.getVariables(), formatVisitor, ",");
 	String goal;
 	if (trueAnswers == null)
 	    goal = String.format("detGoal([%s],(%s),TM)", vars, query.accept(formatVisitor));
@@ -243,7 +243,7 @@ public class XSBDatabase {
 
     public Map<List<Term>, TruthValue> queryAll(Query query, Boolean trueAnswers) {
 	final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
-	final String vars = Model.concat(",", query.getVariables(), formatVisitor);
+	final String vars = Model.concat(query.getVariables(), formatVisitor, ",");
 	String goal;
 	if (trueAnswers == null)
 	    goal = String.format("nonDetGoal([%s],(%s),TM)", vars, query.accept(formatVisitor));

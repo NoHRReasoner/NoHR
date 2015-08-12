@@ -29,11 +29,11 @@ import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLOntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
-public class QLOntologyTranslation extends AbstractOntologyTranslation {
+public class QLOntologyTranslation extends OWLOntologyTranslation {
 
     private final QLDoubleAxiomsTranslator doubleAxiomsTranslator;
 
@@ -99,8 +99,8 @@ public class QLOntologyTranslation extends AbstractOntologyTranslation {
     }
 
     @Override
-    public Profiles getProfile() {
-	return Profiles.OWL2_QL;
+    public Profile getProfile() {
+	return Profile.OWL2_QL;
     }
 
     // TODO optimize translatin: (e) can be discarded for roles for which there

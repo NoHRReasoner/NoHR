@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
@@ -34,9 +35,20 @@ public class AtomImpl implements Atom {
      * @param predicate
      *            the functor predicate.
      * @param arguments
-     *            the arguments list.
+     *            the arguments list. Can be null, in which case the atom is
+     *            treated has having a empty arguments list.
+     *
+     * @throws IllegalArgumentException
+     *             if the size of {@code arguments} is different from the
+     *             predicate arity.
      */
     AtomImpl(Predicate predicate, List<Term> arguments) {
+	Objects.requireNonNull(predicate);
+	if (arguments == null && predicate.getArity() > 0)
+	    throw new IllegalArgumentException("arguments must have a size equal to the predicate arity");
+	if (arguments != null)
+	    if (predicate.getArity() != arguments.size())
+		throw new IllegalArgumentException("arguments must have a size equal to the predicate arity");
 	this.predicate = predicate;
 	this.arguments = arguments;
     }
@@ -47,11 +59,13 @@ public class AtomImpl implements Atom {
     }
 
     @Override
-    public Atom acept(ModelVisitor visitor) {
-	final Predicate pred = predicate.acept(visitor);
+    public Atom accept(ModelVisitor visitor) {
+	final Predicate pred = predicate.accept(visitor);
 	final List<Term> args = new LinkedList<Term>();
+	if (arguments == null)
+	    return new AtomImpl(pred, null);
 	for (final Term term : arguments)
-	    args.add(term.acept(visitor));
+	    args.add(term.accept(visitor));
 	return new AtomImpl(pred, args);
     }
 

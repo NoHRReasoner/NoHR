@@ -30,7 +30,7 @@ public class VariableImpl implements Variable {
     }
 
     @Override
-    public Variable acept(ModelVisitor visitor) {
+    public Variable accept(ModelVisitor visitor) {
 	return visitor.visit(this);
     }
 

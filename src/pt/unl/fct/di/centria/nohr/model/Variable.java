@@ -10,7 +10,7 @@ package pt.unl.fct.di.centria.nohr.model;
 public interface Variable extends Term, Comparable<Variable> {
 
     @Override
-    Variable acept(ModelVisitor visitor);
+    Variable accept(ModelVisitor visitor);
 
     /**
      * Returns the symbol that represents this variable.

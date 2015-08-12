@@ -3,7 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import java.util.List;
 import java.util.Set;
@@ -13,7 +13,6 @@ import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 
@@ -21,16 +20,13 @@ import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 
 /**
  * @author nunocosta
  *
  */
 public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
-
-    public ELOriginalAxiomsTranslator(OWLOntology ontology) {
-	super(ontology);
-    }
 
     List<Atom> tr(List<OWLObjectPropertyExpression> chain, Variable x, Variable y) {
 	return tr(chain, x, y, false);
@@ -50,12 +46,12 @@ public class ELOriginalAxiomsTranslator extends AbstractELAxiomsTranslator {
 
     @Override
     public Set<Rule> translate(OWLClassAssertionAxiom alpha) {
-	return translateOriginal(alpha);
+	return AssertionsTranslation.translateOriginal(alpha);
     }
 
     @Override
     public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha) {
-	return translateOriginal(alpha);
+	return AssertionsTranslation.translateOriginal(alpha);
     }
 
     @Override

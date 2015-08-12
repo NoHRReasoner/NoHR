@@ -64,7 +64,7 @@ import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
-import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
@@ -490,7 +490,7 @@ public class QueryViewComponent0 extends AbstractHybridViewComponent {
 	ontologyChangesListner = new OntologyChangesListener(getOWLModelManager().getActiveOntology());
 	getOWLModelManager().addListener(modelManagerListner);
 	getOWLModelManager().addOntologyChangeListener(ontologyChangesListner);
-	parser = new NoHRParser(new OntologyIndexImpl(getOWLModelManager().getActiveOntology()));
+	parser = new NoHRParser(new VocabularyMappingImpl(getOWLModelManager().getActiveOntology()));
 	setLayout(new BorderLayout(12, 12));
 	final JPanel panel = new JPanel(new GridBagLayout());
 

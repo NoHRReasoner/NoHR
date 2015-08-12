@@ -7,9 +7,8 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
@@ -25,7 +24,7 @@ public class QLQueryTest extends QueryTest {
     public QLQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException,
 	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
 	    IPException, XSBDatabaseCreationException {
-	super(Profiles.OWL2_QL);
+	super(Profile.OWL2_QL);
     }
 
     @Test
@@ -215,11 +214,6 @@ public class QLQueryTest extends QueryTest {
 	symmetric("p1");
 	//
 	assertTrue("p1(b,a)");
-    }
-
-    @Override
-    public void tearDown() {
-	AbstractOntologyTranslation.profile = null;
     }
 
     // (i2)

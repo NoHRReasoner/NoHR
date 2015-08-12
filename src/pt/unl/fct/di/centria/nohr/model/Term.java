@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface Term extends FormatVisitable {
 
-    public Term acept(ModelVisitor visitor);
+    public Term accept(ModelVisitor visitor);
 
     /**
      * Returns this term as a constant if it is indeed a constant.

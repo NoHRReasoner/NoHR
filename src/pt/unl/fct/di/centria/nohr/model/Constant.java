@@ -12,7 +12,7 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 public interface Constant extends Term {
 
     @Override
-    public Constant acept(ModelVisitor visitor);
+    public Constant accept(ModelVisitor visitor);
 
     /**
      * Returns this constant as a number if it is indeed a number.

@@ -34,16 +34,16 @@ import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import com.declarativa.interprolog.util.IPException;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
-import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.parsing.StandarPrologParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntology;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntologyImpl;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
@@ -56,6 +56,8 @@ public class KB {
 
     private final OWLDataFactory df;
 
+    private final Profile profile;
+
     private HybridKB hybridKB;
 
     private NoHRParser parser;
@@ -67,8 +69,14 @@ public class KB {
     private final Map<String, OWLObjectProperty> roles;
 
     public KB() throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
-	    IOException, CloneNotSupportedException, UnsupportedAxiomsException, IPException,
+	    IPException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
 	    XSBDatabaseCreationException {
+	this(null);
+    }
+
+    public KB(Profile profile) throws OWLOntologyCreationException, OWLOntologyStorageException,
+	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+	    IPException, XSBDatabaseCreationException {
 	final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
 	df = om.getOWLDataFactory();
 	ontology = om.createOntology(IRI.generateDocumentIRI());
@@ -76,8 +84,9 @@ public class KB {
 	roles = new HashMap<String, OWLObjectProperty>();
 	dataRoles = new HashMap<String, OWLDataProperty>();
 	individuals = new HashMap<String, OWLIndividual>();
-	hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology.getAxioms());
-	parser = new NoHRParser(new OntologyIndexImpl(ontology));
+	this.profile = profile;
+	hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology.getAxioms(), profile);
+	parser = new NoHRParser(new VocabularyMappingImpl(ontology));
     }
 
     private void addAxiom(OWLAxiom axiom) {
@@ -97,7 +106,7 @@ public class KB {
 
     public void assertNegative(String query) {
 	try {
-	    final StandarPrologParser parser = new StandarPrologParser(new OntologyIndexImpl(ontology));
+	    final NoHRParser parser = new NoHRParser(new VocabularyMappingImpl(ontology));
 	    if (!query.endsWith("."))
 		query += ".";
 	    final Query q = parser.parseQuery(query);
@@ -106,11 +115,11 @@ public class KB {
 		    throw new IllegalArgumentException("literals must be positive");
 		if (!l.isGrounded())
 		    throw new IllegalArgumentException("literals must be grounded");
-		rule(l.getAtom().toString());
+		hybridKB.getRuleBase().add(Model.rule(l.getAtom()));
 	    }
 	    Assert.assertTrue("should have inconsistent answers", hasAnswer(query, false, false, true));
 	    Assert.assertFalse("shouldn't have non inconsistent answers", hasAnswer(query, true, true, false));
-	} catch (final PrologParserException | IOException e) {
+	} catch (final ParseException e) {
 	    fail(e);
 	}
     }
@@ -140,7 +149,7 @@ public class KB {
 	// final Set<OWLDeclarationAxiom> declarationAxioms =
 	// ontology.getAxioms(AxiomType.DECLARATION);
 	try {
-	    hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")));
+	    hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), profile);
 	} catch (final IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -157,7 +166,7 @@ public class KB {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
-	parser = new NoHRParser(new OntologyIndexImpl(ontology));
+	parser = new NoHRParser(new VocabularyMappingImpl(ontology));
     }
 
     public OWLClassExpression complement(OWLClassExpression concept) {
@@ -333,6 +342,7 @@ public class KB {
     private boolean hasAnswer(String query, boolean trueAnswers, boolean undefinedAnswers,
 	    boolean inconsistentAnswers) {
 	try {
+	    parser = new NoHRParser(new VocabularyMappingImpl(ontology));
 	    if (!query.endsWith("."))
 		query += ".";
 	    final Query q = parser.parseQuery(query);
@@ -412,9 +422,7 @@ public class KB {
     }
 
     public void rule(String rule) {
-
-	if (!rule.endsWith("."))
-	    rule += ".";
+	parser = new NoHRParser(new VocabularyMappingImpl(ontology));
 	pt.unl.fct.di.centria.nohr.model.Rule r;
 	try {
 	    r = parser.parseRule(rule);

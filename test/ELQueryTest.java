@@ -9,9 +9,8 @@ import com.declarativa.interprolog.util.IPException;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
@@ -27,7 +26,7 @@ public class ELQueryTest extends QueryTest {
     public ELQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException,
 	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
 	    IPException, XSBDatabaseCreationException {
-	super(Profiles.OWL2_EL);
+	super(Profile.OWL2_EL);
     }
 
     // (a2), (r2.2), (n2.1)
@@ -175,11 +174,6 @@ public class ELQueryTest extends QueryTest {
 	rule("a0(a)");
 	//
 	assertNegative("p1(a, b)");
-    }
-
-    @Override
-    public void tearDown() {
-	AbstractOntologyTranslation.profile = null;
     }
 
     @Test

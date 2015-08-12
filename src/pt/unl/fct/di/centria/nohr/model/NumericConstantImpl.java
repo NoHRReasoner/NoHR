@@ -43,7 +43,7 @@ public class NumericConstantImpl implements Constant {
     }
 
     @Override
-    public Constant acept(ModelVisitor visit) {
+    public Constant accept(ModelVisitor visit) {
 	return visit.visit(this);
     }
 

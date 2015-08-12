@@ -9,9 +9,8 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 import ubt.api.QueryConfigParser;
 import ubt.api.QuerySpecification;
@@ -70,36 +69,34 @@ public class LubmTest {
 	}
 	final Path data = test.getDataDir().toPath();
 	final QueryConfigParser queryParser = new QueryConfigParser();
-	final Vector<QuerySpecification> queries = queryParser
-		.createQueryList(test.getQueriesFile().getAbsolutePath());
+	final Vector<QuerySpecification> queries = queryParser.createQueryList(test.getQueriesFile().getAbsolutePath());
+	Profile profile = null;
 	if (test.isProfile())
 	    if (test.getProfile().equals("QL"))
-		AbstractOntologyTranslation.profile = Profiles.OWL2_QL;
+		profile = Profile.OWL2_QL;
 	    else if (test.getProfile().equals("EL"))
-		AbstractOntologyTranslation.profile = Profiles.OWL2_EL;
+		profile = Profile.OWL2_EL;
 	RuntimesLogger.info("warm up");
-	run(test, data, queries, 1);
+	run(test, data, queries, 1, profile);
 	RuntimesLogger.open("loading", "queries");
 	if (test.isMaxUniversities())
 	    for (int u = 1; u <= test.getMaxUniversities(); u += test.getStep())
-		run(test, data, queries, u);
+		run(test, data, queries, u, profile);
 	if (test.isUnivs())
 	    for (final int u : test.getUnivs())
-		run(test, data, queries, u);
+		run(test, data, queries, u, profile);
 	RuntimesLogger.close();
 	System.out.println("Consult loading times at loading.csv");
 	System.out.println("Consult query times at queries.csv");
 	System.exit(0);
     }
 
-    private static void run(final Test test, final Path data,
-	    final Vector<QuerySpecification> queries, int u)
-		    throws OWLOntologyCreationException, OWLOntologyStorageException,
-		    OWLProfilesViolationsException, IOException, CloneNotSupportedException,
-		    UnsupportedAxiomsException, PrologParserException, Exception {
+    private static void run(final Test test, final Path data, final Vector<QuerySpecification> queries, int u,
+	    Profile profile) throws OWLOntologyCreationException, OWLOntologyStorageException,
+		    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+		    PrologParserException, Exception {
 	RuntimesLogger.setDataset(String.valueOf(u));
-	final LubmRepository nohrRepository = new LubmRepository(data,
-		test.getOutputDir());
+	final LubmRepository nohrRepository = new LubmRepository(data, test.getOutputDir(), profile);
 	nohrRepository.load(u);
 	final Iterator<QuerySpecification> queriesIt = queries.iterator();
 	while (queriesIt.hasNext())

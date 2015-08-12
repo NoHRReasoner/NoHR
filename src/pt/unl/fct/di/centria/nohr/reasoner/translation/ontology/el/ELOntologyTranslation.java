@@ -20,11 +20,11 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLOntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
-public class ELOntologyTranslation extends AbstractOntologyTranslation {
+public class ELOntologyTranslation extends OWLOntologyTranslation {
 
     private final ELDoubleAxiomsTranslator doubleAxiomsTranslator;
 
@@ -34,8 +34,8 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
 
     public ELOntologyTranslation(OWLOntology ontology) throws UnsupportedAxiomsException {
 	super(ontology);
-	originalAxiomsTranslator = new ELOriginalAxiomsTranslator(ontology);
-	doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(ontology);
+	originalAxiomsTranslator = new ELOriginalAxiomsTranslator();
+	doubleAxiomsTranslator = new ELDoubleAxiomsTranslator();
 	RuntimesLogger.start("ontology reduction");
 	reducedOntology = new ELReducedOntologyImpl(ontology);
 	RuntimesLogger.stop("ontology reduction", "loading");
@@ -76,8 +76,8 @@ public class ELOntologyTranslation extends AbstractOntologyTranslation {
     }
 
     @Override
-    public Profiles getProfile() {
-	return Profiles.OWL2_EL;
+    public Profile getProfile() {
+	return Profile.OWL2_EL;
     }
 
     @Override

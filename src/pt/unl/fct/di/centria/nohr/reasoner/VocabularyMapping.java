@@ -11,7 +11,7 @@ import org.semanticweb.owlapi.model.OWLProperty;
  * @author nunocosta
  *
  */
-public interface OntologyIndex {
+public interface VocabularyMapping {
 
     public void addConcept(OWLClass concept);
 

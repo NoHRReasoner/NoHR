@@ -1,6 +1,7 @@
 package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a query <i>q(x<sub>1</sub>, ..., x<sub>k</sub>) &larr; A
@@ -15,11 +16,12 @@ import java.util.List;
  */
 public interface Query extends FormatVisitable {
 
-    public Query acept(ModelVisitor visitor);
+    public Query accept(ModelVisitor visitor);
 
     /**
-     * Assign values to free variables and the apply the corresponding
-     * substitution to the query's literals.
+     * Apply, to all the query's literal, a substitution that maps each variable
+     * of the list of free variables to the term at the same position in a
+     * specified list values.
      *
      * @param values
      *            the list of terms to assign to free variables <i>x<sub>1</sub>
@@ -28,9 +30,19 @@ public interface Query extends FormatVisitable {
      * @return this query with each free variable <i>x<sub>i</sub></i> replaced
      *         by the <i>i</i>-th term of {@code terms}.
      */
-    public Query assign(List<Term> values);
+    public Query apply(List<Term> values);
 
     public Query getDouble();
+
+    /**
+     * Returns a mapping between the free variable of the query and the position
+     * where there values are expected in an {@link Answer answer} value list.
+     *
+     * @return a mapping between the free variable of the query and the position
+     *         where there values are expected in an {@link Answer answer} value
+     *         list.
+     */
+    Map<Variable, Integer> getIndex();
 
     /**
      * Returns the literals of this query.

@@ -17,7 +17,7 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 
 /**
  * @author nunocosta
@@ -37,14 +37,14 @@ public class NoHRParser implements Parser {
 
     private NoHRScanner scanner;
 
-    private final OntologyIndex ontologyIndex;
+    private final VocabularyMapping vocabularyMapping;
 
     public NoHRParser() {
 	this(null);
     }
 
-    public NoHRParser(OntologyIndex ontologyIndex) {
-	this.ontologyIndex = ontologyIndex;
+    public NoHRParser(VocabularyMapping vocabularyMapping) {
+	this.vocabularyMapping = vocabularyMapping;
     }
 
     private boolean acept(TokenType type) {
@@ -59,7 +59,7 @@ public class NoHRParser implements Parser {
 	    return null;
 	final String predicateSymbol = next();
 	if (!acept(TokenType.L_PAREN))
-	    return Model.atom(predicateSymbol, ontologyIndex);
+	    return Model.atom(predicateSymbol, vocabularyMapping);
 	else {
 	    final List<Term> args = new LinkedList<>();
 	    boolean comma = false;
@@ -76,7 +76,7 @@ public class NoHRParser implements Parser {
 		return null;
 	    if (!acept(TokenType.R_PAREN))
 		return null;
-	    return Model.atom(predicateSymbol, args, ontologyIndex);
+	    return Model.atom(predicateSymbol, vocabularyMapping, args);
 	}
     }
 
@@ -168,7 +168,7 @@ public class NoHRParser implements Parser {
 	if (variable != null)
 	    return variable;
 	if (hasNext(TokenType.SYMBOL))
-	    return cons(next());
+	    return cons(next(), vocabularyMapping);
 	return null;
     }
 

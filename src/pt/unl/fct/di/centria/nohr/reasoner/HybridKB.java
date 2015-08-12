@@ -31,13 +31,12 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.predicates.NegativePredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.RulesDuplication;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.UnquoteVisitor;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.OntologyTranslation;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLOntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.RulesDoubling;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.xsb.XSBFormatVisitor;
@@ -63,22 +62,41 @@ public class HybridKB {
 
     private final XSBDatabase xsbDatabase;
 
+    private final Profile profile;
+
     public HybridKB(final File xsbBinDirectory) throws OWLProfilesViolationsException, IOException,
 	    UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
 	this(xsbBinDirectory, Collections.<OWLAxiom> emptySet());
     }
 
+    public HybridKB(final File xsbBinDirectory, final Profile profile) throws OWLProfilesViolationsException,
+	    IPException, UnsupportedAxiomsException, IOException, XSBDatabaseCreationException {
+	this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), profile);
+    }
+
     public HybridKB(final File xsbBinDirectory, final RuleBase ruleBase) throws IOException,
 	    OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
-	this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase());
+	this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), null);
     }
 
     public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms) throws IOException,
 	    OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
-	this(xsbBinDirectory, axioms, new RuleBase());
+	this(xsbBinDirectory, axioms, new RuleBase(), null);
+    }
+
+    public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, Profile profile)
+	    throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
+	    XSBDatabaseCreationException {
+	this(xsbBinDirectory, axioms, new RuleBase(), profile);
     }
 
     public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase)
+	    throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
+	    XSBDatabaseCreationException {
+	this(xsbBinDirectory, axioms, ruleBase, null);
+    }
+
+    public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase, Profile profile)
 	    throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
 	    XSBDatabaseCreationException {
 	Objects.requireNonNull(xsbBinDirectory);
@@ -92,6 +110,7 @@ public class HybridKB {
 	queryProcessor = new QueryProcessor(xsbDatabase);
 	this.ruleBase = ruleBase;
 	rulesDuplication = new HashSet<Rule>();
+	this.profile = profile;
 	preprocess();
     }
 
@@ -123,20 +142,20 @@ public class HybridKB {
 	final File file = FileSystems.getDefault().getPath(TRANSLATION_FILE_NAME).toAbsolutePath().toFile();
 	final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 	final Set<Predicate> tabled = new HashSet<Predicate>();
-	tabled.addAll(ontologyTranslation.getTabledPredicates());
+	tabled.addAll(ontologyTranslation.getPredicatesToTable());
 	tabled.addAll(rulesTabledPredicates());
 	final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
 	for (final Predicate predicate : tabled) {
 	    writer.write(":- table " + predicate.accept(xsbFormatedVisitor) + "/" + predicate.getArity()
 		    + " as subsumptive.");
 	    writer.newLine();
-	    if (predicate instanceof NegativePredicate
+	    if (predicate.isMetaPredicate() && predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE)
 		    && !ontologyTranslation.getNegativeHeadsPredicates().contains(predicate)) {
 		writer.write(atom(predicate).accept(xsbFormatedVisitor) + " :- fail.");
 		writer.newLine();
 	    }
 	}
-	for (final Rule rule : ontologyTranslation.getTranslation()) {
+	for (final Rule rule : ontologyTranslation.getRules()) {
 	    writer.write(rule.accept(xsbFormatedVisitor));
 	    writer.newLine();
 	}
@@ -170,14 +189,14 @@ public class HybridKB {
     private void preprocess() throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
 	if (hasOntologyChanges) {
 	    RuntimesLogger.start("ontology processing");
-	    ontologyTranslation = AbstractOntologyTranslation.createOntologyTranslation(ontology);
+	    ontologyTranslation = OWLOntologyTranslation.createOntologyTranslation(ontology, profile);
 	    RuntimesLogger.stop("ontology processing", "loading");
 	}
 	if (ruleBase.hasChanges(true) || ontologyTranslation.hasDisjunctions() != hasDisjunctions) {
 	    RuntimesLogger.start("rules parsing");
 	    rulesDuplication.clear();
 	    for (final Rule rule : ruleBase.getRules())
-		Collections.addAll(rulesDuplication, RulesDuplication.duplicate(rule, true));
+		Collections.addAll(rulesDuplication, RulesDoubling.doubleRule(rule));
 	    RuntimesLogger.stop("rules parsing", "loading");
 	}
 	RuntimesLogger.start("file writing");
@@ -206,7 +225,7 @@ public class HybridKB {
 	final Answer answer = queryProcessor.query(query, hasDisjunctions, trueAnswer, undefinedAnswers,
 		hasDisjunctions ? inconsistentAnswers : false);
 	RuntimesLogger.stop("query", "queries");
-	return answer.acept(new UnquoteVisitor());
+	return answer;
     }
 
     public List<Answer> queryAll(Query query)
@@ -224,9 +243,8 @@ public class HybridKB {
 		hasDisjunctions ? inconsistentAnswers : false);
 	RuntimesLogger.stop("query", "queries");
 	final List<Answer> result = new LinkedList<Answer>();
-	final ModelVisitor unquoteVisitor = new UnquoteVisitor();
 	for (final Answer ans : answers)
-	    result.add(ans.acept(unquoteVisitor));
+	    result.add(ans);
 	return result;
     }
 

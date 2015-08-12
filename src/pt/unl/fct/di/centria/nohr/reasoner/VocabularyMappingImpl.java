@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.model.OWLProperty;
  * @author nunocosta
  *
  */
-public class OntologyIndexImpl implements OntologyIndex {
+public class VocabularyMappingImpl implements VocabularyMapping {
 
     private final Map<String, OWLClass> concepts;
 
@@ -26,7 +26,7 @@ public class OntologyIndexImpl implements OntologyIndex {
     /**
      *
      */
-    public OntologyIndexImpl(OWLOntology ontology) {
+    public VocabularyMappingImpl(OWLOntology ontology) {
 	concepts = new HashMap<>();
 	roles = new HashMap<>();
 	individuals = new HashMap<>();

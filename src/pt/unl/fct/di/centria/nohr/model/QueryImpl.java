@@ -10,7 +10,7 @@ import java.util.Set;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypesVisitor;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
 
 /**
  * Implementation of {@link Query}.
@@ -26,6 +26,8 @@ public class QueryImpl implements Query {
     /** The query's free variables */
     private final List<Variable> variables;
 
+    private final Map<Variable, Integer> index;
+
     /**
      * Construct a query with a specified list of literals and a specified list
      * of free variables.
@@ -33,12 +35,27 @@ public class QueryImpl implements Query {
      * @param literals
      *            the query's literals.
      *
-     * @variables variables the query's free variables
+     * @param variables
+     *            the query's free variables. All the those variables must
+     *            appear in {@code literals}.
      *
+     * @throws IllegalArgumentException
+     *             if {@code variables} contains some variable that doesn't
+     *             appear in {@code literals}.
      */
     QueryImpl(List<Literal> literals, List<Variable> variables) {
+	final Set<Variable> vars = new HashSet<>();
+	for (final Literal literal : literals)
+	    vars.addAll(literal.getVariables());
+	for (final Variable var : variables)
+	    if (!vars.contains(var))
+		throw new IllegalArgumentException("variables " + var + "doesn't appear in" + literals);
 	this.literals = literals;
 	this.variables = variables;
+	index = new HashMap<>();
+	int i = 0;
+	for (final Variable var : variables)
+	    index.put(var, i++);
     }
 
     @Override
@@ -47,7 +64,7 @@ public class QueryImpl implements Query {
     }
 
     @Override
-    public Query acept(ModelVisitor visitor) {
+    public Query accept(ModelVisitor visitor) {
 	final List<Literal> lits = new LinkedList<Literal>();
 	final List<Variable> vars = new LinkedList<Variable>();
 	for (final Literal literal : literals)
@@ -58,7 +75,7 @@ public class QueryImpl implements Query {
     }
 
     @Override
-    public Query assign(List<Term> termList) {
+    public Query apply(List<Term> termList) {
 	if (termList.size() != variables.size())
 	    throw new IllegalArgumentException(
 		    "termList size must have the same size that the number of variables of the query");
@@ -74,8 +91,8 @@ public class QueryImpl implements Query {
     }
 
     private Query encode(PredicateType predicateType) {
-	final ModelVisitor encoder = new PredicateTypesVisitor(predicateType);
-	return acept(encoder);
+	final ModelVisitor encoder = new PredicateTypeVisitor(predicateType);
+	return accept(encoder);
     }
 
     @Override
@@ -103,6 +120,11 @@ public class QueryImpl implements Query {
     @Override
     public Query getDouble() {
 	return encode(PredicateType.DOUBLE);
+    }
+
+    @Override
+    public Map<Variable, Integer> getIndex() {
+	return index;
     }
 
     @Override

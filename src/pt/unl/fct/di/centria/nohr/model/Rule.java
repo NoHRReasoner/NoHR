@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface Rule extends FormatVisitable {
 
-    public Rule acept(ModelVisitor visitor);
+    public Rule accept(ModelVisitor visitor);
 
     /**
      *
@@ -27,7 +27,7 @@ public interface Rule extends FormatVisitable {
      *
      * @return the list of literals at the body of this rule.
      */
-    public List<Literal> getBody();
+    public List<? extends Literal> getBody();
 
     /**
      * Returns the head of this rule.

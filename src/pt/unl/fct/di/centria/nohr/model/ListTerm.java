@@ -15,5 +15,5 @@ public interface ListTerm extends Term {
     public String accept(FormatVisitor visitor);
 
     @Override
-    public ListTerm acept(ModelVisitor visitor);
+    public ListTerm accept(ModelVisitor visitor);
 }

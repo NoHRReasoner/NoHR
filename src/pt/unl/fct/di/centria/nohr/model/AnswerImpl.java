@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
@@ -33,13 +34,6 @@ public class AnswerImpl implements Answer {
     private final List<Term> values;
 
     /**
-     * The mapping between the query's variables and the position in
-     * {@link #values} where the terms to which those variables are mapped
-     * appear.
-     */
-    private final Map<Variable, Integer> variablesIndex;
-
-    /**
      * Constructs an answer to a specified query, with the specified truth value
      * and substitution.
      *
@@ -49,16 +43,18 @@ public class AnswerImpl implements Answer {
      *            the truth value of the answer.
      * @param values
      *            the list of terms to which each query's variable is mapped.
-     * @param variablesIndex
+     * @param query.getIndex()
      *            the mapping between the query's variables and the position in
      *            {@code values} where the terms to which those variables are
      *            mapped appear.
      */
-    AnswerImpl(Query query, TruthValue truthValue, List<Term> values, Map<Variable, Integer> variablesIndex) {
+    AnswerImpl(Query query, TruthValue truthValue, List<Term> values) {
+	Objects.requireNonNull(query);
+	Objects.requireNonNull(truthValue);
+	Objects.requireNonNull(values);
 	this.query = query;
 	this.truthValue = truthValue;
 	this.values = values;
-	this.variablesIndex = variablesIndex;
     }
 
     @Override
@@ -67,20 +63,20 @@ public class AnswerImpl implements Answer {
     }
 
     @Override
-    public Answer acept(ModelVisitor visitor) {
+    public Answer accept(ModelVisitor visitor) {
 	final Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
 	final List<Term> vals = new ArrayList<Term>();
-	for (final Entry<Variable, Integer> entry : variablesIndex.entrySet())
-	    varsIdx.put(entry.getKey().acept(visitor), entry.getValue());
+	for (final Entry<Variable, Integer> entry : query.getIndex().entrySet())
+	    varsIdx.put(entry.getKey().accept(visitor), entry.getValue());
 	for (final Term val : values)
-	    vals.add(val.acept(visitor));
-	return new AnswerImpl(query, truthValue, vals, varsIdx);
+	    vals.add(val.accept(visitor));
+	return new AnswerImpl(query, truthValue, vals);
     }
 
     @Override
     public List<Literal> apply() {
 	final Map<Variable, Term> substitution = new HashMap<Variable, Term>();
-	for (final Entry<Variable, Integer> entry : variablesIndex.entrySet())
+	for (final Entry<Variable, Integer> entry : query.getIndex().entrySet())
 	    substitution.put(entry.getKey(), values.get(entry.getValue()));
 	final List<Literal> literals = new LinkedList<Literal>();
 	for (final Literal literal : query.getLiterals())
@@ -104,10 +100,10 @@ public class AnswerImpl implements Answer {
 		return false;
 	} else if (!values.equals(other.values))
 	    return false;
-	if (variablesIndex == null) {
-	    if (other.variablesIndex != null)
+	if (query.getIndex() == null) {
+	    if (other.query.getIndex() != null)
 		return false;
-	} else if (!variablesIndex.equals(other.variablesIndex))
+	} else if (!query.getIndex().equals(other.query.getIndex()))
 	    return false;
 	return true;
     }
@@ -124,7 +120,7 @@ public class AnswerImpl implements Answer {
 
     @Override
     public Term getValue(Variable var) {
-	return values.get(variablesIndex.get(var));
+	return values.get(query.getIndex().get(var));
     }
 
     @Override

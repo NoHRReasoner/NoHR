@@ -3,12 +3,9 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origDomPred;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origPred;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origRanPred;
+import static pt.unl.fct.di.centria.nohr.model.Model.*;
+
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
 
 import java.util.Set;
 
@@ -25,6 +22,7 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 
 /**
  * @author nunocosta
@@ -51,14 +49,12 @@ public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
 	return tr(r, x, y, false);
     }
 
-    @Override
     public Set<Rule> translate(OWLClassAssertionAxiom alpha) {
-	return translateOriginal(alpha);
+	return AssertionsTranslation.translateOriginal(alpha);
     }
 
-    @Override
     public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha) {
-	return translateOriginal(alpha);
+	return AssertionsTranslation.translateOriginal(alpha);
     }
 
     @Override

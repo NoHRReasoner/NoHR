@@ -28,7 +28,7 @@ public class TermModelAdapter {
 
     public static Term getTerm(TermModel termModel) {
 	if (termModel.isAtom())
-	    return cons(termModel.toString());
+	    return cons(unquote(termModel.toString()));
 	else if (termModel.isNumber()) {
 	    final Number number = termModel.intValue();
 	    return cons(number);
@@ -53,5 +53,9 @@ public class TermModelAdapter {
 	    return TruthValue.FALSE;
 	else
 	    throw new ClassCastException();
+    }
+
+    public static String unquote(String str) {
+	return str.replaceAll("''", "'");
     }
 }

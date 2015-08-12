@@ -12,19 +12,30 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
 /**
- * @author nunocosta
+ * Implementation of a {@link Predicate} representing a role.
+ *
+ * @author Nuno Costa
  *
  */
 public class RolePredicateImpl implements Predicate {
 
+    /** The role represented by this predicate. */
     private final OWLProperty<?, ?> role;
 
     /**
+     * Constructs a predicate representing a specified role.
      *
+     * @param role
+     *            the role represented by the predicate. Must have a IRI
+     *            fragment.
+     * 
+     * @throws IllegalArgumentException
+     *             if {@code role} hasn't a IRI fragment.
      */
     RolePredicateImpl(OWLProperty<?, ?> role) {
 	Objects.requireNonNull(role);
-	Objects.requireNonNull(role.getIRI().getFragment(), "must have a valid IRI (with fragment)");
+	if (role.getIRI().getFragment() == null)
+	    throw new IllegalArgumentException("role: must have an IRI fragment");
 	this.role = role;
     }
 
@@ -48,7 +59,7 @@ public class RolePredicateImpl implements Predicate {
      * .di.centria.nohr.model.Visitor)
      */
     @Override
-    public Predicate acept(ModelVisitor visitor) {
+    public Predicate accept(ModelVisitor visitor) {
 	return visitor.visit(this);
     }
 
@@ -65,22 +76,22 @@ public class RolePredicateImpl implements Predicate {
     /*
      * (non-Javadoc)
      *
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRole()
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asMetaPredicate()
      */
     @Override
-    public OWLProperty<?, ?> asRole() {
-	return role;
+    public MetaPredicate asMetaPredicate() {
+	throw new ClassCastException();
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRulePredicate()
+     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRole()
      */
     @Override
-    public String asRulePredicate() {
-	throw new ClassCastException();
+    public OWLProperty<?, ?> asRole() {
+	return role;
     }
 
     /*
@@ -118,7 +129,7 @@ public class RolePredicateImpl implements Predicate {
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getName()
      */
     @Override
-    public String getName() {
+    public String getSignature() {
 	return getSymbol() + "/" + getArity();
     }
 
@@ -158,6 +169,18 @@ public class RolePredicateImpl implements Predicate {
     /*
      * (non-Javadoc)
      *
+     * @see
+     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isMetaPredicate()
+     */
+    @Override
+    public boolean isMetaPredicate() {
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRole()
      */
     @Override
@@ -178,7 +201,7 @@ public class RolePredicateImpl implements Predicate {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

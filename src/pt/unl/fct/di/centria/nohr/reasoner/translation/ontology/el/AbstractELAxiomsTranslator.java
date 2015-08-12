@@ -3,8 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,13 +11,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
+import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
@@ -29,23 +29,15 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractAxiomsTranslator;
 
 /**
  * @author nunocosta
  *
  */
-public abstract class AbstractELAxiomsTranslator extends AbstractAxiomsTranslator {
+public abstract class AbstractELAxiomsTranslator {
 
     protected static final Variable X = var("X");
     protected static final Variable Y = var("Y");
-
-    /**
-     *
-     */
-    public AbstractELAxiomsTranslator(OWLOntology ontology) {
-	super(ontology);
-    }
 
     protected List<Literal> atomsList(Atom... atoms) {
 	final List<Literal> result = new ArrayList<Literal>(atoms.length);
@@ -98,6 +90,10 @@ public abstract class AbstractELAxiomsTranslator extends AbstractAxiomsTranslato
 	    return atom(pred, x, y);
 	return null;
     }
+
+    public abstract Set<Rule> translate(OWLClassAssertionAxiom alpha);
+
+    public abstract Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha);
 
     public Set<Rule> translate(OWLSubClassOfAxiom axiom) {
 	final OWLClassExpression ce1 = axiom.getSubClass();

@@ -3,10 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
 
@@ -20,7 +17,6 @@ import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 
@@ -29,19 +25,13 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 
 /**
  * @author nunocosta
  *
  */
 public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
-
-    /**
-     * @param ontology
-     */
-    public ELDoubleAxiomsTranslator(OWLOntology ontology) {
-	super(ontology);
-    }
 
     Atom negTr(Literal b) {
 	final Predicate pred0 = b.getFunctor();
@@ -77,12 +67,12 @@ public class ELDoubleAxiomsTranslator extends AbstractELAxiomsTranslator {
 
     @Override
     public Set<Rule> translate(OWLClassAssertionAxiom alpha) {
-	return translateDouble(alpha);
+	return AssertionsTranslation.translateDouble(alpha);
     }
 
     @Override
     public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha) {
-	return translateDouble(alpha);
+	return AssertionsTranslation.translateDouble(alpha);
     }
 
     // (r2)

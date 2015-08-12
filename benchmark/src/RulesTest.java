@@ -26,11 +26,9 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.StandarPrologParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
-import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 import ubt.api.QueryConfigParser;
@@ -73,8 +71,6 @@ public class RulesTest {
 	    System.exit(1);
 	}
 
-	AbstractOntologyTranslation.profile = Profiles.OWL2_QL;
-
 	final QueryConfigParser queriesParser = new QueryConfigParser();
 	final Path queriesFile = FileSystems.getDefault().getPath(args[2]).toAbsolutePath();
 	Vector<?> queries = null;
@@ -102,7 +98,7 @@ public class RulesTest {
 	    }
 	    RuntimesLogger.stop("ontology loading", "loading");
 	    final HybridKB nohr = new HybridKB(new File(System.getProperty("XSB_BIN_DIRECTORY")), ontology.getAxioms());
-	    final StandarPrologParser parser = new StandarPrologParser(new OntologyIndexImpl(ontology));
+	    final StandarPrologParser parser = new StandarPrologParser(new VocabularyMappingImpl(ontology));
 	    final Iterator<?> queriesIt1 = queries.iterator();
 	    while (queriesIt1.hasNext()) {
 		final QuerySpecification querySpecification = (QuerySpecification) queriesIt1.next();

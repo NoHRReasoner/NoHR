@@ -36,8 +36,8 @@ import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.plugin.rules.DisposableRuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex;
-import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
@@ -191,11 +191,11 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 	return getOWLModelManager().getActiveOntology();
     }
 
-    protected OntologyIndex getOntologyIndex() {
-	DisposableObject<OntologyIndex> disposableObject = getOWLModelManager().get(OntologyIndex.class);
+    protected VocabularyMapping getOntologyIndex() {
+	DisposableObject<VocabularyMapping> disposableObject = getOWLModelManager().get(VocabularyMapping.class);
 	if (disposableObject == null) {
-	    disposableObject = new DisposableObject<OntologyIndex>(new OntologyIndexImpl(getOntology()));
-	    getOWLModelManager().put(OntologyIndex.class, disposableObject);
+	    disposableObject = new DisposableObject<VocabularyMapping>(new VocabularyMappingImpl(getOntology()));
+	    getOWLModelManager().put(VocabularyMapping.class, disposableObject);
 	}
 	return disposableObject.getObject();
     }
@@ -242,14 +242,14 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
     }
 
     protected void startNoHR() {
-	getOWLModelManager().put(OntologyIndex.class,
-		new DisposableObject<OntologyIndex>(new OntologyIndexImpl(getOntology())));
+	getOWLModelManager().put(VocabularyMapping.class,
+		new DisposableObject<VocabularyMapping>(new VocabularyMappingImpl(getOntology())));
 	getOWLModelManager().put(HybridKB.class, createHybridKB(getOntology().getAxioms()));
 	getOWLModelManager().addOntologyChangeListener(new OWLOntologyChangeListener() {
 
 	    @Override
 	    public void ontologiesChanged(List<? extends OWLOntologyChange> changes) throws OWLException {
-		final OntologyIndex ontologyIndex = getOntologyIndex();
+		final VocabularyMapping ontologyIndex = getOntologyIndex();
 		for (final OWLOntologyChange change : changes)
 		    if (change.isAddAxiom()) {
 			for (final OWLClass concept : change.getAxiom().getClassesInSignature())
@@ -270,8 +270,8 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 	    @Override
 	    public void handleChange(OWLModelManagerChangeEvent e) {
 		if (e.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-		    getOWLModelManager().put(OntologyIndex.class, new DisposableObject<OntologyIndex>(
-			    new OntologyIndexImpl(getOWLModelManager().getActiveOntology())));
+		    getOWLModelManager().put(VocabularyMapping.class, new DisposableObject<VocabularyMapping>(
+			    new VocabularyMappingImpl(getOWLModelManager().getActiveOntology())));
 		    getOWLModelManager().put(HybridKB.class, createHybridKB(getOntology().getAxioms()));
 		}
 	    }

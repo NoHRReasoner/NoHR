@@ -15,7 +15,7 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndex;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 
 import com.igormaznitsa.prologparser.PrologCharDataSource;
 import com.igormaznitsa.prologparser.PrologParser;
@@ -36,17 +36,17 @@ public class StandarPrologParser {
 
     private final PrologCharDataSource src;
 
-    private final OntologyIndex ontologyIndex;
+    private final VocabularyMapping ontologyIndex;
 
     public StandarPrologParser() {
 	this(null, null);
     }
 
-    public StandarPrologParser(OntologyIndex ontologyIndex) {
+    public StandarPrologParser(VocabularyMapping ontologyIndex) {
 	this(null, ontologyIndex);
     }
 
-    public StandarPrologParser(Reader reader, OntologyIndex ontologyIndex) {
+    public StandarPrologParser(Reader reader, VocabularyMapping ontologyIndex) {
 	if (reader != null)
 	    src = new PrologCharDataSource(reader);
 	else
@@ -89,7 +89,7 @@ public class StandarPrologParser {
 	    }
 	}
 	if (ontologyIndex != null)
-	    return atom(pred, args, ontologyIndex);
+	    return atom(pred, ontologyIndex, args);
 	else
 	    return atom(pred, args);
     }

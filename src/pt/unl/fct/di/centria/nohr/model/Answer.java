@@ -16,10 +16,10 @@ import java.util.List;
 
 public interface Answer extends FormatVisitable {
 
-    public Answer acept(ModelVisitor visitor);
+    public Answer accept(ModelVisitor visitor);
 
     /**
-     * Apply the answer's substitution to query.
+     * Apply the answer's substitutions to the query literals.
      *
      * @return the query's literal list with each variable replaced by the
      *         corresponding answer's term.

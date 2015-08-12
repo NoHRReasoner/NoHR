@@ -32,7 +32,7 @@ public class ListTermImpl implements ListTerm {
     }
 
     @Override
-    public ListTerm acept(ModelVisitor visitor) {
+    public ListTerm accept(ModelVisitor visitor) {
 	final List<Term> list = new LinkedList<Term>();
 	for (final Term term : termList)
 	    list.add(visitor.visit(term));

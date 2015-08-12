@@ -8,7 +8,6 @@ import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ListTerm;
-import pt.unl.fct.di.centria.nohr.model.ListTermImpl;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -35,7 +34,7 @@ public class XSBFormatVisitor implements FormatVisitor {
      */
     @Override
     public String visit(Answer answer) {
-	return Model.concat(",", answer.apply(), this);
+	return Model.concat(answer.apply(), this, ",");
     }
 
     /*
@@ -47,7 +46,7 @@ public class XSBFormatVisitor implements FormatVisitor {
     @Override
     public String visit(Atom atom) {
 	final String pred = atom.getFunctor().accept(this);
-	final String args = Model.concat(",", atom.getArguments(), this);
+	final String args = Model.concat(atom.getArguments(), this, ",");
 	return pred + "(" + args + ")";
     }
 
@@ -72,12 +71,12 @@ public class XSBFormatVisitor implements FormatVisitor {
      */
     @Override
     public String visit(ListTerm listTerm) {
-	return "[" + Model.concat(",", listTerm.asList(), this) + "]";
+	return "[" + Model.concat(listTerm.asList(), this, ",") + "]";
     }
 
     @Override
     public String visit(MetaPredicate metaPredicate) {
-	return quoted(metaPredicate.getPrefix() + metaPredicate.getPredicate().getSymbol());
+	return quoted(metaPredicate.getSymbol());
     }
 
     /*
@@ -111,7 +110,7 @@ public class XSBFormatVisitor implements FormatVisitor {
      */
     @Override
     public String visit(Query query) {
-	return Model.concat(",", query.getLiterals(), this);
+	return Model.concat(query.getLiterals(), this, ",");
     }
 
     /*
@@ -123,7 +122,7 @@ public class XSBFormatVisitor implements FormatVisitor {
     @Override
     public String visit(Rule rule) {
 	final String head = rule.getHead().accept(this);
-	final String body = Model.concat(",", rule.getBody(), this);
+	final String body = Model.concat(rule.getBody(), this, ",");
 	if (rule.isFact())
 	    return head + ".";
 	else

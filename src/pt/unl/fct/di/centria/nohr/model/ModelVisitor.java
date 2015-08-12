@@ -1,5 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model;
 
+import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 /**
@@ -14,16 +15,20 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
  * returning the result of the application of that operation to each model
  * element, in the corresponding {@code visit} method.
  *
- * @author nunocosta
+ * @author Nuno Costa
  *
  */
 public interface ModelVisitor {
+
+    public Answer visit(Answer visit);
 
     public Constant visit(Constant constant);
 
     public Term visit(ListTerm list);
 
     public Literal visit(Literal literal);
+
+    public Predicate visit(MetaPredicate predicate);
 
     public NegativeLiteral visit(NegativeLiteral literal);
 

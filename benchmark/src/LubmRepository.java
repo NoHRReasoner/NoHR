@@ -21,11 +21,10 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.parsing.StandarPrologParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
-import pt.unl.fct.di.centria.nohr.reasoner.OntologyIndexImpl;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 import ubt.api.QueryResult;
@@ -36,24 +35,24 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 public class LubmRepository {
 
-    private Path data;
+    private final Path data;
 
     private String lastQuery;
 
     private pt.unl.fct.di.centria.nohr.reasoner.HybridKB nohrQuery;
 
-    private File resultsDirectory;
+    private final File resultsDirectory;
 
     int universities = 0;
 
+    private final Profile profiles;
+
     private StandarPrologParser parser;
 
-    public LubmRepository() {
-    }
-
-    public LubmRepository(Path data, File resultsDirectory) {
+    public LubmRepository(Path data, File resultsDirectory, Profile profile) {
 	this.resultsDirectory = resultsDirectory;
 	this.data = data;
+	profiles = profile;
     }
 
     public void clear() {
@@ -119,8 +118,8 @@ public class LubmRepository {
 	OWLOntology outOntology = outManager.createOntology(IRI.generateDocumentIRI(), inManager.getOntologies(), true);
 	inManager = null;
 	outManager = null;
-	nohrQuery = new HybridKB(new File(System.getProperty("XSB_BIN_DIRECTORY")), outOntology.getAxioms());
-	parser = new StandarPrologParser(new OntologyIndexImpl(outOntology));
+	nohrQuery = new HybridKB(new File(System.getProperty("XSB_BIN_DIRECTORY")), outOntology.getAxioms(), profiles);
+	parser = new StandarPrologParser(new VocabularyMappingImpl(outOntology));
 	outOntology = null;
 	System.gc();
 	return true;
@@ -146,10 +145,6 @@ public class LubmRepository {
 	} catch (final IOException x) {
 	    System.err.format("IOException: %s%n", x);
 	}
-    }
-
-    public void open(String database) {
-	AbstractOntologyTranslation.profile = Profiles.OWL2_QL;
     }
 
     public void setOntology(String ontology) {

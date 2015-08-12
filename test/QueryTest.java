@@ -9,9 +9,8 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import helpers.KB;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.AbstractOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.Profiles;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
@@ -24,11 +23,10 @@ import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
  */
 public abstract class QueryTest extends KB {
 
-    public QueryTest(Profiles profile) throws OWLOntologyCreationException, OWLOntologyStorageException,
+    public QueryTest(Profile profile) throws OWLOntologyCreationException, OWLOntologyStorageException,
 	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
 	    IPException, XSBDatabaseCreationException {
-	super();
-	AbstractOntologyTranslation.profile = profile;
+	super(profile);
     }
 
     // (s1.1), (s1.3)

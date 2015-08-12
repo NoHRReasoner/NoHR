@@ -73,7 +73,7 @@ public class ParserTest {
     public void testParseRule() throws ParseException {
 	final NoHRParser parser = new NoHRParser();
 	final Rule expectedRule = rule(atom("p", var("X"), var("Y"), var("Z")), atom("q", var("X"), var("Y")),
-		atom("r", cons("a")), negLiteral("z", var("X")), negLiteral(pred("w", 1), var("Y")));
+		atom("r", cons("a")), negLiteral(atom("z", var("X"))), negLiteral(pred("w", 1), var("Y")));
 	final Rule actualRule = parser.parseRule("p(?X, ?Y,  ?Z) :- q(?X, ?Y),r(a), not z(?X),  not w(?Y)");
 	Assert.assertEquals(expectedRule, actualRule);
     }

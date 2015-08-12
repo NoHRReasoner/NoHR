@@ -2,6 +2,7 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -41,5 +42,19 @@ public class DLUtils {
 	    return p.getSimplified() instanceof OWLObjectInverseOf;
 	}
 	return false;
+    }
+
+    /**
+     * @param role
+     * @return
+     */
+    public static OWLProperty<?, ?> atomic(OWLPropertyExpression<?, ?> role) {
+        if (role.isObjectPropertyExpression()) {
+            final OWLObjectPropertyExpression ope = (OWLObjectPropertyExpression) role;
+            return ope.getNamedProperty();
+        } else if (role.isDataPropertyExpression())
+            return (OWLDataProperty) role;
+        else
+            throw new IllegalArgumentException();
     }
 }

@@ -17,6 +17,6 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 public interface Atom extends Literal {
 
     @Override
-    public Atom acept(ModelVisitor visitor);
+    public Atom accept(ModelVisitor visitor);
 
 }

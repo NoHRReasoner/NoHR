@@ -14,7 +14,6 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
 
 public class QueryProcessor {
@@ -41,7 +40,7 @@ public class QueryProcessor {
 	    for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, true)) {
 		if (trueAnswers && !hasDoubled)
 		    return true;
-		final Query doubQuery = query.getDouble().assign(origAns.getValues());
+		final Query doubQuery = query.getDouble().apply(origAns.getValues());
 		final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
 		if (inconsistentAnswers && !hasDoubAns)
 		    return true;
@@ -53,7 +52,7 @@ public class QueryProcessor {
 	    for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, false)) {
 		if (!hasDoubled && undefinedAnswers)
 		    return true;
-		final Query doubQuery = query.getDouble().assign(origAns.getValues());
+		final Query doubQuery = query.getDouble().apply(origAns.getValues());
 		if (trueAnswers && hasDoubled && xsbDatabase.hasAnswers(doubQuery, true))
 		    return true;
 		if (undefinedAnswers && xsbDatabase.hasAnswers(doubQuery, false))
@@ -122,7 +121,7 @@ public class QueryProcessor {
 		    private Answer nextAnswer() {
 			while (origAnssIt.hasNext()) {
 			    final Answer origAns = origAnssIt.next();
-			    final Query doubQuery = query.getDouble().assign(origAns.getValues());
+			    final Query doubQuery = query.getDouble().apply(origAns.getValues());
 			    final TruthValue origTruth = origAns.getValuation();
 			    if (!hasDoubled
 				    && isRequiredTruth(origTruth, trueAnswers, undefinedAnswers, inconsistentAnswers))
@@ -195,7 +194,7 @@ public class QueryProcessor {
 	    for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, false)) {
 		if (!hasDoubled)
 		    return ans(query, TruthValue.UNDEFINED, origAns.getValues());
-		final Query doubQuery = query.getDouble().assign(origAns.getValues());
+		final Query doubQuery = query.getDouble().apply(origAns.getValues());
 		if (xsbDatabase.hasAnswers(doubQuery, false))
 		    return ans(query, TruthValue.UNDEFINED, origAns.getValues());
 	    }
@@ -204,7 +203,7 @@ public class QueryProcessor {
 	    for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, true)) {
 		if (trueAnswers && !hasDoubled)
 		    return ans(query, TruthValue.TRUE, origAns.getValues());
-		final Query doubQuery = query.getDouble().assign(origAns.getValues());
+		final Query doubQuery = query.getDouble().apply(origAns.getValues());
 		final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
 		if (trueAnswers && hasDoubAns)
 		    return ans(query, TruthValue.TRUE, origAns.getValues());
@@ -218,7 +217,7 @@ public class QueryProcessor {
 	    if ((trueAnswers && origTruth == TruthValue.TRUE || undefinedAnswers && origTruth == TruthValue.UNDEFINED)
 		    && !hasDoubled)
 		return ans(query, origTruth, origAns.getValues());
-	    final Query doubQuery = query.getDouble().assign(origAns.getValues());
+	    final Query doubQuery = query.getDouble().apply(origAns.getValues());
 	    if ((trueAnswers || inconsistentAnswers) && origTruth == TruthValue.TRUE) {
 		final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
 		if (trueAnswers && hasDoubAns)
@@ -255,10 +254,6 @@ public class QueryProcessor {
 	if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
 	    throw new IllegalArgumentException("must have at least one truth value enabled");
 	final List<Answer> result = new LinkedList<Answer>();
-	final Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
-	int i = 0;
-	for (final Variable var : query.getVariables())
-	    varsIdx.put(var, i++);
 	Map<List<Term>, TruthValue> origAnss;
 	if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
 	    origAnss = xsbDatabase.queryAll(query.getOriginal(), false);
@@ -284,7 +279,7 @@ public class QueryProcessor {
 	    } else
 		truth = origTruth;
 	    if (isRequiredTruth(truth, trueAnswers, undefinedAnswers, inconsistentAnswers))
-		result.add(ans(query, truth, vals, varsIdx));
+		result.add(ans(query, truth, vals));
 	}
 	return result;
     }

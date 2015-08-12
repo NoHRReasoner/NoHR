@@ -12,82 +12,58 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
 /**
- * @author nunocosta
+ * Implementation of a {@link Predicate} representing a concept.
+ *
+ * @author Nuno Costa
  *
  */
 public class ConceptPredicateImpl implements Predicate {
 
+    /** The concept represented by this predicate. */
     private final OWLClass concept;
 
     /**
+     * Constructs a predicate representing a specified concept.
      *
+     * @param concept
+     *            the concept represented by the predicate. Must have a IRI
+     *            fragment.
+     *
+     * @throws IllegalArgumentException
+     *             if {@code concept} hasn't a IRI fragment;
      */
     ConceptPredicateImpl(OWLClass concept) {
 	Objects.requireNonNull(concept);
-	Objects.requireNonNull(concept.getIRI().getFragment(), "concept: must have a valid IRI (with a fragment)");
+	if (concept.getIRI().getFragment() == null)
+	    throw new IllegalArgumentException("concept: must have an IRI fragment");
 	this.concept = concept;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct
-     * .di.centria.nohr.model.FormatVisitor)
-     */
     @Override
     public String accept(FormatVisitor visitor) {
 	return visitor.visit(this);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct
-     * .di.centria.nohr.model.Visitor)
-     */
     @Override
-    public Predicate acept(ModelVisitor visitor) {
+    public Predicate accept(ModelVisitor visitor) {
 	return visitor.visit(this);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asConcept()
-     */
     @Override
     public OWLClass asConcept() {
 	return concept;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRole()
-     */
+    @Override
+    public MetaPredicate asMetaPredicate() {
+	throw new ClassCastException();
+    }
+
     @Override
     public OWLProperty<?, ?> asRole() {
 	throw new ClassCastException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRulePredicate()
-     */
-    @Override
-    public String asRulePredicate() {
-	throw new ClassCastException();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
 	if (this == obj)
@@ -102,41 +78,21 @@ public class ConceptPredicateImpl implements Predicate {
 	return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getArity()
-     */
     @Override
     public int getArity() {
 	return 1;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getName()
-     */
     @Override
-    public String getName() {
+    public String getSignature() {
 	return getSymbol() + "/" + getArity();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getSymbol()
-     */
     @Override
     public String getSymbol() {
 	return concept.getIRI().getFragment();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
 	final int prime = 31;
@@ -145,42 +101,26 @@ public class ConceptPredicateImpl implements Predicate {
 	return result;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isConcept()
-     */
     @Override
     public boolean isConcept() {
 	return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRole()
-     */
+    @Override
+    public boolean isMetaPredicate() {
+	return false;
+    }
+
     @Override
     public boolean isRole() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRulePredicate()
-     */
     @Override
     public boolean isRulePredicate() {
 	return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
 	return getSymbol();

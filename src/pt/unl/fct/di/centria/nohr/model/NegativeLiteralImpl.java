@@ -40,7 +40,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
     }
 
     @Override
-    public NegativeLiteral acept(ModelVisitor visitor) {
+    public NegativeLiteral accept(ModelVisitor visitor) {
 	return new NegativeLiteralImpl(visitor.visit(atom).getAtom());
     }
 
