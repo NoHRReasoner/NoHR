@@ -8,7 +8,7 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.DLUtils;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
 
 import static pt.unl.fct.di.centria.nohr.model.predicates.PredicateType.*;
 

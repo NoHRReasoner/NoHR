@@ -44,223 +44,222 @@ import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class HybridKB {
 
-    private static final String TRANSLATION_FILE_NAME = "nohrtr.P";
+	private static final String TRANSLATION_FILE_NAME = "nohrtr.P";
 
-    private boolean hasDisjunctions;
+	private boolean hasDisjunctions;
 
-    private boolean hasOntologyChanges;
+	private boolean hasOntologyChanges;
 
-    private final OWLOntology ontology;
+	private final OWLOntology ontology;
 
-    private OntologyTranslation ontologyTranslation;
+	private OntologyTranslation ontologyTranslation;
 
-    private final QueryProcessor queryProcessor;
+	private final QueryProcessor queryProcessor;
 
-    private final RuleBase ruleBase;
+	private final RuleBase ruleBase;
 
-    private final Set<Rule> rulesDuplication;
+	private final Set<Rule> rulesDuplication;
 
-    private final XSBDatabase xsbDatabase;
+	private final XSBDatabase xsbDatabase;
 
-    private final Profile profile;
+	private final Profile profile;
 
-    public HybridKB(final File xsbBinDirectory) throws OWLProfilesViolationsException, IOException,
-	    UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
-	this(xsbBinDirectory, Collections.<OWLAxiom> emptySet());
-    }
-
-    public HybridKB(final File xsbBinDirectory, final Profile profile) throws OWLProfilesViolationsException,
-	    IPException, UnsupportedAxiomsException, IOException, XSBDatabaseCreationException {
-	this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), profile);
-    }
-
-    public HybridKB(final File xsbBinDirectory, final RuleBase ruleBase) throws IOException,
-	    OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
-	this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), null);
-    }
-
-    public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms) throws IOException,
-	    OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
-	this(xsbBinDirectory, axioms, new RuleBase(), null);
-    }
-
-    public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, Profile profile)
-	    throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
-	    XSBDatabaseCreationException {
-	this(xsbBinDirectory, axioms, new RuleBase(), profile);
-    }
-
-    public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase)
-	    throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
-	    XSBDatabaseCreationException {
-	this(xsbBinDirectory, axioms, ruleBase, null);
-    }
-
-    public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase, Profile profile)
-	    throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
-	    XSBDatabaseCreationException {
-	Objects.requireNonNull(xsbBinDirectory);
-	try {
-	    ontology = OWLManager.createOWLOntologyManager().createOntology(axioms);
-	} catch (final OWLOntologyCreationException e) {
-	    throw new RuntimeException(e);
+	public HybridKB(final File xsbBinDirectory) throws OWLProfilesViolationsException, IOException,
+			UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
+		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet());
 	}
-	hasOntologyChanges = true;
-	xsbDatabase = new XSBDatabase(xsbBinDirectory);
-	queryProcessor = new QueryProcessor(xsbDatabase);
-	this.ruleBase = ruleBase;
-	rulesDuplication = new HashSet<Rule>();
-	this.profile = profile;
-	preprocess();
-    }
 
-    public boolean addAxiom(OWLAxiom axiom) {
-	final List<OWLOntologyChange> changes = ontology.getOWLOntologyManager().addAxiom(ontology, axiom);
-	if (!changes.isEmpty()) {
-	    hasOntologyChanges = true;
-	    return true;
+	public HybridKB(final File xsbBinDirectory, final Profile profile) throws OWLProfilesViolationsException,
+			IPException, UnsupportedAxiomsException, IOException, XSBDatabaseCreationException {
+		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), profile);
 	}
-	return false;
-    }
 
-    public void dispose() {
-	xsbDatabase.dispose();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#finalize()
-     */
-    @Override
-    protected void finalize() throws Throwable {
-	super.finalize();
-	dispose();
-    }
-
-    private File generateTranslationFile() throws IOException {
-	final File file = FileSystems.getDefault().getPath(TRANSLATION_FILE_NAME).toAbsolutePath().toFile();
-	final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-	final Set<Predicate> tabled = new HashSet<Predicate>();
-	tabled.addAll(ontologyTranslation.getPredicatesToTable());
-	tabled.addAll(rulesTabledPredicates());
-	final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
-	for (final Predicate predicate : tabled) {
-	    writer.write(":- table " + predicate.accept(xsbFormatedVisitor) + "/" + predicate.getArity()
-		    + " as subsumptive.");
-	    writer.newLine();
-	    if (predicate.isMetaPredicate() && predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE)
-		    && !ontologyTranslation.getNegativeHeadsPredicates().contains(predicate)) {
-		writer.write(atom(predicate).accept(xsbFormatedVisitor) + " :- fail.");
-		writer.newLine();
-	    }
+	public HybridKB(final File xsbBinDirectory, final RuleBase ruleBase) throws IOException,
+			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
+		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), null);
 	}
-	for (final Rule rule : ontologyTranslation.getRules()) {
-	    writer.write(rule.accept(xsbFormatedVisitor));
-	    writer.newLine();
+
+	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms) throws IOException,
+			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
+		this(xsbBinDirectory, axioms, new RuleBase(), null);
 	}
-	for (final Rule rule : rulesDuplication) {
-	    writer.write(rule.accept(xsbFormatedVisitor));
-	    writer.newLine();
+
+	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, Profile profile)
+			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
+			XSBDatabaseCreationException {
+		this(xsbBinDirectory, axioms, new RuleBase(), profile);
 	}
-	writer.close();
-	return file;
-    }
 
-    /**
-     * @return the ruleBase
-     */
-    public RuleBase getRuleBase() {
-	return ruleBase;
-    }
-
-    public boolean hasAnswer(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
-	    IOException, CloneNotSupportedException, UnsupportedAxiomsException {
-	if (hasOntologyChanges || ruleBase.hasChanges())
-	    preprocess();
-	RuntimesLogger.start("query");
-	final boolean hasAnswer = queryProcessor.hasAnswer(query, hasDisjunctions, trueAnswer, undefinedAnswers,
-		hasDisjunctions ? inconsistentAnswers : false);
-	RuntimesLogger.stop("query", "queries");
-	return hasAnswer;
-    }
-
-    private void preprocess() throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
-	if (hasOntologyChanges) {
-	    RuntimesLogger.start("ontology processing");
-	    ontologyTranslation = OWLOntologyTranslation.createOntologyTranslation(ontology, profile);
-	    RuntimesLogger.stop("ontology processing", "loading");
+	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase)
+			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
+			XSBDatabaseCreationException {
+		this(xsbBinDirectory, axioms, ruleBase, null);
 	}
-	if (ruleBase.hasChanges(true) || ontologyTranslation.hasDisjunctions() != hasDisjunctions) {
-	    RuntimesLogger.start("rules parsing");
-	    rulesDuplication.clear();
-	    for (final Rule rule : ruleBase.getRules())
-		Collections.addAll(rulesDuplication, RulesDoubling.doubleRule(rule));
-	    RuntimesLogger.stop("rules parsing", "loading");
+
+	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase, Profile profile)
+			throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
+			XSBDatabaseCreationException {
+		Objects.requireNonNull(xsbBinDirectory);
+		try {
+			ontology = OWLManager.createOWLOntologyManager().createOntology(axioms);
+		} catch (final OWLOntologyCreationException e) {
+			throw new RuntimeException(e);
+		}
+		hasOntologyChanges = true;
+		xsbDatabase = new XSBDatabase(xsbBinDirectory);
+		queryProcessor = new QueryProcessor(xsbDatabase);
+		this.ruleBase = ruleBase;
+		rulesDuplication = new HashSet<Rule>();
+		this.profile = profile;
+		preprocess();
 	}
-	RuntimesLogger.start("file writing");
-	final File xsbFile = generateTranslationFile();
-	RuntimesLogger.stop("file writing", "loading");
-	RuntimesLogger.start("xsb loading");
-	xsbDatabase.clear();
-	xsbDatabase.load(xsbFile);
-	RuntimesLogger.stop("xsb loading", "loading");
-	hasOntologyChanges = false;
-	hasDisjunctions = ontologyTranslation.hasDisjunctions();
-    }
 
-    public Answer query(Query query) throws OWLOntologyCreationException, OWLOntologyStorageException,
-	    OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException {
-	return query(query, true, true, true);
-    }
+	public boolean addAxiom(OWLAxiom axiom) {
+		final List<OWLOntologyChange> changes = ontology.getOWLOntologyManager().addAxiom(ontology, axiom);
+		if (!changes.isEmpty()) {
+			hasOntologyChanges = true;
+			return true;
+		}
+		return false;
+	}
 
-    public Answer query(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
-	    throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
-	    IOException, CloneNotSupportedException, UnsupportedAxiomsException {
-	if (hasOntologyChanges || ruleBase.hasChanges())
-	    preprocess();
-	RuntimesLogger.start("query");
+	public void dispose() {
+		xsbDatabase.dispose();
+	}
 
-	final Answer answer = queryProcessor.query(query, hasDisjunctions, trueAnswer, undefinedAnswers,
-		hasDisjunctions ? inconsistentAnswers : false);
-	RuntimesLogger.stop("query", "queries");
-	return answer;
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Object#finalize()
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		dispose();
+	}
 
-    public List<Answer> queryAll(Query query)
-	    throws OWLProfilesViolationsException, UnsupportedAxiomsException, IOException {
-	return queryAll(query, true, true, true);
-    }
+	private File generateTranslationFile() throws IOException {
+		final File file = FileSystems.getDefault().getPath(TRANSLATION_FILE_NAME).toAbsolutePath().toFile();
+		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		final Set<Predicate> tabled = new HashSet<Predicate>();
+		tabled.addAll(ontologyTranslation.getPredicatesToTable());
+		tabled.addAll(rulesTabledPredicates());
+		final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
+		for (final Predicate predicate : tabled) {
+			writer.write(":- table " + predicate.accept(xsbFormatedVisitor) + "/" + predicate.getArity()
+					+ " as subsumptive.");
+			writer.newLine();
+			if (predicate.isMetaPredicate() && predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE)
+					&& !ontologyTranslation.getNegativeHeadsPredicates().contains(predicate)) {
+				writer.write(atom(predicate).accept(xsbFormatedVisitor) + " :- fail.");
+				writer.newLine();
+			}
+		}
+		for (final Rule rule : ontologyTranslation.getRules()) {
+			writer.write(rule.accept(xsbFormatedVisitor));
+			writer.newLine();
+		}
+		for (final Rule rule : rulesDuplication) {
+			writer.write(rule.accept(xsbFormatedVisitor));
+			writer.newLine();
+		}
+		writer.close();
+		return file;
+	}
 
-    public List<Answer> queryAll(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
-	    throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
-	if (hasOntologyChanges || ruleBase.hasChanges())
-	    preprocess();
-	RuntimesLogger.start("query");
-	RuntimesLogger.info("querying: " + query);
-	final List<Answer> answers = queryProcessor.queryAll(query, hasDisjunctions, trueAnswer, undefinedAnswers,
-		hasDisjunctions ? inconsistentAnswers : false);
-	RuntimesLogger.stop("query", "queries");
-	final List<Answer> result = new LinkedList<Answer>();
-	for (final Answer ans : answers)
-	    result.add(ans);
-	return result;
-    }
+	/**
+	 * @return the ruleBase
+	 */
+	public RuleBase getRuleBase() {
+		return ruleBase;
+	}
 
-    public boolean removeAxiom(OWLAxiom axiom) {
-	final List<OWLOntologyChange> changes = ontology.getOWLOntologyManager().removeAxiom(ontology, axiom);
-	if (!changes.isEmpty())
-	    hasOntologyChanges = true;
-	return !changes.isEmpty();
-    }
+	public boolean hasAnswer(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
+			throws OWLProfilesViolationsException, IOException, UnsupportedAxiomsException {
+		if (hasOntologyChanges || ruleBase.hasChanges())
+			preprocess();
+		RuntimesLogger.start("query");
+		final boolean hasAnswer = queryProcessor.hasAnswer(query, hasDisjunctions, trueAnswer, undefinedAnswers,
+				hasDisjunctions ? inconsistentAnswers : false);
+		RuntimesLogger.stop("query", "queries");
+		return hasAnswer;
+	}
 
-    private Set<Predicate> rulesTabledPredicates() {
-	final Set<Predicate> result = new HashSet<Predicate>();
-	for (final Rule rule : rulesDuplication)
-	    for (final Literal literal : rule.getNegativeBody())
-		result.add(literal.getFunctor());
-	return result;
-    }
+	private void preprocess() throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
+		if (hasOntologyChanges) {
+			RuntimesLogger.start("ontology processing");
+			ontologyTranslation = OWLOntologyTranslation.createOntologyTranslation(ontology, profile);
+			RuntimesLogger.stop("ontology processing", "loading");
+		}
+		if (ruleBase.hasChanges(true) || ontologyTranslation.hasDisjunctions() != hasDisjunctions) {
+			RuntimesLogger.start("rules parsing");
+			rulesDuplication.clear();
+			for (final Rule rule : ruleBase.getRules())
+				Collections.addAll(rulesDuplication, RulesDoubling.doubleRule(rule));
+			RuntimesLogger.stop("rules parsing", "loading");
+		}
+		RuntimesLogger.start("file writing");
+		final File xsbFile = generateTranslationFile();
+		RuntimesLogger.stop("file writing", "loading");
+		RuntimesLogger.start("xsb loading");
+		xsbDatabase.clear();
+		xsbDatabase.load(xsbFile);
+		RuntimesLogger.stop("xsb loading", "loading");
+		hasOntologyChanges = false;
+		hasDisjunctions = ontologyTranslation.hasDisjunctions();
+	}
+
+	public Answer query(Query query) throws OWLOntologyCreationException, OWLOntologyStorageException,
+			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException {
+		return query(query, true, true, true);
+	}
+
+	public Answer query(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
+			throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
+			IOException, CloneNotSupportedException, UnsupportedAxiomsException {
+		if (hasOntologyChanges || ruleBase.hasChanges())
+			preprocess();
+		RuntimesLogger.start("query");
+
+		final Answer answer = queryProcessor.query(query, hasDisjunctions, trueAnswer, undefinedAnswers,
+				hasDisjunctions ? inconsistentAnswers : false);
+		RuntimesLogger.stop("query", "queries");
+		return answer;
+	}
+
+	public List<Answer> queryAll(Query query)
+			throws OWLProfilesViolationsException, UnsupportedAxiomsException, IOException {
+		return queryAll(query, true, true, true);
+	}
+
+	public List<Answer> queryAll(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
+			throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
+		if (hasOntologyChanges || ruleBase.hasChanges())
+			preprocess();
+		RuntimesLogger.start("query");
+		RuntimesLogger.info("querying: " + query);
+		final List<Answer> answers = queryProcessor.queryAll(query, hasDisjunctions, trueAnswer, undefinedAnswers,
+				hasDisjunctions ? inconsistentAnswers : false);
+		RuntimesLogger.stop("query", "queries");
+		final List<Answer> result = new LinkedList<Answer>();
+		for (final Answer ans : answers)
+			result.add(ans);
+		return result;
+	}
+
+	public boolean removeAxiom(OWLAxiom axiom) {
+		final List<OWLOntologyChange> changes = ontology.getOWLOntologyManager().removeAxiom(ontology, axiom);
+		if (!changes.isEmpty())
+			hasOntologyChanges = true;
+		return !changes.isEmpty();
+	}
+
+	private Set<Predicate> rulesTabledPredicates() {
+		final Set<Predicate> result = new HashSet<Predicate>();
+		for (final Rule rule : rulesDuplication)
+			for (final Literal literal : rule.getNegativeBody())
+				result.add(literal.getFunctor());
+		return result;
+	}
 
 }

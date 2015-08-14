@@ -23,33 +23,20 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
  */
 public enum PredicateType {
     /**
-     * The type of a double meta-predicate, <i>P<sup>d</sup></i>. Has the marker
-     * {@code 'd'}.
+     * The type of an original meta-predicate, <i>P</i>. Has the maker
+     * {@code 'a'}.
      */
-    DOUBLE('d',
-	    true), /**
-		    * The type of a double meta-predicate, <i>DP<sup>d</sup></i>
-		    * , representing an existential quantification of an atomic
-		    * role, <i>P</i>. Has the marker {@code 'g'}.
-		    */
-    DOUBLE_DOMAIN('g', true,
-	    true), /**
-		    * The type of a double meta-predicate, <i>RP
-		    * <sup>d</sup></i>, representing a existential
-		    * quantification of an inverse role, <i>P</i>. Has the
-		    * marker {@code 'g'}.
-		    */
-    DOUBLED_RANGE('h', true, true), /**
-				     * The type of a meta-predicate, <i>NP
-				     * </p>
-				     * , representing a classic negation. Has
-				     * the marker {@code 'n'}.
-				     */
-    NEGATIVE('n'), /**
-		    * The type of an original meta-predicate, <i>P</i>. Has the
-		    * maker {@code 'a'}.
-		    */
     ORIGINAL('a'), /**
+		    * The type of a double meta-predicate, <i>P<sup>d</sup></i>.
+		    * Has the marker {@code 'd'}.
+		    */
+    DOUBLE('d', true), /**
+		        * The type of a meta-predicate, <i>NP
+		        * </p>
+		        * , representing a classic negation. Has the marker
+		        * {@code 'n'}.
+		        */
+    NEGATIVE('n'), /**
 		    * The type of an original meta-predicate, <i>DP</i>,
 		    * representing an existential quantification of an atomic
 		    * role, <i>P</i>. Has the maker {@code 'e'}.
@@ -60,7 +47,21 @@ public enum PredicateType {
 		    * representing an existential quantification of an atomic
 		    * role, <i>P</i>. Has the marker {@code 'f'}.
 		    */
-    ORIGINAL_RANGE('f', false, true);
+    ORIGINAL_RANGE('f', false,
+	    true), /**
+		    * The type of a double meta-predicate, <i>DP<sup>d</sup></i>
+		    * , representing an existential quantification of an atomic
+		    * role, <i>P</i>. Has the marker {@code 'g'}.
+		    */
+
+    DOUBLE_DOMAIN('g', true,
+	    true), /**
+		    * The type of a double meta-predicate, <i>RP
+		    * <sup>d</sup></i>, representing a existential
+		    * quantification of an inverse role, <i>P</i>. Has the
+		    * marker {@code 'g'}.
+		    */
+    DOUBLED_RANGE('h', true, true);
 
     /** The char to prefix the symbols of meta-predicates of this type. */
     private final char marker;

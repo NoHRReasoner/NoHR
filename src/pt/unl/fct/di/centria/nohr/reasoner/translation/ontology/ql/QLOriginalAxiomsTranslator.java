@@ -23,12 +23,13 @@ import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
 
 /**
  * @author nunocosta
  *
  */
-public class QLOriginalAxiomsTranslator extends AbstractQLAxiomsTranslator {
+public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 
     public QLOriginalAxiomsTranslator(OWLOntology ontology) {
 	super(ontology);

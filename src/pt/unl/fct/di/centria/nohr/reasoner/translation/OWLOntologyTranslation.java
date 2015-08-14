@@ -4,16 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.profiles.OWL2ELProfile;
-import org.semanticweb.owlapi.profiles.OWL2QLProfile;
-import org.semanticweb.owlapi.profiles.OWLProfileReport;
+
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.ELOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLOntologyTranslation;
 
 /**
  * An partial implementation of {@link OntologyTranslation} that translate an
@@ -28,52 +24,31 @@ public abstract class OWLOntologyTranslation implements OntologyTranslation {
     /**
      * {@link OntologyTranslation}'s factory method. Creates an
      * {@link OntologyTranslation ontology translation} of a specified ontology
-     * choosing the {@link OntologyTranslation} implementation that can handle
-     * the ontology's OWL profile.
+     * choosing appropriately the {@link OntologyTranslation} implementation
+     * that can handle a specified OWL profile if the ontology is in that
+     * profile, or the preferred ontology's profile (the same that is returned
+     * by {@link #getProfile()}) if none is specified.
      *
      * @param ontology
      *            the ontology to translate.
+     * @param profile
+     *            the {@link Profile profile} that {@link OntologyTranslation}
+     *            will handle. If none is specified (i.e. if it is {@code null}
+     *            ), the preferred ontology's profile will be choosen.
      * @return an {@link OntologyTranslation ontology translation} of
      *         {@code ontology}.
      * @throws OWLProfilesViolationsException
-     *             if the ontology isn't in any supported OWL profile.
+     *             if {@code profile!=null} and the ontology isn't in
+     *             {@code profile}, or {@code profile==null} and the ontology
+     *             isn't in any supported profile.
      * @throws UnsupportedAxiomsException
-     *             if the ontolgy is in a supported OWL profile, but has some
-     *             axioms of an unsupported type.
+     *             if {@code ontology} has some axioms of an unsupported type.
      */
     public static OntologyTranslation createOntologyTranslation(OWLOntology ontology, Profile profile)
 	    throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-	profile = profile == null ? getProfile(ontology) : profile;
-	switch (profile) {
-	case OWL2_QL:
-	    return new QLOntologyTranslation(ontology);
-	case OWL2_EL:
-	    return new ELOntologyTranslation(ontology);
-	default:
-	    throw new OWLProfilesViolationsException();
-	}
-    }
-
-    /**
-     * Returns the OWL profile of a given ontology.
-     *
-     * @param ontology
-     *            an ontology
-     * @return the OWL profile of {@code ontology}
-     * @throws OWLProfilesViolationsException
-     *             if {@code ontology} isn't in any of the supported profiles.
-     */
-    public static Profile getProfile(OWLOntology ontology) throws OWLProfilesViolationsException {
-	final OWL2ELProfile elProfile = new OWL2ELProfile();
-	final OWL2QLProfile qlProfile = new OWL2QLProfile();
-	final OWLProfileReport elReport = elProfile.checkOntology(ontology);
-	final OWLProfileReport qlRerport = qlProfile.checkOntology(ontology);
-	if (!qlRerport.isInProfile() && !elReport.isInProfile())
-	    throw new OWLProfilesViolationsException(qlRerport, elReport);
-	if (qlRerport.getViolations().size() <= elReport.getViolations().size())
-	    return Profile.OWL2_QL;
-	else
-	    return Profile.OWL2_EL;
+	if (profile != null)
+	    return profile.createOntologyTranslation(ontology);
+	return Profile.getProfile(ontology).createOntologyTranslation(ontology);
     }
 
     /**
@@ -96,8 +71,8 @@ public abstract class OWLOntologyTranslation implements OntologyTranslation {
     protected final Set<Predicate> predicatesToTable;
 
     /**
-     * Constructs a {@link OWLOntologyTranslation}, appropriately
-     * initializing its state.
+     * Constructs a {@link OWLOntologyTranslation}, appropriately initializing
+     * its state.
      *
      * @param ontology
      *            the ontology to translate.
@@ -152,8 +127,7 @@ public abstract class OWLOntologyTranslation implements OntologyTranslation {
     }
 
     /**
-     * Translates the ontology that this {@link OWLOntologyTranslation}
-     * refer.
+     * Translates the ontology that this {@link OWLOntologyTranslation} refer.
      */
     protected void translate() {
 	if (hasDisjunctions())

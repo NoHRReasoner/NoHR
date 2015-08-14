@@ -27,7 +27,7 @@ import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.BasicTBoxGraph;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.TBoxDigraphImpl;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
@@ -52,7 +52,7 @@ public class TBoxGraphTest {
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -76,14 +76,14 @@ public class TBoxGraphTest {
 	kb.subConcept(a[3], a[2]);
 	final Set<OWLClassExpression> expectedAncestors = set(a[1], a[2], a[3]);
 	// Test
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	final Set<OWLClassExpression> ancestors = graph.getAncestors(a[0]);
 	Assert.assertEquals(expectedAncestors, ancestors);
     }
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -108,7 +108,7 @@ public class TBoxGraphTest {
 	kb.subConcept(a[0], a[3]);
 	final Set<OWLClassExpression> expectedAncestors = set(a);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	Set<OWLClassExpression> ancestors;
 	// Tests
 	for (int i = 0; i < 4; i++) {
@@ -119,7 +119,7 @@ public class TBoxGraphTest {
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getPredecessors(org.semanticweb.owlapi.model.OWLClassExpression)}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getPredecessors(org.semanticweb.owlapi.model.OWLClassExpression)}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -145,7 +145,7 @@ public class TBoxGraphTest {
 	kb.subConcept(a[4], kb.some(p[1]));
 	kb.subConcept(kb.some(p[2]), kb.some(p[3]));
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	// Test1
 	Set<OWLClassExpression> predecessors = graph.getPredecessors(a[2]);
 	Assert.assertEquals(set(a[0], a[1]), predecessors);
@@ -176,7 +176,7 @@ public class TBoxGraphTest {
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getIrreflexiveRoles()}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getIrreflexiveRoles()}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -200,7 +200,7 @@ public class TBoxGraphTest {
 	kb.disjointConcepts(a[0], a[1]);
 	final Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	final Set<OWLObjectProperty> irreflexiveRoles = graph.getIrreflexiveRoles();
 	// Test
 	Assert.assertEquals(expectedIrreflexiveRoles, irreflexiveRoles);
@@ -208,7 +208,7 @@ public class TBoxGraphTest {
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getIrreflexiveRoles()}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getIrreflexiveRoles()}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -231,7 +231,7 @@ public class TBoxGraphTest {
 	kb.disjointRoles(p[1], p[2]);
 	final Set<OWLObjectProperty> expectedIrreflexiveRoles = set((OWLObjectProperty) p[0]);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	final Set<OWLObjectProperty> irreflexiveRoles = graph.getIrreflexiveRoles();
 	// Test
 	Assert.assertEquals(expectedIrreflexiveRoles, irreflexiveRoles);
@@ -239,7 +239,7 @@ public class TBoxGraphTest {
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLObjectPropertyExpression)}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLObjectPropertyExpression)}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -263,14 +263,14 @@ public class TBoxGraphTest {
 	kb.subRole(p[3], p[2]);
 	final Set<OWLObjectPropertyExpression> expectedAncestors = set(p[1], p[2], p[3]);
 	// Test
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	final Set<OWLPropertyExpression<?, ?>> ancestors = graph.getAncestors(p[0]);
 	Assert.assertEquals(expectedAncestors, ancestors);
     }
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getAncestors(org.semanticweb.owlapi.model.OWLClassExpression)}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -295,7 +295,7 @@ public class TBoxGraphTest {
 	kb.subRole(p[0], p[3]);
 	final Set<OWLObjectPropertyExpression> expectedAncestors = set(p);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	Set<OWLPropertyExpression<?, ?>> ancestors;
 	// Tests
 	for (int i = 0; i < 4; i++) {
@@ -307,7 +307,7 @@ public class TBoxGraphTest {
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getPredecessors(org.semanticweb.owlapi.model.OWLObjectPropertyExpression)}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getPredecessors(org.semanticweb.owlapi.model.OWLObjectPropertyExpression)}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -332,7 +332,7 @@ public class TBoxGraphTest {
 	kb.subRole(p[5], kb.inv((OWLObjectProperty) p[6]));
 	kb.subRole(kb.inv((OWLObjectProperty) p[7]), kb.inv((OWLObjectProperty) p[8]));
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	// Test1
 	Set<OWLPropertyExpression<?, ?>> predecessors = graph.getPredecessors(p[2]);
 	Assert.assertEquals(set(p[0], p[1]), predecessors);
@@ -371,7 +371,7 @@ public class TBoxGraphTest {
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getUnsatisfiableEntities()}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getUnsatisfiableEntities()}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -399,7 +399,7 @@ public class TBoxGraphTest {
 	kb.disjointRoles(p[1], p[2]);
 	final Set<OWLEntity> expectedUnsatisfiableEntities = set((OWLEntity) a[0], (OWLEntity) p[0]);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	final Set<OWLEntity> unsatisfiableEntities = graph.getUnsatisfiableEntities();
 	// Test
 	Assert.assertEquals(expectedUnsatisfiableEntities, unsatisfiableEntities);
@@ -407,7 +407,7 @@ public class TBoxGraphTest {
 
     /**
      * Test method for
-     * {@link nohr.reasoner.translation.ontology.ql.BasicTBoxGraph#getUnsatisfiableEntities()}
+     * {@link TBoxDigraphImpl.reasoner.translation.ontology.ql.BasicTBoxGraph#getUnsatisfiableEntities()}
      * .
      *
      * @throws OWLOntologyCreationException
@@ -438,7 +438,7 @@ public class TBoxGraphTest {
 	final Set<OWLEntity> expectedUnsatisfiableEntities = set((OWLEntity) a[0], (OWLEntity) a[1], (OWLEntity) a[2],
 		(OWLEntity) p[0], (OWLEntity) p[1], (OWLEntity) p[2]);
 	// TestInit
-	final BasicTBoxGraph graph = new BasicTBoxGraph(kb.getQLNormalizedOntology());
+	final TBoxDigraphImpl graph = new TBoxDigraphImpl(kb.getQLNormalizedOntology());
 	final Set<OWLEntity> unsatisfiableEntities = graph.getUnsatisfiableEntities();
 	// Test
 	Assert.assertEquals(expectedUnsatisfiableEntities, unsatisfiableEntities);

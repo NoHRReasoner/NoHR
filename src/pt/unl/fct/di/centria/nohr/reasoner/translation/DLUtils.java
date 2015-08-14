@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
+package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;

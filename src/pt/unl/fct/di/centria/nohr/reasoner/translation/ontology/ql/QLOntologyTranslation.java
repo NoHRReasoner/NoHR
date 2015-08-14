@@ -37,7 +37,7 @@ public class QLOntologyTranslation extends OWLOntologyTranslation {
 
     private final QLDoubleAxiomsTranslator doubleAxiomsTranslator;
 
-    private final TBoxGraph graph;
+    private final TBoxDigraph graph;
 
     private final boolean hasDisjunctions;
 
@@ -48,8 +48,8 @@ public class QLOntologyTranslation extends OWLOntologyTranslation {
     public QLOntologyTranslation(OWLOntology ontology) throws UnsupportedAxiomsException {
 	super(ontology);
 	normalizedOntology = new QLNormalizedOntologyImpl(ontology);
-	graph = new BasicTBoxGraph(normalizedOntology);
-	hasDisjunctions = normalizedOntology.hasDisjointStatement();
+	graph = new TBoxDigraphImpl(normalizedOntology);
+	hasDisjunctions = normalizedOntology.hasDisjunctions();
 	originalAxiomsTranslator = new QLOriginalAxiomsTranslator(ontology);
 	doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(ontology);
 	translate();
@@ -78,7 +78,7 @@ public class QLOntologyTranslation extends OWLOntologyTranslation {
 
     @Override
     protected void computeRules() {
-	final boolean hasDisjunctions = normalizedOntology.hasDisjointStatement();
+	final boolean hasDisjunctions = normalizedOntology.hasDisjunctions();
 	computeNegativeHeadsPredicates();
 	RuntimesLogger.start("ontology translation");
 	rules.addAll(getTranslation(originalAxiomsTranslator));
@@ -105,7 +105,7 @@ public class QLOntologyTranslation extends OWLOntologyTranslation {
 
     // TODO optimize translatin: (e) can be discarded for roles for which there
     // aren't assertions
-    private Set<Rule> getTranslation(AbstractQLAxiomsTranslator axiomsTranslator) {
+    private Set<Rule> getTranslation(QLAxiomsTranslator axiomsTranslator) {
 	final Set<Rule> result = new HashSet<Rule>();
 	for (final OWLClassAssertionAxiom f : normalizedOntology.getConceptAssertions())
 	    result.addAll(axiomsTranslator.translate(f));
