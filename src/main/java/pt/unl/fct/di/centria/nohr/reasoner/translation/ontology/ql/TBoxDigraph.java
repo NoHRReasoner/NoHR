@@ -59,7 +59,7 @@ public interface TBoxDigraph {
 	 *            a role vertex.
 	 * @return the predecessor of {@code v}.
 	 */
-	Set<OWLPropertyExpression<?, ?>> getPredecessors(OWLObjectPropertyExpression v);
+	public Set<OWLPropertyExpression<?, ?>> getPredecessors(OWLObjectPropertyExpression v);
 
 	/**
 	 * Computes a the set of irreflexive roles <i>&Omega;(T)</i> of the the TBox, <i>T</i>, of which this {@link TBoxDigraph} is <i>digraph</i> (see

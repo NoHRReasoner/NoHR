@@ -184,6 +184,14 @@ public abstract class ELAxiomsTranslator {
 	 */
 	public abstract Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> assertion);
 
+	/**
+	 * Partially (depending on the concrete {@link ELAxiomsTranslator} used) translate a concept subsumption axiom to a set of rules according to
+	 * <b>(t1)</b>, <b>(c1)</b>, <b>(i1)</b> or <b>(i2)</b> of <b>Definition 13.</b>, and respective assumed simplifications, of {@link <a>A Correct
+	 * EL Oracle for NoHR (Technical Report)</a>} .
+	 *
+	 * @param axiom
+	 *            an axiom
+	 */
 	public Set<Rule> translate(OWLSubClassOfAxiom axiom) {
 		final OWLClassExpression ce1 = axiom.getSubClass();
 		final OWLClassExpression ce2 = axiom.getSuperClass();
@@ -199,8 +207,8 @@ public abstract class ELAxiomsTranslator {
 
 	/**
 	 * Partially (depending on the concrete {@link ELAxiomsTranslator} used) translate a concept subsumption axiom to a set of rules according to
-	 * <b>(t1)</b>, <b>(c1)</b>, <b>(i1)</b> or <b>(i2)</b> of <b>Definition 13.</b>, and respective assumed simplifications, of {@link <a>A Correct
-	 * EL Oracle for NoHR (Technical Report)</a>} .
+	 * <b>(r1)</b> of <b>Definition 13.</b>, and respective assumed simplifications, of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>}
+	 * .
 	 *
 	 * @param axiom
 	 *            an axiom

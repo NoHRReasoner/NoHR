@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
@@ -101,7 +102,7 @@ public class HybridKB {
 			XSBDatabaseCreationException {
 		Objects.requireNonNull(xsbBinDirectory);
 		try {
-			ontology = OWLManager.createOWLOntologyManager().createOntology(axioms);
+			ontology = OWLManager.createOWLOntologyManager().createOntology(axioms, IRI.generateDocumentIRI());
 		} catch (final OWLOntologyCreationException e) {
 			throw new RuntimeException(e);
 		}

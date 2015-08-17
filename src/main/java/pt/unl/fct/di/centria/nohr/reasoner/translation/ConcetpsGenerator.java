@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -45,7 +46,11 @@ public class ConcetpsGenerator {
 		final OWLDataFactory dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
 		final String ontologyIRI = ontology.getOntologyID().getOntologyIRI().toString();
 		final IRI iri = IRI.create(ontologyIRI + "#", filler + counter++);
-		return dataFactory.getOWLClass(iri);
+		final OWLClass concept = dataFactory.getOWLClass(iri);
+		final OWLDeclarationAxiom declaration = dataFactory.getOWLDeclarationAxiom(concept);
+		ontology.getOWLOntologyManager().addAxiom(ontology, declaration);
+		assert iri.getFragment() != null;
+		return concept;
 	}
 
 }

@@ -9,6 +9,7 @@ import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
 
 import java.util.Set;
 
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -45,22 +46,22 @@ public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	}
 
 	@Override
-	public Set<Rule> translate(OWLClassAssertionAxiom alpha) {
+	public Set<Rule> translateAssertion(OWLClassAssertionAxiom alpha) {
 		return AssertionsTranslation.translateOriginal(alpha);
 	}
 
 	@Override
-	public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha) {
+	public Set<Rule> translateAssertion(OWLPropertyAssertionAxiom<?, ?> alpha) {
 		return AssertionsTranslation.translateOriginal(alpha);
 	}
 
 	@Override
-	protected Set<Rule> translateDisjunction(OWLClassExpression b1, OWLClassExpression owlClassExpression) {
+	public Set<Rule> translateDisjunction(OWLClassExpression b1, OWLClassExpression owlClassExpression) {
 		return ruleSet();
 	}
 
 	@Override
-	protected Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
+	public Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
 		return ruleSet();
 	}
 
@@ -89,20 +90,42 @@ public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	}
 
 	@Override
-	protected Set<Rule> translateSubsumption(OWLClassExpression b1, OWLClassExpression b2) {
+	public Set<Rule> translateSubsumption(OWLClassExpression b1, OWLClassExpression b2) {
 		if (b1.isOWLThing())
 			return ruleSet(rule(tr(b2, X)));
 		return ruleSet(rule(tr(b2, X), tr(b1, X)));
 	}
 
 	@Override
-	protected Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
+	public Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
 		if (q1.isBottomEntity() || q2.isTopEntity())
 			return ruleSet();
 		if (q1.isTopEntity())
 			return ruleSet(rule(tr(q2, X, Y)));
 		if (q2.isBottomEntity())
-			return ruleSet(translateUnsatisfaible((OWLProperty<?, ?>) q1));
+			return translateUnsatisfaible((OWLProperty<?, ?>) q1);
 		return ruleSet(rule(tr(q2, X, Y), tr(q1, X, Y)));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#translateUnsatisfaible(org.semanticweb.owlapi.model.OWLClass)
+	 */
+	@Override
+	public Set<Rule> translateUnsatisfaible(OWLClass a) {
+		return ruleSet();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLAxiomsTranslator#translateUnsatisfaible(org.semanticweb.owlapi.model.OWLProperty)
+	 */
+	@Override
+	public Set<Rule> translateUnsatisfaible(OWLProperty<?, ?> p) {
+		return ruleSet();
 	}
 }

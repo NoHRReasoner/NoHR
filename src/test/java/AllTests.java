@@ -3,17 +3,16 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- *
+ * 
  */
 
 /**
- * @author nunocosta
+ * @author Nuno Costa
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ BasicLazyGraphClosureTest.class, ParserTest.class,
-	QueryProcessorTest.class, QLQueryTest.class, ELQueryTest.class,
-    TBoxGraphTest.class })
+@SuiteClasses({ BasicLazyGraphClosureTest.class, ELQueryTest.class, ModelTest.class, ParserTest.class,
+		QLQueryTest.class, QueryProcessorTest.class, TBoxGraphTest.class })
 public class AllTests {
 
 }

@@ -4,26 +4,18 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.domPred;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.ranPred;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
-import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
@@ -31,10 +23,7 @@ import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
-
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
@@ -186,57 +175,53 @@ public abstract class QLAxiomsTranslator {
 			return atom(pred(r, doub), y, x);
 	}
 
-	public abstract Set<Rule> translate(OWLClassAssertionAxiom alpha);
+	/**
+	 * Partially (depending on the concrete {@link QLAxiomsTranslator} used) translate a concept assertion to a set of rules according to <b>(a1)</b>
+	 * of <b>Definition 9.</b> of {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL
+	 * 2 QL</a>}.
+	 *
+	 * @param assertion
+	 *            an assertion
+	 */
+	public abstract Set<Rule> translateAssertion(OWLClassAssertionAxiom assertion);
 
-	public Set<Rule> translate(OWLDisjointClassesAxiom alpha) {
-		final Set<Rule> result = new HashSet<Rule>();
-		final List<OWLClassExpression> ops = alpha.getClassExpressionsAsList();
-		for (int i = 0; i < ops.size(); i++)
-			for (int j = i + 1; j < ops.size(); j++)
-				result.addAll(translateDisjunction(ops.get(i), ops.get(j)));
-		return result;
-	}
+	/**
+	 * Partially (depending on the concrete {@link QLAxiomsTranslator} used) translate a concept assertion to a set of rules according to <b>(a1)</b>
+	 * of <b>Definition 9.</b> of {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL
+	 * 2 QL</a>}.
+	 *
+	 * @param assertion
+	 *            an assertion
+	 */
+	public abstract Set<Rule> translateAssertion(OWLPropertyAssertionAxiom<?, ?> assertion);
 
-	public Set<Rule> translate(OWLDisjointDataPropertiesAxiom alpha) {
-		final Set<Rule> result = new HashSet<Rule>();
-		final List<OWLDataPropertyExpression> ops = new LinkedList<OWLDataPropertyExpression>(alpha.getProperties());
-		for (int i = 0; i < ops.size(); i++)
-			for (final int j = i + 1; i < ops.size(); i++)
-				result.addAll(translateDisjunction(ops.get(i), ops.get(j)));
-		return result;
-	}
+	/**
+	 * Partially (according to some {@link QLAxiomsTranslator} implementing class's criteria) translate a DL-Lite<sub>R</sub> negative concept
+	 * subsumption axiom to a set of rules according to <b>(n1)</b> of <b>Definition 9.</b> of
+	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} .
+	 *
+	 * @param b1
+	 *            a DL-Lite<sub>R</sub> basic concept operand, <i>B<sub>1</sub></i>.
+	 * @param b2
+	 *            a DL-Lite<sub>R</sub> basic concept operand, <i>B<sub>2</sub></i>.
+	 * @return the translation of <i>B<sub>1</sub>&sqsube;&not;B<sub>2</sub></i> according to <b>(n1)</b> and given the the implementing class
+	 *         criteria.
+	 */
+	public abstract Set<Rule> translateDisjunction(OWLClassExpression b1, OWLClassExpression b2);
 
-	public Set<Rule> translate(OWLDisjointObjectPropertiesAxiom alpha) {
-		final Set<Rule> result = new HashSet<Rule>();
-		final List<OWLObjectPropertyExpression> ops = new LinkedList<OWLObjectPropertyExpression>(
-				alpha.getProperties());
-		for (int i = 0; i < ops.size(); i++)
-			for (final int j = i + 1; i < ops.size(); i++)
-				result.addAll(translateDisjunction(ops.get(i), ops.get(j)));
-		return result;
-	}
-
-	public abstract Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha);
-
-	public Set<Rule> translate(OWLSubClassOfAxiom alpha) {
-		final OWLClassExpression b1 = alpha.getSubClass();
-		final OWLClassExpression b2 = alpha.getSuperClass();
-		final Set<Rule> result = new HashSet<Rule>();
-		result.addAll(translateSubsumption(b1, b2));
-		return result;
-	}
-
-	public Set<Rule> translate(OWLSubPropertyAxiom<?> alpha) {
-		final OWLPropertyExpression<?, ?> ope1 = alpha.getSubProperty();
-		final OWLPropertyExpression<?, ?> ope2 = alpha.getSuperProperty();
-		final Set<Rule> result = new HashSet<Rule>();
-		result.addAll(translateSubsumption(ope1, ope2));
-		return result;
-	}
-
-	protected abstract Set<Rule> translateDisjunction(OWLClassExpression b1, OWLClassExpression b2);
-
-	protected abstract Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
+	/**
+	 * Partially (according to some {@link QLAxiomsTranslator} implementing class's criteria) translate a DL-Lite<sub>R</sub> negative role
+	 * subsumption axiom to a set of rules according to <b>(n2)</b> of <b>Definition 9.</b> of
+	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} .
+	 *
+	 * @param q1
+	 *            a DL-Lite<sub>R</sub> basic role operand, <i>Q<sub>1</sub></i>.
+	 * @param q2
+	 *            a DL-Lite<sub>R</sub> basic role operand, <i>Q<sub>2</sub></i>.
+	 * @return the translation of <i>Q<sub>1</sub>&sqsube;&not;Q<sub>2</sub></i> according to <b>(n2)</b> and given the the implementing class
+	 *         criteria.
+	 */
+	public abstract Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
 
 	public abstract Rule translateDomain(OWLObjectProperty p);
 
@@ -246,16 +231,56 @@ public abstract class QLAxiomsTranslator {
 
 	public abstract Rule translateRange(OWLSubObjectPropertyOfAxiom alpha);
 
-	protected abstract Set<Rule> translateSubsumption(OWLClassExpression b1, OWLClassExpression b2);
+	/**
+	 * Partially (according to some {@link QLAxiomsTranslator} implementing class's criteria) translate a DL-Lite<sub>R</sub> concept subsumption
+	 * axiom to a set of rules according to <b>(s1)</b> of <b>Definition 9.</b> of
+	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} .
+	 *
+	 * @param b1
+	 *            the subsumed DL-Lite<sub>R</sub> basic concept <i>B<sub>1</sub></i>.
+	 * @param b2
+	 *            the subsuming DL-Lite<sub>R</sub> basic concept <i>B<sub>2</sub></i>.
+	 * @return the translation of <i>B<sub>1</sub>&sqsube;&not;B<sub>2</sub></i> according to <b>(s1)</b> given the implementing class criteria.
+	 * @throws IllegalArgumentException
+	 *             if <i>B<sub>1</sub></i> or <i>B<sub>2</sub></i> aren't DL-Lite<sub>R</sub> basic concepts.
+	 */
+	public abstract Set<Rule> translateSubsumption(OWLClassExpression b1, OWLClassExpression b2);
 
-	protected abstract Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
+	/**
+	 * Partially (according to some {@link QLAxiomsTranslator} implementing class's criteria) translate a DL-Lite<sub>R</sub> role subsumption axiom
+	 * to a set of rules according to <b>(s2)</b> of <b>Definition 9.</b> of
+	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} .
+	 *
+	 * @param q1
+	 *            the subsumed basic role <i>Q<sub>1</sub></i>.
+	 * @param q2
+	 *            the subsuming basic role <i>Q<sub>2</sub></i>.
+	 * @return translation of <i>Q<sub>1</sub>&sqsube;&not;Q<sub>2</sub></i> according to <b>(s1)</b> given the implementing class criteria.
+	 * @throws IllegalArgumentException
+	 *             <i>Q<sub>1</sub></i> or <i>Q<sub>2</sub></i> aren't a basic DL-Lite<sub>R</sub> roles.
+	 */
+	public abstract Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
 
-	public Rule translateUnsatisfaible(OWLClass a) {
-		return rule(negTr(a, X));
-	}
+	/**
+	 * Partially (according to some {@link QLAxiomsTranslator} implementing class's criteria) translate a DL-Lite<sub>R</sub> concept unsatisfiability
+	 * to a set of rules according to <b>(i1)</b> of <b>Definition 9.</b> of
+	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} .
+	 *
+	 * @param a
+	 *            the unsatisfiable concept <i>A</i>.
+	 * @return translation of the unsatisfiability of <i>A</i> according to <b>(i1)</b> given the implementing class criteria.
+	 */
+	public abstract Set<Rule> translateUnsatisfaible(OWLClass a);
 
-	public Rule translateUnsatisfaible(OWLProperty<?, ?> p) {
-		return rule(negTr(p, X, Y));
-	}
+	/**
+	 * Partially (according to some {@link QLAxiomsTranslator} implementing class's criteria) translate a DL-Lite<sub>R</sub> role unsatisfiability
+	 * according to <b>(i2)</i> of {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL
+	 * 2 QL</a>} .
+	 *
+	 * @param p
+	 *            the unsatisfiable role <i>P</i>.
+	 * @return translation of the unsatisfiability of <i>P</i> according to <b>(i2)</b> given the implementing class criteria.
+	 */
+	public abstract Set<Rule> translateUnsatisfaible(OWLProperty<?, ?> p);
 
 }

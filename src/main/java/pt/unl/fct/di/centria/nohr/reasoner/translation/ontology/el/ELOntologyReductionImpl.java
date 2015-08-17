@@ -19,6 +19,7 @@ import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
@@ -347,6 +348,7 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	 *         2. <i>O &vDash; C&sqsube;A</i> iff <i>C&sqsube;&bot; &in;</i><b>Closure</b> or <i>C&sqsube;A &in; </i><b>Closure</b>;<br>
 	 */
 	private void classify(OWLOntology ontology) {
+		assert hasFraments(ontology);
 		RuntimesLogger.start("ontology classification");
 		Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
 		final OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
@@ -360,6 +362,7 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 		final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, generators);
 		inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager(), ontology);
 		RuntimesLogger.stop("ontology classification", "loading");
+		// assert hasFraments(ontology);
 	}
 
 	/**
@@ -488,6 +491,13 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 			if (isExistential(cei))
 				return true;
 		return false;
+	}
+
+	private boolean hasFraments(OWLOntology ontology) {
+		for (final OWLEntity entity : ontology.getSignature())
+			if (entity.getIRI().toURI().getFragment() == null)
+				return false;
+		return true;
 	}
 
 	/**

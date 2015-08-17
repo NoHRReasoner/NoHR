@@ -1,6 +1,8 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
@@ -9,8 +11,6 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -81,16 +81,16 @@ public class QLOntologyTranslation extends OWLOntologyTranslation {
 		final boolean hasDisjunctions = normalizedOntology.hasDisjunctions();
 		computeNegativeHeadsPredicates();
 		RuntimesLogger.start("ontology translation");
-		rules.addAll(getTranslation(originalAxiomsTranslator));
+		rules.addAll(translation(originalAxiomsTranslator));
 		if (hasDisjunctions)
-			rules.addAll(getTranslation(doubleAxiomsTranslator));
+			rules.addAll(translation(doubleAxiomsTranslator));
 		RuntimesLogger.stop("ontology translation", "loading");
 		RuntimesLogger.start("ontology classification");
 		for (final OWLEntity e : graph.getUnsatisfiableEntities())
 			if (e instanceof OWLClass)
-				rules.add(doubleAxiomsTranslator.translateUnsatisfaible((OWLClass) e));
+				rules.addAll(doubleAxiomsTranslator.translateUnsatisfaible((OWLClass) e));
 			else if (e instanceof OWLProperty)
-				rules.add(doubleAxiomsTranslator.translateUnsatisfaible((OWLProperty<?, ?>) e));
+				rules.addAll(doubleAxiomsTranslator.translateUnsatisfaible((OWLProperty<?, ?>) e));
 		for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
 			rules.add(doubleAxiomsTranslator.translateIrreflexive(p));
 		RuntimesLogger.stop("ontology classification", "loading");
@@ -105,22 +105,27 @@ public class QLOntologyTranslation extends OWLOntologyTranslation {
 
 	// TODO optimize translatin: (e) can be discarded for roles for which there
 	// aren't assertions
-	private Set<Rule> getTranslation(QLAxiomsTranslator axiomsTranslator) {
+	private Set<Rule> translation(QLAxiomsTranslator axiomsTranslator) {
 		final Set<Rule> result = new HashSet<Rule>();
-		for (final OWLClassAssertionAxiom f : normalizedOntology.getConceptAssertions())
-			result.addAll(axiomsTranslator.translate(f));
-		for (final OWLObjectPropertyAssertionAxiom f : normalizedOntology.getRoleAssertions())
-			result.addAll(axiomsTranslator.translate(f));
-		for (final OWLDataPropertyAssertionAxiom f : normalizedOntology.getDataAssertions())
-			result.addAll(axiomsTranslator.translate(f));
-		for (final OWLSubClassOfAxiom s : normalizedOntology.getConceptSubsumptions())
-			result.addAll(axiomsTranslator.translate(s));
-		for (final OWLDisjointClassesAxiom d : normalizedOntology.getConceptDisjunctions())
-			result.addAll(axiomsTranslator.translate(d));
-		for (final OWLSubPropertyAxiom<?> s : normalizedOntology.getRoleSubsumptions())
-			if (s instanceof OWLSubObjectPropertyOfAxiom) {
-				result.addAll(axiomsTranslator.translate(s));
-				final OWLSubObjectPropertyOfAxiom axiom = (OWLSubObjectPropertyOfAxiom) s;
+		for (final OWLClassAssertionAxiom assertion : normalizedOntology.getConceptAssertions())
+			result.addAll(axiomsTranslator.translateAssertion(assertion));
+		for (final OWLObjectPropertyAssertionAxiom assertion : normalizedOntology.getRoleAssertions())
+			result.addAll(axiomsTranslator.translateAssertion(assertion));
+		for (final OWLDataPropertyAssertionAxiom assertion : normalizedOntology.getDataAssertions())
+			result.addAll(axiomsTranslator.translateAssertion(assertion));
+		for (final OWLSubClassOfAxiom subsumption : normalizedOntology.getConceptSubsumptions())
+			result.addAll(
+					axiomsTranslator.translateSubsumption(subsumption.getSubClass(), subsumption.getSuperClass()));
+		for (final OWLDisjointClassesAxiom disjunction : normalizedOntology.getConceptDisjunctions()) {
+			final List<OWLClassExpression> concepts = disjunction.getClassExpressionsAsList();
+			assert concepts.size() <= 2;
+			result.addAll(axiomsTranslator.translateDisjunction(concepts.get(0), concepts.get(1)));
+		}
+		for (final OWLSubPropertyAxiom<?> subsumption : normalizedOntology.getRoleSubsumptions())
+			if (subsumption instanceof OWLSubObjectPropertyOfAxiom) {
+				result.addAll(axiomsTranslator.translateSubsumption(subsumption.getSubProperty(),
+						subsumption.getSuperProperty()));
+				final OWLSubObjectPropertyOfAxiom axiom = (OWLSubObjectPropertyOfAxiom) subsumption;
 				final OWLObjectPropertyExpression ope1 = axiom.getSubProperty();
 				final OWLObjectPropertyExpression ope2 = axiom.getSuperProperty();
 				final OWLObjectPropertyExpression invOpe1 = ope1.getInverseProperty().getSimplified();
@@ -131,14 +136,14 @@ public class QLOntologyTranslation extends OWLOntologyTranslation {
 				if ((normalizedOntology.isSuper(some(invOpe1)) || normalizedOntology.isSuper(invOpe1))
 						&& (normalizedOntology.isSub(some(invOpe2)) || normalizedOntology.isSub(invOpe2)))
 					result.add(axiomsTranslator.translateRange(axiom));
-			} else if (s instanceof OWLSubDataPropertyOfAxiom)
-				result.addAll(axiomsTranslator.translate(s));
-		for (final OWLNaryPropertyAxiom<?> d : normalizedOntology.getRoleDisjunctions())
-			if (d instanceof OWLDisjointObjectPropertiesAxiom)
-				result.addAll(axiomsTranslator.translate((OWLDisjointObjectPropertiesAxiom) d));
-			else if (d instanceof OWLDisjointDataPropertiesAxiom)
-				result.addAll(axiomsTranslator.translate((OWLDisjointDataPropertiesAxiom) d));
-
+			} else if (subsumption instanceof OWLSubDataPropertyOfAxiom)
+				result.addAll(axiomsTranslator.translateSubsumption(subsumption.getSubProperty(),
+						subsumption.getSuperProperty()));
+		for (final OWLNaryPropertyAxiom<?> disjunction : normalizedOntology.getRoleDisjunctions()) {
+			final List<OWLPropertyExpression<?, ?>> roles = new LinkedList<>(disjunction.getProperties());
+			assert roles.size() <= 2;
+			result.addAll(axiomsTranslator.translateDisjunction(roles.get(0), roles.get(1)));
+		}
 		for (final OWLPropertyExpression<?, ?> ope : normalizedOntology.getRoles())
 			if (ope instanceof OWLObjectPropertyExpression) {
 				final OWLObjectProperty p = ((OWLObjectPropertyExpression) ope).getNamedProperty();

@@ -41,6 +41,7 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ConcetpsGenerator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
@@ -54,6 +55,8 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 			AxiomType.OBJECT_PROPERTY_ASSERTION, AxiomType.OBJECT_PROPERTY_DOMAIN, AxiomType.OBJECT_PROPERTY_RANGE,
 			AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY, AxiomType.SUBCLASS_OF,
 			AxiomType.SYMMETRIC_OBJECT_PROPERTY };
+
+	private final ConcetpsGenerator concetpsGenerator;
 
 	private final Set<OWLDisjointClassesAxiom> conceptDisjunctions;
 
@@ -93,6 +96,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 		if (unsupportedAxioms.size() > 0)
 			throw new UnsupportedAxiomsException(unsupportedAxioms);
 		this.ontology = ontology;
+		concetpsGenerator = new ConcetpsGenerator(ontology);
 		ontologyIRI = ontology.getOntologyID().getOntologyIRI();
 		df = ontology.getOWLOntologyManager().getOWLDataFactory();
 		conceptSubsumptions = new HashSet<OWLSubClassOfAxiom>();

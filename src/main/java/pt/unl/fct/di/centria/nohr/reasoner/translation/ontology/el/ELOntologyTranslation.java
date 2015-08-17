@@ -90,7 +90,7 @@ public class ELOntologyTranslation extends OWLOntologyTranslation {
 		translate(originalAxiomsTranslator);
 		if (reducedOntology.hasDisjunction())
 			translate(doubleAxiomsTranslator);
-		RuntimesLogger.end("ontology translation", "loading");
+		RuntimesLogger.stop("ontology translation", "loading");
 	}
 
 	@Override

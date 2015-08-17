@@ -46,34 +46,34 @@ public class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
 	}
 
 	@Override
-	public Set<Rule> translate(OWLClassAssertionAxiom alpha) {
+	public Set<Rule> translateAssertion(OWLClassAssertionAxiom alpha) {
 		return AssertionsTranslation.translateDouble(alpha);
 	}
 
 	@Override
-	public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha) {
+	public Set<Rule> translateAssertion(OWLPropertyAssertionAxiom<?, ?> alpha) {
 		return AssertionsTranslation.translateDouble(alpha);
 	}
 
 	@Override
-	protected Set<Rule> translateDisjunction(OWLClassExpression b1, OWLClassExpression b2) {
+	public Set<Rule> translateDisjunction(OWLClassExpression b1, OWLClassExpression b2) {
 		if (b1.isBottomEntity() || b2.isBottomEntity())
 			return ruleSet();
 		if (b1.isOWLThing())
-			return ruleSet(translateUnsatisfaible((OWLClass) b2));
+			return translateUnsatisfaible((OWLClass) b2);
 		if (b2.isOWLThing())
-			return ruleSet(translateUnsatisfaible((OWLClass) b1));
+			return translateUnsatisfaible((OWLClass) b1);
 		return ruleSet(rule(negTr(b1, X), tr(b2, X, false)), rule(negTr(b2, X), tr(b1, X, false)));
 	}
 
 	@Override
-	protected Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
+	public Set<Rule> translateDisjunction(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
 		if (q1.isBottomEntity() || q2.isBottomEntity())
 			return ruleSet();
 		if (q1.isTopEntity())
-			return ruleSet(translateUnsatisfaible((OWLProperty<?, ?>) q2));
+			return translateUnsatisfaible((OWLProperty<?, ?>) q2);
 		if (q2.isTopEntity())
-			return ruleSet(translateUnsatisfaible((OWLProperty<?, ?>) q1));
+			return translateUnsatisfaible((OWLProperty<?, ?>) q1);
 		return ruleSet(rule(negTr(q1, X, Y), tr(q2, X, Y, false)), rule(negTr(q2, X, Y), tr(q1, X, Y, false)));
 	}
 
@@ -106,14 +106,14 @@ public class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
 	}
 
 	@Override
-	protected Set<Rule> translateSubsumption(OWLClassExpression b1, OWLClassExpression b2) {
+	public Set<Rule> translateSubsumption(OWLClassExpression b1, OWLClassExpression b2) {
 		if (b1.isOWLThing())
 			ruleSet(rule(tr(b2, X), negLiteral(negTr(b2, X), true)));
 		return ruleSet(rule(tr(b2, X), tr(b1, X), negLiteral(negTr(b2, X), true)), rule(negTr(b1, X), negTr(b2, X)));
 	}
 
 	@Override
-	protected Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
+	public Set<Rule> translateSubsumption(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
 		if (q1.isBottomEntity() || q2.isTopEntity())
 			return ruleSet();
 		if (q1.isTopEntity())
@@ -122,6 +122,16 @@ public class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
 			return translateDisjunction(q1, q1);
 		return ruleSet(rule(tr(q2, X, Y), tr(q1, X, Y), negLiteral(negTr(q2, X, Y))),
 				rule(negTr(q1, X, Y), negTr(q2, X, Y)));
+	}
+
+	@Override
+	public Set<Rule> translateUnsatisfaible(OWLClass a) {
+		return ruleSet(rule(negTr(a, X)));
+	}
+
+	@Override
+	public Set<Rule> translateUnsatisfaible(OWLProperty<?, ?> p) {
+		return ruleSet(rule(negTr(p, X, Y)));
 	}
 
 }
