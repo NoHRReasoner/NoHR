@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+
+<plugin> 	
+   <extension id="NoHRPreferences" point="org.protege.editor.core.application.preferencespanel">
+      <label value="NoHR Preferences"></label>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.NoHRPreferencesPanel"></class>
+   </extension>
+  <extension id="QueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
+      <label value="NoHR Query"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.QueryViewComponent"></class>
+      <category value="@org.protege.querycategory"></category>
+   </extension>
+   <extension id="RulesViewComponent" point="org.protege.editor.core.application.ViewComponent">
+      <label value="NoHR Rules"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="pt.unl.fct.di.centria.nohr.plugin.RulesViewComponent"></class>
+      <category value="@org.protege.querycategory"></category>
+   </extension> 
+   <extension id="QueryTab" point="org.protege.editor.core.application.WorkspaceTab">
+      <label value="NoHR Query"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="org.protege.editor.owl.ui.OWLWorkspaceViewsTab"></class>
+      <index value="Y"></index>
+      <editorKitId value="OWLEditorKit"></editorKitId>
+      <defaultViewConfigFileName value="viewconfig-querytab.xml"></defaultViewConfigFileName>
+   </extension>
+   <extension id="RulesTab" point="org.protege.editor.core.application.WorkspaceTab">
+      <label value="NoHR Rules"></label>
+      <headerColor value="@org.protege.classcolor"/>
+      <class value="org.protege.editor.owl.ui.OWLWorkspaceViewsTab"></class>
+      <index value="X"></index>
+      <editorKitId value="OWLEditorKit"></editorKitId>
+      <defaultViewConfigFileName value="viewconfig-rulestab.xml"></defaultViewConfigFileName>
+   </extension>
+   
+</plugin>
