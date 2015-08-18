@@ -1,9 +1,10 @@
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.cons;
+import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
 import static pt.unl.fct.di.centria.nohr.model.Model.query;
-import static pt.unl.fct.di.centria.nohr.model.Model.*;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -23,58 +24,57 @@ import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 
 /**
  * @author nunocosta
- *
  */
 public class ParserTest {
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
-    @Test
-    public final void testParseQuery() throws Throwable {
-	try {
-	    final NoHRParser parser = new NoHRParser();
-	    final Variable X = var("X");
-	    Assert.assertEquals(query(atom("p", X)), parser.parseQuery("p(?X)"));
-	    Assert.assertEquals(query(atom("p", cons("a"))), parser.parseQuery("p(a)"));
-	    Assert.assertEquals(query(atom("p", X), atom("q", X), atom("r", X)),
-		    parser.parseQuery("p(?X),  q(?X), r(?X)"));
-	    Assert.assertEquals(query(atom("p", cons("a"), cons("b"), cons("c"))), parser.parseQuery("p(a, b ,  c)"));
-	    Assert.assertEquals(query(atom("p", cons(1))), parser.parseQuery("p(1)"));
-	    Assert.assertEquals(query(atom("p", cons(1.1))), parser.parseQuery("p(1.1)"));
-	} catch (final ExceptionInInitializerError e) {
-	    throw e.getCause();
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
 	}
-    }
 
-    @Test
-    public void testParseRule() throws ParseException {
-	final NoHRParser parser = new NoHRParser();
-	final Rule expectedRule = rule(atom("p", var("X"), var("Y"), var("Z")), atom("q", var("X"), var("Y")),
-		atom("r", cons("a")), negLiteral(atom("z", var("X"))), negLiteral(pred("w", 1), var("Y")));
-	final Rule actualRule = parser.parseRule("p(?X, ?Y,  ?Z) :- q(?X, ?Y),r(a), not z(?X),  not w(?Y)");
-	Assert.assertEquals(expectedRule, actualRule);
-    }
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public final void testParseQuery() throws Throwable {
+		try {
+			final NoHRParser parser = new NoHRParser();
+			final Variable X = var("X");
+			Assert.assertEquals(query(atom("p", X)), parser.parseQuery("p(?X)"));
+			Assert.assertEquals(query(atom("p", cons("a"))), parser.parseQuery("p(a)"));
+			Assert.assertEquals(query(atom("p", X), atom("q", X), atom("r", X)),
+					parser.parseQuery("p(?X),  q(?X), r(?X)"));
+			Assert.assertEquals(query(atom("p", cons("a"), cons("b"), cons("c"))), parser.parseQuery("p(a, b ,  c)"));
+			Assert.assertEquals(query(atom("p", cons(1))), parser.parseQuery("p(1)"));
+			Assert.assertEquals(query(atom("p", cons(1.1))), parser.parseQuery("p(1.1)"));
+		} catch (final ExceptionInInitializerError e) {
+			throw e.getCause();
+		}
+	}
+
+	@Test
+	public void testParseRule() throws ParseException {
+		final NoHRParser parser = new NoHRParser();
+		final Rule expectedRule = rule(atom("p", var("X"), var("Y"), var("Z")), atom("q", var("X"), var("Y")),
+				atom("r", cons("a")), negLiteral(atom("z", var("X"))), negLiteral(pred("w", 1), var("Y")));
+		final Rule actualRule = parser.parseRule("p(?X, ?Y,  ?Z) :- q(?X, ?Y),r(a), not z(?X),  not w(?Y)");
+		Assert.assertEquals(expectedRule, actualRule);
+	}
 }

@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.ql;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,12 +10,13 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
+import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNaryPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
@@ -29,6 +30,26 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
  * @author Nuno Costa
  */
 public class TBoxDigraphImpl implements TBoxDigraph {
+
+	/**
+	 * Returns the atomic concept or role with which a given DL-Lite<sub>R</sub> basic concept is formed.
+	 *
+	 * @param b
+	 *            a basic concept <i>B</i>.
+	 * @return <i>A</i> if <i>B</i> is an atomic concept <i>A</i>; <br>
+	 *         <i>P</i> if <i>B</i> is an existential <i>&exist;P</i> or <i>&exist;P<sup>-</sup></i>.
+	 * @throws IllegalArgumentException
+	 *             if {@code b} isn't a basic concept.
+	 */
+	private static OWLEntity atomic(OWLClassExpression b) {
+		if (b instanceof OWLClass)
+			return (OWLClass) b;
+		else if (b instanceof OWLObjectSomeValuesFrom) {
+			final OWLObjectSomeValuesFrom existential = (OWLObjectSomeValuesFrom) b;
+			return existential.getProperty().getNamedProperty();
+		} else
+			throw new IllegalArgumentException("b: must be an atomic concept or existential");
+	}
 
 	/**
 	 * The {@link GraphClosure closure} of the concepts subgraph (i.e. the subgraph containing only the vertices that represent concepts) of this
@@ -50,7 +71,7 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 	private Set<OWLObjectProperty> irreflexiveRoles;
 
 	/** The ontology of whose TBox this {@link TBoxDigraph} is <i>digraph</i> */
-	private final QLNormalizedOntology ontology;
+	private final QLOntologyNormalization ontology;
 
 	/**
 	 * the {@link GraphClosure closure} of the roles subgraph (i.e. the subgraph containing only the vertices that represent roles) of this
@@ -79,7 +100,7 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 	 * @param ontology
 	 *            an DL-Lite<sub>R</sub> ontology.
 	 */
-	public TBoxDigraphImpl(QLNormalizedOntology ontology) {
+	public TBoxDigraphImpl(QLOntologyNormalization ontology) {
 		this.ontology = ontology;
 		conceptsPredecessors = new HashMap<OWLClassExpression, Set<OWLClassExpression>>();
 		rolesPredecessor = new HashMap<OWLPropertyExpression<?, ?>, Set<OWLPropertyExpression<?, ?>>>();
@@ -105,58 +126,67 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 		unsatisfiableEntities = null;
 	}
 
-	/**
-	 * Returns the atomic concept or role with which a given basic concept is formed.
-	 *
-	 * @param b
-	 *            a basic concept <i>B</i>.
-	 * @return <i>A</i> if <i>B</i> is an atomic concept <i>A</i>; <br>
-	 *         <i>P</i> if <i>B</i> is an existential <i>&exist;P</i> or <i>&exist;P<sup>-</sup></i>.
-	 * @throws IllegalArgumentException
-	 *             if {@code b} isn't a basic concept.
-	 */
-	private OWLEntity atom(OWLClassExpression b) {
-		if (DLUtils.isAtomic(b))
-			return (OWLClass) b;
-		else if (DLUtils.isExistential(b)) {
-			final OWLObjectSomeValuesFrom existential = (OWLObjectSomeValuesFrom) b;
-			return existential.getProperty().getNamedProperty();
-		} else
-			throw new IllegalArgumentException("b: must be a basic concept");
+	private void accumulateUnsatisfiable(final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles,
+			final OWLNaryPropertyAxiom<?> disjPropsAxiom) {
+		final Object[] props = disjPropsAxiom.getProperties().toArray();
+		for (int i = 0; i < props.length; i++) {
+			final OWLPropertyExpression<?, ?> q1 = (OWLPropertyExpression<?, ?>) props[i];
+			for (int j = 0; j < props.length; j++)
+				if (i != j) {
+					final OWLPropertyExpression<?, ?> q2 = (OWLPropertyExpression<?, ?>) props[j];
+					Set<OWLPropertyExpression<?, ?>> q1Ancs = getAncestors(q1);
+					Set<OWLPropertyExpression<?, ?>> q2Ancs = getAncestors(q2);
+					if (q1Ancs == null)
+						q1Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
+					if (q2Ancs == null)
+						q2Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
+					q1Ancs.add(q1);
+					q2Ancs.add(q2);
+					final Set<OWLPropertyExpression<?, ?>> intersection = intersection(q1Ancs, q2Ancs);
+					unsatisfiableRoles.addAll(intersection);
+				}
+		}
+	}
+
+	private void acumulateIrreflexives(final OWLNaryPropertyAxiom<?> disjPropsAxiom) {
+		final Object[] props = disjPropsAxiom.getProperties().toArray();
+		for (int i = 0; i < props.length; i++) {
+			final OWLPropertyExpression<?, ?> q1 = (OWLPropertyExpression<?, ?>) props[i];
+			for (int j = 0; j < props.length; j++)
+				if (i != j) {
+					final OWLPropertyExpression<?, ?> q2 = (OWLPropertyExpression<?, ?>) props[j];
+					Set<OWLPropertyExpression<?, ?>> q1Ancs = getAncestors(q1);
+					Set<OWLPropertyExpression<?, ?>> q2Ancs = getAncestors(q2);
+					if (q1Ancs == null)
+						q1Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
+					if (q2Ancs == null)
+						q2Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
+					q1Ancs.add(q1);
+					q2Ancs.add(q2);
+					final Set<OWLObjectProperty> intersection = inverselyOccurringRoles2(q1Ancs, q2Ancs);
+					irreflexiveRoles.addAll(intersection);
+				}
+		}
 	}
 
 	/**
-	 * Returns the atomic role with which a given basic role is formed.
-	 *
-	 * @param q
-	 *            a basic role <i>P</i> or <i>P<sup>-</sup></i>.
-	 * @return <i>P</i>.
-	 */
-	private OWLProperty<?, ?> atom(OWLPropertyExpression<?, ?> q) {
-		if (!DLUtils.isInverse(q))
-			return (OWLProperty<?, ?>) q;
-		else
-			return ((OWLObjectPropertyExpression) q).getNamedProperty();
-	}
-
-	/**
-	 * Returns the set of atomic concept and roles obtained by applying {@link #atom(OWLClassExpression)} and {@link #atom(OWLPropertyExpression)} to
-	 * two given sets of basic concepts and basic roles.
+	 * Returns the set of atomic concept and roles obtained by applying {@link TBoxDigraphImpl#atomic(OWLClassExpression)} and
+	 * {@link #atom(OWLPropertyExpression)} to two given sets of basic concepts and basic roles.
 	 *
 	 * @param concepts
 	 *            a set of atomic roles.
 	 * @param roles
 	 *            a set of basic roles.
-	 * @return the set of atomic concept and roles obtained by applying {@link #atom(OWLClassExpression)} and {@link #atom(OWLPropertyExpression)} to
-	 *         {@code concepts} and {@code roles}.
+	 * @return the set of atomic concept and roles obtained by applying {@link TBoxDigraphImpl#atomic(OWLClassExpression)} and
+	 *         {@link #atom(OWLPropertyExpression)} to {@code concepts} and {@code roles}.
 	 * @throw IllegalArgumentException if some concept of {@code concepts} isn't basic.
 	 */
 	private Set<OWLEntity> atoms(Set<OWLClassExpression> concepts, Set<OWLPropertyExpression<?, ?>> roles) {
 		final Set<OWLEntity> result = new HashSet<OWLEntity>();
 		for (final OWLClassExpression c : concepts)
-			result.add(atom(c));
+			result.add(TBoxDigraphImpl.atomic(c));
 		for (final OWLPropertyExpression<?, ?> r : roles)
-			result.add(atom(r));
+			result.add(DLUtils.atomic(r));
 		return result;
 	}
 
@@ -191,26 +221,10 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 				final Set<OWLObjectProperty> intersection = inverselyOccurringRoles1(c1Ancs, c2Ancs);
 				irreflexiveRoles.addAll(intersection);
 			}
-		for (final OWLNaryPropertyAxiom<?> disjPropsAxiom : ontology.getRoleDisjunctions()) {
-			final Object[] props = disjPropsAxiom.getProperties().toArray();
-			for (int i = 0; i < props.length; i++) {
-				final OWLPropertyExpression<?, ?> q1 = (OWLPropertyExpression<?, ?>) props[i];
-				for (int j = 0; j < props.length; j++)
-					if (i != j) {
-						final OWLPropertyExpression<?, ?> q2 = (OWLPropertyExpression<?, ?>) props[j];
-						Set<OWLPropertyExpression<?, ?>> q1Ancs = getAncestors(q1);
-						Set<OWLPropertyExpression<?, ?>> q2Ancs = getAncestors(q2);
-						if (q1Ancs == null)
-							q1Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
-						if (q2Ancs == null)
-							q2Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
-						q1Ancs.add(q1);
-						q2Ancs.add(q2);
-						final Set<OWLObjectProperty> intersection = inverselyOccurringRoles2(q1Ancs, q2Ancs);
-						irreflexiveRoles.addAll(intersection);
-					}
-			}
-		}
+		for (final OWLDisjointObjectPropertiesAxiom disjPropsAxiom : ontology.getRoleDisjunctions())
+			acumulateIrreflexives(disjPropsAxiom);
+		for (final OWLDisjointDataPropertiesAxiom disjPropsAxiom : ontology.getDataDisjunctions())
+			acumulateIrreflexives(disjPropsAxiom);
 		return irreflexiveRoles;
 	}
 
@@ -253,26 +267,10 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 			unsatisfiableConcepts.addAll(cAncs);
 		}
 		final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles = new HashSet<OWLPropertyExpression<?, ?>>();
-		for (final OWLNaryPropertyAxiom<?> disjPropsAxiom : ontology.getRoleDisjunctions()) {
-			final Object[] props = disjPropsAxiom.getProperties().toArray();
-			for (int i = 0; i < props.length; i++) {
-				final OWLPropertyExpression<?, ?> q1 = (OWLPropertyExpression<?, ?>) props[i];
-				for (int j = 0; j < props.length; j++)
-					if (i != j) {
-						final OWLPropertyExpression<?, ?> q2 = (OWLPropertyExpression<?, ?>) props[j];
-						Set<OWLPropertyExpression<?, ?>> q1Ancs = getAncestors(q1);
-						Set<OWLPropertyExpression<?, ?>> q2Ancs = getAncestors(q2);
-						if (q1Ancs == null)
-							q1Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
-						if (q2Ancs == null)
-							q2Ancs = new HashSet<OWLPropertyExpression<?, ?>>();
-						q1Ancs.add(q1);
-						q2Ancs.add(q2);
-						final Set<OWLPropertyExpression<?, ?>> intersection = intersection(q1Ancs, q2Ancs);
-						unsatisfiableRoles.addAll(intersection);
-					}
-			}
-		}
+		for (final OWLDisjointObjectPropertiesAxiom disjPropsAxiom : ontology.getRoleDisjunctions())
+			accumulateUnsatisfiable(unsatisfiableRoles, disjPropsAxiom);
+		for (final OWLDisjointDataPropertiesAxiom disjPropsAxiom : ontology.getDataDisjunctions())
+			accumulateUnsatisfiable(unsatisfiableRoles, disjPropsAxiom);
 		for (final OWLPropertyExpression<?, ?> q : ontology.getUnsatisfiableRoles()) {
 			Set<OWLPropertyExpression<?, ?>> qAncs = getAncestors(q);
 			if (qAncs == null)
@@ -318,7 +316,7 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 	private Set<OWLObjectProperty> inverselyOccurringRoles1(Set<OWLClassExpression> s1, Set<OWLClassExpression> s2) {
 		final Set<OWLObjectProperty> result = new HashSet<OWLObjectProperty>();
 		for (final OWLClassExpression v : s1)
-			if (DLUtils.isExistential(v)) {
+			if (v instanceof OWLObjectSomeValuesFrom) {
 				final OWLObjectSomeValuesFrom exist = (OWLObjectSomeValuesFrom) v;
 				final OWLObjectPropertyExpression prop = exist.getProperty();
 				final OWLObjectPropertyExpression invProp = prop.getInverseProperty().getSimplified();

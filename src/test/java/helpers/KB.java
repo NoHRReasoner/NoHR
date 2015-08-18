@@ -21,6 +21,7 @@ import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
@@ -40,11 +41,11 @@ import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntology;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLNormalizedOntologyImpl;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalization;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalizationImpl;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 public class KB {
@@ -325,8 +326,8 @@ public class KB {
 			return null;
 	}
 
-	public QLNormalizedOntology getQLNormalizedOntology() throws UnsupportedAxiomsException {
-		return new QLNormalizedOntologyImpl(ontology);
+	public QLOntologyNormalization getQLNormalizedOntology() throws UnsupportedAxiomsException {
+		return new QLOntologyNormalizationImpl(ontology);
 	}
 
 	public OWLObjectProperty[] getRoles(int n) {
@@ -354,6 +355,9 @@ public class KB {
 			Assert.fail(e.getMessage());
 			return false;
 		} catch (final ParseException e) {
+			Assert.fail(e.getMessage());
+			return false;
+		} catch (final IllegalArgumentException e) {
 			Assert.fail(e.getMessage());
 			return false;
 		}
@@ -387,6 +391,14 @@ public class KB {
 
 	public void irreflexive(String role) {
 		addAxiom(df.getOWLIrreflexiveObjectPropertyAxiom(role(role)));
+	}
+
+	public OWLObjectComplementOf neg(OWLClassExpression ce) {
+		return df.getOWLObjectComplementOf(ce);
+	}
+
+	public OWLObjectComplementOf neg(String conceptName) {
+		return df.getOWLObjectComplementOf(conc(conceptName));
 	}
 
 	public void object(OWLObjectProperty role, OWLIndividual ind1, OWLIndividual ind2) {

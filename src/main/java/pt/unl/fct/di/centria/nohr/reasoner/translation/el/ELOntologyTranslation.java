@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
@@ -43,10 +43,10 @@ public class ELOntologyTranslation extends OWLOntologyTranslation {
 	private final ELOntologyReduction reducedOntology;
 
 	/**
-	 * Constructs an {@link ELOntologyReduction} of a given ontology.
+	 * Constructs an {@link OntologyTranslation} of a given OWL 2 EL ontology.
 	 *
 	 * @param ontology
-	 *            an ontology.
+	 *            an OWL 2 EL ontology.
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} contains some axioms of unsupported types.
 	 */
@@ -88,7 +88,7 @@ public class ELOntologyTranslation extends OWLOntologyTranslation {
 	protected void computeRules() {
 		RuntimesLogger.start("ontology translation");
 		translate(originalAxiomsTranslator);
-		if (reducedOntology.hasDisjunction())
+		if (reducedOntology.hasDisjunctions())
 			translate(doubleAxiomsTranslator);
 		RuntimesLogger.stop("ontology translation", "loading");
 	}
@@ -100,7 +100,7 @@ public class ELOntologyTranslation extends OWLOntologyTranslation {
 
 	@Override
 	public boolean hasDisjunctions() {
-		return reducedOntology.hasDisjunction();
+		return reducedOntology.hasDisjunctions();
 	}
 
 	/**
@@ -111,20 +111,20 @@ public class ELOntologyTranslation extends OWLOntologyTranslation {
 	 */
 	private void translate(ELAxiomsTranslator axiomTranslator) {
 		for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology.getChainSubsumptions())
-			rules.addAll(axiomTranslator.translate(axiom));
+			rules.addAll(axiomTranslator.translation(axiom));
 		for (final OWLClassAssertionAxiom assertion : reducedOntology.getConceptAssertions())
-			rules.addAll(axiomTranslator.translate(assertion));
+			rules.addAll(axiomTranslator.translation(assertion));
 		for (final OWLSubClassOfAxiom axiom : reducedOntology.getConceptSubsumptions())
-			rules.addAll(axiomTranslator.translate(axiom));
+			rules.addAll(axiomTranslator.translation(axiom));
 		for (final OWLDataPropertyAssertionAxiom assertion : reducedOntology.getDataAssertion())
-			rules.addAll(axiomTranslator.translate(assertion));
+			rules.addAll(axiomTranslator.translation(assertion));
 		for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology.getDataSubsuptions())
-			rules.addAll(axiomTranslator.translate(axiom));
+			rules.addAll(axiomTranslator.translation(axiom));
 		for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions())
-			rules.addAll(axiomTranslator.translate(axiom));
+			rules.addAll(axiomTranslator.translation(axiom));
 		for (final OWLObjectPropertyAssertionAxiom assertion : reducedOntology.getRoleAssertions())
-			rules.addAll(axiomTranslator.translate(assertion));
+			rules.addAll(axiomTranslator.translation(assertion));
 		for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions())
-			rules.addAll(axiomTranslator.translate(axiom));
+			rules.addAll(axiomTranslator.translation(axiom));
 	}
 }

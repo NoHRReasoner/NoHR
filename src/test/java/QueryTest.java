@@ -7,9 +7,9 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import com.declarativa.interprolog.util.IPException;
 
 import helpers.KB;
+import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
-import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
@@ -105,7 +105,7 @@ public abstract class QueryTest extends KB {
 		rule("a3(i)");
 		assertInconsistent("a1(i)");
 		assertInconsistent("a2(i)");
-		assertInconsistent("a2(i)");
+		assertInconsistent("a3(i)");
 	}
 
 	@Test

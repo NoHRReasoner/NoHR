@@ -14,8 +14,8 @@ import org.semanticweb.owlapi.profiles.OWLProfileReport;
 
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el.ELOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql.QLOntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.el.ELOntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyTranslation;
 
 /**
  * Represents the types of the supported OWL profiles. The order of enumeration corresponds to the preferred order. Each profile check if a given

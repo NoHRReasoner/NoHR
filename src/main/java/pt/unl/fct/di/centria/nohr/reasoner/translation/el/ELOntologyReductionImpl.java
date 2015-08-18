@@ -1,7 +1,7 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,7 +46,7 @@ import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ConcetpsGenerator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLEntityGenerator;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
@@ -263,11 +263,11 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	 */
 	private final OWLOntology closure;
 
-	/** The {@link ConcetpsGenerator} used to generate new concepts. */
-	private final ConcetpsGenerator concetpsGenerator;
+	/** The {@link OWLEntityGenerator} used to generate new concepts. */
+	private final OWLEntityGenerator concetpsGenerator;
 
 	/** Whether this {@link ELOntologyReduction reduction} has disjunctions. */
-	private final boolean hasDisjunction;
+	private final boolean hasDisjunctions;
 
 	/** The ontology that this {@link ELOntologyReduction reduction} refer. */
 	private final OWLOntology ontology;
@@ -289,14 +289,14 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 		if (unsupportedAxioms.size() > 0)
 			throw new UnsupportedAxiomsException(unsupportedAxioms);
 		this.ontology = ontology;
-		concetpsGenerator = new ConcetpsGenerator(ontology);
+		concetpsGenerator = new OWLEntityGenerator(ontology);
 		final Set<OWLClassAssertionAxiom> conceptAssertions = ontology.getAxioms(AxiomType.CLASS_ASSERTION);
 		final Set<OWLSubClassOfAxiom> conceptSubsumptions = conceptSubsumptions(ontology);
 		roleSubsumptions = roleSubsumptions(ontology);
 		closure = closure(conceptAssertions, conceptSubsumptions, roleSubsumptions);
 		int negAssertions = ontology.getAxiomCount(AxiomType.NEGATIVE_OBJECT_PROPERTY_ASSERTION);
 		negAssertions += ontology.getAxiomCount(AxiomType.NEGATIVE_DATA_PROPERTY_ASSERTION);
-		hasDisjunction = hasDisjunctions(closure) || negAssertions > 0;
+		hasDisjunctions = hasDisjunctions(closure) || negAssertions > 0;
 		chainSubsumptions = chainSubsumptions(ontology);
 	}
 
@@ -465,8 +465,8 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	}
 
 	@Override
-	public boolean hasDisjunction() {
-		return hasDisjunction;
+	public boolean hasDisjunctions() {
+		return hasDisjunctions;
 	}
 
 	/**

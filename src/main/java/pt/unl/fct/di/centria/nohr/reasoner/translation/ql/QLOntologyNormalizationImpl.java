@@ -1,11 +1,10 @@
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.ql;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.ql;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.AxiomType;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -41,12 +40,13 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ConcetpsGenerator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLEntityGenerator;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
-public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
+public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 
+	/** The set of supported OWL 2 QL axiom types */
 	public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[] {
 			AxiomType.ASYMMETRIC_OBJECT_PROPERTY, AxiomType.CLASS_ASSERTION, AxiomType.DATA_PROPERTY_ASSERTION,
 			AxiomType.DECLARATION, AxiomType.DISJOINT_CLASSES, AxiomType.DISJOINT_DATA_PROPERTIES,
@@ -56,62 +56,84 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 			AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY, AxiomType.SUBCLASS_OF,
 			AxiomType.SYMMETRIC_OBJECT_PROPERTY };
 
-	private final ConcetpsGenerator concetpsGenerator;
+	/** The entitiesGenerator used to obtain new roles */
+	private final OWLEntityGenerator entitiesGenerator;
 
+	/** The set of DL-Lite<sub>R</sub> concept disjunctions in this {@link QLOntologyNormalization} */
 	private final Set<OWLDisjointClassesAxiom> conceptDisjunctions;
 
+	/** The set of DL-Lite<sub>R</sub> concept subsumptions in this {@link QLOntologyNormalization} */
 	private final Set<OWLSubClassOfAxiom> conceptSubsumptions;
 
-	private final OWLDataFactory df;
-
-	private final Set<OWLClassExpression> disjointConcepts;
-
-	private final Set<OWLProperty<?, ?>> disjointRoles;
-
-	private boolean hasDisjunction;
-
+	/** The ontology of which this {@link QLOntologyTranslation} is normalization. */
 	private final OWLOntology ontology;
 
-	private final IRI ontologyIRI;
+	/** The set of DL-Lite<sub>R</sub> role disjunctions in this {@link QLOntologyNormalization}. */
+	private final Set<OWLDisjointObjectPropertiesAxiom> roleDisjunctions;
 
-	private final Set<OWLNaryPropertyAxiom<?>> roleDisjunctions;
+	/** The set of DL-Lite<sub>R</sub> (data) role disjunctions in this {@link QLOntologyNormalization}. */
+	private final Set<OWLDisjointDataPropertiesAxiom> dataDisjunctions;
 
+	/** The set of DL-Lite<sub>R</sub> role subsumptions in this {@link QLOntologyNormalization}. */
 	private final Set<OWLSubPropertyAxiom<?>> roleSubsumptions;
 
+	/** The set of DL-Lite<sub>R</sub> concepts occurring as subsumed concept in some subsumption in this {@link QLOntologyNormalization}. */
 	private final Set<OWLClassExpression> subConcepts;
 
+	/** The set of DL-Lite<sub>R</sub> roles occurring as subsumed roles in some subsumption in this {@link QLOntologyNormalization}. */
 	private final Set<OWLProperty<?, ?>> subRoles;
 
+	/** The set of DL-Lite<sub>R</sub> concepts occurring as subsuming concept in some subsumption in this {@link QLOntologyNormalization}. */
 	private final Set<OWLClassExpression> superConcepts;
 
+	/** The set of DL-Lite<sub>R</sub> roles occurring as subsuming role in some subsumption in this {@link QLOntologyNormalization}. */
 	private final Set<OWLProperty<?, ?>> superRoles;
 
+	/**
+	 * The set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
+	 * <i>&top;&sqsube;&not;B</i> or </i> B&sqsube;&not;B</i> {@link QLOntologyNormalization}.
+	 */
 	private final Set<OWLClassExpression> unsatisfiableConcepts;
 
+	/**
+	 * The set of DL-Lite<sub>R</sub> roles <i>Q</i> that occur in some axiom <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
+	 * <i>&top;&sqsube;&not;Q</i> or </i>Q&sqsube;&not;Q</i> {@link QLOntologyNormalization}.
+	 */
 	private final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles;
 
-	public QLNormalizedOntologyImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
+	/**
+	 * Constructs a {@link QLOntologyNormalization} from a given OWL 2 QL ontology according to <b>Appendix D</b> of
+	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}.
+	 *
+	 * @param ontology
+	 *            an OWL 2 QL ontology.
+	 * @throws UnsupportedAxiomsException
+	 *             if {@code ontology} has some axiom of an unsupported type (i.e. that aren't in {@link #SUPPORTED_AXIOM_TYPES}).
+	 */
+	public QLOntologyNormalizationImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
 		final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(ontology.getAxioms(),
 				SUPPORTED_AXIOM_TYPES);
 		if (unsupportedAxioms.size() > 0)
 			throw new UnsupportedAxiomsException(unsupportedAxioms);
 		this.ontology = ontology;
-		concetpsGenerator = new ConcetpsGenerator(ontology);
-		ontologyIRI = ontology.getOntologyID().getOntologyIRI();
-		df = ontology.getOWLOntologyManager().getOWLDataFactory();
-		conceptSubsumptions = new HashSet<OWLSubClassOfAxiom>();
-		roleSubsumptions = new HashSet<OWLSubPropertyAxiom<?>>();
-		conceptDisjunctions = new HashSet<OWLDisjointClassesAxiom>();
-		roleDisjunctions = new HashSet<OWLNaryPropertyAxiom<?>>();
-		unsatisfiableConcepts = new HashSet<OWLClassExpression>();
-		unsatisfiableRoles = new HashSet<OWLPropertyExpression<?, ?>>();
-		subConcepts = new HashSet<OWLClassExpression>();
-		superConcepts = new HashSet<OWLClassExpression>();
-		disjointConcepts = new HashSet<OWLClassExpression>();
-		subRoles = new HashSet<OWLProperty<?, ?>>();
-		superRoles = new HashSet<OWLProperty<?, ?>>();
-		disjointRoles = new HashSet<OWLProperty<?, ?>>();
+		entitiesGenerator = new OWLEntityGenerator(ontology);
+		conceptSubsumptions = new HashSet<>();
+		roleSubsumptions = new HashSet<>();
+		conceptDisjunctions = new HashSet<>();
+		roleDisjunctions = new HashSet<>();
+		dataDisjunctions = new HashSet<>();
+		unsatisfiableConcepts = new HashSet<>();
+		unsatisfiableRoles = new HashSet<>();
+		subConcepts = new HashSet<>();
+		superConcepts = new HashSet<>();
+		subRoles = new HashSet<>();
+		superRoles = new HashSet<>();
 		normalize(ontology);
+	}
+
+	private OWLDisjointObjectPropertiesAxiom disjunction(OWLObjectPropertyExpression q1,
+			OWLObjectPropertyExpression q2) {
+		return getDataFactory().getOWLDisjointObjectPropertiesAxiom(q1, q2);
 	}
 
 	@Override
@@ -135,20 +157,12 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	}
 
 	@Override
-	public Set<OWLClassExpression> getDisjointConcepts() {
-		return disjointConcepts;
+	public Set<OWLDisjointDataPropertiesAxiom> getDataDisjunctions() {
+		return dataDisjunctions;
 	}
 
-	@Override
-	public Set<OWLProperty<?, ?>> getDisjointRoles() {
-		return disjointRoles;
-	}
-
-	private OWLObjectProperty getNewRole(int hashCode) {
-		final String fragment = String.valueOf(hashCode);
-		final IRI ruleIri = IRI.create(ontologyIRI + "#" + fragment);
-		final OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
-		return df.getOWLObjectProperty(ruleIri);
+	private OWLDataFactory getDataFactory() {
+		return ontology.getOWLOntologyManager().getOWLDataFactory();
 	}
 
 	@Override
@@ -162,7 +176,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	}
 
 	@Override
-	public Set<OWLNaryPropertyAxiom<?>> getRoleDisjunctions() {
+	public Set<OWLDisjointObjectPropertiesAxiom> getRoleDisjunctions() {
 		return roleDisjunctions;
 	}
 
@@ -187,16 +201,6 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 	}
 
 	@Override
-	public Set<OWLClassExpression> getSuperConcepts() {
-		return superConcepts;
-	}
-
-	@Override
-	public Set<OWLProperty<?, ?>> getSuperRoles() {
-		return superRoles;
-	}
-
-	@Override
 	public Set<OWLClassExpression> getUnsatisfiableConcepts() {
 		return unsatisfiableConcepts;
 	}
@@ -208,7 +212,8 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 
 	@Override
 	public boolean hasDisjunctions() {
-		return hasDisjunction;
+		return !(conceptDisjunctions.isEmpty() && roleDisjunctions.isEmpty() && dataDisjunctions.isEmpty()
+				&& unsatisfiableConcepts.isEmpty() && unsatisfiableRoles.isEmpty());
 	}
 
 	@Override
@@ -231,17 +236,41 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 		return superRoles.contains(pe);
 	}
 
-	private void normalize(OWLAsymmetricObjectPropertyAxiom alpha) {
-		final OWLObjectPropertyExpression q = alpha.getProperty();
-		normalizeDisjunction(df.getOWLDisjointObjectPropertiesAxiom(q, q.getInverseProperty().getSimplified()));
+	/**
+	 * Normalize a given asymmetry axiom according to <b>Appendix D</b> of
+	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}. Given an
+	 * asymmetry axiom <b>asymmetric</b><i>(P)</i> adds <i>P&sqsube;&not;P<sup>-</sup></i> to {@link #roleDisjunctions}.
+	 *
+	 * @param axiom
+	 *            the asymmetry axiom <b>asymmetric</b><i>(P)</i>.
+	 */
+	private void normalize(OWLAsymmetricObjectPropertyAxiom axiom) {
+		final OWLObjectPropertyExpression q = axiom.getProperty();
+		roleDisjunctions.add(disjunction(q.getSimplified(), q.getInverseProperty().getSimplified()));
 	}
 
-	private void normalize(OWLObjectPropertyRangeAxiom alpha) {
-		final OWLObjectPropertyExpression q = alpha.getProperty();
-		final OWLClassExpression c = alpha.getRange();
-		normalize(df.getOWLSubClassOfAxiom(some(q.getInverseProperty()), c));
+	/**
+	 * Normalize a given range axiom according to <b>Appendix D</b> of
+	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}. Given a range
+	 * axiom <b>range</b><i>(Q, B)</i> adds <i>&exist;P<sup>-</sup>&sqsube;B</i> to {@link #conceptSubsumptions}.
+	 *
+	 * @param axiom
+	 *            the range axiom <b>range</b><i>(Q, B)</i>.
+	 */
+	private void normalize(OWLObjectPropertyRangeAxiom axiom) {
+		final OWLObjectPropertyExpression q = axiom.getProperty();
+		final OWLClassExpression c = axiom.getRange();
+		normalize(getDataFactory().getOWLSubClassOfAxiom(some(q.getInverseProperty()), c));
 	}
 
+	/**
+	 * Normalize a given OWL 2 QL ontology according to <b>Appendix D</b> of
+	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}, adding the
+	 * obtained axioms to the appropriate fields.
+	 *
+	 * @param ontology
+	 *            a OWL 2 QL ontology.
+	 */
 	private void normalize(OWLOntology ontology) {
 		RuntimesLogger.start("ontology normalization");
 		for (final OWLSubClassOfAxiom a : ontology.getAxioms(AxiomType.SUBCLASS_OF))
@@ -281,6 +310,14 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 		RuntimesLogger.stop("ontology normalization", "loading");
 	}
 
+	/**
+	 * Normalize a given concept subsumption axiom according to <b>Appendix D</b> of
+	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}, adding the
+	 * obtained axioms to the appropriate fields.
+	 *
+	 * @param axiom
+	 *            a OWL 2 QL concept subsumption.
+	 */
 	private void normalize(OWLSubClassOfAxiom alpha) {
 		final OWLClassExpression b = alpha.getSubClass();
 		final OWLClassExpression c = alpha.getSuperClass();
@@ -288,10 +325,9 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 			return;
 		if (b instanceof OWLDataSomeValuesFrom || c instanceof OWLDataSomeValuesFrom)
 			return;
-		if (c.isOWLNothing()) { // BASE CASE
+		if (c.isOWLNothing())
 			unsatisfiableConcepts.add(b);
-			hasDisjunction = true;
-		} else if (c instanceof OWLClass) { // BASE CASE
+		else if (c instanceof OWLClass) { // BASE CASE
 			subConcepts.add(b);
 			superConcepts.add(c);
 			conceptSubsumptions.add(alpha);
@@ -299,13 +335,10 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 			final OWLObjectIntersectionOf c0 = (OWLObjectIntersectionOf) c;
 			final Set<OWLClassExpression> ops = c0.getOperands();
 			for (final OWLClassExpression ci : ops)
-				normalize(df.getOWLSubClassOfAxiom(b, ci));
+				normalize(getDataFactory().getOWLSubClassOfAxiom(b, ci));
 		} else if (c instanceof OWLObjectComplementOf) { // BASE CASE
-			hasDisjunction = true;
 			final OWLObjectComplementOf c0 = (OWLObjectComplementOf) c;
 			final OWLClassExpression b1 = c0.getOperand();
-			disjointConcepts.add(b);
-			disjointConcepts.add(b1);
 			subConcepts.add(b);
 			subConcepts.add(b1);
 			if (b1.isOWLNothing())
@@ -315,7 +348,7 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 			else if (b.isOWLThing())
 				unsatisfiableConcepts.add(b1);
 			else
-				conceptDisjunctions.add(df.getOWLDisjointClassesAxiom(b, b1));
+				conceptDisjunctions.add(getDataFactory().getOWLDisjointClassesAxiom(b, b1));
 		} else if (c instanceof OWLObjectSomeValuesFrom) {
 			final OWLObjectSomeValuesFrom b0 = (OWLObjectSomeValuesFrom) c;
 			final OWLObjectPropertyExpression q = b0.getProperty();
@@ -323,41 +356,55 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 			if (a.isOWLThing()) {// BASE CASE
 				subConcepts.add(b);
 				superConcepts.add(c);
-				conceptSubsumptions.add(df.getOWLSubClassOfAxiom(b, c));
+				conceptSubsumptions.add(getDataFactory().getOWLSubClassOfAxiom(b, c));
 			} else {
-				final OWLObjectProperty pnew = getNewRole(alpha.hashCode());
-				normalize(df.getOWLSubObjectPropertyOfAxiom(pnew, q));
-				normalize(df.getOWLSubClassOfAxiom(some(pnew.getInverseProperty()), a));
-				normalize(df.getOWLSubClassOfAxiom(b, some(pnew)));
+				final OWLObjectProperty pnew = entitiesGenerator.generateNewRole();
+				normalize(getDataFactory().getOWLSubObjectPropertyOfAxiom(pnew, q));
+				normalize(getDataFactory().getOWLSubClassOfAxiom(some(pnew.getInverseProperty()), a));
+				normalize(getDataFactory().getOWLSubClassOfAxiom(b, some(pnew)));
 			}
 		}
 	}
 
+	/**
+	 * Normalize a given role subsumption axiom according to <b>Appendix D</b> of
+	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}, adding the
+	 * obtained axioms to the appropriate fields.
+	 *
+	 * @param axiom
+	 *            a OWL 2 QL role subsumption.
+	 */
 	private void normalize(OWLSubPropertyAxiom<?> alpha) {
 		final OWLPropertyExpression<?, ?> q1 = alpha.getSubProperty();
 		final OWLPropertyExpression<?, ?> q2 = alpha.getSuperProperty();
-		subRoles.add(DLUtils.getRoleName(q1));
-		superRoles.add(DLUtils.getRoleName(q2));
+		subRoles.add(DLUtils.atomic(q1));
+		superRoles.add(DLUtils.atomic(q2));
 		if (q1.isBottomEntity() || q2.isTopEntity())
 			return;
 		if (q2.isBottomEntity())
 			unsatisfiableRoles.add(q1);
 		else if (q1 instanceof OWLObjectPropertyExpression && q2 instanceof OWLObjectPropertyExpression)
-			roleSubsumptions.add(df.getOWLSubObjectPropertyOfAxiom((OWLObjectPropertyExpression) q1,
+			roleSubsumptions.add(getDataFactory().getOWLSubObjectPropertyOfAxiom((OWLObjectPropertyExpression) q1,
 					(OWLObjectPropertyExpression) q2));
 		else if (q1 instanceof OWLDataPropertyExpression && q2 instanceof OWLDataPropertyExpression)
-			roleSubsumptions.add(
-					df.getOWLSubDataPropertyOfAxiom((OWLDataPropertyExpression) q1, (OWLDataPropertyExpression) q2));
+			roleSubsumptions.add(getDataFactory().getOWLSubDataPropertyOfAxiom((OWLDataPropertyExpression) q1,
+					(OWLDataPropertyExpression) q2));
 	}
 
+	/**
+	 * Normalize a given role disjunction axiom according to <b>Appendix D</b> of
+	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}, adding the
+	 * obtained axioms to the appropriate fields.
+	 *
+	 * @param axiom
+	 *            a OWL 2 QL role disjunction.
+	 */
 	private <P extends OWLPropertyExpression<?, ?>> void normalizeDisjunction(OWLNaryPropertyAxiom<P> alpha) {
-		hasDisjunction = true;
 		final Set<P> props = alpha.getProperties();
 		final Iterator<P> propsIt1 = props.iterator();
 		while (propsIt1.hasNext()) {
 			final OWLPropertyExpression<?, ?> q1 = propsIt1.next();
-			final OWLProperty<?, ?> p = DLUtils.getRoleName(q1);
-			disjointRoles.add(p);
+			final OWLProperty<?, ?> p = DLUtils.atomic(q1);
 			subRoles.add(p);
 			if (q1.isBottomEntity())
 				continue;
@@ -372,18 +419,25 @@ public class QLNormalizedOntologyImpl implements QLNormalizedOntology {
 					else if (q2.isTopEntity())
 						unsatisfiableRoles.add(q2);
 					else if (q1 instanceof OWLObjectPropertyExpression && q2 instanceof OWLObjectPropertyExpression)
-						roleDisjunctions.add(df.getOWLDisjointObjectPropertiesAxiom((OWLObjectPropertyExpression) q1,
-								(OWLObjectPropertyExpression) q2));
+						roleDisjunctions.add(getDataFactory().getOWLDisjointObjectPropertiesAxiom(
+								(OWLObjectPropertyExpression) q1, (OWLObjectPropertyExpression) q2));
 					else if (q1 instanceof OWLDataPropertyExpression && q2 instanceof OWLDataPropertyExpression)
-						roleDisjunctions.add(df.getOWLDisjointDataPropertiesAxiom((OWLDataPropertyExpression) q1,
-								(OWLDataPropertyExpression) q2));
+						dataDisjunctions.add(getDataFactory().getOWLDisjointDataPropertiesAxiom(
+								(OWLDataPropertyExpression) q1, (OWLDataPropertyExpression) q2));
 			}
 		}
 
 	}
 
+	/**
+	 * Returns the unqualified existential quantification of a given role.
+	 *
+	 * @param q
+	 *            a role <i>Q</i>
+	 * @return <i>&exist;Q</i>.
+	 */
 	private OWLClassExpression some(OWLObjectPropertyExpression q) {
-		return df.getOWLObjectSomeValuesFrom(q.getSimplified(), df.getOWLThing());
+		return getDataFactory().getOWLObjectSomeValuesFrom(q.getSimplified(), getDataFactory().getOWLThing());
 	}
 
 }

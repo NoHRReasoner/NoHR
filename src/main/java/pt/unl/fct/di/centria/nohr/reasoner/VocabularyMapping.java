@@ -9,19 +9,18 @@ import org.semanticweb.owlapi.model.OWLProperty;
 
 /**
  * @author nunocosta
- *
  */
 public interface VocabularyMapping {
 
-    public void addConcept(OWLClass concept);
+	public void addConcept(OWLClass concept);
 
-    public void addIndividual(OWLIndividual individual);
+	public void addIndividual(OWLIndividual individual);
 
-    public void addRole(OWLProperty<?, ?> role);
+	public void addRole(OWLProperty<?, ?> role);
 
-    public OWLClass getConcept(String symbol);
+	public OWLClass getConcept(String symbol);
 
-    public OWLIndividual getIndividual(String symbol);
+	public OWLIndividual getIndividual(String symbol);
 
-    public OWLProperty<?, ?> getRole(String symbol);
+	public OWLProperty<?, ?> getRole(String symbol);
 }

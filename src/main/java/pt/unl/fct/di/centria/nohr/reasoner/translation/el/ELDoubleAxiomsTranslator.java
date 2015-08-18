@@ -1,11 +1,13 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.*;
-
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.*;
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -78,6 +80,96 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	Atom negTr(OWLProperty<?, ?> r, Variable x, Variable y) {
 		final Predicate pred = negPred(r);
 		return atom(pred, x, y);
+	}
+
+	/**
+	 * Translate a role chain subsumption axiom to a set of double rules according to <b>(r2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL
+	 * Oracle for NoHR (Technical Report)</a>} .
+	 *
+	 * @param chain
+	 *            a role chain <i>R<sub>1</sub>&#x26AA; ... &#x26AA;R<sub>k</i>.
+	 * @param superRole
+	 *            the subsuming role <i>S</i>
+	 * @retrun see lines 2,3 and 4 of <b>(r2)</b>.
+	 */
+	// (r2)
+	@Override
+	protected Set<Rule> subsumptionTranslation(List<OWLObjectPropertyExpression> chain, OWLObjectProperty s) {
+		final Set<Rule> result = new HashSet<Rule>();
+		List<Atom> chainTr = tr(chain, X, Y);
+		List<Literal> body = new ArrayList<Literal>(chainTr);
+		body.add(negLiteral(negTr(s, X, Y)));
+		result.add(rule(tr(s, X, Y), body));
+		for (final Literal r : tr(chain, X, Y, false)) {
+			chainTr = tr(chain, X, Y, false);
+			body = new ArrayList<Literal>(chainTr);
+			body.add(negTr(s, X, Y));
+			body.remove(r);
+			result.add(rule(negTr(r), body));
+		}
+		return result;
+	}
+
+	/**
+	 * Translate a concept subsumption axiom to a set of double rules according to <b>(t1)</b>, <b>(c1)</b> and <b>(i1)</b> and <b>(i2)</b> of
+	 * <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
+	 *
+	 * @param c
+	 *            the subsumed concept expression <i>C</i>.
+	 * @param a
+	 *            the subsuming concept <i>A</i>.
+	 * @return see: <br>
+	 *         line 2 of <b>(t1)</b>; <br>
+	 *         lines 2,3 and 4 of <b>(c1)</b>; <br>
+	 *         <b>(i1)</b>; <br>
+	 *         <b>(i2)</b>.
+	 */
+	@Override
+	protected Set<Rule> subsumptionTranslation(OWLClassExpression c, OWLClass a) {
+		final Set<Rule> result = new HashSet<Rule>();
+		// (t1)
+		if (c.isOWLThing())
+			result.add(rule(tr(a, X), negLiteral(negTr(a, X))));
+		// (i1)
+		else if (a.isOWLNothing() && !c.isAnonymous())
+			result.add(rule(negTr(c.asOWLClass(), X)));
+		// (i2)
+		else if (a.isOWLNothing() && c.isAnonymous())
+			for (final Literal b : tr(c, X, false)) {
+				final List<Literal> body = tr(c, X, false);
+				body.remove(b);
+				result.add(rule(negTr(b), body));
+			}
+		// (c1)
+		else {
+			List<Literal> body = tr(c, X);
+			body.add(negLiteral(negTr(a, X)));
+			result.add(rule(tr(a, X), body));
+			for (final Literal b : tr(c, X, false)) {
+				body = tr(c, X, false);
+				body.add(negTr(a, X));
+				body.remove(b);
+				result.add(rule(negTr(b), body));
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Translate a role subsumption axiom to a set of double rules according to <b>(r1)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle
+	 * for NoHR (Technical Report)</a>} .
+	 *
+	 * @param r
+	 *            the subsumed role <i>R</i>.
+	 * @param s
+	 *            the subsuming role <i>S</i>.
+	 * @return see lines 2 and 3 of <b>(i1)</b>.
+	 */
+	// (r1)
+	@Override
+	protected Set<Rule> subsumptionTranslation(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
+		return ruleSet(rule(tr(r, X, Y), tr(s, X, Y), negLiteral(negTr(r, X, Y))),
+				rule(negTr(r, X, Y), negTr(s, X, Y)));
 	}
 
 	/**
@@ -154,110 +246,20 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i>{A<sup>d</sup>(a)&larr;}</i>
 	 */
 	@Override
-	public Set<Rule> translate(OWLClassAssertionAxiom assertion) {
+	public Set<Rule> translation(OWLClassAssertionAxiom assertion) {
 		return AssertionsTranslation.translateDouble(assertion);
 	}
 
 	/**
-	 * Translate a role assertion to a set of original rules according to <b>(a2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for
-	 * NoHR (Technical Report)</a>}.
+	 * Translate a role assertion to a set of double rules according to <b>(a2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR
+	 * (Technical Report)</a>}.
 	 *
 	 * @param assertion
 	 *            an assertion <i>R(a, b)</i>.
 	 * @return <i>R<sup>d</sup>(a, b)&larr;</i>.
 	 */
 	@Override
-	public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> alpha) {
+	public Set<Rule> translation(OWLPropertyAssertionAxiom<?, ?> alpha) {
 		return AssertionsTranslation.translateDouble(alpha);
-	}
-
-	/**
-	 * Translate a role chain subsumption axiom to a set of double rules according to <b>(r2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL
-	 * Oracle for NoHR (Technical Report)</a>} .
-	 *
-	 * @param chain
-	 *            a role chain <i>R<sub>1</sub>&#x26AA; ... &#x26AA;R<sub>k</i>.
-	 * @param superRole
-	 *            the subsuming role <i>S</i>
-	 * @retrun see lines 2,3 and 4 of <b>(r2)</b>.
-	 */
-	// (r2)
-	@Override
-	protected Set<Rule> translateSubsumption(List<OWLObjectPropertyExpression> chain, OWLObjectProperty s) {
-		final Set<Rule> result = new HashSet<Rule>();
-		List<Atom> chainTr = tr(chain, X, Y);
-		List<Literal> body = new ArrayList<Literal>(chainTr);
-		body.add(negLiteral(negTr(s, X, Y)));
-		result.add(rule(tr(s, X, Y), body));
-		for (final Literal r : tr(chain, X, Y, false)) {
-			chainTr = tr(chain, X, Y, false);
-			body = new ArrayList<Literal>(chainTr);
-			body.add(negTr(s, X, Y));
-			body.remove(r);
-			result.add(rule(negTr(r), body));
-		}
-		return result;
-	}
-
-	/**
-	 * Translate a concept subsumption axiom to a set of double rules according to <b>(t1)</b>, <b>(c1)</b> and <b>(i1)</b> and <b>(i2)</b> of
-	 * <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
-	 *
-	 * @param c
-	 *            the subsumed concept expression <i>C</i>.
-	 * @param a
-	 *            the subsuming concept <i>A</i>.
-	 * @return see: <br>
-	 *         line 2 of <b>(t1)</b>; <br>
-	 *         lines 2,3 and 4 of <b>(c1)</b>; <br>
-	 *         <b>(i1)</b>; <br>
-	 *         <b>(i2)</b>.
-	 */
-	@Override
-	protected Set<Rule> translateSubsumption(OWLClassExpression c, OWLClass a) {
-		final Set<Rule> result = new HashSet<Rule>();
-		// (t1)
-		if (c.isOWLThing())
-			result.add(rule(tr(a, X), negLiteral(negTr(a, X))));
-		// (i1)
-		else if (a.isOWLNothing() && !c.isAnonymous())
-			result.add(rule(negTr(c.asOWLClass(), X)));
-		// (i2)
-		else if (a.isOWLNothing() && c.isAnonymous())
-			for (final Literal b : tr(c, X, false)) {
-				final List<Literal> body = tr(c, X, false);
-				body.remove(b);
-				result.add(rule(negTr(b), body));
-			}
-		// (c1)
-		else {
-			List<Literal> body = tr(c, X);
-			body.add(negLiteral(negTr(a, X)));
-			result.add(rule(tr(a, X), body));
-			for (final Literal b : tr(c, X, false)) {
-				body = tr(c, X, false);
-				body.add(negTr(a, X));
-				body.remove(b);
-				result.add(rule(negTr(b), body));
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Translate a role subsumption axiom to a set of double rules according to <b>(r1)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle
-	 * for NoHR (Technical Report)</a>} .
-	 *
-	 * @param r
-	 *            the subsumed role <i>R</i>.
-	 * @param s
-	 *            the subsuming role <i>S</i>.
-	 * @return see lines 2 and 3 of <b>(i1)</b>.
-	 */
-	// (r1)
-	@Override
-	protected Set<Rule> translateSubsumption(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
-		return ruleSet(rule(tr(r, X, Y), tr(s, X, Y), negLiteral(negTr(r, X, Y))),
-				rule(negTr(r, X, Y), negTr(s, X, Y)));
 	}
 }

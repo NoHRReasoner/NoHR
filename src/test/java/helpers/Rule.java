@@ -1,13 +1,12 @@
 package helpers;
 
-
 public class Rule {
-	
+
 	String format;
 	Object[] args;
 
-	public Rule(String fmt, Object ... args) {
-		this.format = fmt;
+	public Rule(String fmt, Object... args) {
+		format = fmt;
 		this.args = args;
 	}
 
@@ -15,7 +14,5 @@ public class Rule {
 	public String toString() {
 		return String.format(format, args);
 	}
-	
-	
 
 }

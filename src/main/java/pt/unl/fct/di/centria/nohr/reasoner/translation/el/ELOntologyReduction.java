@@ -1,7 +1,7 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
 import java.util.Set;
 
@@ -87,6 +87,6 @@ public interface ELOntologyReduction {
 	 *
 	 * @return rue iff this reduction has disjunctions.
 	 */
-	public boolean hasDisjunction();
+	public boolean hasDisjunctions();
 
 }

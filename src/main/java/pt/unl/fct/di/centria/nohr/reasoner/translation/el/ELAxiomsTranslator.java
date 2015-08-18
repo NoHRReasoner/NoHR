@@ -1,7 +1,7 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
@@ -59,6 +59,41 @@ public abstract class ELAxiomsTranslator {
 	protected List<Literal> literalsList(Literal... literals) {
 		return new ArrayList<>(Arrays.asList(literals));
 	}
+
+	/**
+	 * Partially (according to some {@link ELAxiomsTranslator} implementing class's criteria) translate a role chain subsumption axiom to a set of
+	 * rules according to <b>(r2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
+	 *
+	 * @param chain
+	 *            a role chain
+	 * @param superRole
+	 *            the subsuming role.
+	 */
+	protected abstract Set<Rule> subsumptionTranslation(List<OWLObjectPropertyExpression> chain,
+			OWLObjectProperty superRole);
+
+	/**
+	 * Partially (according to some {@link ELAxiomsTranslator} implementing class's criteria) translate a concept subsumption axiom to a set of rules
+	 * according to <b>(t1)</b>, <b>(c1)</b>, <b>(i1)</b> or <b>(i2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
+	 * Report)</a>} .
+	 *
+	 * @param ce1
+	 *            the subsumed concept expression
+	 * @param c2
+	 *            the subsuming concept.
+	 */
+	protected abstract Set<Rule> subsumptionTranslation(OWLClassExpression ce1, OWLClass c2);
+
+	/**
+	 * Partially (according to some {@link ELAxiomsTranslator} implementing class's criteria) translate a role subsumption axiom to a set of rules
+	 * according to <b>(r1)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
+	 *
+	 * @param r1
+	 *            the subsumed role
+	 * @param r2
+	 *            the subsuming role.
+	 */
+	protected abstract Set<Rule> subsumptionTranslation(OWLProperty<?, ?> r1, OWLProperty<?, ?> r2);
 
 	/**
 	 * Translate an role composition to a list of atoms according to <b> Definition 12.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
@@ -173,7 +208,7 @@ public abstract class ELAxiomsTranslator {
 	 * @param assertion
 	 *            an assertion
 	 */
-	public abstract Set<Rule> translate(OWLClassAssertionAxiom assertion);
+	public abstract Set<Rule> translation(OWLClassAssertionAxiom assertion);
 
 	/**
 	 * Partially (depending on the concrete {@link ELAxiomsTranslator} used) translate a role assertion to a set of rules according to <b>(a2)</b> of
@@ -182,7 +217,7 @@ public abstract class ELAxiomsTranslator {
 	 * @param assertion
 	 *            an assertion
 	 */
-	public abstract Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> assertion);
+	public abstract Set<Rule> translation(OWLPropertyAssertionAxiom<?, ?> assertion);
 
 	/**
 	 * Partially (depending on the concrete {@link ELAxiomsTranslator} used) translate a concept subsumption axiom to a set of rules according to
@@ -192,7 +227,7 @@ public abstract class ELAxiomsTranslator {
 	 * @param axiom
 	 *            an axiom
 	 */
-	public Set<Rule> translate(OWLSubClassOfAxiom axiom) {
+	public Set<Rule> translation(OWLSubClassOfAxiom axiom) {
 		final OWLClassExpression ce1 = axiom.getSubClass();
 		final OWLClassExpression ce2 = axiom.getSuperClass();
 		if (ce2.isAnonymous())
@@ -202,7 +237,7 @@ public abstract class ELAxiomsTranslator {
 				return ruleSet();
 		if (ce2.isOWLThing())
 			return ruleSet();
-		return translateSubsumption(ce1, (OWLClass) ce2);
+		return subsumptionTranslation(ce1, (OWLClass) ce2);
 	}
 
 	/**
@@ -213,10 +248,10 @@ public abstract class ELAxiomsTranslator {
 	 * @param axiom
 	 *            an axiom
 	 */
-	public Set<Rule> translate(OWLSubPropertyAxiom<?> axiom) {
+	public Set<Rule> translation(OWLSubPropertyAxiom<?> axiom) {
 		final OWLProperty<?, ?> pe1 = (OWLProperty<?, ?>) axiom.getSubProperty();
 		final OWLProperty<?, ?> pe2 = (OWLProperty<?, ?>) axiom.getSuperProperty();
-		return translateSubsumption(pe1, pe2);
+		return subsumptionTranslation(pe1, pe2);
 	}
 
 	/**
@@ -226,44 +261,9 @@ public abstract class ELAxiomsTranslator {
 	 * @param axiom
 	 *            an axiom
 	 */
-	public Set<Rule> translate(OWLSubPropertyChainOfAxiom axiom) {
+	public Set<Rule> translation(OWLSubPropertyChainOfAxiom axiom) {
 		final List<OWLObjectPropertyExpression> chain = axiom.getPropertyChain();
 		final OWLObjectPropertyExpression superProperty = axiom.getSuperProperty();
-		return translateSubsumption(chain, (OWLObjectProperty) superProperty);
+		return subsumptionTranslation(chain, (OWLObjectProperty) superProperty);
 	}
-
-	/**
-	 * Partially (according to some {@link ELAxiomsTranslator} implementing class's criteria) translate a role chain subsumption axiom to a set of
-	 * rules according to <b>(r2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
-	 *
-	 * @param chain
-	 *            a role chain
-	 * @param superRole
-	 *            the subsuming role.
-	 */
-	protected abstract Set<Rule> translateSubsumption(List<OWLObjectPropertyExpression> chain,
-			OWLObjectProperty superRole);
-
-	/**
-	 * Partially (according to some {@link ELAxiomsTranslator} implementing class's criteria) translate a concept subsumption axiom to a set of rules
-	 * according to <b>(t1)</b>, <b>(c1)</b>, <b>(i1)</b> or <b>(i2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
-	 * Report)</a>} .
-	 *
-	 * @param ce1
-	 *            the subsumed concept expression
-	 * @param c2
-	 *            the subsuming concept.
-	 */
-	protected abstract Set<Rule> translateSubsumption(OWLClassExpression ce1, OWLClass c2);
-
-	/**
-	 * Partially (according to some {@link ELAxiomsTranslator} implementing class's criteria) translate a role subsumption axiom to a set of rules
-	 * according to <b>(r1)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
-	 *
-	 * @param r1
-	 *            the subsumed role
-	 * @param r2
-	 *            the subsuming role.
-	 */
-	protected abstract Set<Rule> translateSubsumption(OWLProperty<?, ?> r1, OWLProperty<?, ?> r2);
 }

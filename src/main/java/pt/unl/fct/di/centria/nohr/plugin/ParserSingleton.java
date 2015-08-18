@@ -8,16 +8,15 @@ import pt.unl.fct.di.centria.nohr.parsing.Parser;
 
 /**
  * @author nunocosta
- *
  */
 public class ParserSingleton {
 
-    private static Parser parser;
+	private static Parser parser;
 
-    public static Parser getParser() {
-	if (parser == null)
-	    parser = new NoHRParser(null);
-	return parser;
-    }
+	public static Parser getParser() {
+		if (parser == null)
+			parser = new NoHRParser(null);
+		return parser;
+	}
 
 }

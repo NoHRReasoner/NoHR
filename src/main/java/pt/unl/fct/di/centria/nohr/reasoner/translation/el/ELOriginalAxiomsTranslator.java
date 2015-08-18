@@ -1,9 +1,10 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.reasoner.translation.ontology.el;
+package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.*;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
 
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,61 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
  * @author Nuno Costa
  */
 public class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
+
+	/**
+	 * Translate a role chain subsumption axiom to a set of original rules according to <b>(r2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL
+	 * Oracle for NoHR (Technical Report)</a>} .
+	 *
+	 * @param chain
+	 *            a role chain <i>R<sub>1</sub>&#x26AA; ... &#x26AA;R<sub>k</i>.
+	 * @param superRole
+	 *            the subsuming role <i>S</i>
+	 * @retrun <i>{ S(x, x<sub>k</sub>)&larr; tr(R<sub>1k</sub>, x, x<sub>k</sub>) }</i>.
+	 */
+	@Override
+	protected Set<Rule> subsumptionTranslation(List<OWLObjectPropertyExpression> chain, OWLObjectProperty superRole) {
+		return ruleSet(rule(tr(superRole, X, Y), tr(chain, X, Y)));
+	}
+
+	/**
+	 * Translate a concept subsumption axiom to a set of original rules according to <b>(t1)</b>, <b>(c1)</b> and <b>(i1)</b> and <b>(i2)</b> of
+	 * <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
+	 *
+	 * @param c
+	 *            the subsumed concept expression <i>C</i>.
+	 * @param a
+	 *            the subsuming concept <i>A</i>.
+	 * @return <i>{ A(x)&larr;</i> }, if <i>A</i> is the top concept; <br>
+	 *         <i>{ }, if <i>C</i> is the bottom concept <i>&larr;</i>;<br>
+	 *         <i>{ A(x)&larr; tr(C, x) }</i>, otherwise.
+	 */
+	@Override
+	protected Set<Rule> subsumptionTranslation(OWLClassExpression c, OWLClass a) {
+		// (i1) and (i2)
+		// Note that the rules whose head have a negative meta-predicate functor aren't relevant in the original part of the translation.
+		if (a.isOWLNothing())
+			return ruleSet();
+		// (t1)
+		if (c.isOWLThing())
+			return ruleSet(rule(tr(a, X)));
+		// (a1)
+		return ruleSet(rule(tr(a, X), tr(c, X)));
+	}
+
+	/**
+	 * Translate a role subsumption axiom to a set of original rules according to <b>(r1)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL
+	 * Oracle for NoHR (Technical Report)</a>} .
+	 *
+	 * @param r
+	 *            the subsumed role <i>R</i>.
+	 * @param s
+	 *            the subsuming role <i>S</i>
+	 * @return <i> { S(x, y)&larr;R(x, y) } </i>.
+	 */
+	@Override
+	protected Set<Rule> subsumptionTranslation(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
+		return ruleSet(rule(tr(s, X, Y), tr(r, X, Y)));
+	}
 
 	/**
 	 * Translate an role composition to a list of atoms according to <b> Definition 12.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
@@ -102,7 +158,7 @@ public class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i>{A(a)&larr;}</i>
 	 */
 	@Override
-	public Set<Rule> translate(OWLClassAssertionAxiom assertion) {
+	public Set<Rule> translation(OWLClassAssertionAxiom assertion) {
 		return AssertionsTranslation.translateOriginal(assertion);
 	}
 
@@ -115,63 +171,8 @@ public class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i>R(a, b)&larr;</i>.
 	 */
 	@Override
-	public Set<Rule> translate(OWLPropertyAssertionAxiom<?, ?> assertion) {
+	public Set<Rule> translation(OWLPropertyAssertionAxiom<?, ?> assertion) {
 		return AssertionsTranslation.translateOriginal(assertion);
-	}
-
-	/**
-	 * Translate a role chain subsumption axiom to a set of original rules according to <b>(r2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL
-	 * Oracle for NoHR (Technical Report)</a>} .
-	 *
-	 * @param chain
-	 *            a role chain <i>R<sub>1</sub>&#x26AA; ... &#x26AA;R<sub>k</i>.
-	 * @param superRole
-	 *            the subsuming role <i>S</i>
-	 * @retrun <i>{ S(x, x<sub>k</sub>)&larr; tr(R<sub>1k</sub>, x, x<sub>k</sub>) }</i>.
-	 */
-	@Override
-	protected Set<Rule> translateSubsumption(List<OWLObjectPropertyExpression> chain, OWLObjectProperty superRole) {
-		return ruleSet(rule(tr(superRole, X, Y), tr(chain, X, Y)));
-	}
-
-	/**
-	 * Translate a concept subsumption axiom to a set of original rules according to <b>(t1)</b>, <b>(c1)</b> and <b>(i1)</b> and <b>(i2)</b> of
-	 * <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
-	 *
-	 * @param c
-	 *            the subsumed concept expression <i>C</i>.
-	 * @param a
-	 *            the subsuming concept <i>A</i>.
-	 * @return <i>{ A(x)&larr;</i> }, if <i>A</i> is the top concept; <br>
-	 *         <i>{ }, if <i>C</i> is the bottom concept <i>&larr;</i>;<br>
-	 *         <i>{ A(x)&larr; tr(C, x) }</i>, otherwise.
-	 */
-	@Override
-	protected Set<Rule> translateSubsumption(OWLClassExpression c, OWLClass a) {
-		// (i1) and (i2)
-		// Note that the rules whose head have a negative meta-predicate functor aren't relevant in the original part of the translation.
-		if (a.isOWLNothing())
-			return ruleSet();
-		// (t1)
-		if (c.isOWLThing())
-			return ruleSet(rule(tr(a, X)));
-		// (a1)
-		return ruleSet(rule(tr(a, X), tr(c, X)));
-	}
-
-	/**
-	 * Translate a role subsumption axiom to a set of original rules according to <b>(r1)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL
-	 * Oracle for NoHR (Technical Report)</a>} .
-	 *
-	 * @param r
-	 *            the subsumed role <i>R</i>.
-	 * @param s
-	 *            the subsuming role <i>S</i>
-	 * @return <i> { S(x, y)&larr;R(x, y) } </i>.
-	 */
-	@Override
-	protected Set<Rule> translateSubsumption(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
-		return ruleSet(rule(tr(s, X, Y), tr(r, X, Y)));
 	}
 
 }
