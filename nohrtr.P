@@ -1,0 +1,19 @@
+:- table 'at'/1 as subsumptive.
+:- table 'au'/1 as subsumptive.
+:- table 'as'/1 as subsumptive.
+:- table 'dq'/1 as subsumptive.
+:- table 'dt'/1 as subsumptive.
+'ds'('d').
+'ap'('a').
+'dp'('a').
+'dt'('e'):-tnot('at'('e')).
+'du'('o').
+'aq'('b').
+'au'('f'):-tnot('au'('f')).
+'dr'('o').
+'as'('d'):-tnot('as'('d')).
+'ar'('c').
+'at'('e'):-tnot('at'('e')).
+'dv'('l').
+'av'('o').
+'dq'('b'):-tnot('dq'('b')).

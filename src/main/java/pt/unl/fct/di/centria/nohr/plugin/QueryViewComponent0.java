@@ -64,11 +64,11 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
+import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 public class QueryViewComponent0 extends AbstractHybridViewComponent {
 
@@ -690,7 +690,7 @@ public class QueryViewComponent0 extends AbstractHybridViewComponent {
 			MessageDialogs.xsbProblems(this, e);
 		} catch (final RuntimeException e) {
 			ErrorLogPanel.showErrorDialog(e);
-		} catch (final XSBDatabaseCreationException e) {
+		} catch (final DatabaseCreationException e) {
 			MessageDialogs.xsbDatabaseCreationProblems(this, e);
 		}
 	}

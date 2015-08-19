@@ -1,12 +1,12 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.xsb;
+package pt.unl.fct.di.centria.nohr.prolog;
 
 /**
  * @author nunocosta
  */
-public class XSBDatabaseCreationException extends Exception {
+public class DatabaseCreationException extends Exception {
 
 	/**
 	 *
@@ -16,14 +16,14 @@ public class XSBDatabaseCreationException extends Exception {
 	/**
 	 *
 	 */
-	public XSBDatabaseCreationException() {
+	public DatabaseCreationException() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 */
-	public XSBDatabaseCreationException(String message) {
+	public DatabaseCreationException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
@@ -32,7 +32,7 @@ public class XSBDatabaseCreationException extends Exception {
 	 * @param message
 	 * @param cause
 	 */
-	public XSBDatabaseCreationException(String message, Throwable cause) {
+	public DatabaseCreationException(String message, Throwable cause) {
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}
@@ -43,7 +43,7 @@ public class XSBDatabaseCreationException extends Exception {
 	 * @param enableSuppression
 	 * @param writableStackTrace
 	 */
-	public XSBDatabaseCreationException(String message, Throwable cause, boolean enableSuppression,
+	public DatabaseCreationException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 		// TODO Auto-generated constructor stub
@@ -52,7 +52,7 @@ public class XSBDatabaseCreationException extends Exception {
 	/**
 	 * @param cause
 	 */
-	public XSBDatabaseCreationException(Throwable cause) {
+	public DatabaseCreationException(Throwable cause) {
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}

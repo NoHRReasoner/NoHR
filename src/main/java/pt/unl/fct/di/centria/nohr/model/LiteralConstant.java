@@ -82,6 +82,31 @@ public class LiteralConstant implements Constant {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final LiteralConstant other = (LiteralConstant) obj;
+		if (literal == null) {
+			if (other.literal != null)
+				return false;
+		} else if (!toString().equals(other.toString()))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (literal == null ? 0 : toString().hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean isConstant() {
 		return true;
 	}
@@ -119,6 +144,11 @@ public class LiteralConstant implements Constant {
 	@Override
 	public boolean isVariable() {
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return literal.getLiteral() + (literal.getLang().isEmpty() ? "" : "@" + literal.getLang());
 	}
 
 }

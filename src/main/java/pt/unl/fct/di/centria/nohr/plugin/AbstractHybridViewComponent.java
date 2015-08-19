@@ -34,13 +34,13 @@ import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.plugin.rules.DisposableRuleBase;
+import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
  * @author nunocosta
@@ -51,7 +51,7 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 
 		public DisposableHybridKB(File xsbBinDirectory, Set<OWLAxiom> axioms, RuleBase ruleBase)
 				throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
-				XSBDatabaseCreationException {
+				DatabaseCreationException {
 			super(xsbBinDirectory, axioms, ruleBase);
 		}
 
@@ -169,7 +169,7 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 		} catch (final IOException e) {
 			MessageDialogs.translationFileProblems(this, e);
 			return null;
-		} catch (final XSBDatabaseCreationException e) {
+		} catch (final DatabaseCreationException e) {
 			MessageDialogs.xsbDatabaseCreationProblems(this, e);
 			return null;
 		} catch (final RuntimeException e) {

@@ -6,10 +6,10 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
  *
@@ -22,7 +22,7 @@ public class QLQueryTest extends QueryTest {
 
 	public QLQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		super(Profile.OWL2_QL);
 	}
 

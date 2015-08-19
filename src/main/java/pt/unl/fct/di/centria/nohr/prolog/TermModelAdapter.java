@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.xsb;
+package pt.unl.fct.di.centria.nohr.prolog;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
 import static pt.unl.fct.di.centria.nohr.model.Model.list;

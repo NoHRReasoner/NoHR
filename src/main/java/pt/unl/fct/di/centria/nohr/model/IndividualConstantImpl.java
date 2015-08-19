@@ -4,6 +4,7 @@
 package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
@@ -26,6 +27,7 @@ public class IndividualConstantImpl implements Constant {
 	 *            the ontology individual
 	 */
 	IndividualConstantImpl(OWLIndividual individual) {
+		Objects.requireNonNull(individual);
 		this.individual = individual;
 	}
 
@@ -80,6 +82,31 @@ public class IndividualConstantImpl implements Constant {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final IndividualConstantImpl other = (IndividualConstantImpl) obj;
+		if (individual == null) {
+			if (other.individual != null)
+				return false;
+		} else if (!toString().equals(other.toString()))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (individual == null ? 0 : toString().hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean isConstant() {
 		return false;
 	}
@@ -117,6 +144,11 @@ public class IndividualConstantImpl implements Constant {
 	@Override
 	public boolean isVariable() {
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return individual.toStringID();
 	}
 
 }

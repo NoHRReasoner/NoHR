@@ -1,7 +1,7 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.xsb;
+package pt.unl.fct.di.centria.nohr.prolog;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Atom;
@@ -12,6 +12,7 @@ import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.TableDirective;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
@@ -44,6 +45,8 @@ public class XSBFormatVisitor implements FormatVisitor {
 	public String visit(Atom atom) {
 		final String pred = atom.getFunctor().accept(this);
 		final String args = Model.concat(atom.getArguments(), this, ",");
+		if (atom.getArity() == 0)
+			return pred;
 		return pred + "(" + args + ")";
 	}
 
@@ -92,6 +95,8 @@ public class XSBFormatVisitor implements FormatVisitor {
 	 */
 	@Override
 	public String visit(Predicate predicate) {
+		if (predicate.getSymbol().equals("fail"))
+			return predicate.getSymbol();
 		return quoted(predicate.getSymbol());
 	}
 
@@ -118,6 +123,17 @@ public class XSBFormatVisitor implements FormatVisitor {
 			return head + ".";
 		else
 			return head + ":-" + body + ".";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.FormatVisitor#visit(pt.unl.fct.di.centria.nohr.model.TableDirective)
+	 */
+	@Override
+	public String visit(TableDirective tableDirective) {
+		final Predicate pred = tableDirective.getPredicate();
+		return ":- table " + pred.accept(this) + "/" + pred.getArity() + " as subsumptive.";
 	}
 
 	/*

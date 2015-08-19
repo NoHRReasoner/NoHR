@@ -288,6 +288,10 @@ public class Model {
 		return cons(symbol);
 	}
 
+	public static Atom fail() {
+		return atom("fail");
+	}
+
 	/**
 	 * Create a term list from a specified list of terms.
 	 *
@@ -348,6 +352,19 @@ public class Model {
 		final List<Term> argsList = new LinkedList<Term>();
 		Collections.addAll(argsList, args);
 		return negLiteral(atom(functor, argsList));
+	}
+
+	/**
+	 * Create a {@link Program program} with given sets of tabled predicate and rules.
+	 *
+	 * @param tableDirectives
+	 *            the tabled predicates.
+	 * @param rules
+	 *            the rules.
+	 * @return the program composed by the tabled predicates {@code tabledPredicates} and the rules {@code rules}.
+	 */
+	public static Program prog(Set<TableDirective> tableDirectives, Set<Rule> rules) {
+		return new ProgramImpl(tableDirectives, rules);
 	}
 
 	/**
@@ -438,6 +455,17 @@ public class Model {
 		final Set<Rule> result = new HashSet<Rule>();
 		Collections.addAll(result, rules);
 		return result;
+	}
+
+	/**
+	 * Create a table directive for a given predicate.
+	 *
+	 * @param the
+	 *            predicate to table.
+	 * @return a table directive of {@code predicate}
+	 */
+	public static TableDirective table(Predicate predicate) {
+		return new TableDirectiveImpl(predicate);
 	}
 
 	/**

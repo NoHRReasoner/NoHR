@@ -2,6 +2,7 @@ package pt.unl.fct.di.centria.nohr.reasoner;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,22 +15,22 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
+import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase;
 
 public class QueryProcessor {
 
-	protected XSBDatabase xsbDatabase;
+	protected DedutiveDatabase xsbDatabase;
 
-	public QueryProcessor(XSBDatabase xsbDatabase) {
+	public QueryProcessor(DedutiveDatabase xsbDatabase) {
 		this.xsbDatabase = xsbDatabase;
 	}
 
-	public boolean hasAnswer(Query query, boolean hasDoubled) {
+	public boolean hasAnswer(Query query, boolean hasDoubled) throws IOException {
 		return hasAnswer(query, hasDoubled, true, true, hasDoubled);
 	}
 
 	public boolean hasAnswer(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
-			boolean inconsistentAnswers) {
+			boolean inconsistentAnswers) throws IOException {
 		if (inconsistentAnswers && hasDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
@@ -76,7 +77,7 @@ public class QueryProcessor {
 	}
 
 	public Iterable<Answer> lazilyQuery(final Query query, final boolean hasDoubled, final boolean trueAnswers,
-			final boolean undefinedAnswers, final boolean inconsistentAnswers) {
+			final boolean undefinedAnswers, final boolean inconsistentAnswers) throws IOException {
 		xsbDatabase.cancelLastIterator();
 		if (inconsistentAnswers && hasDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
@@ -103,7 +104,11 @@ public class QueryProcessor {
 					@Override
 					public boolean hasNext() {
 						if (next == null)
-							searchNext();
+							try {
+								searchNext();
+							} catch (final IOException e) {
+								throw new RuntimeException(e);
+							}
 						return next != null;
 					}
 
@@ -111,14 +116,18 @@ public class QueryProcessor {
 					public Answer next() {
 						Answer result = next;
 						if (result == null)
-							result = nextAnswer();
+							try {
+								result = nextAnswer();
+							} catch (final IOException e) {
+								throw new RuntimeException(e);
+							}
 						if (result == null)
 							throw new NoSuchElementException();
 						next = null;
 						return result;
 					}
 
-					private Answer nextAnswer() {
+					private Answer nextAnswer() throws IOException {
 						while (origAnssIt.hasNext()) {
 							final Answer origAns = origAnssIt.next();
 							final Query doubQuery = query.getDouble().apply(origAns.getValues());
@@ -150,7 +159,7 @@ public class QueryProcessor {
 
 					}
 
-					private void searchNext() {
+					private void searchNext() throws IOException {
 						next = nextAnswer();
 					}
 
@@ -174,16 +183,16 @@ public class QueryProcessor {
 			return null;
 	}
 
-	public Answer query(Query query) {
+	public Answer query(Query query) throws IOException {
 		return query(query, true, true, true, true);
 	}
 
-	public Answer query(Query query, boolean hasDoubled) {
+	public Answer query(Query query, boolean hasDoubled) throws IOException {
 		return query(query, hasDoubled, true, true, hasDoubled);
 	}
 
 	public Answer query(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
-			boolean inconsistentAnswers) {
+			boolean inconsistentAnswers) throws IOException {
 		if (inconsistentAnswers && hasDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
@@ -239,16 +248,16 @@ public class QueryProcessor {
 		return null;
 	}
 
-	public List<Answer> queryAll(Query query) {
+	public List<Answer> queryAll(Query query) throws IOException {
 		return queryAll(query, true);
 	}
 
-	public List<Answer> queryAll(Query query, boolean hasDoubled) {
+	public List<Answer> queryAll(Query query, boolean hasDoubled) throws IOException {
 		return queryAll(query, hasDoubled, true, true, hasDoubled);
 	}
 
 	public List<Answer> queryAll(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
-			boolean inconsistentAnswers) {
+			boolean inconsistentAnswers) throws IOException {
 		if (inconsistentAnswers && hasDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)

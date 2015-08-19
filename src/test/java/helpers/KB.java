@@ -39,6 +39,7 @@ import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
+import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
@@ -46,7 +47,6 @@ import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalization;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalizationImpl;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 public class KB {
 
@@ -70,13 +70,13 @@ public class KB {
 
 	public KB() throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
 			IPException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			XSBDatabaseCreationException {
+			DatabaseCreationException {
 		this(null);
 	}
 
 	public KB(Profile profile) throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
 		df = om.getOWLDataFactory();
 		ontology = om.createOntology(IRI.generateDocumentIRI());
@@ -162,7 +162,7 @@ public class KB {
 		} catch (final IPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (final XSBDatabaseCreationException e) {
+		} catch (final DatabaseCreationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

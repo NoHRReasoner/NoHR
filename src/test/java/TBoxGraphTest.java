@@ -24,10 +24,10 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import com.declarativa.interprolog.util.IPException;
 
 import helpers.KB;
+import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.TBoxDigraphImpl;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
  * @author nunocosta
@@ -58,13 +58,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void conceptsAncestors() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		// Data
 		final KB kb = new KB();
 		final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -88,13 +88,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void conceptsAncestorsWithCycles() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		// Data
 		final KB kb = new KB();
 		final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -123,13 +123,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void conceptsPredecessors() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		// Data
 		final KB kb = new KB();
 		final OWLClassExpression[] a = createAtomicConcepts(kb, 6);
@@ -178,13 +178,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void irreflexiveRolesFromConceptDisjunction() throws OWLOntologyCreationException,
 			OWLOntologyStorageException, OWLProfilesViolationsException, IOException, CloneNotSupportedException,
-			UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
+			UnsupportedAxiomsException, IPException, DatabaseCreationException {
 		final KB kb = new KB();
 		final OWLClassExpression[] a = createAtomicConcepts(kb, 2);
 		final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 1);
@@ -208,13 +208,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void irreflexiveRolesFromRoleDisjunction() throws OWLOntologyCreationException,
 			OWLOntologyStorageException, OWLProfilesViolationsException, IOException, CloneNotSupportedException,
-			UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
+			UnsupportedAxiomsException, IPException, DatabaseCreationException {
 		final KB kb = new KB();
 		final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
 		kb.subRole(p[0], p[1]);
@@ -239,13 +239,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void rolesAncestors() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		// Data
 		final KB kb = new KB();
 		final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
@@ -269,13 +269,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void rolesAncestorsWithCycles() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		// Data
 		final KB kb = new KB();
 		final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 4);
@@ -306,13 +306,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void rolesPredecessors() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		// Data
 		final KB kb = new KB();
 		final OWLObjectPropertyExpression[] p = createAtomicRoles(kb, 9);
@@ -368,13 +368,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void unsatisfiableEntities1() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		// Data
 		final KB kb = new KB();
 		final OWLClassExpression[] a = createAtomicConcepts(kb, 4);
@@ -402,13 +402,13 @@ public class TBoxGraphTest {
 	 * @throws IOException
 	 * @throws OWLProfilesViolationsException
 	 * @throws OWLOntologyStorageException
-	 * @throws XSBDatabaseCreationException
+	 * @throws DatabaseCreationException
 	 * @throws IPException
 	 */
 	@Test
 	public final void unsatisfiableEntities2() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, XSBDatabaseCreationException {
+			IPException, DatabaseCreationException {
 		// Data
 		final KB kb = new KB();
 		final OWLClassExpression[] a = createAtomicConcepts(kb, 3);

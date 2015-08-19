@@ -12,8 +12,8 @@ import javax.swing.JOptionPane;
 import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
+import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
 
 /**
  * @author nunocosta
@@ -52,7 +52,7 @@ public class MessageDialogs {
 				JOptionPane.WARNING_MESSAGE);
 	}
 
-	public static void xsbDatabaseCreationProblems(Component parent, XSBDatabaseCreationException e) {
+	public static void xsbDatabaseCreationProblems(Component parent, DatabaseCreationException e) {
 		JOptionPane.showMessageDialog(parent, "Can not run the XSB." + CHECK_XSB_INSTALLATION, "XSB",
 				JOptionPane.ERROR_MESSAGE);
 	}

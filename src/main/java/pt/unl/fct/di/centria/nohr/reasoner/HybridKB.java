@@ -3,13 +3,11 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.prog;
+import static pt.unl.fct.di.centria.nohr.model.Model.table;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -28,24 +26,20 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
+import pt.unl.fct.di.centria.nohr.model.TableDirective;
+import pt.unl.fct.di.centria.nohr.prolog.XSBDedutiveDatabase;
+import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
+import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLOntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslation;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.RulesDoubling;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabase;
-import pt.unl.fct.di.centria.nohr.xsb.XSBDatabaseCreationException;
-import pt.unl.fct.di.centria.nohr.xsb.XSBFormatVisitor;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class HybridKB {
-
-	private static final String TRANSLATION_FILE_NAME = "nohrtr.P";
 
 	private boolean hasDisjunctions;
 
@@ -61,45 +55,45 @@ public class HybridKB {
 
 	private final Set<Rule> rulesDuplication;
 
-	private final XSBDatabase xsbDatabase;
+	private final DedutiveDatabase xsbDatabase;
 
 	private final Profile profile;
 
 	public HybridKB(final File xsbBinDirectory) throws OWLProfilesViolationsException, IOException,
-			UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
+			UnsupportedAxiomsException, IPException, DatabaseCreationException {
 		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet());
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Profile profile) throws OWLProfilesViolationsException,
-			IPException, UnsupportedAxiomsException, IOException, XSBDatabaseCreationException {
+			IPException, UnsupportedAxiomsException, IOException, DatabaseCreationException {
 		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), profile);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final RuleBase ruleBase) throws IOException,
-			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
+			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, DatabaseCreationException {
 		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), null);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms) throws IOException,
-			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, XSBDatabaseCreationException {
+			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, DatabaseCreationException {
 		this(xsbBinDirectory, axioms, new RuleBase(), null);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, Profile profile)
 			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
-			XSBDatabaseCreationException {
+			DatabaseCreationException {
 		this(xsbBinDirectory, axioms, new RuleBase(), profile);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase)
 			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
-			XSBDatabaseCreationException {
+			DatabaseCreationException {
 		this(xsbBinDirectory, axioms, ruleBase, null);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase, Profile profile)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
-			XSBDatabaseCreationException {
+			DatabaseCreationException {
 		Objects.requireNonNull(xsbBinDirectory);
 		try {
 			ontology = OWLManager.createOWLOntologyManager().createOntology(axioms, IRI.generateDocumentIRI());
@@ -107,7 +101,7 @@ public class HybridKB {
 			throw new RuntimeException(e);
 		}
 		hasOntologyChanges = true;
-		xsbDatabase = new XSBDatabase(xsbBinDirectory);
+		xsbDatabase = new XSBDedutiveDatabase(xsbBinDirectory);
 		queryProcessor = new QueryProcessor(xsbDatabase);
 		this.ruleBase = ruleBase;
 		rulesDuplication = new HashSet<Rule>();
@@ -139,35 +133,6 @@ public class HybridKB {
 		dispose();
 	}
 
-	private File generateTranslationFile() throws IOException {
-		final File file = FileSystems.getDefault().getPath(TRANSLATION_FILE_NAME).toAbsolutePath().toFile();
-		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-		final Set<Predicate> tabled = new HashSet<Predicate>();
-		tabled.addAll(ontologyTranslation.getPredicatesToTable());
-		tabled.addAll(rulesTabledPredicates());
-		final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
-		for (final Predicate predicate : tabled) {
-			writer.write(":- table " + predicate.accept(xsbFormatedVisitor) + "/" + predicate.getArity()
-					+ " as subsumptive.");
-			writer.newLine();
-			if (predicate.isMetaPredicate() && predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE)
-					&& !ontologyTranslation.getNegativeHeadsPredicates().contains(predicate)) {
-				writer.write(atom(predicate).accept(xsbFormatedVisitor) + " :- fail.");
-				writer.newLine();
-			}
-		}
-		for (final Rule rule : ontologyTranslation.getRules()) {
-			writer.write(rule.accept(xsbFormatedVisitor));
-			writer.newLine();
-		}
-		for (final Rule rule : rulesDuplication) {
-			writer.write(rule.accept(xsbFormatedVisitor));
-			writer.newLine();
-		}
-		writer.close();
-		return file;
-	}
-
 	/**
 	 * @return the ruleBase
 	 */
@@ -187,9 +152,11 @@ public class HybridKB {
 	}
 
 	private void preprocess() throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
+		xsbDatabase.clear();
 		if (hasOntologyChanges) {
 			RuntimesLogger.start("ontology processing");
 			ontologyTranslation = OWLOntologyTranslation.createOntologyTranslation(ontology, profile);
+			xsbDatabase.load(ontologyTranslation.getProgram());
 			RuntimesLogger.stop("ontology processing", "loading");
 		}
 		if (ruleBase.hasChanges(true) || ontologyTranslation.hasDisjunctions() != hasDisjunctions) {
@@ -197,15 +164,9 @@ public class HybridKB {
 			rulesDuplication.clear();
 			for (final Rule rule : ruleBase.getRules())
 				Collections.addAll(rulesDuplication, RulesDoubling.doubleRule(rule));
+			xsbDatabase.load(prog(rulesTabledPredicates(), rulesDuplication));
 			RuntimesLogger.stop("rules parsing", "loading");
 		}
-		RuntimesLogger.start("file writing");
-		final File xsbFile = generateTranslationFile();
-		RuntimesLogger.stop("file writing", "loading");
-		RuntimesLogger.start("xsb loading");
-		xsbDatabase.clear();
-		xsbDatabase.load(xsbFile);
-		RuntimesLogger.stop("xsb loading", "loading");
 		hasOntologyChanges = false;
 		hasDisjunctions = ontologyTranslation.hasDisjunctions();
 	}
@@ -255,11 +216,11 @@ public class HybridKB {
 		return !changes.isEmpty();
 	}
 
-	private Set<Predicate> rulesTabledPredicates() {
-		final Set<Predicate> result = new HashSet<Predicate>();
+	private Set<TableDirective> rulesTabledPredicates() {
+		final Set<TableDirective> result = new HashSet<>();
 		for (final Rule rule : rulesDuplication)
 			for (final Literal literal : rule.getNegativeBody())
-				result.add(literal.getFunctor());
+				result.add(table(literal.getFunctor()));
 		return result;
 	}
 
