@@ -28,7 +28,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 
+import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
@@ -42,8 +44,8 @@ import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
-import pt.unl.fct.di.centria.nohr.prolog.XSBDedutiveDatabase;
 import pt.unl.fct.di.centria.nohr.reasoner.QueryProcessor;
+import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 
 /**
  * @author nunocosta
@@ -121,8 +123,9 @@ public class QueryProcessorTest extends QueryProcessor {
 	 * @throws Exception
 	 */
 	public QueryProcessorTest() throws Exception {
-		super(new XSBDedutiveDatabase(
-				FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb").toFile()));
+		super(new XSBDeductiveDatabaseManager(
+				FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb").toFile(),
+				new VocabularyMappingImpl(OWLManager.createOWLOntologyManager().createOntology())));
 		program = new PrologProgram();
 	}
 

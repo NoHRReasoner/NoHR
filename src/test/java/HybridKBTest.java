@@ -11,8 +11,8 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import com.declarativa.interprolog.util.IPException;
 
 import helpers.KB;
+import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 
@@ -28,7 +28,7 @@ public class HybridKBTest extends KB {
 
 	public HybridKBTest() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IPException, IOException, CloneNotSupportedException,
-			UnsupportedAxiomsException, DatabaseCreationException {
+			UnsupportedAxiomsException, PrologEngineCreationException {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -43,7 +43,7 @@ public class HybridKBTest extends KB {
 
 	@Test
 	public final void test() throws ParseException, OWLProfilesViolationsException, IPException, IOException,
-			UnsupportedAxiomsException, DatabaseCreationException, OWLOntologyCreationException,
+			UnsupportedAxiomsException, PrologEngineCreationException, OWLOntologyCreationException,
 			OWLOntologyStorageException, CloneNotSupportedException {
 		rule("A(a)");
 		rule("B(?X):-A(?X)");

@@ -7,7 +7,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
+import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
@@ -23,7 +23,7 @@ public class ELQueryTest extends QueryTest {
 
 	public ELQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, DatabaseCreationException {
+			IPException, PrologEngineCreationException {
 		super(Profile.OWL2_EL);
 	}
 

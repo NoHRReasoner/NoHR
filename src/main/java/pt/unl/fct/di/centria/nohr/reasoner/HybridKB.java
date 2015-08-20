@@ -25,14 +25,14 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.TableDirective;
-import pt.unl.fct.di.centria.nohr.prolog.XSBDedutiveDatabase;
-import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
-import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
@@ -54,51 +54,54 @@ public class HybridKB {
 
 	private final Set<Rule> rulesDuplication;
 
-	private final DedutiveDatabaseManager dedutiveDatabaseManager;
+	private final DeductiveDatabaseManager dedutiveDatabaseManager;
+
+	private final VocabularyMapping vocabularyMapping;
 
 	public HybridKB(final File xsbBinDirectory) throws OWLProfilesViolationsException, IOException,
-			UnsupportedAxiomsException, IPException, DatabaseCreationException {
+			UnsupportedAxiomsException, IPException, PrologEngineCreationException {
 		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet());
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Profile profile) throws OWLProfilesViolationsException,
-			IPException, UnsupportedAxiomsException, IOException, DatabaseCreationException {
+			IPException, UnsupportedAxiomsException, IOException, PrologEngineCreationException {
 		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), profile);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final RuleBase ruleBase) throws IOException,
-			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, DatabaseCreationException {
+			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, PrologEngineCreationException {
 		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBase(), null);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms) throws IOException,
-			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, DatabaseCreationException {
+			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, PrologEngineCreationException {
 		this(xsbBinDirectory, axioms, new RuleBase(), null);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, Profile profile)
 			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
-			DatabaseCreationException {
+			PrologEngineCreationException {
 		this(xsbBinDirectory, axioms, new RuleBase(), profile);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase)
 			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
-			DatabaseCreationException {
+			PrologEngineCreationException {
 		this(xsbBinDirectory, axioms, ruleBase, null);
 	}
 
 	public HybridKB(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase, Profile profile)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
-			DatabaseCreationException {
+			PrologEngineCreationException {
 		Objects.requireNonNull(xsbBinDirectory);
 		try {
 			ontology = OWLManager.createOWLOntologyManager().createOntology(axioms, IRI.generateDocumentIRI());
 		} catch (final OWLOntologyCreationException e) {
 			throw new RuntimeException(e);
 		}
+		vocabularyMapping = new VocabularyMappingImpl(ontology);
 		hasOntologyChanges = true;
-		dedutiveDatabaseManager = new XSBDedutiveDatabase(xsbBinDirectory);
+		dedutiveDatabaseManager = new XSBDeductiveDatabaseManager(xsbBinDirectory, vocabularyMapping);
 		ontologyTranslator = new OntologyTranslatorImpl(ontology, dedutiveDatabaseManager, profile);
 		queryProcessor = new QueryProcessor(dedutiveDatabaseManager);
 		this.ruleBase = ruleBase;

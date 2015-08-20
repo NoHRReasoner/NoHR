@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
 
 public class QueryProcessor {
 
-	protected DedutiveDatabaseManager xsbDatabase;
+	protected DeductiveDatabaseManager xsbDatabase;
 
-	public QueryProcessor(DedutiveDatabaseManager xsbDatabase) {
+	public QueryProcessor(DeductiveDatabaseManager xsbDatabase) {
 		this.xsbDatabase = xsbDatabase;
 	}
 

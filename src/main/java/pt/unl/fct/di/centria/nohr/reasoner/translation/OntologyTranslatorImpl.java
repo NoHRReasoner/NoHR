@@ -5,7 +5,7 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 
@@ -27,7 +27,7 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
 	 * @param ontology
 	 *            the ontology to translate.
 	 * @param dedutiveDatabaseManager
-	 *            the {@link DedutiveDatabaseManager} where the ontology translation will be loaded.
+	 *            the {@link DeductiveDatabaseManager} where the ontology translation will be loaded.
 	 * @param profile
 	 *            the {@link Profile profile} that {@link OntologyTranslator} will handle. If none is specified (i.e. if it is {@code null} ), the
 	 *            preferred ontology's profile will be chosen.
@@ -39,7 +39,7 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
 	 *             if {@code ontology} has some axioms of an unsupported type.
 	 */
 	private static OntologyTranslator createOntologyTranslation(OWLOntology ontology,
-			DedutiveDatabaseManager dedutiveDatabaseManager, Profile profile)
+			DeductiveDatabaseManager dedutiveDatabaseManager, Profile profile)
 					throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		if (profile != null)
 			return profile.createOntologyTranslation(ontology, dedutiveDatabaseManager);
@@ -61,7 +61,7 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
 	 * @param ontology
 	 *            the ontoloty that will be translated.
 	 * @param dedutiveDatabaseManager
-	 *            the {@link DedutiveDatabaseManager} where the translation will be loaded.
+	 *            the {@link DeductiveDatabaseManager} where the translation will be loaded.
 	 * @param profile
 	 *            the {@link Profile profile} that this {@link OntologyTranslator} will handle. If none is specified (i.e. if it is {@code null} ),
 	 *            the preferred ontology's profile will be chosen.
@@ -71,14 +71,14 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} has some axioms of an unsupported type.
 	 */
-	public OntologyTranslatorImpl(OWLOntology ontology, DedutiveDatabaseManager dedutiveDatabaseManager,
+	public OntologyTranslatorImpl(OWLOntology ontology, DeductiveDatabaseManager dedutiveDatabaseManager,
 			Profile profile) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		this.profile = profile;
 		implementor = createOntologyTranslation(ontology, dedutiveDatabaseManager, profile);
 	}
 
 	@Override
-	public DedutiveDatabaseManager getDedutiveDatabase() {
+	public DeductiveDatabaseManager getDedutiveDatabase() {
 		return implementor.getDedutiveDatabase();
 	}
 

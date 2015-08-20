@@ -28,13 +28,13 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.plugin.rules.DisposableRuleBase;
-import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
@@ -51,7 +51,7 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 
 		public DisposableHybridKB(File xsbBinDirectory, Set<OWLAxiom> axioms, RuleBase ruleBase)
 				throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
-				DatabaseCreationException {
+				PrologEngineCreationException {
 			super(xsbBinDirectory, axioms, ruleBase);
 		}
 
@@ -169,7 +169,7 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 		} catch (final IOException e) {
 			MessageDialogs.translationFileProblems(this, e);
 			return null;
-		} catch (final DatabaseCreationException e) {
+		} catch (final PrologEngineCreationException e) {
 			MessageDialogs.xsbDatabaseCreationProblems(this, e);
 			return null;
 		} catch (final RuntimeException e) {

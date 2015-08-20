@@ -11,12 +11,12 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.TableDirective;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
-import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
 
 /**
  * A <i>concrete implementor</i> of {@link OntologyTranslator} (see {@link <a href="http://www.oodesign.com/bridge-pattern.html">Bridge Pattern</a>},
@@ -27,7 +27,7 @@ import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
  */
 public abstract class OntologyTranslatorImplementor implements OntologyTranslator {
 
-	protected final DedutiveDatabaseManager dedutiveDatabaseManager;
+	protected final DeductiveDatabaseManager dedutiveDatabaseManager;
 
 	/**
 	 * The set of negative meta-predicates appearing at the head of some rule of this translation.
@@ -53,9 +53,9 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 	 * @param ontology
 	 *            the ontology to translate.
 	 * @param dedutiveDatabase
-	 *            the {@link DedutiveDatabaseManager} where the ontology translation will be loaded.
+	 *            the {@link DeductiveDatabaseManager} where the ontology translation will be loaded.
 	 */
-	public OntologyTranslatorImplementor(OWLOntology ontology, DedutiveDatabaseManager dedutiveDatabase) {
+	public OntologyTranslatorImplementor(OWLOntology ontology, DeductiveDatabaseManager dedutiveDatabase) {
 		this.ontology = ontology;
 		dedutiveDatabaseManager = dedutiveDatabase;
 		rules = new HashSet<>();
@@ -98,7 +98,7 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 	}
 
 	@Override
-	public DedutiveDatabaseManager getDedutiveDatabase() {
+	public DeductiveDatabaseManager getDedutiveDatabase() {
 		return dedutiveDatabaseManager;
 	}
 

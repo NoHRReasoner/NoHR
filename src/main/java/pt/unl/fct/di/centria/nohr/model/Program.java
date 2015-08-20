@@ -16,9 +16,9 @@ public interface Program {
 	public Program accept(ModelVisitor visitor);
 
 	/**
-	 * Gets the ID of this {@link Program program}, an object that univocally identifies this {@link Program}.
+	 * Gets the identifier of this {@link Program program}, an object that univocally identifies this {@link Program}.
 	 *
-	 * @return the ID of this {@link Program program}
+	 * @return the identifier of this {@link Program program}
 	 */
 	public Object getID();
 

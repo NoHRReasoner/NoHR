@@ -58,13 +58,13 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
@@ -690,7 +690,7 @@ public class QueryViewComponent0 extends AbstractHybridViewComponent {
 			MessageDialogs.xsbProblems(this, e);
 		} catch (final RuntimeException e) {
 			ErrorLogPanel.showErrorDialog(e);
-		} catch (final DatabaseCreationException e) {
+		} catch (final PrologEngineCreationException e) {
 			MessageDialogs.xsbDatabaseCreationProblems(this, e);
 		}
 	}
