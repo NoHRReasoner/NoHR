@@ -30,42 +30,44 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImplementor;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
- * Implementation of {@link OntologyTranslation} for the {@link Profile#OWL2_QL QL} profile, according to
+ * Implementation of {@link OntologyTranslator} for the {@link Profile#OWL2_QL QL} profile, according to
  * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}.
  *
  * @author Nuno Costa
  */
-public class QLOntologyTranslation extends OWLOntologyTranslation {
+public class QLOntologyTranslation extends OntologyTranslatorImplementor {
 
-	/** The {@link QLAxiomsTranslator} that obtain the double rules of this {@link OntologyTranslation}. */
+	/** The {@link QLAxiomsTranslator} that obtain the double rules of this {@link OntologyTranslator}. */
 	private final QLDoubleAxiomsTranslator doubleAxiomsTranslator;
 
-	/** The {@link TBoxDigraph digraph} of the TBox of the ontology of which this {@link OntologyTranslation} is translation. */
+	/** The {@link TBoxDigraph digraph} of the TBox of the ontology of which this {@link OntologyTranslator} is translation. */
 	private final TBoxDigraph graph;
 
-	/** The {@link QLOntologyNormalization normalization} of the ontology of which this {@link OntologyTranslation} is translation. */
+	/** The {@link QLOntologyNormalization normalization} of the ontology of which this {@link OntologyTranslator} is translation. */
 	private final QLOntologyNormalization ontologyNormalization;
 
-	/** The {@link QLAxiomsTranslator} that obtain the original rules of this {@link OntologyTranslation}. */
+	/** The {@link QLAxiomsTranslator} that obtain the original rules of this {@link OntologyTranslator}. */
 	private final QLOriginalAxiomsTranslator originalAxiomsTranslator;
 
 	/**
-	 * Constructs an {@link OntologyTranslation} of a given OWL 2 QL ontology.
+	 * Constructs an {@link OntologyTranslator} of a given OWL 2 QL ontology.
 	 *
 	 * @param ontology
 	 *            an OWL 2 QL ontology.
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} contains some axioms of unsupported types.
 	 */
-	public QLOntologyTranslation(OWLOntology ontology) throws UnsupportedAxiomsException {
-		super(ontology);
+	public QLOntologyTranslation(OWLOntology ontology, DedutiveDatabaseManager dedutiveDatabase)
+			throws UnsupportedAxiomsException {
+		super(ontology, dedutiveDatabase);
 		ontologyNormalization = new QLOntologyNormalizationImpl(ontology);
 		graph = new TBoxDigraphImpl(ontologyNormalization);
 		originalAxiomsTranslator = new QLOriginalAxiomsTranslator();

@@ -1,7 +1,7 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.reasoner.translation;
+package pt.unl.fct.di.centria.nohr.reasoner;
 
 import java.util.List;
 

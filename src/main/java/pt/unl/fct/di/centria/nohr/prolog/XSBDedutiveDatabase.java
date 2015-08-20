@@ -33,7 +33,7 @@ public class XSBDedutiveDatabase extends PrologDedutiveDatabase {
 				return new XSBSubprocessEngine(binDirectory.toPath().toAbsolutePath().toString());
 			}
 		});
-		final DedutiveDatabase self = this;
+		final DedutiveDatabaseManager self = this;
 		prologEngine.consultFromPackage("startup", self);
 		prologEngine.deterministicGoal("set_prolog_flag(unknown, fail)");
 		return prologEngine;

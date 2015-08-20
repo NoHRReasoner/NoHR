@@ -32,11 +32,10 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.TableDirective;
 import pt.unl.fct.di.centria.nohr.prolog.XSBDedutiveDatabase;
 import pt.unl.fct.di.centria.nohr.prolog.DatabaseCreationException;
-import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslation;
+import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.RulesDoubling;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class HybridKB {
@@ -47,7 +46,7 @@ public class HybridKB {
 
 	private final OWLOntology ontology;
 
-	private OntologyTranslation ontologyTranslation;
+	private final OntologyTranslator ontologyTranslator;
 
 	private final QueryProcessor queryProcessor;
 
@@ -55,9 +54,7 @@ public class HybridKB {
 
 	private final Set<Rule> rulesDuplication;
 
-	private final DedutiveDatabase xsbDatabase;
-
-	private final Profile profile;
+	private final DedutiveDatabaseManager dedutiveDatabaseManager;
 
 	public HybridKB(final File xsbBinDirectory) throws OWLProfilesViolationsException, IOException,
 			UnsupportedAxiomsException, IPException, DatabaseCreationException {
@@ -101,11 +98,11 @@ public class HybridKB {
 			throw new RuntimeException(e);
 		}
 		hasOntologyChanges = true;
-		xsbDatabase = new XSBDedutiveDatabase(xsbBinDirectory);
-		queryProcessor = new QueryProcessor(xsbDatabase);
+		dedutiveDatabaseManager = new XSBDedutiveDatabase(xsbBinDirectory);
+		ontologyTranslator = new OntologyTranslatorImpl(ontology, dedutiveDatabaseManager, profile);
+		queryProcessor = new QueryProcessor(dedutiveDatabaseManager);
 		this.ruleBase = ruleBase;
 		rulesDuplication = new HashSet<Rule>();
-		this.profile = profile;
 		preprocess();
 	}
 
@@ -119,7 +116,7 @@ public class HybridKB {
 	}
 
 	public void dispose() {
-		xsbDatabase.dispose();
+		dedutiveDatabaseManager.clear();
 	}
 
 	/*
@@ -152,23 +149,22 @@ public class HybridKB {
 	}
 
 	private void preprocess() throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
-		xsbDatabase.clear();
+		dedutiveDatabaseManager.clear();
 		if (hasOntologyChanges) {
 			RuntimesLogger.start("ontology processing");
-			ontologyTranslation = OWLOntologyTranslation.createOntologyTranslation(ontology, profile);
-			xsbDatabase.load(ontologyTranslation.getProgram());
+			ontologyTranslator.translate();
 			RuntimesLogger.stop("ontology processing", "loading");
 		}
-		if (ruleBase.hasChanges(true) || ontologyTranslation.hasDisjunctions() != hasDisjunctions) {
+		if (ruleBase.hasChanges(true) || ontologyTranslator.hasDisjunctions() != hasDisjunctions) {
 			RuntimesLogger.start("rules parsing");
 			rulesDuplication.clear();
 			for (final Rule rule : ruleBase.getRules())
 				Collections.addAll(rulesDuplication, RulesDoubling.doubleRule(rule));
-			xsbDatabase.load(prog(rulesTabledPredicates(), rulesDuplication));
+			dedutiveDatabaseManager.load(prog(ruleBase, rulesTabledPredicates(), rulesDuplication));
 			RuntimesLogger.stop("rules parsing", "loading");
 		}
 		hasOntologyChanges = false;
-		hasDisjunctions = ontologyTranslation.hasDisjunctions();
+		hasDisjunctions = ontologyTranslator.hasDisjunctions();
 	}
 
 	public Answer query(Query query) throws OWLOntologyCreationException, OWLOntologyStorageException,

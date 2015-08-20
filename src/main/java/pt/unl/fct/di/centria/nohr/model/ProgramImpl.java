@@ -14,6 +14,9 @@ import java.util.Set;
  */
 public class ProgramImpl implements Program {
 
+	/** The object that univocally identifies this {@link Program program} */
+	private final Object id;
+
 	/* The set of table directives in this {@link Program program} */
 	private final Set<TableDirective> tableDirectives;
 
@@ -23,17 +26,17 @@ public class ProgramImpl implements Program {
 	/**
 	 * Constructs a {@link Program program} with given sets of tabled predicate, failed predicates, and rules.
 	 *
-	 * @param tabledPredicates
+	 * @id the {@link Object} that univocally identified the {@link Program program}.
+	 * @param tableDirectives
 	 *            the tabled predicates.
-	 * @param failedPredicates
-	 *            the failed predicates.
 	 * @param rules
 	 *            the rules.
 	 */
-	ProgramImpl(Set<TableDirective> tabledPredicates, Set<Rule> rules) {
-		Objects.requireNonNull(tabledPredicates);
+	ProgramImpl(Object id, Set<TableDirective> tableDirectives, Set<Rule> rules) {
+		Objects.requireNonNull(tableDirectives);
 		Objects.requireNonNull(rules);
-		tableDirectives = tabledPredicates;
+		this.id = id;
+		this.tableDirectives = tableDirectives;
 		this.rules = rules;
 	}
 
@@ -45,35 +48,44 @@ public class ProgramImpl implements Program {
 			tabledPredicates.add(predicate.accept(visitor));
 		for (final Rule rule : this.rules)
 			rules.add(rule.accept(visitor));
-		return new ProgramImpl(tabledPredicates, rules);
+		return new ProgramImpl(id, tabledPredicates, rules);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof ProgramImpl))
 			return false;
 		final ProgramImpl other = (ProgramImpl) obj;
-		if (tableDirectives == null) {
-			if (other.tableDirectives != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!tableDirectives.equals(other.tableDirectives))
+		} else if (!id.equals(other.id))
 			return false;
 		if (rules == null) {
 			if (other.rules != null)
 				return false;
 		} else if (!rules.equals(other.rules))
 			return false;
+		if (tableDirectives == null) {
+			if (other.tableDirectives != null)
+				return false;
+		} else if (!tableDirectives.equals(other.tableDirectives))
+			return false;
 		return true;
 	}
 
 	@Override
-	public String getHash() {
-		// TODO implement
-		return "";
+	public Object getID() {
+		return id;
 	}
 
 	@Override
@@ -86,10 +98,16 @@ public class ProgramImpl implements Program {
 		return tableDirectives;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (id == null ? 0 : id.hashCode());
 		result = prime * result + (rules == null ? 0 : rules.hashCode());
 		result = prime * result + (tableDirectives == null ? 0 : tableDirectives.hashCode());
 		return result;

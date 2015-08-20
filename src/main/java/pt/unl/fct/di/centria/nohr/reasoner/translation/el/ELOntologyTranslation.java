@@ -19,39 +19,41 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImplementor;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
- * Implementation of {@link OntologyTranslation} for the {@link Profile#OWL2_EL EL} profile, according to {@link <a>A Correct EL Oracle for NoHR
+ * Implementation of {@link OntologyTranslator} for the {@link Profile#OWL2_EL EL} profile, according to {@link <a>A Correct EL Oracle for NoHR
  * (Technical Report)</a>}.
  *
  * @author Nuno Costa
  */
-public class ELOntologyTranslation extends OWLOntologyTranslation {
+public class ELOntologyTranslation extends OntologyTranslatorImplementor {
 
-	/** The {@link ELAxiomsTranslator} that obtain the double rules of this {@link OntologyTranslation}. */
+	/** The {@link ELAxiomsTranslator} that obtain the double rules of this {@link OntologyTranslator}. */
 	private final ELDoubleAxiomsTranslator doubleAxiomsTranslator;
 
-	/** The {@link ELAxiomsTranslator} that obtain the original rules of this {@link OntologyTranslation}. */
+	/** The {@link ELAxiomsTranslator} that obtain the original rules of this {@link OntologyTranslator}. */
 	private final ELOriginalAxiomsTranslator originalAxiomsTranslator;
 
 	/** The {@link ELOntologyReduction reduction} of the ontology that this translation refer. */
 	private final ELOntologyReduction reducedOntology;
 
 	/**
-	 * Constructs an {@link OntologyTranslation} of a given OWL 2 EL ontology.
+	 * Constructs an {@link OntologyTranslator} of a given OWL 2 EL ontology.
 	 *
 	 * @param ontology
 	 *            an OWL 2 EL ontology.
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} contains some axioms of unsupported types.
 	 */
-	public ELOntologyTranslation(OWLOntology ontology) throws UnsupportedAxiomsException {
-		super(ontology);
+	public ELOntologyTranslation(OWLOntology ontology, DedutiveDatabaseManager dedutiveDatabase)
+			throws UnsupportedAxiomsException {
+		super(ontology, dedutiveDatabase);
 		originalAxiomsTranslator = new ELOriginalAxiomsTranslator();
 		doubleAxiomsTranslator = new ELDoubleAxiomsTranslator();
 		RuntimesLogger.start("ontology reduction");

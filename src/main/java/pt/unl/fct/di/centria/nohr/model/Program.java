@@ -6,7 +6,8 @@ package pt.unl.fct.di.centria.nohr.model;
 import java.util.Set;
 
 /**
- * Represents a Prolog program. Is composed by a set of tabled predicates, failed predicates and rules.
+ * Represents a logic program. Is composed by the a set of {@link Rule rules} and {@link TableDirective directives} specifying which predicates must
+ * be tabled, and s univocally identified by a certain {@link Object}.
  *
  * @author Nuno Costa
  */
@@ -15,11 +16,11 @@ public interface Program {
 	public Program accept(ModelVisitor visitor);
 
 	/**
-	 * Gets the hash of this {@link Program program}, an integer that univocally identifies this program.
+	 * Gets the ID of this {@link Program program}, an object that univocally identifies this {@link Program}.
 	 *
-	 * @return the hash of this {@link Program program}
+	 * @return the ID of this {@link Program program}
 	 */
-	public String getHash();
+	public Object getID();
 
 	/**
 	 * Return the set of rules in this {@link Program program}.

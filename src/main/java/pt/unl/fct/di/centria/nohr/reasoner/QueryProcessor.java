@@ -4,24 +4,22 @@ import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase;
+import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
 
 public class QueryProcessor {
 
-	protected DedutiveDatabase xsbDatabase;
+	protected DedutiveDatabaseManager xsbDatabase;
 
-	public QueryProcessor(DedutiveDatabase xsbDatabase) {
+	public QueryProcessor(DedutiveDatabaseManager xsbDatabase) {
 		this.xsbDatabase = xsbDatabase;
 	}
 
@@ -38,7 +36,7 @@ public class QueryProcessor {
 		final Query origQuery = query.getOriginal();
 		// true original answers
 		if (inconsistentAnswers || trueAnswers)
-			for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, true)) {
+			for (final Answer origAns : xsbDatabase.answers(origQuery, true)) {
 				if (trueAnswers && !hasDoubled)
 					return true;
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
@@ -50,7 +48,7 @@ public class QueryProcessor {
 			}
 		// undefined original answers
 		if (trueAnswers || undefinedAnswers)
-			for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, false)) {
+			for (final Answer origAns : xsbDatabase.answers(origQuery, false)) {
 				if (!hasDoubled && undefinedAnswers)
 					return true;
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
@@ -74,99 +72,6 @@ public class QueryProcessor {
 		default:
 			return false;
 		}
-	}
-
-	public Iterable<Answer> lazilyQuery(final Query query, final boolean hasDoubled, final boolean trueAnswers,
-			final boolean undefinedAnswers, final boolean inconsistentAnswers) throws IOException {
-		xsbDatabase.cancelLastIterator();
-		if (inconsistentAnswers && hasDoubled == false)
-			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
-		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
-			throw new IllegalArgumentException("must have at least one truth value enabled");
-		final Iterable<Answer> origAnss;
-		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-			origAnss = xsbDatabase.lazilyQuery(query.getOriginal(), false);
-		else if (inconsistentAnswers && !trueAnswers && !undefinedAnswers)
-			origAnss = xsbDatabase.lazilyQuery(query.getOriginal(), true);
-		else
-			origAnss = xsbDatabase.lazilyQuery(query.getOriginal());
-		return new Iterable<Answer>() {
-
-			@Override
-			public Iterator<Answer> iterator() {
-
-				final Iterator<Answer> origAnssIt = origAnss.iterator();
-
-				return new Iterator<Answer>() {
-
-					private Answer next;
-
-					@Override
-					public boolean hasNext() {
-						if (next == null)
-							try {
-								searchNext();
-							} catch (final IOException e) {
-								throw new RuntimeException(e);
-							}
-						return next != null;
-					}
-
-					@Override
-					public Answer next() {
-						Answer result = next;
-						if (result == null)
-							try {
-								result = nextAnswer();
-							} catch (final IOException e) {
-								throw new RuntimeException(e);
-							}
-						if (result == null)
-							throw new NoSuchElementException();
-						next = null;
-						return result;
-					}
-
-					private Answer nextAnswer() throws IOException {
-						while (origAnssIt.hasNext()) {
-							final Answer origAns = origAnssIt.next();
-							final Query doubQuery = query.getDouble().apply(origAns.getValues());
-							final TruthValue origTruth = origAns.getValuation();
-							if (!hasDoubled
-									&& isRequiredTruth(origTruth, trueAnswers, undefinedAnswers, inconsistentAnswers))
-								return origAns;
-							if (origTruth == TruthValue.TRUE) {
-								final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
-								if (trueAnswers && hasDoubAns)
-									return ans(query, TruthValue.TRUE, origAns.getValues());
-								else if (inconsistentAnswers && !hasDoubAns)
-									return ans(query, TruthValue.INCONSISTENT, origAns.getValues());
-							} else if (origTruth == TruthValue.UNDEFINED) {
-								if (undefinedAnswers)
-									if (xsbDatabase.hasAnswers(doubQuery, false))
-										return ans(query, TruthValue.UNDEFINED, origAns.getValues());
-								if (trueAnswers)
-									if (xsbDatabase.hasAnswers(doubQuery, true))
-										return ans(query, TruthValue.TRUE, origAns.getValues());
-							}
-						}
-						return null;
-					}
-
-					@Override
-					public void remove() {
-						throw new UnsupportedOperationException();
-
-					}
-
-					private void searchNext() throws IOException {
-						next = nextAnswer();
-					}
-
-				};
-
-			}
-		};
 	}
 
 	private TruthValue process(TruthValue originalTruth, TruthValue doubledTruth) {
@@ -200,7 +105,7 @@ public class QueryProcessor {
 		final Query origQuery = query.getOriginal();
 		// undefined original answers
 		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-			for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, false)) {
+			for (final Answer origAns : xsbDatabase.answers(origQuery, false)) {
 				if (!hasDoubled)
 					return ans(query, TruthValue.UNDEFINED, origAns.getValues());
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
@@ -209,7 +114,7 @@ public class QueryProcessor {
 			}
 		// true original answers
 		if (!undefinedAnswers)
-			for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, true)) {
+			for (final Answer origAns : xsbDatabase.answers(origQuery, true)) {
 				if (trueAnswers && !hasDoubled)
 					return ans(query, TruthValue.TRUE, origAns.getValues());
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
@@ -221,7 +126,7 @@ public class QueryProcessor {
 			}
 
 		// all original answers
-		for (final Answer origAns : xsbDatabase.lazilyQuery(origQuery, null)) {
+		for (final Answer origAns : xsbDatabase.answers(origQuery, null)) {
 			final TruthValue origTruth = origAns.getValuation();
 			if ((trueAnswers && origTruth == TruthValue.TRUE || undefinedAnswers && origTruth == TruthValue.UNDEFINED)
 					&& !hasDoubled)
@@ -235,7 +140,7 @@ public class QueryProcessor {
 					return ans(query, TruthValue.INCONSISTENT, origAns.getValues());
 			}
 			if ((trueAnswers && hasDoubled || undefinedAnswers) && origTruth == TruthValue.UNDEFINED) {
-				final Answer doubAns = xsbDatabase.query(doubQuery);
+				final Answer doubAns = xsbDatabase.answer(doubQuery);
 				if (doubAns != null) {
 					final TruthValue doubTruth = doubAns.getValuation();
 					if (trueAnswers && doubTruth == TruthValue.TRUE)
@@ -265,17 +170,17 @@ public class QueryProcessor {
 		final List<Answer> result = new LinkedList<Answer>();
 		Map<List<Term>, TruthValue> origAnss;
 		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-			origAnss = xsbDatabase.queryAll(query.getOriginal(), false);
+			origAnss = xsbDatabase.answersValuations(query.getOriginal(), false);
 		else if (inconsistentAnswers && !trueAnswers && !undefinedAnswers)
-			origAnss = xsbDatabase.queryAll(query.getOriginal(), true);
+			origAnss = xsbDatabase.answersValuations(query.getOriginal(), true);
 		else
-			origAnss = xsbDatabase.queryAll(query.getOriginal());
+			origAnss = xsbDatabase.answersValuations(query.getOriginal());
 		Map<List<Term>, TruthValue> doubAnss = new HashMap<List<Term>, TruthValue>();
 		if (hasDoubled)
 			if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-				doubAnss = xsbDatabase.queryAll(query.getDouble(), false);
+				doubAnss = xsbDatabase.answersValuations(query.getDouble(), false);
 			else
-				doubAnss = xsbDatabase.queryAll(query.getDouble());
+				doubAnss = xsbDatabase.answersValuations(query.getDouble());
 		for (final Entry<List<Term>, TruthValue> origEntry : origAnss.entrySet()) {
 			final List<Term> vals = origEntry.getKey();
 			final TruthValue origTruth = origEntry.getValue();

@@ -12,45 +12,22 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.TableDirective;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
-import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
 
 /**
- * An partial implementation of {@link OntologyTranslation} that translate an ontology applying the methods {@link #computeNegativeHeadFunctors()} and
- * {@link #computeRules()}.
+ * A <i>concrete implementor</i> of {@link OntologyTranslator} (see {@link <a href="http://www.oodesign.com/bridge-pattern.html">Bridge Pattern</a>},
+ * and note that here {@link OntologyTranslator} is simultaneously the <i>abstraction</i> interface and the <i>implementor</i> interface), for a
+ * specific {@link Profile}.
  *
  * @author Nuno Costa
  */
-public abstract class OWLOntologyTranslation implements OntologyTranslation {
+public abstract class OntologyTranslatorImplementor implements OntologyTranslator {
 
-	/**
-	 * {@link OntologyTranslation}'s factory method. Creates an {@link OntologyTranslation ontology translation} of a specified ontology choosing
-	 * appropriately the {@link OntologyTranslation} implementation that can handle a specified OWL profile if the ontology is in that profile, or the
-	 * preferred ontology's profile (the same that is returned by {@link #getProfile()}) if none is specified.
-	 *
-	 * @param ontology
-	 *            the ontology to translate.
-	 * @param profile
-	 *            the {@link Profile profile} that {@link OntologyTranslation} will handle. If none is specified (i.e. if it is {@code null} ), the
-	 *            preferred ontology's profile will be choosen.
-	 * @return an {@link OntologyTranslation ontology translation} of {@code ontology}.
-	 * @throws OWLProfilesViolationsException
-	 *             if {@code profile!=null} and the ontology isn't in {@code profile}, or {@code profile==null} and the ontology isn't in any
-	 *             supported profile.
-	 * @throws UnsupportedAxiomsException
-	 *             if {@code ontology} has some axioms of an unsupported type.
-	 */
-	public static OntologyTranslation createOntologyTranslation(OWLOntology ontology, Profile profile)
-			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-		if (profile != null)
-			return profile.createOntologyTranslation(ontology);
-		return Profile.getProfile(ontology).createOntologyTranslation(ontology);
-	}
+	protected final DedutiveDatabaseManager dedutiveDatabaseManager;
 
 	/**
 	 * The set of negative meta-predicates appearing at the head of some rule of this translation.
@@ -71,13 +48,16 @@ public abstract class OWLOntologyTranslation implements OntologyTranslation {
 	private final Set<TableDirective> tableDirectives;
 
 	/**
-	 * Constructs a {@link OWLOntologyTranslation}, appropriately initializing its state.
+	 * Constructs a {@link OntologyTranslatorImplementor}, appropriately initializing its state.
 	 *
 	 * @param ontology
 	 *            the ontology to translate.
+	 * @param dedutiveDatabase
+	 *            the {@link DedutiveDatabaseManager} where the ontology translation will be loaded.
 	 */
-	public OWLOntologyTranslation(OWLOntology ontology) {
+	public OntologyTranslatorImplementor(OWLOntology ontology, DedutiveDatabaseManager dedutiveDatabase) {
 		this.ontology = ontology;
+		dedutiveDatabaseManager = dedutiveDatabase;
 		rules = new HashSet<>();
 		tableDirectives = new HashSet<>();
 		negativeHeadFunctors = new HashSet<>();
@@ -98,7 +78,7 @@ public abstract class OWLOntologyTranslation implements OntologyTranslation {
 	protected abstract void computeNegativeHeadFunctors();
 
 	/**
-	 * Computes the rules corresponding to the translation of the ontology that these {@link OWLOntologyTranslation} refer.
+	 * Computes the rules corresponding to the translation of the ontology that these {@link OntologyTranslatorImplementor} refer.
 	 */
 	protected abstract void computeRules();
 
@@ -118,8 +98,13 @@ public abstract class OWLOntologyTranslation implements OntologyTranslation {
 	}
 
 	@Override
-	public Program getProgram() {
-		return prog(tableDirectives, rules);
+	public DedutiveDatabaseManager getDedutiveDatabase() {
+		return dedutiveDatabaseManager;
+	}
+
+	@Override
+	public OWLOntology getOntology() {
+		return ontology;
 	}
 
 	private boolean isFailed(Predicate predicate) {
@@ -127,23 +112,21 @@ public abstract class OWLOntologyTranslation implements OntologyTranslation {
 				&& !isNegativeHeadFunctor(predicate);
 	}
 
-	@Override
-	public boolean isNegativeHeadFunctor(Predicate predicate) {
+	private boolean isNegativeHeadFunctor(Predicate predicate) {
 		if (!predicate.isMetaPredicate() || !predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE))
 			throw new IllegalArgumentException("predicate: should be a negative meta-predicate");
 		return negativeHeadFunctors.contains(predicate);
 	}
 
-	/**
-	 * Translates the ontology that this {@link OWLOntologyTranslation} refer.
-	 */
-	protected void translate() {
+	@Override
+	public void translate() {
 		if (hasDisjunctions())
 			computeNegativeHeadFunctors();
 		computeRules();
 		computeTabledDirectives();
 		if (hasDisjunctions())
 			computeFailedAtoms();
+		dedutiveDatabaseManager.load(prog(this, tableDirectives, rules));
 	}
 
 }

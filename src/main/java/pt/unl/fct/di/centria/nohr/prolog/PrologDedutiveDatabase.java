@@ -1,13 +1,12 @@
 package pt.unl.fct.di.centria.nohr.prolog;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.ans;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,7 +39,7 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
-public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
+public abstract class PrologDedutiveDatabase implements DedutiveDatabaseManager {
 
 	private static final String TRANSLATION_FILE_NAME = "nohrtr.P";
 
@@ -52,7 +51,7 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 
 	private PrologEngine prologEngine;
 
-	private final Set<Program> programs;
+	private final Map<Object, Program> programs;
 
 	private boolean loaded = false;
 
@@ -60,7 +59,7 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 		Objects.requireNonNull(binDirectory);
 		this.binDirectory = binDirectory;
 		formatVisitor = new XSBFormatVisitor();
-		programs = new HashSet<>();
+		programs = new HashMap<>();
 		prologEngine = createPrologEngine();
 	}
 
@@ -74,25 +73,129 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 
 	}
 
-	private Answer answer(Query query, TermModel valuesList) {
+	private Answer ans(Query query, TermModel valuesList) {
 		final TermModel[] termsList = valuesList.flatList();
 		final TruthValue truth = TermModelAdapter.getTruthValue(termsList[0]);
 		final List<Term> vals = new ArrayList<Term>(termsList.length);
 		for (int i = 1; i <= query.getVariables().size(); i++)
 			vals.add(TermModelAdapter.getTerm(termsList[i]));
-		return ans(query, truth, vals);
+		return Model.ans(query, truth, vals);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#cancelLastIterator()
+	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#query(pt.unl.fct.di.centria.nohr.model.Query)
 	 */
 	@Override
-	public void cancelLastIterator() {
-		if (lastSolutionsIterator != null)
+	public Answer answer(Query query) throws IOException {
+		return answer(query, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#query(pt.unl.fct.di.centria.nohr.model.Query, java.lang.Boolean)
+	 */
+	@Override
+	public Answer answer(Query query, Boolean trueAnswers) throws IOException {
+		if (trueAnswers != null && !trueAnswers && !isTrivalued())
+			return null;
+		load();
+		final Object[] bindings = prologEngine.deterministicGoal(detGoal(query, trueAnswers, "TM"), "[TM]");
+		if (bindings == null)
+			return null;
+		return ans(query, (TermModel) bindings[0]);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#lazilyQuery(pt.unl.fct.di.centria.nohr.model.Query)
+	 */
+	@Override
+	public Iterable<Answer> answers(Query query) throws IOException {
+		return answers(query, null);
+	}
+
+	/*
+	 * (non-Javadoc):w
+	 *
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#lazilyQuery(pt.unl.fct.di.centria.nohr.model.Query, java.lang.Boolean)
+	 */
+	@Override
+	public Iterable<Answer> answers(final Query query, Boolean trueAnswers) throws IOException {
+		if (trueAnswers != null && !trueAnswers && !isTrivalued())
+			return Collections.<Answer> emptyList();
+		load();
+		if (lastSolutionsIterator != null) {
 			lastSolutionsIterator.cancel();
-		lastSolutionsIterator = null;
+			lastSolutionsIterator = null;
+		}
+		final SolutionIterator solutions = prologEngine.goal(detGoal(query, trueAnswers, "TM"), "[TM]");
+		lastSolutionsIterator = solutions;
+		final PrologDedutiveDatabase xsbDatabase = this;
+		return new Iterable<Answer>() {
+
+			@Override
+			public Iterator<Answer> iterator() {
+				return new Iterator<Answer>() {
+
+					private boolean canceled;
+
+					@Override
+					public boolean hasNext() {
+						if (canceled)
+							return false;
+						return solutions.hasNext();
+					}
+
+					@Override
+					public Answer next() {
+						final Object[] bindings = solutions.next();
+						if (!solutions.hasNext()) {
+							solutions.cancel();
+							canceled = true;
+							xsbDatabase.lastSolutionsIterator = null;
+						}
+						final TermModel valuesList = (TermModel) bindings[0];
+						return ans(query, valuesList);
+					}
+
+					@Override
+					public void remove() {
+						solutions.remove();
+					}
+				};
+			}
+
+		};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#queryAll(pt.unl.fct.di.centria.nohr.model.Query)
+	 */
+	@Override
+	public Map<List<Term>, TruthValue> answersValuations(Query query) throws IOException {
+		return answersValuations(query, null);
+	}
+
+	@Override
+	public Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) throws IOException {
+		final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
+		if (trueAnswers != null && trueAnswers == false && !isTrivalued())
+			return answers;
+		load();
+		final Object[] bindings = prologEngine.deterministicGoal(nonDetGoal(query, trueAnswers, "TM"), "[TM]");
+		if (bindings == null)
+			return answers;
+		final TermModel ansList = (TermModel) bindings[0];
+		for (final TermModel ans : ansList.flatList())
+			addAnswer(ans, answers);
+		return answers;
 	}
 
 	/*
@@ -130,22 +233,12 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#dispose()
-	 */
-	@Override
-	public void dispose() {
-		prologEngine.shutdown();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see java.lang.Object#finalize()
 	 */
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		dispose();
+		clear();
 	}
 
 	private File generateTranslationFile() throws IOException {
@@ -153,13 +246,13 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
 		final Set<TableDirective> tabledDirectives = new HashSet<>();
-		for (final Program program : programs)
+		for (final Program program : programs.values())
 			tabledDirectives.addAll(program.getTableDirectives());
 		for (final TableDirective predicate : tabledDirectives) {
 			writer.write(predicate.accept(xsbFormatedVisitor));
 			writer.newLine();
 		}
-		for (final Program program : programs)
+		for (final Program program : programs.values())
 			for (final Rule rule : program.getRules()) {
 				writer.write(rule.accept(xsbFormatedVisitor));
 				writer.newLine();
@@ -186,6 +279,8 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 	 */
 	@Override
 	public boolean hasAnswers(Query query, Boolean trueAnswers) throws IOException {
+		if (trueAnswers != null && !trueAnswers && !isTrivalued())
+			return false;
 		load();
 		if (trueAnswers == null)
 			return prologEngine.deterministicGoal(toString(query));
@@ -199,70 +294,6 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 
 	@Override
 	public abstract boolean isTrivalued();
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#lazilyQuery(pt.unl.fct.di.centria.nohr.model.Query)
-	 */
-	@Override
-	public Iterable<Answer> lazilyQuery(Query query) throws IOException {
-		return lazilyQuery(query, null);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#lazilyQuery(pt.unl.fct.di.centria.nohr.model.Query, java.lang.Boolean)
-	 */
-	@Override
-	public Iterable<Answer> lazilyQuery(final Query query, Boolean trueAnswers) throws IOException {
-		if (trueAnswers != null && !isTrivalued())
-			return null;
-		load();
-		if (lastSolutionsIterator != null) {
-			lastSolutionsIterator.cancel();
-			lastSolutionsIterator = null;
-		}
-		final SolutionIterator solutions = prologEngine.goal(detGoal(query, trueAnswers, "TM"), "[TM]");
-		lastSolutionsIterator = solutions;
-		final PrologDedutiveDatabase xsbDatabase = this;
-		return new Iterable<Answer>() {
-
-			@Override
-			public Iterator<Answer> iterator() {
-				return new Iterator<Answer>() {
-
-					private boolean canceled;
-
-					@Override
-					public boolean hasNext() {
-						if (canceled)
-							return false;
-						return solutions.hasNext();
-					}
-
-					@Override
-					public Answer next() {
-						final Object[] bindings = solutions.next();
-						if (!solutions.hasNext()) {
-							solutions.cancel();
-							canceled = true;
-							xsbDatabase.lastSolutionsIterator = null;
-						}
-						final TermModel valuesList = (TermModel) bindings[0];
-						return answer(query, valuesList);
-					}
-
-					@Override
-					public void remove() {
-						solutions.remove();
-					}
-				};
-			}
-
-		};
-	}
 
 	private void load() throws IOException {
 		if (loaded)
@@ -285,7 +316,7 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 	 */
 	@Override
 	public void load(Program program) {
-		programs.add(program);
+		programs.put(program.getID(), program);
 		loaded = false;
 	}
 
@@ -295,57 +326,6 @@ public abstract class PrologDedutiveDatabase implements DedutiveDatabase {
 		else
 			return String.format("nonDetGoal([%s],(%s),%s,%s)", varsList(query), toString(query), toString(trueAnswers),
 					var);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#query(pt.unl.fct.di.centria.nohr.model.Query)
-	 */
-	@Override
-	public Answer query(Query query) throws IOException {
-		return query(query, null);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#query(pt.unl.fct.di.centria.nohr.model.Query, java.lang.Boolean)
-	 */
-	@Override
-	public Answer query(Query query, Boolean trueAnswers) throws IOException {
-		if (trueAnswers != null && !isTrivalued())
-			return null;
-		load();
-		final Object[] bindings = prologEngine.deterministicGoal(detGoal(query, trueAnswers, "TM"), "[TM]");
-		if (bindings == null)
-			return null;
-		return answer(query, (TermModel) bindings[0]);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#queryAll(pt.unl.fct.di.centria.nohr.model.Query)
-	 */
-	@Override
-	public Map<List<Term>, TruthValue> queryAll(Query query) throws IOException {
-		return queryAll(query, null);
-	}
-
-	@Override
-	public Map<List<Term>, TruthValue> queryAll(Query query, Boolean trueAnswers) throws IOException {
-		final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
-		if (trueAnswers != null && !isTrivalued())
-			return answers;
-		load();
-		final Object[] bindings = prologEngine.deterministicGoal(nonDetGoal(query, trueAnswers, "TM"), "[TM]");
-		if (bindings == null)
-			return answers;
-		final TermModel ansList = (TermModel) bindings[0];
-		for (final TermModel ans : ansList.flatList())
-			addAnswer(ans, answers);
-		return answers;
 	}
 
 	private String toString(boolean trueValue) {

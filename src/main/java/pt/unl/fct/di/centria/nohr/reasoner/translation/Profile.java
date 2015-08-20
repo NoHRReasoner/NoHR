@@ -12,6 +12,7 @@ import org.semanticweb.owlapi.profiles.OWL2QLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 
+import pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabaseManager;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.el.ELOntologyTranslation;
@@ -19,7 +20,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyTranslation;
 
 /**
  * Represents the types of the supported OWL profiles. The order of enumeration corresponds to the preferred order. Each profile check if a given
- * ontology is in that profile and return an {@link OntologyTranslation} of that ontology in that profile.
+ * ontology is in that profile and return an {@link OntologyTranslator} of that ontology in that profile.
  *
  * @author Nuno Costa
  */
@@ -51,26 +52,28 @@ public enum Profile {
 	}
 
 	/**
-	 * Create an {@link OntologyTranslation} of a given ontology that can handle this profile.
+	 * Create an {@link OntologyTranslator} of a given ontology that can handle this profile.
 	 *
 	 * @param ontology
-	 *            the ontology whose {@link OntologyTranslation ontology translation} will be created.
-	 * @return the {@link OntologyTranslation ontology translation} of {@code ontology} for this profile.
+	 *            the ontology whose {@link OntologyTranslator ontology translation} will be created.
+	 * @param dedutiveDatabase
+	 *            the {@link DedutiveDatabaseManager dedutive database} where the ontology translation will be loaded.
+	 * @return the {@link OntologyTranslator ontology translation} of {@code ontology} for this profile.
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} has some axiom of a type that isn't supported in this profile.
 	 * @throws OWLProfilesViolationsException
 	 *             if {@code ontology} isn't in this profile.
 	 */
-	public OntologyTranslation createOntologyTranslation(OWLOntology ontology)
+	public OntologyTranslator createOntologyTranslation(OWLOntology ontology, DedutiveDatabaseManager dedutiveDatabase)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		final OWLProfileReport report = owlProfile().checkOntology(ontology);
 		if (!report.isInProfile())
 			throw new OWLProfilesViolationsException(report);
 		switch (this) {
 		case OWL2_QL:
-			return new QLOntologyTranslation(ontology);
+			return new QLOntologyTranslation(ontology, dedutiveDatabase);
 		case OWL2_EL:
-			return new ELOntologyTranslation(ontology);
+			return new ELOntologyTranslation(ontology, dedutiveDatabase);
 		default:
 			throw new OWLProfilesViolationsException();
 		}
