@@ -28,12 +28,10 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImplementor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImplementor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
@@ -76,40 +74,22 @@ public class QLOntologyTranslation extends OntologyTranslatorImplementor {
 	}
 
 	@Override
-	protected void computeNegativeHeadFunctors() {
-		final Variable X = Model.var("X");
-		final Variable Y = Model.var("Y");
-		for (final OWLClassExpression b : ontologyNormalization.getSubConcepts())
-			negativeHeadFunctors.add(originalAxiomsTranslator.negTr(b, X).getFunctor());
-		for (final OWLPropertyExpression<?, ?> q : ontologyNormalization.getSubRoles())
-			negativeHeadFunctors.add(originalAxiomsTranslator.negTr(q, X, Y).getFunctor());
-		for (final OWLEntity e : graph.getUnsatisfiableEntities())
-			if (e instanceof OWLClass)
-				negativeHeadFunctors.add(originalAxiomsTranslator.negTr((OWLClass) e, X).getFunctor());
-			else if (e instanceof OWLProperty)
-				negativeHeadFunctors.add(originalAxiomsTranslator.negTr((OWLProperty<?, ?>) e, X, Y).getFunctor());
-		for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
-			negativeHeadFunctors.add(originalAxiomsTranslator.negTr(p, X, Y).getFunctor());
-	}
-
-	@Override
-	protected void computeRules() {
+	protected void execute() {
 		final boolean hasDisjunctions = ontologyNormalization.hasDisjunctions();
-		computeNegativeHeadFunctors();
 		RuntimesLogger.start("ontology translation");
-		rules.addAll(translation(originalAxiomsTranslator));
+		addAll(translation(originalAxiomsTranslator));
 		if (hasDisjunctions) {
-			rules.addAll(translation(doubleAxiomsTranslator));
-			rules.addAll(disjunctionsTranslation());
+			addAll(translation(doubleAxiomsTranslator));
+			addAll(disjunctionsTranslation());
 			RuntimesLogger.stop("ontology translation", "loading");
 			RuntimesLogger.start("ontology classification");
 			for (final OWLEntity e : graph.getUnsatisfiableEntities())
 				if (e instanceof OWLClass)
-					rules.addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLClass) e));
+					addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLClass) e));
 				else if (e instanceof OWLProperty)
-					rules.addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLProperty<?, ?>) e));
+					addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLProperty<?, ?>) e));
 			for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
-				rules.add(doubleAxiomsTranslator.unreflexivityTranslation(p));
+				add(doubleAxiomsTranslator.unreflexivityTranslation(p));
 			RuntimesLogger.stop("ontology classification", "loading");
 		}
 		RuntimesLogger.stop("ontology translation", "loading");

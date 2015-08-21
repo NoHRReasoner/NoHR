@@ -3,55 +3,132 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyChange;
+import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLProperty;
 
 /**
- * @author nunocosta
+ * An implementation of {@link VocabularyMapping} where the concepts and rules are represented by the fragment of their IRIs and the individuals by
+ * their node IDs
+ *
+ * @author Nuno Costa
  */
 public class VocabularyMappingImpl implements VocabularyMapping {
 
+	/** The {@link OWLOntologyChangeListener} that handles concepts, roles, or individual addition or remotion */
+	private final OWLOntologyChangeListener ontologyChangeListener;
+
+	/** Maintains a counter of the occurrences, in the ontology, of each concept, role and individual. */
+	private final Map<OWLObject, Integer> referencesCounters;
+
+	/** The ontologies whose concepts, rules, and individuals this {@link VocabularyMapping} maps. */
+	private final Set<OWLOntology> ontologies;
+
+	/** The mapping between symbols and the concepts that they represent. */
 	private final Map<String, OWLClass> concepts;
 
+	/** The mapping between symbols and the roles that they represent. */
 	private final Map<String, OWLProperty<?, ?>> roles;
 
+	/** The mapping between symbols and the individuals that they represent. */
 	private final Map<String, OWLIndividual> individuals;
 
-	/**
-	 *
-	 */
 	public VocabularyMappingImpl(OWLOntology ontology) {
+		this(Collections.singleton(ontology));
+	}
+
+	/**
+	 * Constructs a {@link VocabularyMappingImpl} for a given set of ontologies;
+	 *
+	 * @param ontologies
+	 *            the set of ontologies.
+	 */
+	public VocabularyMappingImpl(final Set<OWLOntology> ontologies) {
+		this.ontologies = ontologies;
+		referencesCounters = new HashMap<>();
 		concepts = new HashMap<>();
 		roles = new HashMap<>();
 		individuals = new HashMap<>();
-		for (final OWLClass c : ontology.getClassesInSignature())
-			addConcept(c);
-		for (final OWLProperty<?, ?> r : ontology.getObjectPropertiesInSignature())
-			addRole(r);
-		for (final OWLProperty<?, ?> d : ontology.getDataPropertiesInSignature())
-			addRole(d);
-		for (final OWLIndividual i : ontology.getIndividualsInSignature())
-			addIndividual(i);
+		for (final OWLOntology ontology : ontologies) {
+			for (final OWLClass c : ontology.getClassesInSignature())
+				register(c);
+			for (final OWLProperty<?, ?> r : ontology.getObjectPropertiesInSignature())
+				register(r);
+			for (final OWLProperty<?, ?> d : ontology.getDataPropertiesInSignature())
+				register(d);
+			for (final OWLIndividual i : ontology.getIndividualsInSignature())
+				register(i);
+		}
+		ontologyChangeListener = new OWLOntologyChangeListener() {
+
+			@Override
+			public void ontologiesChanged(List<? extends OWLOntologyChange> changes) throws OWLException {
+				for (final OWLOntologyChange change : changes)
+					if (ontologies.contains(change.getOntology()))
+						if (change.isAddAxiom()) {
+							for (final OWLClass concept : change.getAxiom().getClassesInSignature())
+								register(concept);
+							for (final OWLObjectProperty role : change.getAxiom().getObjectPropertiesInSignature())
+								register(role);
+							for (final OWLDataProperty role : change.getAxiom().getDataPropertiesInSignature())
+								register(role);
+							for (final OWLIndividual individual : change.getAxiom().getIndividualsInSignature())
+								register(individual);
+						} else if (change.isRemoveAxiom()) {
+							for (final OWLClass concept : change.getAxiom().getClassesInSignature())
+								unregister(concept);
+							for (final OWLObjectProperty role : change.getAxiom().getObjectPropertiesInSignature())
+								unregister(role);
+							for (final OWLDataProperty role : change.getAxiom().getDataPropertiesInSignature())
+								unregister(role);
+							for (final OWLIndividual individual : change.getAxiom().getIndividualsInSignature())
+								unregiter(individual);
+						}
+			}
+		};
+		for (final OWLOntology ontology : ontologies)
+			ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
+	}
+
+	/**
+	 * Decrements the counter of occurrences of a given concept, rule or individual.
+	 *
+	 * @param obj
+	 *            the object.
+	 * @return the decremented counter of occurrences of {@code obj}.
+	 */
+	private int dec(OWLObject obj) {
+		final Integer oldCounter = referencesCounters.get(obj);
+		if (oldCounter == null)
+			return 0;
+		final int newCounter = oldCounter - 1;
+		if (newCounter == 0)
+			referencesCounters.remove(obj);
+		else
+			referencesCounters.put(obj, newCounter);
+		return newCounter;
 	}
 
 	@Override
-	public void addConcept(OWLClass concept) {
-		concepts.put(concept.getIRI().getFragment(), concept);
-	}
-
-	@Override
-	public void addIndividual(OWLIndividual individual) {
-		individuals.put(individual.toStringID(), individual);
-	}
-
-	@Override
-	public void addRole(OWLProperty<?, ?> role) {
-		roles.put(role.getIRI().getFragment(), role);
+	protected void finalize() throws Throwable {
+		super.finalize();
+		for (final OWLOntology ontology : ontologies)
+			ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
 	}
 
 	@Override
@@ -65,8 +142,124 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	}
 
 	@Override
+	public Set<OWLOntology> getOntologies() {
+		return ontologies;
+	}
+
+	@Override
 	public OWLProperty<?, ?> getRole(String symbol) {
 		return roles.get(symbol);
+	}
+
+	/**
+	 * Increments the counter of occurrences of a given concept, rule or individual.
+	 *
+	 * @param obj
+	 *            the object.
+	 * @return the incremented counter of occurrences of {@code obj}.
+	 */
+	private int inc(OWLObject obj) {
+		final Integer oldCounter = referencesCounters.get(obj);
+		final int newCounter = oldCounter == null ? 1 : oldCounter + 1;
+		referencesCounters.put(obj, newCounter);
+		return newCounter;
+	}
+
+	/**
+	 * Registers an occurrence of a given concept.
+	 *
+	 * @param concept
+	 *            the concept.
+	 */
+	private void register(OWLClass concept) {
+		for (final String symbol : symbols(concept))
+			concepts.put(symbol, concept);
+		inc(concept);
+	}
+
+	/**
+	 * Registers an occurrence of a given individual.
+	 *
+	 * @param individual
+	 */
+	private void register(OWLIndividual individual) {
+		for (final String symbol : symbols(individual))
+			individuals.put(symbol, individual);
+		inc(individual);
+	}
+
+	/**
+	 * Registers an occurrence of a given role.
+	 *
+	 * @param role
+	 *            a role.
+	 */
+	private void register(OWLProperty<?, ?> role) {
+		for (final String symbol : symbols(role))
+			roles.put(symbol, role);
+		inc(role);
+	}
+
+	/**
+	 * Returns the symbols that represent a given entity.
+	 *
+	 * @param entity
+	 *            the entity.
+	 * @return the set of symbols that represent {@code entity}
+	 */
+	protected Set<String> symbols(OWLEntity entity) {
+		final Set<String> result = new HashSet<>();
+		result.add(entity.getIRI().toURI().getFragment());
+		return result;
+	}
+
+	/**
+	 * Returns the symbols that represent a given individual.
+	 *
+	 * @param individual
+	 *            the individual.
+	 * @return the set of symbols that represent {@code individual}
+	 */
+	protected Set<String> symbols(OWLIndividual individual) {
+		final Set<String> result = new HashSet<>();
+		result.add(individual.toStringID());
+		return result;
+	}
+
+	/**
+	 * Unregisters an occurrence of a given concept.
+	 *
+	 * @param concept
+	 *            the concept.
+	 */
+	private void unregister(OWLClass concept) {
+		if (dec(concept) == 0)
+			for (final String symbol : symbols(concept))
+				concepts.remove(symbol);
+	}
+
+	/**
+	 * Unregisters an occurrence of a given role.
+	 *
+	 * @param role
+	 *            a role.
+	 */
+	private void unregister(OWLProperty<?, ?> role) {
+		if (dec(role) == 0)
+			for (final String symbol : symbols(role))
+				roles.put(symbol, role);
+	}
+
+	/**
+	 * Unregisters an occurrence of a given individual
+	 *
+	 * @param individual
+	 *            an individual.
+	 */
+	private void unregiter(OWLIndividual individual) {
+		if (dec(individual) == 0)
+			for (final String symbol : symbols(individual))
+				individuals.remove(symbol);
 	}
 
 }

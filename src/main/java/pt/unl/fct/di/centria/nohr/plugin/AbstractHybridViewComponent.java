@@ -17,11 +17,7 @@ import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLException;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
@@ -36,18 +32,19 @@ import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.Parser;
 import pt.unl.fct.di.centria.nohr.plugin.rules.DisposableRuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
+import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
+import pt.unl.fct.di.centria.nohr.rulebase.RuleBase;
 
 /**
  * @author nunocosta
  */
 public abstract class AbstractHybridViewComponent extends AbstractOWLViewComponent {
 
-	protected class DisposableHybridKB extends HybridKB implements Disposable {
+	protected class DisposableHybridKB extends HybridKBImpl implements Disposable {
 
 		public DisposableHybridKB(File xsbBinDirectory, Set<OWLAxiom> axioms, RuleBase ruleBase)
 				throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
@@ -180,7 +177,7 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 	}
 
 	protected HybridKB getHybridKB() {
-		final DisposableHybridKB hybridKB = getOWLModelManager().get(HybridKB.class);
+		final DisposableHybridKB hybridKB = getOWLModelManager().get(HybridKBImpl.class);
 		if (hybridKB == null)
 			throw new NullPointerException();
 		return hybridKB;
@@ -223,7 +220,6 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 			ruleBase = new DisposableRuleBase();
 			getOWLModelManager().put(DisposableRuleBase.class, ruleBase);
 		}
-		ruleBase.getRules();
 		return ruleBase;
 	}
 
@@ -237,30 +233,21 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 	}
 
 	protected boolean isNoHRStarted() {
-		return getOWLModelManager().get(HybridKB.class) != null;
+		return getOWLModelManager().get(HybridKBImpl.class) != null;
 	}
 
 	protected void startNoHR() {
 		getOWLModelManager().put(VocabularyMapping.class,
 				new DisposableObject<VocabularyMapping>(new VocabularyMappingImpl(getOntology())));
-		getOWLModelManager().put(HybridKB.class, createHybridKB(getOntology().getAxioms()));
+		getOWLModelManager().put(HybridKBImpl.class, createHybridKB(getOntology().getAxioms()));
 		getOWLModelManager().addOntologyChangeListener(new OWLOntologyChangeListener() {
 
 			@Override
 			public void ontologiesChanged(List<? extends OWLOntologyChange> changes) throws OWLException {
-				final VocabularyMapping ontologyIndex = getOntologyIndex();
 				for (final OWLOntologyChange change : changes)
-					if (change.isAddAxiom()) {
-						for (final OWLClass concept : change.getAxiom().getClassesInSignature())
-							ontologyIndex.addConcept(concept);
-						for (final OWLObjectProperty role : change.getAxiom().getObjectPropertiesInSignature())
-							ontologyIndex.addRole(role);
-						for (final OWLDataProperty role : change.getAxiom().getDataPropertiesInSignature())
-							ontologyIndex.addRole(role);
-						for (final OWLIndividual individual : change.getAxiom().getIndividualsInSignature())
-							ontologyIndex.addIndividual(individual);
+					if (change.isAddAxiom())
 						getHybridKB().addAxiom(change.getAxiom());
-					} else if (change.isRemoveAxiom())
+					else if (change.isRemoveAxiom())
 						getHybridKB().removeAxiom(change.getAxiom());
 			}
 		});
@@ -271,7 +258,7 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 				if (e.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
 					getOWLModelManager().put(VocabularyMapping.class, new DisposableObject<VocabularyMapping>(
 							new VocabularyMappingImpl(getOWLModelManager().getActiveOntology())));
-					getOWLModelManager().put(HybridKB.class, createHybridKB(getOntology().getAxioms()));
+					getOWLModelManager().put(HybridKBImpl.class, createHybridKB(getOntology().getAxioms()));
 				}
 			}
 		});

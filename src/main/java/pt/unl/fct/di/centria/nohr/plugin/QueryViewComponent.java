@@ -153,7 +153,7 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 			try {
 				final Query query = queryEditor.createObject();
 				if (query != null && isNoHRStarted()) {
-					final List<Answer> answers = getHybridKB().queryAll(query, showTrueAnswersCheckBox.isSelected(),
+					final List<Answer> answers = getHybridKB().allAnswers(query, showTrueAnswersCheckBox.isSelected(),
 							showUndefinedAnswersCheckBox.isSelected(), showInconsistentAnswersCheckBox.isSelected());
 					answersTable.setAnswers(answers);
 				}

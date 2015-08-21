@@ -15,19 +15,141 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 
+/**
+ * Handle queries to a {@link HybridKB}. Given a certain query, executes the corresponding original and double - or original only, if the KB hasn't
+ * disjunctions - queries on the underlying {@link DeductiveDatabaseManager} and combines their results to obtain the query's answers according to
+ * {@link <a href="http://tocl.acm.org/accepted/464knorr.pdf"><i>Query-driven Procedures for Hybrid MKNF Knowledge Bases</i></a>}.
+ *
+ * @author Nuno Costa
+ */
 public class QueryProcessor {
 
-	protected DeductiveDatabaseManager xsbDatabase;
+	/**
+	 * The underlying {@link DeductiveDatabaseManager}, where the queries will be posed.
+	 */
+	protected DeductiveDatabaseManager deductiveDatabaseManager;
 
-	public QueryProcessor(DeductiveDatabaseManager xsbDatabase) {
-		this.xsbDatabase = xsbDatabase;
+	/**
+	 * Constructs a query processor to a given {@link DeductiveDatabaseManager}.
+	 *
+	 * @param deductiveDatabaseManager
+	 *            the {@link DeductiveDatabaseManager} where the queries will be posed.
+	 */
+	protected QueryProcessor(DeductiveDatabaseManager deductiveDatabaseManager) {
+		this.deductiveDatabaseManager = deductiveDatabaseManager;
 	}
 
-	public boolean hasAnswer(Query query, boolean hasDoubled) throws IOException {
+	/**
+	 * Obtains all answers to a given query.
+	 *
+	 * @param query
+	 *            the query.
+	 * @param isDoubled
+	 *            specifies whether the KB is doubled is doubled.
+	 * @return the list of all answers {@code query}.
+	 * @throws IOException
+	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 */
+	protected List<Answer> allAnswers(Query query, boolean hasDoubled) throws IOException {
+		return allAnswers(query, hasDoubled, true, true, hasDoubled);
+	}
+
+	/**
+	 * Obtains all answers to a given query.
+	 *
+	 * @param query
+	 *            the query.
+	 * @param isDoubled
+	 *            specifies whether the KB is doubled.
+	 * @param trueAnswers
+	 *            specifies whether to obtain {@link TruthValue#TRUE true} answers.
+	 * @param undefinedAnswers
+	 *            specifies whether to obtain {@link TruthValue#UNDEFINED undefined} answers.
+	 * @param inconsistentAnswers
+	 *            specifies whether to obtain {@link TruthValue#INCONSISTENT inconsistent} answers.
+	 * @return the list of all answers {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
+	 *         {@code inconsistentAnswers} flags.
+	 * @throws IOException
+	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 */
+	protected List<Answer> allAnswers(Query query, boolean isDoubled, boolean trueAnswers, boolean undefinedAnswers,
+			boolean inconsistentAnswers) throws IOException {
+		if (inconsistentAnswers && isDoubled == false)
+			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
+		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
+			throw new IllegalArgumentException("must have at least one truth value enabled");
+		final List<Answer> result = new LinkedList<Answer>();
+		Map<List<Term>, TruthValue> origAnss;
+		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
+			origAnss = deductiveDatabaseManager.answersValuations(query.getOriginal(), false);
+		else if (inconsistentAnswers && !trueAnswers && !undefinedAnswers)
+			origAnss = deductiveDatabaseManager.answersValuations(query.getOriginal(), true);
+		else
+			origAnss = deductiveDatabaseManager.answersValuations(query.getOriginal());
+		Map<List<Term>, TruthValue> doubAnss = new HashMap<List<Term>, TruthValue>();
+		if (isDoubled)
+			if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
+				doubAnss = deductiveDatabaseManager.answersValuations(query.getDouble(), false);
+			else
+				doubAnss = deductiveDatabaseManager.answersValuations(query.getDouble());
+		for (final Entry<List<Term>, TruthValue> origEntry : origAnss.entrySet()) {
+			final List<Term> vals = origEntry.getKey();
+			final TruthValue origTruth = origEntry.getValue();
+			TruthValue truth;
+			if (isDoubled) {
+				TruthValue doubTruth = doubAnss.get(vals);
+				if (doubTruth == null)
+					doubTruth = TruthValue.FALSE;
+				truth = process(origTruth, doubTruth);
+			} else
+				truth = origTruth;
+			if (isRequiredTruth(truth, trueAnswers, undefinedAnswers, inconsistentAnswers))
+				result.add(ans(query, truth, vals));
+		}
+		return result;
+	}
+
+	/**
+	 * Checks if there is some answer to a given query.
+	 *
+	 * @param query
+	 *            the query.
+	 * @param isDoubled
+	 *            specifies whether the KB is doubled.
+	 * @param trueAnswers
+	 *            specifies whether to consider {@link TruthValue#TRUE true} answers.
+	 * @param undefinedAnswers
+	 *            specifies whether to consider {@link TruthValue#UNDEFINED undefined} answers.
+	 * @param inconsistentAnswers
+	 *            specifies whether to consider :w {@link TruthValue#INCONSISTENT inconsistent} answers.
+	 * @return true iff there is at least one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
+	 *         {@code inconsistentAnswers} flags.
+	 * @throws IOException
+	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 */
+	protected boolean hasAnswer(Query query, boolean hasDoubled) throws IOException {
 		return hasAnswer(query, hasDoubled, true, true, hasDoubled);
 	}
 
-	public boolean hasAnswer(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
+	/**
+	 * Checks if there is some answer to a given query.
+	 *
+	 * @param query
+	 *            the query.
+	 * @param isDoubled
+	 *            specifies whether the KB is doubled.
+	 * @param trueAnswers
+	 *            specifies whether to consider {@link TruthValue#TRUE true} answers.
+	 * @param undefinedAnswers
+	 *            specifies whether to consider {@link TruthValue#UNDEFINED undefined} answers.
+	 * @param inconsistentAnswers
+	 *            specifies whether to consider :w {@link TruthValue#INCONSISTENT inconsistent} answers.
+	 * @return true iff there is at least one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
+	 *         {@code inconsistentAnswers} flags.
+	 * @throws IOException
+	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 */
+	protected boolean hasAnswer(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) throws IOException {
 		if (inconsistentAnswers && hasDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
@@ -36,11 +158,11 @@ public class QueryProcessor {
 		final Query origQuery = query.getOriginal();
 		// true original answers
 		if (inconsistentAnswers || trueAnswers)
-			for (final Answer origAns : xsbDatabase.answers(origQuery, true)) {
+			for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, true)) {
 				if (trueAnswers && !hasDoubled)
 					return true;
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
-				final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
+				final boolean hasDoubAns = deductiveDatabaseManager.hasAnswers(doubQuery);
 				if (inconsistentAnswers && !hasDoubAns)
 					return true;
 				if (trueAnswers && hasDoubAns)
@@ -48,77 +170,101 @@ public class QueryProcessor {
 			}
 		// undefined original answers
 		if (trueAnswers || undefinedAnswers)
-			for (final Answer origAns : xsbDatabase.answers(origQuery, false)) {
+			for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, false)) {
 				if (!hasDoubled && undefinedAnswers)
 					return true;
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
-				if (trueAnswers && hasDoubled && xsbDatabase.hasAnswers(doubQuery, true))
+				if (trueAnswers && hasDoubled && deductiveDatabaseManager.hasAnswers(doubQuery, true))
 					return true;
-				if (undefinedAnswers && xsbDatabase.hasAnswers(doubQuery, false))
+				if (undefinedAnswers && deductiveDatabaseManager.hasAnswers(doubQuery, false))
 					return true;
 			}
 		return false;
 	}
 
-	private boolean isRequiredTruth(TruthValue truth, boolean trueAnswers, boolean undefinedAnswers,
-			boolean inconsistentAnswers) {
+	/**
+	 * Check whether a given {@link TruthValue truth value} match the given truth values flags.
+	 *
+	 * @param truth
+	 *            the truth value.
+	 * @param trueFlag
+	 *            specifies whether the {@link TruthValue truth value} {@link TruthValue#TRUE true} is enabled.
+	 * @param undefinedFlag
+	 *            specifies whether the {@link TruthValue truth value} {@link TruthValue#UNDEFINED undefined} is enabled.
+	 * @param inconsistentFlag
+	 *            specifies whether the {@link TruthValue truth value} {@link TruthValue#INCONSISTENT inconsistent} is enabled.
+	 * @return true iff {@code truth} match the given flags.
+	 */
+	private boolean isRequiredTruth(TruthValue truth, boolean trueFlag, boolean undefinedFlag,
+			boolean inconsistentFlag) {
 		switch (truth) {
 		case TRUE:
-			return trueAnswers;
+			return trueFlag;
 		case UNDEFINED:
-			return undefinedAnswers;
+			return undefinedFlag;
 		case INCONSISTENT:
-			return inconsistentAnswers;
+			return inconsistentFlag;
 		default:
 			return false;
 		}
 	}
 
-	private TruthValue process(TruthValue originalTruth, TruthValue doubledTruth) {
-		if (originalTruth == TruthValue.FALSE)
-			return TruthValue.FALSE;
-		else if (originalTruth == TruthValue.UNDEFINED)
-			return doubledTruth;
-		else if (originalTruth == TruthValue.TRUE)
-			if (doubledTruth == TruthValue.FALSE)
-				return TruthValue.INCONSISTENT;
-			else
-				return TruthValue.TRUE;
-		else
-			return null;
+	/**
+	 * Obtains one answers to a given query.
+	 *
+	 * @param query
+	 *            the query.
+	 * @param isDoubled
+	 *            specifies whether the KB is doubled.
+	 * @return one answer to {@code query}.
+	 * @throws IOException
+	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 */
+	protected Answer oneAnswer(Query query, boolean hasDoubled) throws IOException {
+		return oneAnswer(query, hasDoubled, true, true, hasDoubled);
 	}
 
-	public Answer query(Query query) throws IOException {
-		return query(query, true, true, true, true);
-	}
-
-	public Answer query(Query query, boolean hasDoubled) throws IOException {
-		return query(query, hasDoubled, true, true, hasDoubled);
-	}
-
-	public Answer query(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
+	/**
+	 * Obtains one answers to a given query.
+	 *
+	 * @param query
+	 *            the query.
+	 * @param isDoubled
+	 *            specifies whether the KB is doubled.
+	 * @param trueAnswers
+	 *            specifies whether to obtain a {@link TruthValue#TRUE true} answers.
+	 * @param undefinedAnswers
+	 *            specifies whether to obtain a {@link TruthValue#UNDEFINED undefined} answers.
+	 * @param inconsistentAnswers
+	 *            specifies whether to obtain a {@link TruthValue#INCONSISTENT inconsistent} answers.
+	 * @return one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and {@code inconsistentAnswers}
+	 *         flags.
+	 * @throws IOException
+	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 */
+	protected Answer oneAnswer(Query query, boolean isDoubled, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) throws IOException {
-		if (inconsistentAnswers && hasDoubled == false)
+		if (inconsistentAnswers && isDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
 			throw new IllegalArgumentException("must have at least one truth value enabled");
 		final Query origQuery = query.getOriginal();
 		// undefined original answers
 		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-			for (final Answer origAns : xsbDatabase.answers(origQuery, false)) {
-				if (!hasDoubled)
+			for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, false)) {
+				if (!isDoubled)
 					return ans(query, TruthValue.UNDEFINED, origAns.getValues());
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
-				if (xsbDatabase.hasAnswers(doubQuery, false))
+				if (deductiveDatabaseManager.hasAnswers(doubQuery, false))
 					return ans(query, TruthValue.UNDEFINED, origAns.getValues());
 			}
 		// true original answers
 		if (!undefinedAnswers)
-			for (final Answer origAns : xsbDatabase.answers(origQuery, true)) {
-				if (trueAnswers && !hasDoubled)
+			for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, true)) {
+				if (trueAnswers && !isDoubled)
 					return ans(query, TruthValue.TRUE, origAns.getValues());
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
-				final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
+				final boolean hasDoubAns = deductiveDatabaseManager.hasAnswers(doubQuery);
 				if (trueAnswers && hasDoubAns)
 					return ans(query, TruthValue.TRUE, origAns.getValues());
 				else if (inconsistentAnswers && !hasDoubAns)
@@ -126,21 +272,21 @@ public class QueryProcessor {
 			}
 
 		// all original answers
-		for (final Answer origAns : xsbDatabase.answers(origQuery, null)) {
+		for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, null)) {
 			final TruthValue origTruth = origAns.getValuation();
 			if ((trueAnswers && origTruth == TruthValue.TRUE || undefinedAnswers && origTruth == TruthValue.UNDEFINED)
-					&& !hasDoubled)
+					&& !isDoubled)
 				return ans(query, origTruth, origAns.getValues());
 			final Query doubQuery = query.getDouble().apply(origAns.getValues());
 			if ((trueAnswers || inconsistentAnswers) && origTruth == TruthValue.TRUE) {
-				final boolean hasDoubAns = xsbDatabase.hasAnswers(doubQuery);
+				final boolean hasDoubAns = deductiveDatabaseManager.hasAnswers(doubQuery);
 				if (trueAnswers && hasDoubAns)
 					return ans(query, TruthValue.TRUE, origAns.getValues());
 				else if (inconsistentAnswers && !hasDoubAns)
 					return ans(query, TruthValue.INCONSISTENT, origAns.getValues());
 			}
-			if ((trueAnswers && hasDoubled || undefinedAnswers) && origTruth == TruthValue.UNDEFINED) {
-				final Answer doubAns = xsbDatabase.answer(doubQuery);
+			if ((trueAnswers && isDoubled || undefinedAnswers) && origTruth == TruthValue.UNDEFINED) {
+				final Answer doubAns = deductiveDatabaseManager.answer(doubQuery);
 				if (doubAns != null) {
 					final TruthValue doubTruth = doubAns.getValuation();
 					if (trueAnswers && doubTruth == TruthValue.TRUE)
@@ -153,49 +299,27 @@ public class QueryProcessor {
 		return null;
 	}
 
-	public List<Answer> queryAll(Query query) throws IOException {
-		return queryAll(query, true);
-	}
-
-	public List<Answer> queryAll(Query query, boolean hasDoubled) throws IOException {
-		return queryAll(query, hasDoubled, true, true, hasDoubled);
-	}
-
-	public List<Answer> queryAll(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
-			boolean inconsistentAnswers) throws IOException {
-		if (inconsistentAnswers && hasDoubled == false)
-			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
-		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
-			throw new IllegalArgumentException("must have at least one truth value enabled");
-		final List<Answer> result = new LinkedList<Answer>();
-		Map<List<Term>, TruthValue> origAnss;
-		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-			origAnss = xsbDatabase.answersValuations(query.getOriginal(), false);
-		else if (inconsistentAnswers && !trueAnswers && !undefinedAnswers)
-			origAnss = xsbDatabase.answersValuations(query.getOriginal(), true);
-		else
-			origAnss = xsbDatabase.answersValuations(query.getOriginal());
-		Map<List<Term>, TruthValue> doubAnss = new HashMap<List<Term>, TruthValue>();
-		if (hasDoubled)
-			if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-				doubAnss = xsbDatabase.answersValuations(query.getDouble(), false);
+	/**
+	 * Obtains the final {@link TruthValue truth value} given an original and a doubled truth value.
+	 *
+	 * @param originalTruth
+	 *            the original truth value, i.e. the valuation of an answer to an original query.
+	 * @param doubledTruth
+	 *            the double truth value, i.e. the valuation of an answer to a double query.
+	 * @return the final answer's valuation given {@code originalTruth} and {@code doubleTruth}.
+	 */
+	private TruthValue process(TruthValue originalTruth, TruthValue doubledTruth) {
+		if (originalTruth == TruthValue.FALSE)
+			return TruthValue.FALSE;
+		else if (originalTruth == TruthValue.UNDEFINED)
+			return doubledTruth;
+		else if (originalTruth == TruthValue.TRUE)
+			if (doubledTruth == TruthValue.FALSE)
+				return TruthValue.INCONSISTENT;
 			else
-				doubAnss = xsbDatabase.answersValuations(query.getDouble());
-		for (final Entry<List<Term>, TruthValue> origEntry : origAnss.entrySet()) {
-			final List<Term> vals = origEntry.getKey();
-			final TruthValue origTruth = origEntry.getValue();
-			TruthValue truth;
-			if (hasDoubled) {
-				TruthValue doubTruth = doubAnss.get(vals);
-				if (doubTruth == null)
-					doubTruth = TruthValue.FALSE;
-				truth = process(origTruth, doubTruth);
-			} else
-				truth = origTruth;
-			if (isRequiredTruth(truth, trueAnswers, undefinedAnswers, inconsistentAnswers))
-				result.add(ans(query, truth, vals));
-		}
-		return result;
+				return TruthValue.TRUE;
+		else
+			return null;
 	}
 
 }

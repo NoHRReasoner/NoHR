@@ -41,6 +41,7 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
+import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
@@ -85,7 +86,7 @@ public class KB {
 		dataRoles = new HashMap<String, OWLDataProperty>();
 		individuals = new HashMap<String, OWLIndividual>();
 		this.profile = profile;
-		hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology.getAxioms(), profile);
+		hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology.getAxioms(), profile);
 		parser = new NoHRParser(new VocabularyMappingImpl(ontology));
 	}
 
@@ -149,7 +150,7 @@ public class KB {
 		// final Set<OWLDeclarationAxiom> declarationAxioms =
 		// ontology.getAxioms(AxiomType.DECLARATION);
 		try {
-			hybridKB = new HybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), profile);
+			hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), profile);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

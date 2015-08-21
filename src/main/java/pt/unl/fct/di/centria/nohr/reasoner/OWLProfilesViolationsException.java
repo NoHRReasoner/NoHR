@@ -16,7 +16,9 @@ import org.semanticweb.owlapi.profiles.OWLProfileViolation;
 import pt.unl.fct.di.centria.nohr.StringUtils;
 
 /**
- * @author nunocosta
+ * Represents violations to the supported {@link Profile profiles}.
+ *
+ * @author Nuno Costa
  */
 public class OWLProfilesViolationsException extends UnsupportedAxiomsException {
 
@@ -26,10 +28,13 @@ public class OWLProfilesViolationsException extends UnsupportedAxiomsException {
 	private static final long serialVersionUID = -5537995982642676635L;
 
 	/**
+	 * Returns the set of axioms that are violations in a given set of {@link OWLProfileReport profile reports}.
+	 *
 	 * @param reports
-	 * @return
+	 *            the {@link OWLProfileReport violation reports}.
+	 * @return Returns the set of axioms that are violations in a given {@code reports}.
 	 */
-	private static Set<OWLAxiom> unsupportedAxioms(List<OWLProfileReport> reports) {
+	private static Set<OWLAxiom> violations(List<OWLProfileReport> reports) {
 		final Set<OWLAxiom> result = new HashSet<>();
 		int minViolations = Integer.MAX_VALUE;
 		OWLProfileReport minReport = null;
@@ -43,19 +48,35 @@ public class OWLProfilesViolationsException extends UnsupportedAxiomsException {
 		return result;
 	}
 
+	/** The set of {@link OWLProfileReport profile reports} that describe the profiles violations. */
 	private final List<OWLProfileReport> reports;
 
+	/**
+	 * Constructs a {@link OWLProfilesViolationsException}.
+	 */
 	public OWLProfilesViolationsException() {
 		this(Collections.<OWLProfileReport> emptyList());
 	}
 
+	/**
+	 * Constructs a {@link OWLProfilesViolationsException} for the violations described by a given set of {@link OWLProfileReport profile reports}.
+	 *
+	 * @param reports
+	 *            the set of {@link OWLProfileReport profile violations}.
+	 */
 	public OWLProfilesViolationsException(List<OWLProfileReport> reports) {
-		super(unsupportedAxioms(reports));
+		super(violations(reports));
 		this.reports = reports;
 	}
 
+	/**
+	 * Constructs a {@link OWLProfilesViolationsException} for the violations described by a given set of {@link OWLProfileReport profile reports}.
+	 *
+	 * @param reports
+	 *            the array of {@link OWLProfileReport profile violations}.
+	 */
 	public OWLProfilesViolationsException(OWLProfileReport... reports) {
-		super(unsupportedAxioms(Arrays.asList(reports)));
+		super(violations(Arrays.asList(reports)));
 		this.reports = Arrays.asList(reports);
 	}
 
@@ -64,6 +85,11 @@ public class OWLProfilesViolationsException extends UnsupportedAxiomsException {
 		return StringUtils.concat(",", reports);
 	}
 
+	/**
+	 * Returns the set of {@link OWLProfileReport profile reports} that describe the profiles violations.
+	 *
+	 * @return the set of {@link OWLProfileReport profile reports} that describe the profiles violations
+	 */
 	public List<OWLProfileReport> getReports() {
 		return reports;
 	}

@@ -1,14 +1,14 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.reasoner;
+package pt.unl.fct.di.centria.nohr.rulebase;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
 
 /**
  * @author nunocosta
  */
-public interface RuleBaseListner {
+public interface RuleBaseListener {
 
 	public void added(Rule rule);
 

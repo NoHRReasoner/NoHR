@@ -1,22 +1,11 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.fail;
-import static pt.unl.fct.di.centria.nohr.model.Model.prog;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.table;
-
-import java.util.HashSet;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
-import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.TableDirective;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 
 /**
  * A <i>concrete implementor</i> of {@link OntologyTranslator} (see {@link <a href="http://www.oodesign.com/bridge-pattern.html">Bridge Pattern</a>},
@@ -27,25 +16,20 @@ import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
  */
 public abstract class OntologyTranslatorImplementor implements OntologyTranslator {
 
-	protected final DeductiveDatabaseManager dedutiveDatabaseManager;
+	/**
+	 * The key of the <i>program</i> (see {@link DeductiveDatabaseManager}) where the translation rules are added.
+	 */
+	private static final String PROGRAM_ID = "ontology_translation";
 
 	/**
-	 * The set of negative meta-predicates appearing at the head of some rule of this translation.
+	 * The {@link DeductiveDatabaseManager} to where the translation rules are added.
 	 */
-	protected final Set<Predicate> negativeHeadFunctors;
+	private final DeductiveDatabaseManager dedutiveDatabaseManager;
 
 	/**
 	 * The translated ontology.
 	 */
 	protected final OWLOntology ontology;
-
-	/**
-	 * The set of rules corresponding to this translation.
-	 */
-	protected final Set<Rule> rules;
-
-	/** The set of table directives */
-	private final Set<TableDirective> tableDirectives;
 
 	/**
 	 * Constructs a {@link OntologyTranslatorImplementor}, appropriately initializing its state.
@@ -58,44 +42,34 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 	public OntologyTranslatorImplementor(OWLOntology ontology, DeductiveDatabaseManager dedutiveDatabase) {
 		this.ontology = ontology;
 		dedutiveDatabaseManager = dedutiveDatabase;
-		rules = new HashSet<>();
-		tableDirectives = new HashSet<>();
-		negativeHeadFunctors = new HashSet<>();
 	}
 
 	/**
-	 * Computes the set of predicates whose atoms must be failed (i.e. must have a false truth value) and the correspondig rules.
+	 * Add a given rule to the underlying {@link DeductiveDatabaseManager}.
+	 *
+	 * @param rule
+	 *            a rule.
 	 */
-	private void computeFailedAtoms() {
-		for (final TableDirective tableDirective : tableDirectives)
-			if (isFailed(tableDirective.getPredicate()))
-				rules.add(rule(atom(tableDirective.getPredicate()), fail()));
+	protected void add(Rule rule) {
+		dedutiveDatabaseManager.add(PROGRAM_ID, rule);
 	}
 
 	/**
-	 * Computes the set of negative meta-predicates that will appear at the head of some rule of this translation.
+	 * Add a given set of rules to the underlying {@link DeductiveDatabaseManager}.
+	 *
+	 * @param rule
+	 *            a rule set.
 	 */
-	protected abstract void computeNegativeHeadFunctors();
-
-	/**
-	 * Computes the rules corresponding to the translation of the ontology that these {@link OntologyTranslatorImplementor} refer.
-	 */
-	protected abstract void computeRules();
-
-	/**
-	 * Computes the set of predicates that need to be tabled.
-	 */
-	private void computeTabledDirectives() {
+	protected void addAll(Set<Rule> rules) {
 		for (final Rule rule : rules)
-			computeTabledDirectives(rule);
+			dedutiveDatabaseManager.add(PROGRAM_ID, rule);
 	}
 
-	private void computeTabledDirectives(Rule rule) {
-		final Predicate headPred = rule.getHead().getFunctor();
-		tableDirectives.add(table(headPred));
-		for (final Literal negLiteral : rule.getNegativeBody())
-			tableDirectives.add(table(negLiteral.getFunctor()));
-	}
+	/**
+	 * Execute the translation of the ontology that these {@link OntologyTranslatorImplementor} refer. The rules must be added to the underlying
+	 * {@link DeductiveDatabaseManager} calling {@link #add(Rule)} or {@link #addAll(Set)}.
+	 */
+	protected abstract void execute();
 
 	@Override
 	public DeductiveDatabaseManager getDedutiveDatabase() {
@@ -107,26 +81,10 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 		return ontology;
 	}
 
-	private boolean isFailed(Predicate predicate) {
-		return predicate.isMetaPredicate() && predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE)
-				&& !isNegativeHeadFunctor(predicate);
-	}
-
-	private boolean isNegativeHeadFunctor(Predicate predicate) {
-		if (!predicate.isMetaPredicate() || !predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE))
-			throw new IllegalArgumentException("predicate: should be a negative meta-predicate");
-		return negativeHeadFunctors.contains(predicate);
-	}
-
 	@Override
 	public void translate() {
-		if (hasDisjunctions())
-			computeNegativeHeadFunctors();
-		computeRules();
-		computeTabledDirectives();
-		if (hasDisjunctions())
-			computeFailedAtoms();
-		dedutiveDatabaseManager.load(prog(this, tableDirectives, rules));
+		dedutiveDatabaseManager.dispose(PROGRAM_ID);
+		execute();
 	}
 
 }

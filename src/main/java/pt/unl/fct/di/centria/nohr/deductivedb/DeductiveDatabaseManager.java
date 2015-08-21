@@ -11,37 +11,27 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.TableDirective;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 
 /**
- * Represents a in-memory deductive database manager. A {@link DeductiveDatabaseManager} can load {@link Program programs}, add and remove
- * {@link Rules rules} or {@link TableDirective tableDirectives} to that programs, and answer queries, based on the loaded {@link Program programs}.
+ * Represents a in-memory deductive database manager. A {@link DeductiveDatabaseManager} maintains a set of logic <i>programs</i> - sets of
+ * {@link Rule rules} univocally identified by {@link Object object} keys - to which lets the client add or remove rules, and answers to queries based
+ * on that programs.
  *
  * @author Nuno Costa
  */
 public interface DeductiveDatabaseManager {
 
 	/**
-	 * Adds a given {@link Rule rule} to the {@link Program program} identified by a given {@link Object object}.
+	 * Adds a given {@link Rule rule} to the <i>program</i> with a given key.
 	 *
-	 * @param programID
-	 *            the object that univocally identifies the {@link Program program} where the {@link Rule rule} will be added.
+	 * @param key
+	 *            the object that univocally identifies the <i>program</i> where the {@link Rule rule} will be added.
 	 * @param rule
-	 *            the rule that will be added to {@code program}.
+	 *            the rule to be added.
 	 */
-	void add(Object programID, Rule rule);
-
-	/**
-	 * Adds a given {@link TableDirective table directive} to the {@link Program program} identified by a given {@link Object object}.
-	 *
-	 * @param programID
-	 *            the object that univocally identifies the {@link Program program} where the {@link TableDirective table directive} will be added.
-	 * @param tableDirective
-	 *            the {@link TableDirective table directive} that will be added to {@code program}.
-	 */
-	void add(Object programID, TableDirective tableDirective);
+	void add(Object key, Rule rule);
 
 	/**
 	 * Deterministically obtains one answer to a given query, based on the loaded {@link Program programs}.
@@ -128,9 +118,17 @@ public interface DeductiveDatabaseManager {
 	Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) throws IOException;
 
 	/**
-	 * Unload all the loaded {@link Program programs} and release all the reclaimed resources.
+	 * Dispose all <i>programs</i> and release all the reclaimed resources.
 	 */
-	void clear();
+	void dipose();
+
+	/**
+	 * Dispose the <i>program</i> with a given key.
+	 *
+	 * @param programKey
+	 *            the key of the program to be removed.
+	 */
+	void dispose(Object programKey);
 
 	/**
 	 * Checks if there is some answer to given query, based on the loaded {@link Program programs}.
@@ -165,27 +163,14 @@ public interface DeductiveDatabaseManager {
 	 */
 	boolean hasWFS();
 
-	void load(Program program);
-
 	/**
-	 * Removes a given {@link Rule rule} from the {@link Program program} identified by a given {@link Object object}.
+	 * Removes a given {@link Rule rule} from the <i>program</i> with a given key.
 	 *
-	 * @param programID
-	 *            the object that univocally identifies the {@link Program program} from where the {@link Rule rule} will be removed.
+	 * @param key
+	 *            the object that univocally identifies the <i>program</i> from where the {@link Rule rule} will be removed.
 	 * @param rule
-	 *            the rule that will be removed from {@code program}.
+	 *            the rule to be removed.
 	 */
-	void remove(Object programID, Rule rule);
-
-	/**
-	 * Removes a given {@link TableDirective table directive} from the {@link Program program} identified by a given {@link Object object}.
-	 *
-	 * @param programID
-	 *            the object that univocally identifies the {@link Program program} from where the {@link TableDirective table directive} will be
-	 *            removed.
-	 * @param tableDirective
-	 *            the table directive that will be added to {@code program}.
-	 */
-	void remove(Object programID, TableDirective tableDirective);
+	void remove(Object key, Rule rule);
 
 }

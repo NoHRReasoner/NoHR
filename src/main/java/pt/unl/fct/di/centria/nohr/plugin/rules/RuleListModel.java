@@ -11,7 +11,7 @@ import javax.swing.AbstractListModel;
 import org.protege.editor.core.ui.list.MListSectionHeader;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.reasoner.RuleBase;
+import pt.unl.fct.di.centria.nohr.rulebase.RuleBase;
 
 public class RuleListModel extends AbstractListModel<Object> {
 
@@ -46,7 +46,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 		this.ruleBase = ruleBase;
 		ruleItems = new ArrayList<Object>(ruleBase.size());
 		ruleItems.add(HEADER);
-		for (final Rule rule : ruleBase.getRules())
+		for (final Rule rule : ruleBase)
 			ruleItems.add(new RuleListItem(ruleItems.size() - 1, this, rule));
 	}
 
