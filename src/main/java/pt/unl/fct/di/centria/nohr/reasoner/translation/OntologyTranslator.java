@@ -2,13 +2,13 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 
 /**
  * Represents a component that can translate a specified {@link OWLOntology} <i>O</i> to a {@link Program logic program} <i>T</i> and load that
- * program in a specified {@link DeductiveDatabaseManager}. The following properties must be satisfied, where <i>A</i> denotes an atomic concept and
+ * program in a specified {@link DeductiveDatabase}. The following properties must be satisfied, where <i>A</i> denotes an atomic concept and
  * the corresponding predicate, <i>P</i> an atomic role and the corresponding predicate, <i>a</i> and <i>b</i> individuals and the corresponding
  * constants:<br>
  * -<i>T&vDash;A(a) iff O&vDash;A(a)</i>;<br>
@@ -25,11 +25,11 @@ import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 public interface OntologyTranslator {
 
 	/**
-	 * Returns the {@link DeductiveDatabaseManager} where this {@link OntologyTranslator translator} load the translation.
+	 * Returns the {@link DeductiveDatabase} where this {@link OntologyTranslator translator} load the translation.
 	 *
-	 * @return the {@link DeductiveDatabaseManager} where this {@link OntologyTranslator translator} load the translation.
+	 * @return the {@link DeductiveDatabase} where this {@link OntologyTranslator translator} load the translation.
 	 */
-	public DeductiveDatabaseManager getDedutiveDatabase();
+	public DeductiveDatabase getDedutiveDatabase();
 
 	/**
 	 * Returns the {@link OWLOntology} that this {@link OntologyTranslator translator} translates.
@@ -54,7 +54,7 @@ public interface OntologyTranslator {
 
 	/**
 	 * Translates the {@link OntologyTranslator translator}'s ontology and load the translation in the {@link OntologyTranslator translator}'s
-	 * {@link DeductiveDatabaseManager}.
+	 * {@link DeductiveDatabase}.
 	 *
 	 * @throws UnsupportedAxiomsException
 	 *             if the {@link OntologyTranslator translator}'s ontology has some axioms of an unsupported type.

@@ -27,7 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -66,13 +66,13 @@ public class QueryProcessorTest extends QueryProcessor {
 	 * @throws Exception
 	 */
 	public QueryProcessorTest() throws Exception {
-		super(new XSBDeductiveDatabaseManager(
+		super(new XSBDeductiveDatabase(
 				FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb").toFile(),
 				new VocabularyMappingImpl(OWLManager.createOWLOntologyManager().createOntology())));
 	}
 
 	public void add(String rule) throws ParseException {
-		deductiveDatabaseManager.add(QueryProcessorTest.class, parser.parseRule(rule));
+		deductiveDatabaseManager.add(QueryProcessorTest.class.toString(), parser.parseRule(rule));
 	}
 
 	private List<Term> l(Term... elems) {

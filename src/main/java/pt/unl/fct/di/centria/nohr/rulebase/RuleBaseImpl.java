@@ -18,6 +18,7 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
 public class RuleBaseImpl implements RuleBase {
 
 	private final Set<RuleBaseListener> listeners;
+
 	private final Set<Rule> rules;
 
 	public RuleBaseImpl() {

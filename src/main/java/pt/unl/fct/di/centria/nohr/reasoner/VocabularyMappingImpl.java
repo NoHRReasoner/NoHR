@@ -22,6 +22,8 @@ import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLProperty;
 
+import pt.unl.fct.di.centria.nohr.MultisetImpl;
+
 /**
  * An implementation of {@link VocabularyMapping} where the concepts and rules are represented by the fragment of their IRIs and the individuals by
  * their node IDs
@@ -34,7 +36,7 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	private final OWLOntologyChangeListener ontologyChangeListener;
 
 	/** Maintains a counter of the occurrences, in the ontology, of each concept, role and individual. */
-	private final Map<OWLObject, Integer> referencesCounters;
+	private final MultisetImpl<OWLObject> references;
 
 	/** The ontologies whose concepts, rules, and individuals this {@link VocabularyMapping} maps. */
 	private final Set<OWLOntology> ontologies;
@@ -60,7 +62,7 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	 */
 	public VocabularyMappingImpl(final Set<OWLOntology> ontologies) {
 		this.ontologies = ontologies;
-		referencesCounters = new HashMap<>();
+		references = new MultisetImpl<>();
 		concepts = new HashMap<>();
 		roles = new HashMap<>();
 		individuals = new HashMap<>();
@@ -105,25 +107,6 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 			ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
 	}
 
-	/**
-	 * Decrements the counter of occurrences of a given concept, rule or individual.
-	 *
-	 * @param obj
-	 *            the object.
-	 * @return the decremented counter of occurrences of {@code obj}.
-	 */
-	private int dec(OWLObject obj) {
-		final Integer oldCounter = referencesCounters.get(obj);
-		if (oldCounter == null)
-			return 0;
-		final int newCounter = oldCounter - 1;
-		if (newCounter == 0)
-			referencesCounters.remove(obj);
-		else
-			referencesCounters.put(obj, newCounter);
-		return newCounter;
-	}
-
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
@@ -152,20 +135,6 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	}
 
 	/**
-	 * Increments the counter of occurrences of a given concept, rule or individual.
-	 *
-	 * @param obj
-	 *            the object.
-	 * @return the incremented counter of occurrences of {@code obj}.
-	 */
-	private int inc(OWLObject obj) {
-		final Integer oldCounter = referencesCounters.get(obj);
-		final int newCounter = oldCounter == null ? 1 : oldCounter + 1;
-		referencesCounters.put(obj, newCounter);
-		return newCounter;
-	}
-
-	/**
 	 * Registers an occurrence of a given concept.
 	 *
 	 * @param concept
@@ -174,7 +143,7 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	private void register(OWLClass concept) {
 		for (final String symbol : symbols(concept))
 			concepts.put(symbol, concept);
-		inc(concept);
+		references.add(concept);
 	}
 
 	/**
@@ -185,7 +154,7 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	private void register(OWLIndividual individual) {
 		for (final String symbol : symbols(individual))
 			individuals.put(symbol, individual);
-		inc(individual);
+		references.add(individual);
 	}
 
 	/**
@@ -197,7 +166,7 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	private void register(OWLProperty<?, ?> role) {
 		for (final String symbol : symbols(role))
 			roles.put(symbol, role);
-		inc(role);
+		references.add(role);
 	}
 
 	/**
@@ -233,7 +202,8 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	 *            the concept.
 	 */
 	private void unregister(OWLClass concept) {
-		if (dec(concept) == 0)
+		references.remove(concept);
+		if (!references.contains(concept))
 			for (final String symbol : symbols(concept))
 				concepts.remove(symbol);
 	}
@@ -245,7 +215,8 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	 *            a role.
 	 */
 	private void unregister(OWLProperty<?, ?> role) {
-		if (dec(role) == 0)
+		references.remove(role);
+		if (!references.contains(role))
 			for (final String symbol : symbols(role))
 				roles.put(symbol, role);
 	}
@@ -257,7 +228,8 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	 *            an individual.
 	 */
 	private void unregiter(OWLIndividual individual) {
-		if (dec(individual) == 0)
+		references.remove(individual);
+		if (!references.contains(individual))
 			for (final String symbol : symbols(individual))
 				individuals.remove(symbol);
 	}

@@ -12,7 +12,7 @@ import org.semanticweb.owlapi.profiles.OWL2QLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.el.ELOntologyTranslation;
@@ -57,14 +57,14 @@ public enum Profile {
 	 * @param ontology
 	 *            the ontology whose {@link OntologyTranslator ontology translation} will be created.
 	 * @param dedutiveDatabase
-	 *            the {@link DeductiveDatabaseManager dedutive database} where the ontology translation will be loaded.
+	 *            the {@link DeductiveDatabase dedutive database} where the ontology translation will be loaded.
 	 * @return the {@link OntologyTranslator ontology translation} of {@code ontology} for this profile.
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} has some axiom of a type that isn't supported in this profile.
 	 * @throws OWLProfilesViolationsException
 	 *             if {@code ontology} isn't in this profile.
 	 */
-	public OntologyTranslator createOntologyTranslation(OWLOntology ontology, DeductiveDatabaseManager dedutiveDatabase)
+	public OntologyTranslator createOntologyTranslation(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		final OWLProfileReport report = owlProfile().checkOntology(ontology);
 		if (!report.isInProfile())

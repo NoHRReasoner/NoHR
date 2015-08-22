@@ -27,7 +27,7 @@ import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
@@ -63,7 +63,7 @@ public class QLOntologyTranslation extends OntologyTranslatorImplementor {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} contains some axioms of unsupported types.
 	 */
-	public QLOntologyTranslation(OWLOntology ontology, DeductiveDatabaseManager dedutiveDatabase)
+	public QLOntologyTranslation(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
 			throws UnsupportedAxiomsException {
 		super(ontology, dedutiveDatabase);
 		ontologyNormalization = new QLOntologyNormalizationImpl(ontology);

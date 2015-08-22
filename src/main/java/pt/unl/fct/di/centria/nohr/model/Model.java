@@ -355,21 +355,6 @@ public class Model {
 	}
 
 	/**
-	 * Create a {@link Program program} with given sets of tabled predicate and rules.
-	 *
-	 * @param the
-	 *            object that univocally identifies the program.
-	 * @param tableDirectives
-	 *            the tabled predicates.
-	 * @param rules
-	 *            the rules.
-	 * @return the program composed by the tabled predicates {@code tabledPredicates} and the rules {@code rules}.
-	 */
-	public static Program prog(Object id, Set<TableDirective> tableDirectives, Set<Rule> rules) {
-		return new ProgramImpl(id, tableDirectives, rules);
-	}
-
-	/**
 	 * Create a query from a specified list of literals.
 	 *
 	 * @param literals

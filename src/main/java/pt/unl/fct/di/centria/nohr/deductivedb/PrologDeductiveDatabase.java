@@ -1,7 +1,11 @@
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.fail;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.table;
+
 import java.io.BufferedWriter;
-import static pt.unl.fct.di.centria.nohr.model.Model.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,11 +32,12 @@ import com.declarativa.interprolog.SolutionIterator;
 import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.Multiset;
+import pt.unl.fct.di.centria.nohr.MultisetImpl;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
-import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.TableDirective;
@@ -44,11 +49,11 @@ import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
- * Partial implementation of {@link DeductiveDatabaseManager} based on the Interprolog API.
+ * Partial implementation of {@link DeductiveDatabase} based on the Interprolog API.
  *
  * @author Nuno Costa
  */
-public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabaseManager {
+public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	/**
 	 * The maximum time, in seconds, in which the construction of a {@link PrologEngine} will be attempted, before giving up and throw a
@@ -56,8 +61,10 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 	 */
 	private static final int CREATION_TIMEOUT = 3;
 
-	/** The name of the file were the programs are written. */
-	private static final String PROLOG_FILE_NAME = "nohrtr.P";
+	/** The name of the file were the table directives and fail rules are written. */
+	private static final String TABLES_FILE_NAME = "tables.P";
+
+	private static final String FAILS_FILE_NAME = "fails.P";
 
 	private final TermModelConverter termModelConverter;
 
@@ -68,7 +75,7 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 	 * The {@link FormatVisitor} that formats the {@link Rule rules} and {@link TableDirective table directives} when they are sent to the Prolog
 	 * engine.
 	 */
-	private final FormatVisitor formatVisitor;
+	protected final FormatVisitor formatVisitor;
 
 	/**
 	 * The {@link SolutionIterator} returned by the last {@link PrologEngine#goal(String, String, Object[], String)} call.
@@ -81,19 +88,28 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 	/** The prolog engine to where the {@link Program programs} will be loaded and that will answer the queries. */
 	protected PrologEngine prologEngine;
 
-	/** The mapping between {@link Program programs} identifiers and respective programs {@link Rules rules}. */
-	private final Map<Object, Set<Rule>> rules;
-
-	/** The set of {@link TableDirectives} table directive. */
-	private final Set<TableDirective> tableDirectives;
-
-	/** Whether the loaded programs have changed since the last call to {@link #generateFile()}. */
-	private boolean changed;
-
-	private final Set<Predicate> negativeHeadFunctors;
+	private final Map<String, Set<Rule>> programs;
 
 	/**
-	 * Constructs a {@link DeductiveDatabaseManager} with the Prolog system located in a given directory as underlying Prolog engine.
+	 * The multiset of {@link TableDirectives} table directives, where the multiplicity represent the number of rules where the tabled predicate
+	 * occurs.
+	 */
+	private final MultisetImpl<TableDirective> tableDirectives;
+
+	/** The set of programs that have changed since the last call to {@link #load()}. Is {@code null} if all the programs where disposed. */
+	private final Set<Object> changedProgramsKeys;
+
+	/**
+	 * The multiset of negative head predicate functors, where the multiplicity represent the number of rules where that predicates occurs.
+	 */
+	private final Multiset<Predicate> negativeHeadFunctors;
+
+	private final Map<Predicate, Multiset<String>> definingPrograms;
+
+	private final Map<String, Multiset<Predicate>> definedPredicates;
+
+	/**
+	 * Constructs a {@link DeductiveDatabase} with the Prolog system located in a given directory as underlying Prolog engine.
 	 *
 	 * @param binDirectory
 	 *            the directory where the Prolog system that will be used as underlying Prolog engine is located.
@@ -105,32 +121,32 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 	 *             if the creation of the underlying Prolog engine timed out. That could mean that the Prolog system located at {@code binDirectory}
 	 *             isn't an operational Prolog system.
 	 */
-	public PrologDeductiveDatabaseManager(File binDirectory, String prologModuleName,
-			VocabularyMapping vocabularyMapping) throws IPException, PrologEngineCreationException {
+	public PrologDeductiveDatabase(File binDirectory, String prologModuleName, VocabularyMapping vocabularyMapping)
+			throws IPException, PrologEngineCreationException {
 		Objects.requireNonNull(binDirectory);
 		this.binDirectory = binDirectory;
 		formatVisitor = new XSBFormatVisitor();
 		prologEngineInterface = new PrologSystemInterface(formatVisitor, prologModuleName);
 		termModelConverter = new TermModelConverter(vocabularyMapping);
-		tableDirectives = new HashSet<>();
-		rules = new HashMap<>();
-		negativeHeadFunctors = new HashSet<>();
+		tableDirectives = new MultisetImpl<>();
+		negativeHeadFunctors = new MultisetImpl<>();
+		definingPrograms = new HashMap<>();
+		definedPredicates = new HashMap<>();
+		programs = new HashMap<>();
+		changedProgramsKeys = new HashSet<>();
 		startPrologEngine();
 	}
 
 	@Override
-	public void add(Object programID, Rule rule) {
-		computeTabledDirectives(rule);
+	public void add(String programKey, Rule rule) {
+		tableDirectives.addAll(tableDirectives(rule));
 		final Predicate headFunctor = rule.getHead().getFunctor();
+		addToMultiset(headFunctor, programKey, definingPrograms);
+		addToMultiset(programKey, headFunctor, definedPredicates);
+		addToSet(programKey, rule, programs);
 		if (headFunctor.isMetaPredicate() && headFunctor.asMetaPredicate().hasType(PredicateType.NEGATIVE))
 			negativeHeadFunctors.add(headFunctor);
-		Set<Rule> program = rules.get(programID);
-		if (program == null) {
-			program = new HashSet<>();
-			rules.put(programID, program);
-		}
-		program.add(rule);
-		changed = false;
+		changedProgramsKeys.add(programKey);
 	}
 
 	/**
@@ -149,6 +165,24 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 		final TruthValue truth = termModelConverter.truthValue(termsList[0]);
 		answers.put(vals, truth);
 
+	}
+
+	private <K, E> void addToMultiset(K key, E element, Map<K, Multiset<E>> map) {
+		Multiset<E> collection = map.get(key);
+		if (collection == null) {
+			collection = new MultisetImpl<E>();
+			map.put(key, collection);
+		}
+		collection.add(element);
+	}
+
+	private <K, E> void addToSet(K key, E element, Map<K, Set<E>> map) {
+		Set<E> collection = map.get(key);
+		if (collection == null) {
+			collection = new HashSet<E>();
+			map.put(key, collection);
+		}
+		collection.add(element);
 	}
 
 	/**
@@ -203,7 +237,7 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 		final SolutionIterator solutions = prologEngine.goal(prologEngineInterface.detGoal(query, trueAnswers, "TM"),
 				"[TM]");
 		lastSolutionsIterator = solutions;
-		final PrologDeductiveDatabaseManager xsbDatabase = this;
+		final PrologDeductiveDatabase xsbDatabase = this;
 		return new Iterable<Answer>() {
 
 			@Override
@@ -262,12 +296,17 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 		return answers;
 	}
 
+	/**
+	 * Create the concrete underlying {@link PrologEngine Prolog engine}.
+	 */
+	protected abstract PrologEngine createPrologEngine();
+
 	@Override
 	public void dipose() {
 		try {
 			tableDirectives.clear();
-			rules.clear();
-			changed = false;
+			programs.clear();
+			changedProgramsKeys.clear();
 			prologEngine.shutdown();
 			startPrologEngine();
 		} catch (IPException | PrologEngineCreationException e) {
@@ -276,34 +315,20 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 	}
 
 	@Override
-	public void dispose(Object programID) {
-		final Set<Rule> program = rules.get(programID);
-		if (program != null)
-			program.clear();
-		changed = false;
+	public void dispose(Object programKey) {
+		programs.remove(programKey);
 	}
 
 	/**
-	 * Computes the set of predicates whose atoms must be failed (i.e. must have a false truth value) and the correspondig rules.
+	 * Computes the set of predicates whose atoms must be failed (i.e. must have a false truth value) and add the corresponding rules.
 	 */
-	private void computeFailedAtoms(Object programID) {
-		final Set<Rule> program = rules.get(programID);
+	private Set<Rule> failRules() {
+		final Set<Rule> result = new HashSet<>();
 		for (final TableDirective tableDirective : tableDirectives)
 			if (isFailed(tableDirective.getPredicate()))
-				program.add(rule(atom(tableDirective.getPredicate()), fail()));
+				result.add(rule(atom(tableDirective.getPredicate()), fail()));
+		return result;
 	}
-
-	private void computeTabledDirectives(Rule rule) {
-		final Predicate headPred = rule.getHead().getFunctor();
-		tableDirectives.add(table(headPred));
-		for (final Literal negLiteral : rule.getNegativeBody())
-			tableDirectives.add(table(negLiteral.getFunctor()));
-	}
-
-	/**
-	 * Create the concrete underlying {@link PrologEngine Prolog engine}.
-	 */
-	protected abstract PrologEngine createPrologEngine();
 
 	@Override
 	protected void finalize() throws Throwable {
@@ -311,39 +336,47 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 		dipose();
 	}
 
-	/**
-	 * Write a Prolog file with all the {@link TableDirective table directives} and {@link Rule rules} of the loaded {@link Program program} to be
-	 * loaded in the underlying {@link PrologEngine prolog engine}.
-	 *
-	 * @return the generated file.
-	 * @throws IOException
-	 *             if the generation of the file failed.
-	 */
-	private File generateFile() throws IOException {
-		for (final Object programID : rules.keySet())
-			computeFailedAtoms(programID);
-		final File file = FileSystems.getDefault().getPath(PROLOG_FILE_NAME).toAbsolutePath().toFile();
+	private File generateFailsFile() throws IOException {
+		final File file = FileSystems.getDefault().getPath(FAILS_FILE_NAME).toAbsolutePath().toFile();
+		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
+		for (final Rule rule : failRules()) {
+			writer.write(rule.accept(xsbFormatedVisitor));
+			writer.newLine();
+		}
+		writer.close();
+		return file;
+	}
+
+	private File generateFile(String programKey) throws IOException {
+		final File file = FileSystems.getDefault().getPath(programKey.toString() + ".P").toAbsolutePath().toFile();
+		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
+		for (final Predicate predicate : definedPredicates.get(programKey))
+			if (definingPrograms.get(predicate).size() > 1) {
+				writer.write(multifileDirective(predicate));
+				writer.newLine();
+			}
+		for (final Rule rule : programs.get(programKey)) {
+			writer.write(rule.accept(xsbFormatedVisitor));
+			writer.newLine();
+		}
+		writer.close();
+		return file;
+	}
+
+	private File generateTablesFile() throws IOException {
+		final File file = FileSystems.getDefault().getPath(TABLES_FILE_NAME).toAbsolutePath().toFile();
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		final FormatVisitor xsbFormatedVisitor = new XSBFormatVisitor();
 		for (final TableDirective predicate : tableDirectives) {
 			writer.write(predicate.accept(xsbFormatedVisitor));
 			writer.newLine();
 		}
-		for (final Set<Rule> program : rules.values())
-			for (final Rule rule : program) {
-				writer.write(rule.accept(xsbFormatedVisitor));
-				writer.newLine();
-			}
-
 		writer.close();
 		return file;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.prolog.DedutiveDatabase#hasAnswers(pt.unl.fct.di.centria.nohr.model.Query)
-	 */
 	@Override
 	public boolean hasAnswers(Query query) throws IOException {
 		return hasAnswers(query, null);
@@ -370,46 +403,48 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 
 	private boolean isFailed(Predicate predicate) {
 		return predicate.isMetaPredicate() && predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE)
-				&& !isNegativeHeadFunctor(predicate);
-	}
-
-	private boolean isNegativeHeadFunctor(Predicate predicate) {
-		if (!predicate.isMetaPredicate() || !predicate.asMetaPredicate().hasType(PredicateType.NEGATIVE))
-			throw new IllegalArgumentException("predicate: should be a negative meta-predicate");
-		return negativeHeadFunctors.contains(predicate);
+				&& !negativeHeadFunctors.contains(predicate);
 	}
 
 	/**
-	 * Load the loaded {@link Program programs} in the underlying {@link PrologEngine}.
+	 * Load all the <i>programs</i> in the underlying {@link PrologEngine}.
 	 *
 	 * @throws IOException
 	 *             if the generation of the Prolog file failed.
 	 */
 	private void load() throws IOException {
-		if (changed)
+		if (changedProgramsKeys == null || changedProgramsKeys.isEmpty())
 			return;
 		RuntimesLogger.start("file writing");
-		final File file = generateFile();
+		final List<File> files = new ArrayList<>(programs.size());
+		files.add(generateTablesFile());
+		files.add(generateFailsFile());
+		for (final String programKey : programs.keySet())
+			files.add(generateFile(programKey));
 		RuntimesLogger.stop("file writing", "loading");
 		RuntimesLogger.start("xsb loading");
-		final boolean loaded = prologEngine.load_dynAbsolute(file);
+		for (final File file : files)
+			if (!prologEngine.load_dynAbsolute(file))
+				throw new IPException("file not loaded");
 		RuntimesLogger.stop("xsb loading", "loading");
-		if (!loaded)
-			throw new IPException("file not loaded");
-		changed = true;
+		changedProgramsKeys.clear();
 	}
 
+	abstract protected String multifileDirective(Predicate predicate);
+
 	@Override
-	public void remove(Object programID, Rule rule) {
-		computeTabledDirectives(rule);
-		final Predicate headFunctor = rule.getHead().getFunctor();
-		if (headFunctor.isMetaPredicate() && headFunctor.asMetaPredicate().hasType(PredicateType.NEGATIVE))
-			negativeHeadFunctors.add(headFunctor);
-		final Set<Rule> program = rules.get(programID);
+	public void remove(String programKey, Rule rule) {
+		final Set<Rule> program = programs.get(programKey);
 		if (program == null)
 			return;
+		tableDirectives.removeAll(tableDirectives(rule));
+		final Predicate headFunctor = rule.getHead().getFunctor();
+		definedPredicates.get(programKey).remove(headFunctor);
+		definingPrograms.get(headFunctor).remove(programKey);
+		if (headFunctor.isMetaPredicate() && headFunctor.asMetaPredicate().hasType(PredicateType.NEGATIVE))
+			negativeHeadFunctors.remove(headFunctor);
 		program.remove(rule);
-		changed = false;
+		changedProgramsKeys.add(programKey);
 	}
 
 	/**
@@ -423,9 +458,20 @@ public abstract class PrologDeductiveDatabaseManager implements DeductiveDatabas
 	 */
 	private void startPrologEngine() throws PrologEngineCreationException, IPException {
 		prologEngine = tryPrologEngineCreation();
-		final DeductiveDatabaseManager self = this;
+		final DeductiveDatabase self = this;
 		prologEngine.consultFromPackage(prologEngineInterface.getPrologModuleName(), self);
 		initializePrologEngine();
+	}
+
+	abstract protected String tableDirective(Predicate predicate);
+
+	private Set<TableDirective> tableDirectives(Rule rule) {
+		final Set<TableDirective> tableDirectives = new HashSet<>();
+		final Predicate headPred = rule.getHead().getFunctor();
+		tableDirectives.add(table(headPred));
+		for (final Literal negLiteral : rule.getNegativeBody())
+			tableDirectives.add(table(negLiteral.getFunctor()));
+		return tableDirectives;
 	}
 
 	/**

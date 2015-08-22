@@ -8,30 +8,29 @@ import java.util.List;
 import java.util.Map;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 
 /**
- * Represents a in-memory deductive database manager. A {@link DeductiveDatabaseManager} maintains a set of logic <i>programs</i> - sets of
- * {@link Rule rules} univocally identified by {@link Object object} keys - to which lets the client add or remove rules, and answers to queries based
- * on that programs.
+ * Represents a in-memory deductive database manager. A {@link DeductiveDatabase} maintains a set of logic <i>programs</i> - sets of {@link Rule
+ * rules} univocally identified by {@link String string} keys - to which lets the client add or remove rules, and answers to queries based on that
+ * programs.
  *
  * @author Nuno Costa
  */
-public interface DeductiveDatabaseManager {
+public interface DeductiveDatabase {
 
 	/**
 	 * Adds a given {@link Rule rule} to the <i>program</i> with a given key.
 	 *
 	 * @param key
-	 *            the object that univocally identifies the <i>program</i> where the {@link Rule rule} will be added.
+	 *            the string that univocally identifies the <i>program</i> where the {@link Rule rule} will be added.
 	 * @param rule
 	 *            the rule to be added.
 	 */
-	void add(Object key, Rule rule);
+	void add(String key, Rule rule);
 
 	/**
 	 * Deterministically obtains one answer to a given query, based on the loaded {@link Program programs}.
@@ -40,7 +39,7 @@ public interface DeductiveDatabaseManager {
 	 *            the query that will be answered.
 	 * @return one answer to {@code query}.
 	 * @throws IOException
-	 *             if {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	Answer answer(Query query) throws IOException;
 
@@ -55,7 +54,7 @@ public interface DeductiveDatabaseManager {
 	 *            two if {@code trueAnswers == null}.
 	 * @return one answer to {@code query} valuated according to {@code two answers}.
 	 * @throws IOException
-	 *             if {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	Answer answer(Query query, Boolean trueAnswers) throws IOException;
 
@@ -66,7 +65,7 @@ public interface DeductiveDatabaseManager {
 	 *            the query that will be answered.
 	 * @return one {@link Iterable} of all the answers to {@code query}.
 	 * @throws IOException
-	 *             if {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	Iterable<Answer> answers(Query query) throws IOException;
 
@@ -81,7 +80,7 @@ public interface DeductiveDatabaseManager {
 	 *            two if {@code trueAnswers == null}.
 	 * @return one {@link Iterable} of all the answers to {@code query}.
 	 * @throws IOException
-	 *             if {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	Iterable<Answer> answers(Query query, Boolean trueAnswers) throws IOException;
 
@@ -95,7 +94,7 @@ public interface DeductiveDatabaseManager {
 	 *         of terms to which each {@code query}'s free variable is mapped, in the same order that those variables appear - and the
 	 *         {@link TruthValue valuation} of that answer.
 	 * @throws IOException
-	 *             if {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	Map<List<Term>, TruthValue> answersValuations(Query query) throws IOException;
 
@@ -113,7 +112,7 @@ public interface DeductiveDatabaseManager {
 	 *         of terms to which each {@code query}'s free variable is mapped, in the same order that those variables appear - and the
 	 *         {@link TruthValue valuation} of that answer.
 	 * @throws IOException
-	 *             if {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) throws IOException;
 
@@ -137,7 +136,7 @@ public interface DeductiveDatabaseManager {
 	 *            the query that will be checked for answers.
 	 * @return true iff there is some answer to {@code query}.
 	 * @throws IOException
-	 *             if {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	boolean hasAnswers(Query query) throws IOException;
 
@@ -152,7 +151,7 @@ public interface DeductiveDatabaseManager {
 	 *            {@code trueAnswers == false}; and any of the two if {@code trueAnswers == null}.
 	 * @return true iff there is some answer to {@code query}.
 	 * @throws IOException
-	 *             if {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	boolean hasAnswers(Query query, Boolean trueAnswers) throws IOException;
 
@@ -167,10 +166,10 @@ public interface DeductiveDatabaseManager {
 	 * Removes a given {@link Rule rule} from the <i>program</i> with a given key.
 	 *
 	 * @param key
-	 *            the object that univocally identifies the <i>program</i> from where the {@link Rule rule} will be removed.
+	 *            the string that univocally identifies the <i>program</i> from where the {@link Rule rule} will be removed.
 	 * @param rule
 	 *            the rule to be removed.
 	 */
-	void remove(Object key, Rule rule);
+	void remove(String key, Rule rule);
 
 }

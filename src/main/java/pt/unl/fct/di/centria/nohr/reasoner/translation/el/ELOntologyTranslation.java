@@ -9,7 +9,7 @@ import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImplementor;
@@ -41,7 +41,7 @@ public class ELOntologyTranslation extends OntologyTranslatorImplementor {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} contains some axioms of unsupported types.
 	 */
-	public ELOntologyTranslation(OWLOntology ontology, DeductiveDatabaseManager dedutiveDatabase)
+	public ELOntologyTranslation(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
 			throws UnsupportedAxiomsException {
 		super(ontology, dedutiveDatabase);
 		originalAxiomsTranslator = new ELOriginalAxiomsTranslator();

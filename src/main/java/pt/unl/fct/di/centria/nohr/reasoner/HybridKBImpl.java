@@ -22,9 +22,9 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
@@ -37,11 +37,6 @@ import pt.unl.fct.di.centria.nohr.rulebase.RuleBaseListener;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class HybridKBImpl implements HybridKB {
-
-	/**
-	 *
-	 */
-	private static final String RULES_DOUBLIG_PROGRAM_ID = "rules_doublig";
 
 	private boolean hasDisjunctions;
 
@@ -57,7 +52,7 @@ public class HybridKBImpl implements HybridKB {
 
 	private final RuleBase ruleBase;
 
-	private final DeductiveDatabaseManager dedutiveDatabaseManager;
+	private final DeductiveDatabase dedutiveDatabaseManager;
 
 	private final VocabularyMapping vocabularyMapping;
 
@@ -106,7 +101,7 @@ public class HybridKBImpl implements HybridKB {
 		ontologies.add(ontology);
 		vocabularyMapping = new VocabularyMappingImpl(ontologies);
 		hasOntologyChanges = true;
-		dedutiveDatabaseManager = new XSBDeductiveDatabaseManager(xsbBinDirectory, vocabularyMapping);
+		dedutiveDatabaseManager = new XSBDeductiveDatabase(xsbBinDirectory, vocabularyMapping);
 		ontologyTranslator = new OntologyTranslatorImpl(ontology, dedutiveDatabaseManager, profile);
 		queryProcessor = new QueryProcessor(dedutiveDatabaseManager);
 		this.ruleBase = ruleBase;
@@ -192,6 +187,10 @@ public class HybridKBImpl implements HybridKB {
 		return ruleBase;
 	}
 
+	private String getRuleBaseProgramKey() {
+		return "rulebase" + ruleBase.hashCode();
+	}
+
 	@Override
 	public VocabularyMapping getVocabularyMapping() {
 		return vocabularyMapping;
@@ -237,10 +236,10 @@ public class HybridKBImpl implements HybridKB {
 		}
 		if (hasRuleChanges || ontologyTranslator.hasDisjunctions() != hasDisjunctions) {
 			RuntimesLogger.start("rules parsing");
-			dedutiveDatabaseManager.dispose(RULES_DOUBLIG_PROGRAM_ID);
+			dedutiveDatabaseManager.dispose(getRuleBaseProgramKey());
 			for (final Rule rule : ruleBase)
 				for (final Rule doublingRule : RulesDoubling.doubleRule(rule))
-					dedutiveDatabaseManager.add(RULES_DOUBLIG_PROGRAM_ID, doublingRule);
+					dedutiveDatabaseManager.add(getRuleBaseProgramKey(), doublingRule);
 			RuntimesLogger.stop("rules parsing", "loading");
 		}
 		hasOntologyChanges = false;

@@ -9,17 +9,18 @@ import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 
 /**
- * Implements an {@link DeductiveDatabaseManager} backed by a XSB Prolog system.
+ * Implements an {@link DeductiveDatabase} backed by a XSB Prolog system.
  *
  * @author Nuno Costa
  */
-public class XSBDeductiveDatabaseManager extends PrologDeductiveDatabaseManager {
+public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	/**
-	 * Constructs a {@link DeductiveDatabaseManager} with the XSB Prolog system located in a given directory as underlying Prolog engine.
+	 * Constructs a {@link DeductiveDatabase} with the XSB Prolog system located in a given directory as underlying Prolog engine.
 	 *
 	 * @param binDirectory
 	 *            the directory where the Prolog system that will be used as underlying Prolog engine is located.
@@ -29,7 +30,7 @@ public class XSBDeductiveDatabaseManager extends PrologDeductiveDatabaseManager 
 	 *             if the creation of the underlying Prolog engine timed out. That could mean that the Prolog system located at {@code binDirectory}
 	 *             isn't an operational Prolog system.
 	 */
-	public XSBDeductiveDatabaseManager(File binDirectory, VocabularyMapping vocabularyMapping)
+	public XSBDeductiveDatabase(File binDirectory, VocabularyMapping vocabularyMapping)
 			throws IPException, PrologEngineCreationException {
 		super(binDirectory, "startup", vocabularyMapping);
 	}
@@ -47,6 +48,16 @@ public class XSBDeductiveDatabaseManager extends PrologDeductiveDatabaseManager 
 	@Override
 	protected void initializePrologEngine() {
 		prologEngine.deterministicGoal("set_prolog_flag(unknown, fail)");
+	}
+
+	@Override
+	protected String multifileDirective(Predicate predicate) {
+		return ":- multifile " + predicate.accept(formatVisitor) + "/" + predicate.getArity() + ".";
+	}
+
+	@Override
+	protected String tableDirective(Predicate pred) {
+		return ":- table " + pred.accept(formatVisitor) + "/" + pred.getArity() + " as subsumptive.";
 	}
 
 }

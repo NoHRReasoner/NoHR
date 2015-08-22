@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
@@ -17,7 +17,7 @@ import pt.unl.fct.di.centria.nohr.model.TruthValue;
 
 /**
  * Handle queries to a {@link HybridKB}. Given a certain query, executes the corresponding original and double - or original only, if the KB hasn't
- * disjunctions - queries on the underlying {@link DeductiveDatabaseManager} and combines their results to obtain the query's answers according to
+ * disjunctions - queries on the underlying {@link DeductiveDatabase} and combines their results to obtain the query's answers according to
  * {@link <a href="http://tocl.acm.org/accepted/464knorr.pdf"><i>Query-driven Procedures for Hybrid MKNF Knowledge Bases</i></a>}.
  *
  * @author Nuno Costa
@@ -25,17 +25,17 @@ import pt.unl.fct.di.centria.nohr.model.TruthValue;
 public class QueryProcessor {
 
 	/**
-	 * The underlying {@link DeductiveDatabaseManager}, where the queries will be posed.
+	 * The underlying {@link DeductiveDatabase}, where the queries will be posed.
 	 */
-	protected DeductiveDatabaseManager deductiveDatabaseManager;
+	protected DeductiveDatabase deductiveDatabaseManager;
 
 	/**
-	 * Constructs a query processor to a given {@link DeductiveDatabaseManager}.
+	 * Constructs a query processor to a given {@link DeductiveDatabase}.
 	 *
 	 * @param deductiveDatabaseManager
-	 *            the {@link DeductiveDatabaseManager} where the queries will be posed.
+	 *            the {@link DeductiveDatabase} where the queries will be posed.
 	 */
-	protected QueryProcessor(DeductiveDatabaseManager deductiveDatabaseManager) {
+	protected QueryProcessor(DeductiveDatabase deductiveDatabaseManager) {
 		this.deductiveDatabaseManager = deductiveDatabaseManager;
 	}
 
@@ -48,7 +48,7 @@ public class QueryProcessor {
 	 *            specifies whether the KB is doubled is doubled.
 	 * @return the list of all answers {@code query}.
 	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	protected List<Answer> allAnswers(Query query, boolean hasDoubled) throws IOException {
 		return allAnswers(query, hasDoubled, true, true, hasDoubled);
@@ -70,7 +70,7 @@ public class QueryProcessor {
 	 * @return the list of all answers {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
 	 *         {@code inconsistentAnswers} flags.
 	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	protected List<Answer> allAnswers(Query query, boolean isDoubled, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) throws IOException {
@@ -125,7 +125,7 @@ public class QueryProcessor {
 	 * @return true iff there is at least one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
 	 *         {@code inconsistentAnswers} flags.
 	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	protected boolean hasAnswer(Query query, boolean hasDoubled) throws IOException {
 		return hasAnswer(query, hasDoubled, true, true, hasDoubled);
@@ -147,7 +147,7 @@ public class QueryProcessor {
 	 * @return true iff there is at least one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
 	 *         {@code inconsistentAnswers} flags.
 	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	protected boolean hasAnswer(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) throws IOException {
@@ -218,7 +218,7 @@ public class QueryProcessor {
 	 *            specifies whether the KB is doubled.
 	 * @return one answer to {@code query}.
 	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	protected Answer oneAnswer(Query query, boolean hasDoubled) throws IOException {
 		return oneAnswer(query, hasDoubled, true, true, hasDoubled);
@@ -240,7 +240,7 @@ public class QueryProcessor {
 	 * @return one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and {@code inconsistentAnswers}
 	 *         flags.
 	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabaseManager} needed to read or write some file and was unsuccessful.
+	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	protected Answer oneAnswer(Query query, boolean isDoubled, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) throws IOException {

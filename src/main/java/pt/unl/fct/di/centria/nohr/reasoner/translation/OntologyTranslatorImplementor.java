@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabaseManager;
+import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 
 /**
@@ -17,14 +17,9 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
 public abstract class OntologyTranslatorImplementor implements OntologyTranslator {
 
 	/**
-	 * The key of the <i>program</i> (see {@link DeductiveDatabaseManager}) where the translation rules are added.
+	 * The {@link DeductiveDatabase} to where the translation rules are added.
 	 */
-	private static final String PROGRAM_ID = "ontology_translation";
-
-	/**
-	 * The {@link DeductiveDatabaseManager} to where the translation rules are added.
-	 */
-	private final DeductiveDatabaseManager dedutiveDatabaseManager;
+	private final DeductiveDatabase dedutiveDatabaseManager;
 
 	/**
 	 * The translated ontology.
@@ -37,42 +32,42 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 	 * @param ontology
 	 *            the ontology to translate.
 	 * @param dedutiveDatabase
-	 *            the {@link DeductiveDatabaseManager} where the ontology translation will be loaded.
+	 *            the {@link DeductiveDatabase} where the ontology translation will be loaded.
 	 */
-	public OntologyTranslatorImplementor(OWLOntology ontology, DeductiveDatabaseManager dedutiveDatabase) {
+	public OntologyTranslatorImplementor(OWLOntology ontology, DeductiveDatabase dedutiveDatabase) {
 		this.ontology = ontology;
 		dedutiveDatabaseManager = dedutiveDatabase;
 	}
 
 	/**
-	 * Add a given rule to the underlying {@link DeductiveDatabaseManager}.
+	 * Add a given rule to the underlying {@link DeductiveDatabase}.
 	 *
 	 * @param rule
 	 *            a rule.
 	 */
 	protected void add(Rule rule) {
-		dedutiveDatabaseManager.add(PROGRAM_ID, rule);
+		dedutiveDatabaseManager.add(getProgramKey(), rule);
 	}
 
 	/**
-	 * Add a given set of rules to the underlying {@link DeductiveDatabaseManager}.
+	 * Add a given set of rules to the underlying {@link DeductiveDatabase}.
 	 *
 	 * @param rule
 	 *            a rule set.
 	 */
 	protected void addAll(Set<Rule> rules) {
 		for (final Rule rule : rules)
-			dedutiveDatabaseManager.add(PROGRAM_ID, rule);
+			dedutiveDatabaseManager.add(getProgramKey(), rule);
 	}
 
 	/**
 	 * Execute the translation of the ontology that these {@link OntologyTranslatorImplementor} refer. The rules must be added to the underlying
-	 * {@link DeductiveDatabaseManager} calling {@link #add(Rule)} or {@link #addAll(Set)}.
+	 * {@link DeductiveDatabase} calling {@link #add(Rule)} or {@link #addAll(Set)}.
 	 */
 	protected abstract void execute();
 
 	@Override
-	public DeductiveDatabaseManager getDedutiveDatabase() {
+	public DeductiveDatabase getDedutiveDatabase() {
 		return dedutiveDatabaseManager;
 	}
 
@@ -81,9 +76,18 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 		return ontology;
 	}
 
+	/**
+	 * Returns the key of the <i>program</i> (see {@link DeductiveDatabase}) where the translation rules are added.
+	 *
+	 * @return returns the key of the <i>program</i> (see {@link DeductiveDatabase}) where the translation rules are added.
+	 */
+	private String getProgramKey() {
+		return getOntology().getOntologyID().getOntologyIRI().toURI().toString();
+	}
+
 	@Override
 	public void translate() {
-		dedutiveDatabaseManager.dispose(PROGRAM_ID);
+		dedutiveDatabaseManager.dispose(getProgramKey());
 		execute();
 	}
 
