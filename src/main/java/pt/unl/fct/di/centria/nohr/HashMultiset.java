@@ -14,12 +14,12 @@ import java.util.Set;
  *
  * @author Nuno Costa
  */
-public class MultisetImpl<E> implements Set<E>, Multiset<E> {
+public class HashMultiset<E> implements Set<E>, Multiset<E> {
 
 	/** The multiplicities of the elements in the set */
 	private final Map<E, Integer> multiplicities;
 
-	public MultisetImpl() {
+	public HashMultiset() {
 		multiplicities = new HashMap<>();
 	}
 
@@ -63,7 +63,7 @@ public class MultisetImpl<E> implements Set<E>, Multiset<E> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final MultisetImpl<?> other = (MultisetImpl<?>) obj;
+		final HashMultiset<?> other = (HashMultiset<?>) obj;
 		if (multiplicities == null) {
 			if (other.multiplicities != null)
 				return false;
@@ -143,6 +143,11 @@ public class MultisetImpl<E> implements Set<E>, Multiset<E> {
 	@Override
 	public <T> T[] toArray(T[] a) {
 		return multiplicities.keySet().toArray(a);
+	}
+
+	@Override
+	public String toString() {
+		return multiplicities.toString();
 	}
 
 }

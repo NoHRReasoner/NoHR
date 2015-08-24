@@ -14,23 +14,12 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 
 /**
- * Represents a in-memory deductive database manager. A {@link DeductiveDatabase} maintains a set of logic <i>programs</i> - sets of {@link Rule
- * rules} univocally identified by {@link String string} keys - to which lets the client add or remove rules, and answers to queries based on that
- * programs.
+ * Maintains a set of {@link Program programs} and can answer queries to the union of that programs (i.e. the logic program formed by all the
+ * {@link Rule rules} of those programs).
  *
  * @author Nuno Costa
  */
 public interface DeductiveDatabase {
-
-	/**
-	 * Adds a given {@link Rule rule} to the <i>program</i> with a given key.
-	 *
-	 * @param key
-	 *            the string that univocally identifies the <i>program</i> where the {@link Rule rule} will be added.
-	 * @param rule
-	 *            the rule to be added.
-	 */
-	void add(String key, Rule rule);
 
 	/**
 	 * Deterministically obtains one answer to a given query, based on the loaded {@link Program programs}.
@@ -117,17 +106,16 @@ public interface DeductiveDatabase {
 	Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) throws IOException;
 
 	/**
-	 * Dispose all <i>programs</i> and release all the reclaimed resources.
+	 * Creates and loads a new {@link Program program}.
+	 *
+	 * @return a new {@link Program program}.
 	 */
-	void dipose();
+	Program createProgram();
 
 	/**
-	 * Dispose the <i>program</i> with a given key.
-	 *
-	 * @param programKey
-	 *            the key of the program to be removed.
+	 * Dispose all {@link Program programs} and release all the reclaimed resources.
 	 */
-	void dispose(Object programKey);
+	void dipose();
 
 	/**
 	 * Checks if there is some answer to given query, based on the loaded {@link Program programs}.
@@ -161,15 +149,5 @@ public interface DeductiveDatabase {
 	 * @return true if the {@link Query queries} will be answered according to the Well Founded Semantic.
 	 */
 	boolean hasWFS();
-
-	/**
-	 * Removes a given {@link Rule rule} from the <i>program</i> with a given key.
-	 *
-	 * @param key
-	 *            the string that univocally identifies the <i>program</i> from where the {@link Rule rule} will be removed.
-	 * @param rule
-	 *            the rule to be removed.
-	 */
-	void remove(String key, Rule rule);
 
 }

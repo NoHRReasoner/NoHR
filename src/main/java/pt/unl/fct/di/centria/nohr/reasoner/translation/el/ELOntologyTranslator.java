@@ -22,7 +22,7 @@ import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
  *
  * @author Nuno Costa
  */
-public class ELOntologyTranslation extends OntologyTranslatorImplementor {
+public class ELOntologyTranslator extends OntologyTranslatorImplementor {
 
 	/** The {@link ELAxiomsTranslator} that obtain the double rules of this {@link OntologyTranslator}. */
 	private final ELDoubleAxiomsTranslator doubleAxiomsTranslator;
@@ -31,7 +31,7 @@ public class ELOntologyTranslation extends OntologyTranslatorImplementor {
 	private final ELOriginalAxiomsTranslator originalAxiomsTranslator;
 
 	/** The {@link ELOntologyReduction reduction} of the ontology that this translation refer. */
-	private final ELOntologyReduction reducedOntology;
+	private ELOntologyReduction reducedOntology;
 
 	/**
 	 * Constructs an {@link OntologyTranslator} of a given OWL 2 EL ontology.
@@ -41,7 +41,7 @@ public class ELOntologyTranslation extends OntologyTranslatorImplementor {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} contains some axioms of unsupported types.
 	 */
-	public ELOntologyTranslation(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
+	public ELOntologyTranslator(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
 			throws UnsupportedAxiomsException {
 		super(ontology, dedutiveDatabase);
 		originalAxiomsTranslator = new ELOriginalAxiomsTranslator();
@@ -49,16 +49,6 @@ public class ELOntologyTranslation extends OntologyTranslatorImplementor {
 		RuntimesLogger.start("ontology reduction");
 		reducedOntology = new ELOntologyReductionImpl(ontology);
 		RuntimesLogger.stop("ontology reduction", "loading");
-		translate();
-	}
-
-	@Override
-	protected void execute() {
-		RuntimesLogger.start("ontology translation");
-		translate(originalAxiomsTranslator);
-		if (reducedOntology.hasDisjunctions())
-			translate(doubleAxiomsTranslator);
-		RuntimesLogger.stop("ontology translation", "loading");
 	}
 
 	@Override
@@ -71,6 +61,10 @@ public class ELOntologyTranslation extends OntologyTranslatorImplementor {
 		return reducedOntology.hasDisjunctions();
 	}
 
+	private void prepareUpdate() throws UnsupportedAxiomsException {
+		reducedOntology = new ELOntologyReductionImpl(ontology);
+	}
+
 	/**
 	 * Translate the ontology that this ontology refers with a given {@link ELAxiomsTranslator}. The resulting translation is added to {@code rules}.
 	 *
@@ -79,20 +73,31 @@ public class ELOntologyTranslation extends OntologyTranslatorImplementor {
 	 */
 	private void translate(ELAxiomsTranslator axiomTranslator) {
 		for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology.getChainSubsumptions())
-			addAll(axiomTranslator.translation(axiom));
+			translation.addAll(axiomTranslator.translation(axiom));
 		for (final OWLClassAssertionAxiom assertion : reducedOntology.getConceptAssertions())
-			addAll(axiomTranslator.translation(assertion));
+			translation.addAll(axiomTranslator.translation(assertion));
 		for (final OWLSubClassOfAxiom axiom : reducedOntology.getConceptSubsumptions())
-			addAll(axiomTranslator.translation(axiom));
+			translation.addAll(axiomTranslator.translation(axiom));
 		for (final OWLDataPropertyAssertionAxiom assertion : reducedOntology.getDataAssertion())
-			addAll(axiomTranslator.translation(assertion));
+			translation.addAll(axiomTranslator.translation(assertion));
 		for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology.getDataSubsuptions())
-			addAll(axiomTranslator.translation(axiom));
+			translation.addAll(axiomTranslator.translation(axiom));
 		for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions())
-			addAll(axiomTranslator.translation(axiom));
+			translation.addAll(axiomTranslator.translation(axiom));
 		for (final OWLObjectPropertyAssertionAxiom assertion : reducedOntology.getRoleAssertions())
-			addAll(axiomTranslator.translation(assertion));
+			translation.addAll(axiomTranslator.translation(assertion));
 		for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions())
-			addAll(axiomTranslator.translation(axiom));
+			translation.addAll(axiomTranslator.translation(axiom));
+	}
+
+	@Override
+	public void updateTranslation() throws UnsupportedAxiomsException {
+		prepareUpdate();
+		translation.clear();
+		RuntimesLogger.start("ontology translation");
+		translate(originalAxiomsTranslator);
+		if (reducedOntology.hasDisjunctions())
+			translate(doubleAxiomsTranslator);
+		RuntimesLogger.stop("ontology translation", "loading");
 	}
 }

@@ -61,9 +61,9 @@ public interface QLOntologyNormalization {
 	public Set<OWLDisjointDataPropertiesAxiom> getDataDisjunctions();
 
 	/**
-	 * The ontology of which this {@link QLOntologyTranslation} is normalization.
+	 * The ontology of which this {@link QLOntologyTranslator} is normalization.
 	 *
-	 * @return the ontology of which this {@link QLOntologyTranslation} is normalization.
+	 * @return the ontology of which this {@link QLOntologyTranslator} is normalization.
 	 */
 	public OWLOntology getOriginalOntology();
 

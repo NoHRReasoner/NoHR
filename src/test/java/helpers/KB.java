@@ -59,7 +59,7 @@ public class KB {
 
 	private final Profile profile;
 
-	private HybridKB hybridKB;
+	protected HybridKB hybridKB;
 
 	private NoHRParser parser;
 
@@ -90,7 +90,7 @@ public class KB {
 		parser = new NoHRParser(new VocabularyMappingImpl(ontology));
 	}
 
-	private void addAxiom(OWLAxiom axiom) {
+	protected void addAxiom(OWLAxiom axiom) {
 		ontology.getOWLOntologyManager().addAxiom(ontology, axiom);
 		hybridKB.addAxiom(axiom);
 	}
@@ -150,6 +150,7 @@ public class KB {
 		// final Set<OWLDeclarationAxiom> declarationAxioms =
 		// ontology.getAxioms(AxiomType.DECLARATION);
 		try {
+			hybridKB.dispose();
 			hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), profile);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block

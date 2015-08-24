@@ -41,16 +41,16 @@ import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
  *
  * @author Nuno Costa
  */
-public class QLOntologyTranslation extends OntologyTranslatorImplementor {
+public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 
 	/** The {@link QLAxiomsTranslator} that obtain the double rules of this {@link OntologyTranslator}. */
 	private final QLDoubleAxiomsTranslator doubleAxiomsTranslator;
 
 	/** The {@link TBoxDigraph digraph} of the TBox of the ontology of which this {@link OntologyTranslator} is translation. */
-	private final TBoxDigraph graph;
+	private TBoxDigraph graph;
 
 	/** The {@link QLOntologyNormalization normalization} of the ontology of which this {@link OntologyTranslator} is translation. */
-	private final QLOntologyNormalization ontologyNormalization;
+	private QLOntologyNormalization ontologyNormalization;
 
 	/** The {@link QLAxiomsTranslator} that obtain the original rules of this {@link OntologyTranslator}. */
 	private final QLOriginalAxiomsTranslator originalAxiomsTranslator;
@@ -63,36 +63,13 @@ public class QLOntologyTranslation extends OntologyTranslatorImplementor {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} contains some axioms of unsupported types.
 	 */
-	public QLOntologyTranslation(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
+	public QLOntologyTranslator(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
 			throws UnsupportedAxiomsException {
 		super(ontology, dedutiveDatabase);
 		ontologyNormalization = new QLOntologyNormalizationImpl(ontology);
 		graph = new TBoxDigraphImpl(ontologyNormalization);
 		originalAxiomsTranslator = new QLOriginalAxiomsTranslator();
 		doubleAxiomsTranslator = new QLDoubleAxiomsTranslator();
-		translate();
-	}
-
-	@Override
-	protected void execute() {
-		final boolean hasDisjunctions = ontologyNormalization.hasDisjunctions();
-		RuntimesLogger.start("ontology translation");
-		addAll(translation(originalAxiomsTranslator));
-		if (hasDisjunctions) {
-			addAll(translation(doubleAxiomsTranslator));
-			addAll(disjunctionsTranslation());
-			RuntimesLogger.stop("ontology translation", "loading");
-			RuntimesLogger.start("ontology classification");
-			for (final OWLEntity e : graph.getUnsatisfiableEntities())
-				if (e instanceof OWLClass)
-					addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLClass) e));
-				else if (e instanceof OWLProperty)
-					addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLProperty<?, ?>) e));
-			for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
-				add(doubleAxiomsTranslator.unreflexivityTranslation(p));
-			RuntimesLogger.stop("ontology classification", "loading");
-		}
-		RuntimesLogger.stop("ontology translation", "loading");
 	}
 
 	/**
@@ -128,6 +105,14 @@ public class QLOntologyTranslation extends OntologyTranslatorImplementor {
 	@Override
 	public boolean hasDisjunctions() {
 		return ontologyNormalization.hasDisjunctions();
+	}
+
+	/**
+	 * Prepares the translation, creating a new {@link QLOntologyNormalization} and {@link TBoxDigraph} for the current version of the ontology.
+	 */
+	private void prepareUpdate() throws UnsupportedAxiomsException {
+		ontologyNormalization = new QLOntologyNormalizationImpl(ontology);
+		graph = new TBoxDigraphImpl(ontologyNormalization);
 	}
 
 	private OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression ope) {
@@ -184,6 +169,30 @@ public class QLOntologyTranslation extends OntologyTranslatorImplementor {
 					result.add(axiomsTranslator.rangeTranslation(p));
 			}
 		return result;
+	}
+
+	@Override
+	public void updateTranslation() throws UnsupportedAxiomsException {
+		prepareUpdate();
+		translation.clear();
+		final boolean hasDisjunctions = ontologyNormalization.hasDisjunctions();
+		RuntimesLogger.start("ontology translation");
+		translation.addAll(translation(originalAxiomsTranslator));
+		if (hasDisjunctions) {
+			translation.addAll(translation(doubleAxiomsTranslator));
+			translation.addAll(disjunctionsTranslation());
+			RuntimesLogger.stop("ontology translation", "loading");
+			RuntimesLogger.start("ontology classification");
+			for (final OWLEntity e : graph.getUnsatisfiableEntities())
+				if (e instanceof OWLClass)
+					translation.addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLClass) e));
+				else if (e instanceof OWLProperty)
+					translation.addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLProperty<?, ?>) e));
+			for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
+				translation.add(doubleAxiomsTranslator.unreflexivityTranslation(p));
+			RuntimesLogger.stop("ontology classification", "loading");
+		}
+		RuntimesLogger.stop("ontology translation", "loading");
 	}
 
 }

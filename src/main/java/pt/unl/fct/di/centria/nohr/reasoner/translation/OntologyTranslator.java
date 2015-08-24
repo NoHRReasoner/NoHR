@@ -7,27 +7,27 @@ import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 
 /**
- * Represents a component that can translate a specified {@link OWLOntology} <i>O</i> to a {@link Program logic program} <i>T</i> and load that
- * program in a specified {@link DeductiveDatabase}. The following properties must be satisfied, where <i>A</i> denotes an atomic concept and
- * the corresponding predicate, <i>P</i> an atomic role and the corresponding predicate, <i>a</i> and <i>b</i> individuals and the corresponding
- * constants:<br>
+ * Represents a component that can translate a specified {@link OWLOntology} <i>O</i> to a logic program <i>T</i> and load that program in a specified
+ * {@link DeductiveDatabase}. The following properties must be satisfied, where <i>A</i> denotes an atomic concept and the corresponding predicate,
+ * <i>P</i> an atomic role and the corresponding predicate, <i>a</i> and <i>b</i> individuals and the corresponding constants:<br>
  * -<i>T&vDash;A(a) iff O&vDash;A(a)</i>;<br>
  * -<i>T&vDash;A<sup>d</sup>(a) iff O&vDash;A(a)</i>;<br>
  * -<i>T&vDash;P(a, b) iff O&vDash;P(a, b)</i>;<br>
- * -<i>T&vDash;P<sup>d</sup>(a, b) iff O&vDash;P(a, b)</i>;<br>
- * -<i>A</i> and <i>A<sup>d</sup></i> are tabled in <i>T</i> if, for some concept <i>C &ne; A</i>, <i>O&vDash;A&sqsube;C</i> and
- * <i>O&vDash;C&sqsube;A</i>; <br>
- * -<i>P</i> and <i>P<sup>d</sup></i> are tabled in <i>T</i> if, for some role <i>R &ne; P</i>, <i>O&vDash;P&sqsube;R</i> and
- * <i>O&vDash;R&sqsube;P</i>.
+ * -<i>T&vDash;P<sup>d</sup>(a, b) iff O&vDash;P(a, b)</i>.
  *
  * @author Nuno Costa
  */
 public interface OntologyTranslator {
 
 	/**
-	 * Returns the {@link DeductiveDatabase} where this {@link OntologyTranslator translator} load the translation.
+	 * Clear the {@link Program program}(s) that maintains the translation.
+	 */
+	public void clear();
+
+	/**
+	 * Returns the {@link DeductiveDatabase} where this {@link OntologyTranslator translator} maintains the translation.
 	 *
-	 * @return the {@link DeductiveDatabase} where this {@link OntologyTranslator translator} load the translation.
+	 * @return the {@link DeductiveDatabase} where this {@link OntologyTranslator translator} maintains the translation.
 	 */
 	public DeductiveDatabase getDedutiveDatabase();
 
@@ -39,28 +39,28 @@ public interface OntologyTranslator {
 	public OWLOntology getOntology();
 
 	/**
-	 * Returns the profile of the translated ontology.
+	 * Returns the profile of the {@link OntologyTranslator translator}'s ontology.
 	 *
-	 * @return the profile of the translated ontology.
+	 * @return the profile of the {@link OntologyTranslator translator}'s ontology.
 	 */
 	public Profile getProfile();
 
 	/**
-	 * Retruns true iff the translated ontology has disjunctions.
+	 * Returns true iff the {@link OntologyTranslator translator}'s ontology has disjunctions.
 	 *
-	 * @return iff the translated ontology has disjunctions.
+	 * @return iff the {@link OntologyTranslator translator}'s has disjunctions.
 	 */
 	public boolean hasDisjunctions();
 
 	/**
-	 * Translates the {@link OntologyTranslator translator}'s ontology and load the translation in the {@link OntologyTranslator translator}'s
-	 * {@link DeductiveDatabase}.
+	 * Updates the translation {@link Program program}(s) in the {@link OntologyTranslator translator}'s {@link DeductiveDatabase deductive database}
+	 * with the translation of the current version of the {@link OntologyTranslator translator}'s ontology.
 	 *
 	 * @throws UnsupportedAxiomsException
 	 *             if the {@link OntologyTranslator translator}'s ontology has some axioms of an unsupported type.
 	 * @throws OWLProfilesViolationsException
 	 *             if the {@link OntologyTranslator translator}'s ontology isn't in any supported OWL profile.
 	 */
-	public void translate() throws OWLProfilesViolationsException, UnsupportedAxiomsException;
+	public void updateTranslation() throws OWLProfilesViolationsException, UnsupportedAxiomsException;
 
 }

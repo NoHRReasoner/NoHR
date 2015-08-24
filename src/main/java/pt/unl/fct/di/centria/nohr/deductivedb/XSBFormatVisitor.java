@@ -12,7 +12,6 @@ import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.TableDirective;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
@@ -86,12 +85,6 @@ public class XSBFormatVisitor implements FormatVisitor {
 			return head + ".";
 		else
 			return head + ":-" + body + ".";
-	}
-
-	@Override
-	public String visit(TableDirective tableDirective) {
-		final Predicate pred = tableDirective.getPredicate();
-		return ":- table " + pred.accept(this) + "/" + pred.getArity() + " as subsumptive.";
 	}
 
 	@Override

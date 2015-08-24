@@ -15,7 +15,7 @@ import pt.unl.fct.di.centria.nohr.model.TruthValue;
  *
  * @author Nuno Costa
  */
-public class PrologSystemInterface {
+class Goals {
 
 	/**
 	 * A goal that obtain one answer to a given query with a given truth value. {@code detGoal(+Vars,?G,-TM)}:
@@ -34,25 +34,6 @@ public class PrologSystemInterface {
 	/** A goal that obtain all answers to a given query. {@code noDetGoal(+Vars,?G,-ListTM)} */
 	private static final String NON_DET_GOAL_3 = "nonDetGoal([%s],(%s),%s)";
 
-	/** The {@link FormatVisitor} used to format the queries. */
-	private final FormatVisitor formatVisitor;
-
-	/** A Prolog module name that defines the predicates described in this class. */
-	private final String prologModuleName;
-
-	/**
-	 * Constructs a {@link PrologSystemInterface} with a given {@link FormatVisitor} and Prolog module name.
-	 *
-	 * @param formatVisitor
-	 *            the {@link FormatVisitor}.
-	 * @param prologModuleName
-	 *            the Prolog module name.
-	 */
-	PrologSystemInterface(FormatVisitor formatVisitor, String prologModuleName) {
-		this.formatVisitor = formatVisitor;
-		this.prologModuleName = prologModuleName;
-	}
-
 	/**
 	 * Create a goal that obtain one answer to a given query.
 	 *
@@ -66,19 +47,12 @@ public class PrologSystemInterface {
 	 *            the name of the variable were the answers values list will be unified.
 	 * @return the goal.
 	 */
-	String detGoal(Query query, Boolean trueAnswers, String var) {
+	static String detGoal(FormatVisitor formatVisitor, Query query, Boolean trueAnswers, String var) {
 		if (trueAnswers == null)
-			return String.format(DET_GOAL_3, varsList(query), query.accept(formatVisitor), var);
+			return String.format(DET_GOAL_3, varsList(formatVisitor, query), query.accept(formatVisitor), var);
 		else
-			return String.format(DET_GOAL_4, varsList(query), query.accept(formatVisitor), toString(trueAnswers), var);
-	}
-
-	/**
-	 * Returns the Prolog module name that defines the predicates described in this class for the Prolog system supported by this
-	 * {@link PrologSystemInterface}.
-	 */
-	public String getPrologModuleName() {
-		return prologModuleName;
+			return String.format(DET_GOAL_4, varsList(formatVisitor, query), query.accept(formatVisitor),
+					toString(trueAnswers), var);
 	}
 
 	/**
@@ -92,8 +66,8 @@ public class PrologSystemInterface {
 	 *            {@code trueAnswers == false}; and any of the two if {@code trueAnswers == null}.
 	 * @return the goal.
 	 */
-	String hasValue(Query query, boolean trueAnswer) {
-		return String.format(HAS_VALUE_2, toString(query), toString(trueAnswer));
+	static String hasValue(FormatVisitor formatVisitor, Query query, boolean trueAnswer) {
+		return String.format(HAS_VALUE_2, toString(formatVisitor, query), toString(trueAnswer));
 	}
 
 	/**
@@ -109,11 +83,12 @@ public class PrologSystemInterface {
 	 *            the name of the variable were the answers values list will be unified.
 	 * @return the goal.
 	 */
-	String nonDetGoal(Query query, Boolean trueAnswers, String var) {
+	static String nonDetGoal(FormatVisitor formatVisitor, Query query, Boolean trueAnswers, String var) {
 		if (trueAnswers == null)
-			return String.format(NON_DET_GOAL_3, varsList(query), toString(query), var);
+			return String.format(NON_DET_GOAL_3, varsList(formatVisitor, query), toString(formatVisitor, query), var);
 		else
-			return String.format(NON_DET_GOAL_4, varsList(query), toString(query), toString(trueAnswers), var);
+			return String.format(NON_DET_GOAL_4, varsList(formatVisitor, query), toString(formatVisitor, query),
+					toString(trueAnswers), var);
 	}
 
 	/**
@@ -123,7 +98,7 @@ public class PrologSystemInterface {
 	 *            specifies whether the truth value is {@link TruthValue#TRUE true} or not (i.e. {@link TruthValue#UNDEFINED undefined}).
 	 * @return the representation of {@code trueValue}.
 	 */
-	private String toString(boolean trueValue) {
+	private static String toString(boolean trueValue) {
 		return trueValue ? "true" : "undefined";
 	}
 
@@ -134,7 +109,7 @@ public class PrologSystemInterface {
 	 *            the model element.
 	 * @return the representation of {@code element}.
 	 */
-	String toString(FormatVisitable element) {
+	static String toString(FormatVisitor formatVisitor, FormatVisitable element) {
 		return element.accept(formatVisitor);
 	}
 
@@ -145,7 +120,7 @@ public class PrologSystemInterface {
 	 *            query.
 	 * @return the string representation of the {@code query}'s variable list.
 	 */
-	private String varsList(Query query) {
+	private static String varsList(FormatVisitor formatVisitor, Query query) {
 		return Model.concat(query.getVariables(), formatVisitor, ",");
 	}
 

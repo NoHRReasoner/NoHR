@@ -27,7 +27,7 @@ public class QueryProcessor {
 	/**
 	 * The underlying {@link DeductiveDatabase}, where the queries will be posed.
 	 */
-	protected DeductiveDatabase deductiveDatabaseManager;
+	protected DeductiveDatabase deductiveDatabase;
 
 	/**
 	 * Constructs a query processor to a given {@link DeductiveDatabase}.
@@ -36,7 +36,7 @@ public class QueryProcessor {
 	 *            the {@link DeductiveDatabase} where the queries will be posed.
 	 */
 	protected QueryProcessor(DeductiveDatabase deductiveDatabaseManager) {
-		this.deductiveDatabaseManager = deductiveDatabaseManager;
+		this.deductiveDatabase = deductiveDatabaseManager;
 	}
 
 	/**
@@ -81,17 +81,17 @@ public class QueryProcessor {
 		final List<Answer> result = new LinkedList<Answer>();
 		Map<List<Term>, TruthValue> origAnss;
 		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-			origAnss = deductiveDatabaseManager.answersValuations(query.getOriginal(), false);
+			origAnss = deductiveDatabase.answersValuations(query.getOriginal(), false);
 		else if (inconsistentAnswers && !trueAnswers && !undefinedAnswers)
-			origAnss = deductiveDatabaseManager.answersValuations(query.getOriginal(), true);
+			origAnss = deductiveDatabase.answersValuations(query.getOriginal(), true);
 		else
-			origAnss = deductiveDatabaseManager.answersValuations(query.getOriginal());
+			origAnss = deductiveDatabase.answersValuations(query.getOriginal());
 		Map<List<Term>, TruthValue> doubAnss = new HashMap<List<Term>, TruthValue>();
 		if (isDoubled)
 			if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-				doubAnss = deductiveDatabaseManager.answersValuations(query.getDouble(), false);
+				doubAnss = deductiveDatabase.answersValuations(query.getDouble(), false);
 			else
-				doubAnss = deductiveDatabaseManager.answersValuations(query.getDouble());
+				doubAnss = deductiveDatabase.answersValuations(query.getDouble());
 		for (final Entry<List<Term>, TruthValue> origEntry : origAnss.entrySet()) {
 			final List<Term> vals = origEntry.getKey();
 			final TruthValue origTruth = origEntry.getValue();
@@ -158,11 +158,11 @@ public class QueryProcessor {
 		final Query origQuery = query.getOriginal();
 		// true original answers
 		if (inconsistentAnswers || trueAnswers)
-			for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, true)) {
+			for (final Answer origAns : deductiveDatabase.answers(origQuery, true)) {
 				if (trueAnswers && !hasDoubled)
 					return true;
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
-				final boolean hasDoubAns = deductiveDatabaseManager.hasAnswers(doubQuery);
+				final boolean hasDoubAns = deductiveDatabase.hasAnswers(doubQuery);
 				if (inconsistentAnswers && !hasDoubAns)
 					return true;
 				if (trueAnswers && hasDoubAns)
@@ -170,13 +170,13 @@ public class QueryProcessor {
 			}
 		// undefined original answers
 		if (trueAnswers || undefinedAnswers)
-			for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, false)) {
+			for (final Answer origAns : deductiveDatabase.answers(origQuery, false)) {
 				if (!hasDoubled && undefinedAnswers)
 					return true;
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
-				if (trueAnswers && hasDoubled && deductiveDatabaseManager.hasAnswers(doubQuery, true))
+				if (trueAnswers && hasDoubled && deductiveDatabase.hasAnswers(doubQuery, true))
 					return true;
-				if (undefinedAnswers && deductiveDatabaseManager.hasAnswers(doubQuery, false))
+				if (undefinedAnswers && deductiveDatabase.hasAnswers(doubQuery, false))
 					return true;
 			}
 		return false;
@@ -251,20 +251,20 @@ public class QueryProcessor {
 		final Query origQuery = query.getOriginal();
 		// undefined original answers
 		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
-			for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, false)) {
+			for (final Answer origAns : deductiveDatabase.answers(origQuery, false)) {
 				if (!isDoubled)
 					return ans(query, TruthValue.UNDEFINED, origAns.getValues());
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
-				if (deductiveDatabaseManager.hasAnswers(doubQuery, false))
+				if (deductiveDatabase.hasAnswers(doubQuery, false))
 					return ans(query, TruthValue.UNDEFINED, origAns.getValues());
 			}
 		// true original answers
 		if (!undefinedAnswers)
-			for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, true)) {
+			for (final Answer origAns : deductiveDatabase.answers(origQuery, true)) {
 				if (trueAnswers && !isDoubled)
 					return ans(query, TruthValue.TRUE, origAns.getValues());
 				final Query doubQuery = query.getDouble().apply(origAns.getValues());
-				final boolean hasDoubAns = deductiveDatabaseManager.hasAnswers(doubQuery);
+				final boolean hasDoubAns = deductiveDatabase.hasAnswers(doubQuery);
 				if (trueAnswers && hasDoubAns)
 					return ans(query, TruthValue.TRUE, origAns.getValues());
 				else if (inconsistentAnswers && !hasDoubAns)
@@ -272,21 +272,21 @@ public class QueryProcessor {
 			}
 
 		// all original answers
-		for (final Answer origAns : deductiveDatabaseManager.answers(origQuery, null)) {
+		for (final Answer origAns : deductiveDatabase.answers(origQuery, null)) {
 			final TruthValue origTruth = origAns.getValuation();
 			if ((trueAnswers && origTruth == TruthValue.TRUE || undefinedAnswers && origTruth == TruthValue.UNDEFINED)
 					&& !isDoubled)
 				return ans(query, origTruth, origAns.getValues());
 			final Query doubQuery = query.getDouble().apply(origAns.getValues());
 			if ((trueAnswers || inconsistentAnswers) && origTruth == TruthValue.TRUE) {
-				final boolean hasDoubAns = deductiveDatabaseManager.hasAnswers(doubQuery);
+				final boolean hasDoubAns = deductiveDatabase.hasAnswers(doubQuery);
 				if (trueAnswers && hasDoubAns)
 					return ans(query, TruthValue.TRUE, origAns.getValues());
 				else if (inconsistentAnswers && !hasDoubAns)
 					return ans(query, TruthValue.INCONSISTENT, origAns.getValues());
 			}
 			if ((trueAnswers && isDoubled || undefinedAnswers) && origTruth == TruthValue.UNDEFINED) {
-				final Answer doubAns = deductiveDatabaseManager.answer(doubQuery);
+				final Answer doubAns = deductiveDatabase.answer(doubQuery);
 				if (doubAns != null) {
 					final TruthValue doubTruth = doubAns.getValuation();
 					if (trueAnswers && doubTruth == TruthValue.TRUE)

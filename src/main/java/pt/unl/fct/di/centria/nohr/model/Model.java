@@ -288,10 +288,6 @@ public class Model {
 		return cons(symbol);
 	}
 
-	public static Atom fail() {
-		return atom("fail");
-	}
-
 	/**
 	 * Create a term list from a specified list of terms.
 	 *
@@ -442,17 +438,6 @@ public class Model {
 		final Set<Rule> result = new HashSet<Rule>();
 		Collections.addAll(result, rules);
 		return result;
-	}
-
-	/**
-	 * Create a table directive for a given predicate.
-	 *
-	 * @param the
-	 *            predicate to table.
-	 * @return a table directive of {@code predicate}
-	 */
-	public static TableDirective table(Predicate predicate) {
-		return new TableDirectiveImpl(predicate);
 	}
 
 	/**

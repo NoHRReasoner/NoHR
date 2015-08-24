@@ -65,7 +65,7 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 	/** The set of DL-Lite<sub>R</sub> concept subsumptions in this {@link QLOntologyNormalization} */
 	private final Set<OWLSubClassOfAxiom> conceptSubsumptions;
 
-	/** The ontology of which this {@link QLOntologyTranslation} is normalization. */
+	/** The ontology of which this {@link QLOntologyTranslator} is normalization. */
 	private final OWLOntology ontology;
 
 	/** The set of DL-Lite<sub>R</sub> role disjunctions in this {@link QLOntologyNormalization}. */

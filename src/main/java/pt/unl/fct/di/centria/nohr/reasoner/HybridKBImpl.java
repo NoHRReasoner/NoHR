@@ -23,6 +23,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.centria.nohr.deductivedb.Program;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
@@ -55,6 +56,8 @@ public class HybridKBImpl implements HybridKB {
 	private final DeductiveDatabase dedutiveDatabaseManager;
 
 	private final VocabularyMapping vocabularyMapping;
+
+	private final Program rulesDoubling;
 
 	public HybridKBImpl(final File xsbBinDirectory) throws OWLProfilesViolationsException, IOException,
 			UnsupportedAxiomsException, IPException, PrologEngineCreationException {
@@ -102,6 +105,7 @@ public class HybridKBImpl implements HybridKB {
 		vocabularyMapping = new VocabularyMappingImpl(ontologies);
 		hasOntologyChanges = true;
 		dedutiveDatabaseManager = new XSBDeductiveDatabase(xsbBinDirectory, vocabularyMapping);
+		rulesDoubling = dedutiveDatabaseManager.createProgram();
 		ontologyTranslator = new OntologyTranslatorImpl(ontology, dedutiveDatabaseManager, profile);
 		queryProcessor = new QueryProcessor(dedutiveDatabaseManager);
 		this.ruleBase = ruleBase;
@@ -187,10 +191,6 @@ public class HybridKBImpl implements HybridKB {
 		return ruleBase;
 	}
 
-	private String getRuleBaseProgramKey() {
-		return "rulebase" + ruleBase.hashCode();
-	}
-
 	@Override
 	public VocabularyMapping getVocabularyMapping() {
 		return vocabularyMapping;
@@ -231,15 +231,15 @@ public class HybridKBImpl implements HybridKB {
 	private void preprocess() throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
 		if (hasOntologyChanges) {
 			RuntimesLogger.start("ontology processing");
-			ontologyTranslator.translate();
+			ontologyTranslator.updateTranslation();
 			RuntimesLogger.stop("ontology processing", "loading");
 		}
 		if (hasRuleChanges || ontologyTranslator.hasDisjunctions() != hasDisjunctions) {
 			RuntimesLogger.start("rules parsing");
-			dedutiveDatabaseManager.dispose(getRuleBaseProgramKey());
+			rulesDoubling.clear();
 			for (final Rule rule : ruleBase)
 				for (final Rule doublingRule : RulesDoubling.doubleRule(rule))
-					dedutiveDatabaseManager.add(getRuleBaseProgramKey(), doublingRule);
+					rulesDoubling.add(doublingRule);
 			RuntimesLogger.stop("rules parsing", "loading");
 		}
 		hasOntologyChanges = false;

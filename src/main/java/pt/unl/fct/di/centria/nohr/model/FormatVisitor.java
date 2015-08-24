@@ -71,12 +71,6 @@ public interface FormatVisitor {
 	public String visit(Rule rule);
 
 	/**
-	 * @param tableDirective
-	 * @return the string representation of the table directive {@code tableDirective}
-	 */
-	public String visit(TableDirective tableDirective);
-
-	/**
 	 * @param variable
 	 * @return the string representation of the variable {@code variable}.
 	 */

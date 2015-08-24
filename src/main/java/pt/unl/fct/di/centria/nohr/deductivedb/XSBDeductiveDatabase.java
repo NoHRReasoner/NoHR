@@ -1,9 +1,9 @@
-/**
- *
- */
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
 import java.io.File;
+import java.io.IOException;
+
+import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
@@ -29,15 +29,21 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	 * @throws PrologEngineCreationException
 	 *             if the creation of the underlying Prolog engine timed out. That could mean that the Prolog system located at {@code binDirectory}
 	 *             isn't an operational Prolog system.
+	 * @throws IOException
 	 */
 	public XSBDeductiveDatabase(File binDirectory, VocabularyMapping vocabularyMapping)
-			throws IPException, PrologEngineCreationException {
-		super(binDirectory, "startup", vocabularyMapping);
+			throws IPException, PrologEngineCreationException, IOException {
+		super(binDirectory, "xsbmodule", new XSBFormatVisitor(), vocabularyMapping);
 	}
 
 	@Override
 	protected PrologEngine createPrologEngine() {
 		return new XSBSubprocessEngine(binDirectory.toPath().toAbsolutePath().toString());
+	}
+
+	@Override
+	protected String failRule(Predicate pred) {
+		return rule(atom(pred), atom("fail")).accept(formatVisitor);
 	}
 
 	@Override
@@ -51,8 +57,10 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	}
 
 	@Override
-	protected String multifileDirective(Predicate predicate) {
-		return ":- multifile " + predicate.accept(formatVisitor) + "/" + predicate.getArity() + ".";
+	protected void load() {
+		if (!prologEngine.load_dynAbsolute(file.getAbsoluteFile()))
+			// if (!prologEngine.deterministicGoal("load_dyn('" + file.getAbsolutePath().toString() + "')"))
+			throw new IPException("file not loaded");
 	}
 
 	@Override

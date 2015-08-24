@@ -22,7 +22,7 @@ import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLProperty;
 
-import pt.unl.fct.di.centria.nohr.MultisetImpl;
+import pt.unl.fct.di.centria.nohr.HashMultiset;
 
 /**
  * An implementation of {@link VocabularyMapping} where the concepts and rules are represented by the fragment of their IRIs and the individuals by
@@ -36,7 +36,7 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	private final OWLOntologyChangeListener ontologyChangeListener;
 
 	/** Maintains a counter of the occurrences, in the ontology, of each concept, role and individual. */
-	private final MultisetImpl<OWLObject> references;
+	private final HashMultiset<OWLObject> references;
 
 	/** The ontologies whose concepts, rules, and individuals this {@link VocabularyMapping} maps. */
 	private final Set<OWLOntology> ontologies;
@@ -62,7 +62,7 @@ public class VocabularyMappingImpl implements VocabularyMapping {
 	 */
 	public VocabularyMappingImpl(final Set<OWLOntology> ontologies) {
 		this.ontologies = ontologies;
-		references = new MultisetImpl<>();
+		references = new HashMultiset<>();
 		concepts = new HashMap<>();
 		roles = new HashMap<>();
 		individuals = new HashMap<>();

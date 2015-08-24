@@ -1,11 +1,10 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
-import java.util.Set;
-
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.deductivedb.Program;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 
 /**
  * A <i>concrete implementor</i> of {@link OntologyTranslator} (see {@link <a href="http://www.oodesign.com/bridge-pattern.html">Bridge Pattern</a>},
@@ -17,9 +16,12 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
 public abstract class OntologyTranslatorImplementor implements OntologyTranslator {
 
 	/**
-	 * The {@link DeductiveDatabase} to where the translation rules are added.
+	 * The {@link DeductiveDatabase} where the translation is maintained.
 	 */
-	private final DeductiveDatabase dedutiveDatabaseManager;
+	private final DeductiveDatabase dedutiveDatabase;
+
+	/** The {@link Program program} where the translation is maintained. */
+	protected final Program translation;
 
 	/**
 	 * The translated ontology.
@@ -32,43 +34,22 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 	 * @param ontology
 	 *            the ontology to translate.
 	 * @param dedutiveDatabase
-	 *            the {@link DeductiveDatabase} where the ontology translation will be loaded.
+	 *            the {@link DeductiveDatabase} where the ontology translation will be mantained.
 	 */
 	public OntologyTranslatorImplementor(OWLOntology ontology, DeductiveDatabase dedutiveDatabase) {
 		this.ontology = ontology;
-		dedutiveDatabaseManager = dedutiveDatabase;
+		this.dedutiveDatabase = dedutiveDatabase;
+		translation = dedutiveDatabase.createProgram();
 	}
 
-	/**
-	 * Add a given rule to the underlying {@link DeductiveDatabase}.
-	 *
-	 * @param rule
-	 *            a rule.
-	 */
-	protected void add(Rule rule) {
-		dedutiveDatabaseManager.add(getProgramKey(), rule);
+	@Override
+	public void clear() {
+		translation.clear();
 	}
-
-	/**
-	 * Add a given set of rules to the underlying {@link DeductiveDatabase}.
-	 *
-	 * @param rule
-	 *            a rule set.
-	 */
-	protected void addAll(Set<Rule> rules) {
-		for (final Rule rule : rules)
-			dedutiveDatabaseManager.add(getProgramKey(), rule);
-	}
-
-	/**
-	 * Execute the translation of the ontology that these {@link OntologyTranslatorImplementor} refer. The rules must be added to the underlying
-	 * {@link DeductiveDatabase} calling {@link #add(Rule)} or {@link #addAll(Set)}.
-	 */
-	protected abstract void execute();
 
 	@Override
 	public DeductiveDatabase getDedutiveDatabase() {
-		return dedutiveDatabaseManager;
+		return dedutiveDatabase;
 	}
 
 	@Override
@@ -76,19 +57,7 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 		return ontology;
 	}
 
-	/**
-	 * Returns the key of the <i>program</i> (see {@link DeductiveDatabase}) where the translation rules are added.
-	 *
-	 * @return returns the key of the <i>program</i> (see {@link DeductiveDatabase}) where the translation rules are added.
-	 */
-	private String getProgramKey() {
-		return getOntology().getOntologyID().getOntologyIRI().toURI().toString();
-	}
-
 	@Override
-	public void translate() {
-		dedutiveDatabaseManager.dispose(getProgramKey());
-		execute();
-	}
+	public abstract void updateTranslation() throws UnsupportedAxiomsException;
 
 }

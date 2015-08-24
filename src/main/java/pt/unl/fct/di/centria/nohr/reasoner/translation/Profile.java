@@ -15,8 +15,8 @@ import org.semanticweb.owlapi.profiles.OWLProfileReport;
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.el.ELOntologyTranslation;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyTranslation;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.el.ELOntologyTranslator;
+import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyTranslator;
 
 /**
  * Represents the types of the supported OWL profiles. The order of enumeration corresponds to the preferred order. Each profile check if a given
@@ -64,16 +64,16 @@ public enum Profile {
 	 * @throws OWLProfilesViolationsException
 	 *             if {@code ontology} isn't in this profile.
 	 */
-	public OntologyTranslator createOntologyTranslation(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
+	public OntologyTranslator createOntologyTranslator(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		final OWLProfileReport report = owlProfile().checkOntology(ontology);
 		if (!report.isInProfile())
 			throw new OWLProfilesViolationsException(report);
 		switch (this) {
 		case OWL2_QL:
-			return new QLOntologyTranslation(ontology, dedutiveDatabase);
+			return new QLOntologyTranslator(ontology, dedutiveDatabase);
 		case OWL2_EL:
-			return new ELOntologyTranslation(ontology, dedutiveDatabase);
+			return new ELOntologyTranslator(ontology, dedutiveDatabase);
 		default:
 			throw new OWLProfilesViolationsException();
 		}
