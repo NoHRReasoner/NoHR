@@ -24,9 +24,9 @@ import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.parsing.Parser;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.plugin.rules.DisposableRuleBase;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
@@ -71,9 +71,9 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 
 	class QueryExpressionChecker implements OWLExpressionChecker<Query>, Disposable {
 
-		private Parser parser;
+		private NoHRParser parser;
 
-		QueryExpressionChecker(Parser parser) {
+		QueryExpressionChecker(NoHRParser parser) {
 			this.parser = parser;
 		}
 
@@ -100,9 +100,9 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 
 	class RuleExpressionChecker implements OWLExpressionChecker<Rule>, Disposable {
 
-		private Parser parser;
+		private NoHRParser parser;
 
-		RuleExpressionChecker(Parser parser) {
+		RuleExpressionChecker(NoHRParser parser) {
 			this.parser = parser;
 		}
 
@@ -192,20 +192,20 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 		return disposableObject.getObject();
 	}
 
-	protected Parser getParser() {
-		DisposableObject<Parser> disposableObject = getOWLModelManager().get(Parser.class);
+	protected NoHRParser getParser() {
+		DisposableObject<NoHRParser> disposableObject = getOWLModelManager().get(NoHRParser.class);
 		if (disposableObject == null) {
-			disposableObject = new DisposableObject<Parser>(new NoHRParser(getOntologyIndex()));
-			getOWLModelManager().put(Parser.class, disposableObject);
+			disposableObject = new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getOntologyIndex()));
+			getOWLModelManager().put(NoHRParser.class, disposableObject);
 		}
 		return disposableObject.getObject();
 	}
 
 	protected OWLExpressionChecker<Query> getQueryExpressionChecker() {
-		QueryExpressionChecker queryExpressionChecker = getOWLModelManager().get(Parser.class);
+		QueryExpressionChecker queryExpressionChecker = getOWLModelManager().get(NoHRParser.class);
 		if (queryExpressionChecker == null) {
 			queryExpressionChecker = new QueryExpressionChecker(getParser());
-			getOWLModelManager().put(Parser.class, queryExpressionChecker);
+			getOWLModelManager().put(NoHRParser.class, queryExpressionChecker);
 		}
 		return queryExpressionChecker;
 	}
@@ -220,10 +220,10 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 	}
 
 	protected OWLExpressionChecker<Query> getRuleExpressionChecker() {
-		QueryExpressionChecker queryExpressionChecker = getOWLModelManager().get(Parser.class);
+		QueryExpressionChecker queryExpressionChecker = getOWLModelManager().get(NoHRParser.class);
 		if (queryExpressionChecker == null) {
 			queryExpressionChecker = new QueryExpressionChecker(getParser());
-			getOWLModelManager().put(Parser.class, queryExpressionChecker);
+			getOWLModelManager().put(NoHRParser.class, queryExpressionChecker);
 		}
 		return queryExpressionChecker;
 	}

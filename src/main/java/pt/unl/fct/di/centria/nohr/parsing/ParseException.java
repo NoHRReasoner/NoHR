@@ -4,7 +4,9 @@
 package pt.unl.fct.di.centria.nohr.parsing;
 
 /**
- * @author nunocosta
+ * An exception thrown when a {@link NoHRParser} failed to recognize a {@link Query} or {@link Rule}.
+ *
+ * @author Nuno Costa
  */
 public class ParseException extends Exception {
 
@@ -16,11 +18,7 @@ public class ParseException extends Exception {
 	private final int begin;
 	private final int end;
 
-	/**
-	 * @param message
-	 */
-	public ParseException(String message, int begin, int end) {
-		super(message);
+	public ParseException(Object expectedToken, int begin, int end) {
 		this.begin = begin;
 		this.end = end;
 	}

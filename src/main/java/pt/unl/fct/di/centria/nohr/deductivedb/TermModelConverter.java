@@ -1,11 +1,7 @@
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.list;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.TermModel;
@@ -46,13 +42,9 @@ public class TermModelConverter {
 			return cons(number);
 		} else if (termModel.isVar())
 			return var(termModel.toString());
-		else if (termModel.isList()) {
-			final List<Term> termList = new LinkedList<Term>();
-			for (final TermModel tm : termModel.flatList())
-				termList.add(term(tm));
-			return list(termList);
-		} else
+		else
 			throw new ClassCastException();
+
 	}
 
 	/**

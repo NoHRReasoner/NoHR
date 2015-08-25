@@ -35,9 +35,9 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.parsing.Parser;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.reasoner.QueryProcessor;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 
@@ -46,7 +46,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
  */
 public class QueryProcessorTest extends QueryProcessor {
 
-	public static final Parser parser = new NoHRParser();
+	public static final NoHRParser parser = new NoHRRecursiveDescentParser();
 
 	/**
 	 * @throws java.lang.Exception

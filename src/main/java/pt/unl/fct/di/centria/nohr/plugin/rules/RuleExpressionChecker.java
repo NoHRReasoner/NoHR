@@ -8,19 +8,19 @@ import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.parsing.Parser;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 
 /**
  * @author nunocosta
  */
 public class RuleExpressionChecker implements OWLExpressionChecker<Rule> {
 
-	private final Parser parser;
+	private final NoHRParser parser;
 
 	/**
 	 *
 	 */
-	public RuleExpressionChecker(Parser parser) {
+	public RuleExpressionChecker(NoHRParser parser) {
 		this.parser = parser;
 	}
 

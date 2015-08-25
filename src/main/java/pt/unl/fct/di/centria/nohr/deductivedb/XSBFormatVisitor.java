@@ -7,7 +7,6 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.ListTerm;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -25,7 +24,7 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 public class XSBFormatVisitor implements FormatVisitor {
 
 	private String quoted(String str) {
-		return "'" + str + "'";
+		return "'" + str.replaceAll("'", "''") + "'";
 	}
 
 	@Override
@@ -47,11 +46,6 @@ public class XSBFormatVisitor implements FormatVisitor {
 		if (constant.isNumber())
 			return constant.asNumber().toString();
 		return quoted(constant.asRuleConstant());
-	}
-
-	@Override
-	public String visit(ListTerm listTerm) {
-		return "[" + Model.concat(listTerm.asList(), this, ",") + "]";
 	}
 
 	@Override

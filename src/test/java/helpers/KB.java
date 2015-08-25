@@ -39,7 +39,7 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
@@ -62,7 +62,7 @@ public class KB {
 
 	protected HybridKB hybridKB;
 
-	private NoHRParser parser;
+	private NoHRRecursiveDescentParser parser;
 
 	private final Map<String, OWLIndividual> individuals;
 
@@ -111,7 +111,7 @@ public class KB {
 
 	public void assertNegative(String query) {
 		try {
-			final NoHRParser parser = new NoHRParser(new VocabularyMappingImpl(ontology));
+			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(new VocabularyMappingImpl(ontology));
 			if (!query.endsWith("."))
 				query += ".";
 			final Query q = parser.parseQuery(query);
@@ -477,7 +477,7 @@ public class KB {
 		try {
 			ontology = ontologyManager.createOntology(IRI.generateDocumentIRI());
 			hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profile);
-			parser = new NoHRParser(hybridKB.getVocabularyMapping());
+			parser = new NoHRRecursiveDescentParser(hybridKB.getVocabularyMapping());
 		} catch (IPException | OWLOntologyCreationException | UnsupportedAxiomsException
 				| PrologEngineCreationException e) {
 			throw new RuntimeException(e);

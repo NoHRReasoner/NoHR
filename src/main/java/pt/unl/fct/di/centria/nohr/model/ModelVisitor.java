@@ -17,8 +17,6 @@ public interface ModelVisitor {
 
 	public Constant visit(Constant constant);
 
-	public Term visit(ListTerm list);
-
 	public Literal visit(Literal literal);
 
 	public Predicate visit(MetaPredicate predicate);

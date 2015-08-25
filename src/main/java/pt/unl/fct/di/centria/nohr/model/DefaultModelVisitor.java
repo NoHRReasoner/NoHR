@@ -26,11 +26,6 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public Term visit(ListTerm termList) {
-		return termList.accept(this);
-	}
-
-	@Override
 	public Literal visit(Literal literal) {
 		return literal.accept(this);
 	}

@@ -35,12 +35,6 @@ public interface FormatVisitor {
 	public String visit(Constant constant);
 
 	/**
-	 * @param listTerm
-	 * @return the string representation of the the list term {@code listTerm}.
-	 */
-	public String visit(ListTerm listTerm);
-
-	/**
 	 * @param metaPredicate
 	 * @return the string representation of the meta-predicate {@code metaPredicate}.
 	 */

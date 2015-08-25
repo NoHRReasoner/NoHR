@@ -289,30 +289,6 @@ public class Model {
 	}
 
 	/**
-	 * Create a term list from a specified list of terms.
-	 *
-	 * @param terms
-	 *            the list of terms.
-	 * @return a term list with the terms of {@code terms}.
-	 */
-	public static Term list(List<Term> terms) {
-		return new ListTermImpl(terms);
-	}
-
-	/**
-	 * Create a term list from a specified array of terms.
-	 *
-	 * @param terms
-	 *            the array of terms.
-	 * @return a term list with the terms of {@code terms}.
-	 */
-	public static Term list(Term... terms) {
-		final List<Term> list = new LinkedList<Term>();
-		Collections.addAll(list, terms);
-		return new ListTermImpl(list);
-	}
-
-	/**
 	 * Create a negative literal from a specified atom.
 	 *
 	 * @param atom
