@@ -104,7 +104,7 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 		this.ontology = ontology;
 		conceptsPredecessors = new HashMap<OWLClassExpression, Set<OWLClassExpression>>();
 		rolesPredecessor = new HashMap<OWLPropertyExpression<?, ?>, Set<OWLPropertyExpression<?, ?>>>();
-		for (final OWLSubClassOfAxiom axiom : ontology.getConceptSubsumptions()) {
+		for (final OWLSubClassOfAxiom axiom : ontology.conceptSubsumptions()) {
 			Set<OWLClassExpression> predecessors = conceptsPredecessors.get(axiom.getSuperClass());
 			if (predecessors == null) {
 				predecessors = new HashSet<OWLClassExpression>();
@@ -112,7 +112,7 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 			}
 			predecessors.add(axiom.getSubClass());
 		}
-		for (final OWLSubPropertyAxiom<?> axiom : ontology.getRoleSubsumptions()) {
+		for (final OWLSubPropertyAxiom<?> axiom : ontology.roleSubsumptions()) {
 			Set<OWLPropertyExpression<?, ?>> predecessors = rolesPredecessor.get(axiom.getSuperProperty());
 			if (predecessors == null) {
 				predecessors = new HashSet<OWLPropertyExpression<?, ?>>();
@@ -205,7 +205,7 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 		if (irreflexiveRoles != null)
 			return irreflexiveRoles;
 		irreflexiveRoles = new HashSet<OWLObjectProperty>();
-		for (final OWLDisjointClassesAxiom axiom : ontology.getConceptDisjunctions())
+		for (final OWLDisjointClassesAxiom axiom : ontology.conceptDisjunctions())
 			for (final OWLDisjointClassesAxiom disjoint : axiom.asPairwiseAxioms()) {
 				final List<OWLClassExpression> concepts = disjoint.getClassExpressionsAsList();
 				final OWLClassExpression c1 = concepts.get(0);
@@ -221,9 +221,9 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 				final Set<OWLObjectProperty> intersection = inverselyOccurringRoles1(c1Ancs, c2Ancs);
 				irreflexiveRoles.addAll(intersection);
 			}
-		for (final OWLDisjointObjectPropertiesAxiom disjPropsAxiom : ontology.getRoleDisjunctions())
+		for (final OWLDisjointObjectPropertiesAxiom disjPropsAxiom : ontology.roleDisjunctions())
 			acumulateIrreflexives(disjPropsAxiom);
-		for (final OWLDisjointDataPropertiesAxiom disjPropsAxiom : ontology.getDataDisjunctions())
+		for (final OWLDisjointDataPropertiesAxiom disjPropsAxiom : ontology.dataDisjunctions())
 			acumulateIrreflexives(disjPropsAxiom);
 		return irreflexiveRoles;
 	}
@@ -243,7 +243,7 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 		if (unsatisfiableEntities != null)
 			return unsatisfiableEntities;
 		final Set<OWLClassExpression> unsatisfiableConcepts = new HashSet<OWLClassExpression>();
-		for (final OWLDisjointClassesAxiom axiom : ontology.getConceptDisjunctions())
+		for (final OWLDisjointClassesAxiom axiom : ontology.conceptDisjunctions())
 			for (final OWLDisjointClassesAxiom disjoint : axiom.asPairwiseAxioms()) {
 				final List<OWLClassExpression> concepts = disjoint.getClassExpressionsAsList();
 				final OWLClassExpression c1 = concepts.get(0);
@@ -267,9 +267,9 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 			unsatisfiableConcepts.addAll(cAncs);
 		}
 		final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles = new HashSet<OWLPropertyExpression<?, ?>>();
-		for (final OWLDisjointObjectPropertiesAxiom disjPropsAxiom : ontology.getRoleDisjunctions())
+		for (final OWLDisjointObjectPropertiesAxiom disjPropsAxiom : ontology.roleDisjunctions())
 			accumulateUnsatisfiable(unsatisfiableRoles, disjPropsAxiom);
-		for (final OWLDisjointDataPropertiesAxiom disjPropsAxiom : ontology.getDataDisjunctions())
+		for (final OWLDisjointDataPropertiesAxiom disjPropsAxiom : ontology.dataDisjunctions())
 			accumulateUnsatisfiable(unsatisfiableRoles, disjPropsAxiom);
 		for (final OWLPropertyExpression<?, ?> q : ontology.getUnsatisfiableRoles()) {
 			Set<OWLPropertyExpression<?, ?>> qAncs = getAncestors(q);
@@ -320,7 +320,7 @@ public class TBoxDigraphImpl implements TBoxDigraph {
 				final OWLObjectSomeValuesFrom exist = (OWLObjectSomeValuesFrom) v;
 				final OWLObjectPropertyExpression prop = exist.getProperty();
 				final OWLObjectPropertyExpression invProp = prop.getInverseProperty().getSimplified();
-				final OWLDataFactory dataFactory = ontology.getOriginalOntology().getOWLOntologyManager()
+				final OWLDataFactory dataFactory = ontology.getOntology().getOWLOntologyManager()
 						.getOWLDataFactory();
 				final OWLObjectSomeValuesFrom invExist = dataFactory.getOWLObjectSomeValuesFrom(invProp,
 						dataFactory.getOWLThing());

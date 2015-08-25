@@ -7,7 +7,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-import java.io.IOException;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -26,7 +25,6 @@ import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
@@ -160,15 +158,8 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 			} catch (final OWLException e) {
 				if (log.isDebugEnabled())
 					log.debug("Exception caught trying to do the query", e);
-			} catch (final IOException e) {
-				MessageDialogs.translationFileProblems(this, e);
 			} catch (final UnsupportedAxiomsException e) {
-				final boolean ignoreUnsupportedAxioms = MessageDialogs.violations(this, e);
-				if (ignoreUnsupportedAxioms) {
-					for (final OWLAxiom axiom : e.getUnsupportedAxioms())
-						getHybridKB().removeAxiom(axiom);
-					doQuery();
-				}
+				MessageDialogs.violations(this, e);
 			}
 			requiresRefresh = false;
 		} else

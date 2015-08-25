@@ -10,10 +10,10 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
  *
  * @author Nuno Costa
  */
-public interface Program {
+public interface DatabaseProgram {
 
 	/**
-	 * Adds a given {@link Rule rule} to this {@link Program program}.
+	 * Adds a given {@link Rule rule} to this {@link DatabaseProgram program}.
 	 *
 	 * @param rule
 	 *            the rule to be added.
@@ -21,7 +21,7 @@ public interface Program {
 	void add(Rule rule);
 
 	/**
-	 * Adds all rules of given {@link Collection collection} of {@link Rule rules} to this {@link Program program}.
+	 * Adds all rules of given {@link Collection collection} of {@link Rule rules} to this {@link DatabaseProgram program}.
 	 *
 	 * @param rules
 	 *            the collection of rules to be added.
@@ -29,19 +29,19 @@ public interface Program {
 	void addAll(Collection<Rule> rules);
 
 	/**
-	 * Removes all the {@link Rule rules} from this {@link Program program}.
+	 * Removes all the {@link Rule rules} from this {@link DatabaseProgram program}.
 	 */
 	void clear();
 
 	/**
-	 * Returns the {@link DeductiveDatabase} where this {@link Program program} is loaded.
+	 * Returns the {@link DeductiveDatabase} where this {@link DatabaseProgram program} is loaded.
 	 *
 	 * @return
 	 */
 	DeductiveDatabase getDeductiveDatabase();
 
 	/**
-	 * Removes a given {@link Rule rule} from this {@link Program program}.
+	 * Removes a given {@link Rule rule} from this {@link DatabaseProgram program}.
 	 *
 	 * @param rule
 	 *            the rule to be removed.
@@ -49,7 +49,7 @@ public interface Program {
 	void remove(Rule rule);
 
 	/**
-	 * Removes all rules of given {@link Collection collection} of {@link Rule rules} from this {@link Program program}.
+	 * Removes all rules of given {@link Collection collection} of {@link Rule rules} from this {@link DatabaseProgram program}.
 	 *
 	 * @param rules
 	 *            the collection of rules to be removed.

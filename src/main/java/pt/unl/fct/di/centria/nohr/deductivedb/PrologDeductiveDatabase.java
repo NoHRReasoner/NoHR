@@ -33,6 +33,7 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
+import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
@@ -42,13 +43,16 @@ import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
- * Partial implementation of {@link DeductiveDatabase} based on the Interprolog API.
+ * Abstract implementation of {@link DeductiveDatabase} based on the Interprolog API. In order to ensures termination and to support the default
+ * negation, each predicate, <i>P</i>, satisfying one of the following conditions is tabled: <br>
+ * - <i>P</i> appears in some (non fact) rule head and in some rule body; <br>
+ * - <i>P</i> appears in some {@link NegativeLiteral negative literal}. <br>
  *
  * @author Nuno Costa
  */
 public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
-	private class ProgramImpl implements Program {
+	private class ProgramImpl implements DatabaseProgram {
 
 		private final Set<Rule> rules;
 
@@ -120,8 +124,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	private final TermModelConverter termModelConverter;
 
 	/**
-	 * The file where the {@link Rule rules} of the loaded {@link Program programs} are written and from where they are loaded in the underlying
-	 * Prolog engine.
+	 * The file where the {@link Rule rules} of the loaded {@link DatabaseProgram programs} are written and from where they are loaded in the
+	 * underlying Prolog engine.
 	 */
 	protected final File file;
 
@@ -142,15 +146,15 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	/** The Prolog module that defines the predicates described {@link Goals}. */
 	protected final String prologModule;
 
-	/** The prolog engine to where the {@link Program programs} will be loaded and that will answer the queries. */
+	/** The prolog engine to where the {@link DatabaseProgram programs} will be loaded and that will answer the queries. */
 	protected PrologEngine prologEngine;
 
 	/**
-	 * Indicates whether the loaded {@link Program programs} have changed since the last call to {@link #commit()}.
+	 * Indicates whether the loaded {@link DatabaseProgram programs} have changed since the last call to {@link #commit()}.
 	 */
 	private boolean hasChanges;
 
-	/** The set of loaded {@link Program programs}. */
+	/** The set of loaded {@link DatabaseProgram programs}. */
 	private final Set<ProgramImpl> programs;
 
 	/** The multiset of arities of the predicates of the loaded programs, the multiplicity represents the number of occurrences. */
@@ -164,13 +168,13 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	/**
 	 * The multiset of predicates that are functor of atoms that occur in facts, where the multiplicity represents the number of {@link Rule rules} of
-	 * the loaded {@link Program programs} where that predicates occurs in such position.
+	 * the loaded {@link DatabaseProgram programs} where that predicates occurs in such position.
 	 */
 	private final Multiset<Predicate> factFunctors;
 
 	/**
 	 * The multiset of predicates that are functor of atoms that occur in positive bodies (see {@link Rule#getPositiveBody()}), where the multiplicity
-	 * represents the number of {@link Rule rules} of the loaded {@link Program programs} where that predicates occurs in such position.
+	 * represents the number of {@link Rule rules} of the loaded {@link DatabaseProgram programs} where that predicates occurs in such position.
 	 */
 	private final Multiset<Predicate> positiveBodyFunctors;
 
@@ -187,21 +191,23 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	 *            the directory where the Prolog system that will be used as underlying Prolog engine is located.
 	 * @param prologModule
 	 *            the name of the Prolog module that defines the predicates specified by {@link Goals}.
-	 * @throws IPException
-	 *             if some exception was thrown by the Interprolog API.
 	 * @throws PrologEngineCreationException
 	 *             if the creation of the underlying Prolog engine timed out. That could mean that the Prolog system located at {@code binDirectory}
-	 *             isn't an operational Prolog system.
-	 * @throws IOException
+	 *             isn't an operational Prolog system. @
 	 */
 	public PrologDeductiveDatabase(File binDirectory, String prologModule, FormatVisitor formatVisitor,
-			VocabularyMapping vocabularyMapping) throws IPException, PrologEngineCreationException, IOException {
+			VocabularyMapping vocabularyMapping) throws PrologEngineCreationException {
 		Objects.requireNonNull(binDirectory);
 		Objects.requireNonNull(prologModule);
 		this.binDirectory = binDirectory;
 		this.prologModule = prologModule;
 		this.formatVisitor = formatVisitor;
-		file = File.createTempFile(FILE_PREFIX, PROLOG_EXTENSION);
+		try {
+			file = File.createTempFile(FILE_PREFIX, PROLOG_EXTENSION);
+			file.deleteOnExit();
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
 		programs = new HashSet<>();
 		arities = new HashMultiset<>();
 		factFunctors = new HashMultiset<>();
@@ -209,7 +215,11 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		positiveBodyFunctors = new HashMultiset<>();
 		negativeBodyFunctors = new HashMultiset<>();
 		termModelConverter = new TermModelConverter(vocabularyMapping);
-		startPrologEngine();
+		try {
+			startPrologEngine();
+		} catch (final IPException e) {
+			throw new PrologEngineCreationException(e);
+		}
 	}
 
 	/**
@@ -277,12 +287,12 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	@Override
-	public Answer answer(Query query) throws IOException {
+	public Answer answer(Query query) {
 		return answer(query, null);
 	}
 
 	@Override
-	public Answer answer(Query query, Boolean trueAnswers) throws IOException {
+	public Answer answer(Query query, Boolean trueAnswers) {
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return null;
 		commit();
@@ -294,12 +304,12 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	@Override
-	public Iterable<Answer> answers(Query query) throws IOException {
+	public Iterable<Answer> answers(Query query) {
 		return answers(query, null);
 	}
 
 	@Override
-	public Iterable<Answer> answers(final Query query, Boolean trueAnswers) throws IOException {
+	public Iterable<Answer> answers(final Query query, Boolean trueAnswers) {
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return Collections.<Answer> emptyList();
 		commit();
@@ -349,12 +359,12 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	@Override
-	public Map<List<Term>, TruthValue> answersValuations(Query query) throws IOException {
+	public Map<List<Term>, TruthValue> answersValuations(Query query) {
 		return answersValuations(query, null);
 	}
 
 	@Override
-	public Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) throws IOException {
+	public Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) {
 		final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
 		if (trueAnswers != null && trueAnswers == false && !hasWFS())
 			return answers;
@@ -370,18 +380,20 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	/**
-	 * Commits all the loaded {@link Program programs} to the underlying {@link PrologEngine}.
+	 * Commits all the loaded {@link DatabaseProgram programs} to the underlying {@link PrologEngine}.
 	 *
-	 * @throws IOException
-	 *             if {@link #write()} threw such an exception.
 	 * @throws PrologEngineCreationException
 	 */
-	protected void commit() throws IOException {
+	protected void commit() {
 		if (!hasChanges)
 			return;
 		restartPrologEngine();
 		RuntimesLogger.start("file writing");
-		write();
+		try {
+			write();
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
 		RuntimesLogger.stop("file writing", "loading");
 		RuntimesLogger.start("xsb loading");
 		load();
@@ -390,7 +402,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	@Override
-	public Program createProgram() {
+	public DatabaseProgram createProgram() {
 		final ProgramImpl program = new ProgramImpl();
 		programs.add(program);
 		return program;
@@ -404,10 +416,10 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	@Override
 	public void dipose() {
 		try {
-			hasChanges = false;
 			headFunctors.clear();
 			negativeBodyFunctors.clear();
 			programs.clear();
+			hasChanges = false;
 			prologEngine.shutdown();
 		} catch (final IPException e) {
 			throw new RuntimeException(e);
@@ -431,12 +443,12 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	@Override
-	public boolean hasAnswers(Query query) throws IOException {
+	public boolean hasAnswers(Query query) {
 		return hasAnswers(query, null);
 	}
 
 	@Override
-	public boolean hasAnswers(Query query, Boolean trueAnswers) throws IOException {
+	public boolean hasAnswers(Query query, Boolean trueAnswers) {
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return false;
 		commit();
@@ -546,7 +558,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 			// Without the below cancel the thread will continue to live
 			// even though the timeout exception thrown.
 			future.cancel(false);
-			throw new PrologEngineCreationException();
+			throw new PrologEngineCreationException(e);
 		} catch (final InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (final ExecutionException e) {
@@ -562,10 +574,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	/**
-	 * Write the {@link Rule rules} of all the loaded {@link Program programs} in {@link #file}, and the corresponding table directives and fail
-	 * rules.
-	 *
-	 * @throws IOException
+	 * Write the {@link Rule rules} of all the loaded {@link DatabaseProgram programs} in {@link #file}, and the corresponding table directives and
+	 * fail rules. @
 	 */
 	protected void write() throws IOException {
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));

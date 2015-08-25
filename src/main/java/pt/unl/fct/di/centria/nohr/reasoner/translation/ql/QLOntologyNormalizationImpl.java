@@ -131,34 +131,34 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 		normalize(ontology);
 	}
 
-	private OWLDisjointObjectPropertiesAxiom disjunction(OWLObjectPropertyExpression q1,
-			OWLObjectPropertyExpression q2) {
-		return getDataFactory().getOWLDisjointObjectPropertiesAxiom(q1, q2);
-	}
-
 	@Override
-	public Set<OWLClassAssertionAxiom> getConceptAssertions() {
+	public Iterable<OWLClassAssertionAxiom> conceptAssertions() {
 		return ontology.getAxioms(AxiomType.CLASS_ASSERTION);
 	}
 
 	@Override
-	public Set<OWLDisjointClassesAxiom> getConceptDisjunctions() {
+	public Iterable<OWLDisjointClassesAxiom> conceptDisjunctions() {
 		return conceptDisjunctions;
 	}
 
 	@Override
-	public Set<OWLSubClassOfAxiom> getConceptSubsumptions() {
+	public Iterable<OWLSubClassOfAxiom> conceptSubsumptions() {
 		return conceptSubsumptions;
 	}
 
 	@Override
-	public Set<OWLDataPropertyAssertionAxiom> getDataAssertions() {
+	public Iterable<OWLDataPropertyAssertionAxiom> dataAssertions() {
 		return ontology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION);
 	}
 
 	@Override
-	public Set<OWLDisjointDataPropertiesAxiom> getDataDisjunctions() {
+	public Iterable<OWLDisjointDataPropertiesAxiom> dataDisjunctions() {
 		return dataDisjunctions;
+	}
+
+	private OWLDisjointObjectPropertiesAxiom disjunction(OWLObjectPropertyExpression q1,
+			OWLObjectPropertyExpression q2) {
+		return getDataFactory().getOWLDisjointObjectPropertiesAxiom(q1, q2);
 	}
 
 	private OWLDataFactory getDataFactory() {
@@ -166,28 +166,13 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 	}
 
 	@Override
-	public OWLOntology getOriginalOntology() {
+	public OWLOntology getOntology() {
 		return ontology;
-	}
-
-	@Override
-	public Set<OWLObjectPropertyAssertionAxiom> getRoleAssertions() {
-		return ontology.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION);
-	}
-
-	@Override
-	public Set<OWLDisjointObjectPropertiesAxiom> getRoleDisjunctions() {
-		return roleDisjunctions;
 	}
 
 	@Override
 	public Set<OWLObjectProperty> getRoles() {
 		return ontology.getObjectPropertiesInSignature();
-	}
-
-	@Override
-	public Set<OWLSubPropertyAxiom<?>> getRoleSubsumptions() {
-		return roleSubsumptions;
 	}
 
 	@Override
@@ -427,6 +412,21 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 			}
 		}
 
+	}
+
+	@Override
+	public Iterable<OWLObjectPropertyAssertionAxiom> roleAssertions() {
+		return ontology.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION);
+	}
+
+	@Override
+	public Iterable<OWLDisjointObjectPropertiesAxiom> roleDisjunctions() {
+		return roleDisjunctions;
+	}
+
+	@Override
+	public Iterable<OWLSubPropertyAxiom<?>> roleSubsumptions() {
+		return roleSubsumptions;
 	}
 
 	/**

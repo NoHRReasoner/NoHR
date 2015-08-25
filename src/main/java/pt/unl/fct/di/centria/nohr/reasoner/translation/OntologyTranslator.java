@@ -20,7 +20,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 public interface OntologyTranslator {
 
 	/**
-	 * Clear the {@link Program program}(s) that maintains the translation.
+	 * Clear the {@link DatabaseProgram program}(s) that maintains the translation.
 	 */
 	public void clear();
 
@@ -53,7 +53,7 @@ public interface OntologyTranslator {
 	public boolean hasDisjunctions();
 
 	/**
-	 * Updates the translation {@link Program program}(s) in the {@link OntologyTranslator translator}'s {@link DeductiveDatabase deductive database}
+	 * Updates the translation {@link DatabaseProgram program}(s) in the {@link OntologyTranslator translator}'s {@link DeductiveDatabase deductive database}
 	 * with the translation of the current version of the {@link OntologyTranslator translator}'s ontology.
 	 *
 	 * @throws UnsupportedAxiomsException

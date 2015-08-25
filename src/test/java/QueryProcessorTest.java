@@ -27,7 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.Program;
+import pt.unl.fct.di.centria.nohr.deductivedb.DatabaseProgram;
 import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Model;
@@ -62,7 +62,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	public static void tearDownAfterClass() throws Exception {
 	}
 
-	private final Program program;
+	private final DatabaseProgram program;
 
 	/**
 	 * @param deductiveDatabase

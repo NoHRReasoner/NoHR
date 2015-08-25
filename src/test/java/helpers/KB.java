@@ -17,13 +17,13 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
-import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -38,6 +38,7 @@ import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
@@ -55,7 +56,7 @@ public class KB {
 
 	private final Map<String, OWLDataProperty> dataRoles;
 
-	private final OWLDataFactory df;
+	protected final OWLDataFactory dataFactory;
 
 	private final Profile profile;
 
@@ -65,9 +66,13 @@ public class KB {
 
 	private final Map<String, OWLIndividual> individuals;
 
-	private final OWLOntology ontology;
+	protected OWLOntology ontology;
 
 	private final Map<String, OWLObjectProperty> roles;
+
+	protected final OWLOntologyManager ontologyManager;
+
+	private boolean clear;
 
 	public KB() throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
 			IPException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
@@ -78,26 +83,25 @@ public class KB {
 	public KB(Profile profile) throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
 			IPException, PrologEngineCreationException {
-		final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
-		df = om.getOWLDataFactory();
-		ontology = om.createOntology(IRI.generateDocumentIRI());
+		this.profile = profile;
+		ontologyManager = OWLManager.createOWLOntologyManager();
+		dataFactory = ontologyManager.getOWLDataFactory();
 		concepts = new HashMap<String, OWLClass>();
 		roles = new HashMap<String, OWLObjectProperty>();
 		dataRoles = new HashMap<String, OWLDataProperty>();
 		individuals = new HashMap<String, OWLIndividual>();
-		this.profile = profile;
-		hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology.getAxioms(), profile);
-		parser = new NoHRParser(new VocabularyMappingImpl(ontology));
+		setup();
+		clear = true;
 	}
 
 	protected void addAxiom(OWLAxiom axiom) {
-		ontology.getOWLOntologyManager().addAxiom(ontology, axiom);
-		hybridKB.addAxiom(axiom);
+		ontologyManager.addAxiom(ontology, axiom);
+		clear = false;
 	}
 
 	public void assertFalse(String query) {
 		Assert.assertFalse("shouldn't have answers", hasAnswer(query, true, true, true));
-
+		clear = false;
 	}
 
 	public void assertInconsistent(String query) {
@@ -116,7 +120,7 @@ public class KB {
 					throw new IllegalArgumentException("literals must be positive");
 				if (!l.isGrounded())
 					throw new IllegalArgumentException("literals must be grounded");
-				hybridKB.getRuleBase().add(Model.rule(l.getAtom()));
+				hybridKB.getProgram().add(Model.rule(l.getAtom()));
 			}
 			Assert.assertTrue("should have inconsistent answers", hasAnswer(query, false, false, true));
 			Assert.assertFalse("shouldn't have non inconsistent answers", hasAnswer(query, true, true, false));
@@ -135,8 +139,10 @@ public class KB {
 		Assert.assertFalse("shouldn't have non undefined answers", hasAnswer(query, true, false, true));
 	}
 
-	public void asymmetric(String role) {
-		addAxiom(df.getOWLAsymmetricObjectPropertyAxiom(role(role)));
+	public OWLAxiom asymmetric(String role) {
+		final OWLAxiom axiom = dataFactory.getOWLAsymmetricObjectPropertyAxiom(role(role));
+		addAxiom(axiom);
+		return axiom;
 	}
 
 	/**
@@ -147,43 +153,32 @@ public class KB {
 	}
 
 	public void clear() {
-		// final Set<OWLDeclarationAxiom> declarationAxioms =
-		// ontology.getAxioms(AxiomType.DECLARATION);
-		try {
-			hybridKB.dispose();
-			hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), profile);
-		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (final OWLProfilesViolationsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (final UnsupportedAxiomsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (final IPException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (final PrologEngineCreationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		parser = new NoHRParser(new VocabularyMappingImpl(ontology));
+		if (clear)
+			return;
+		concepts.clear();
+		roles.clear();
+		dataRoles.clear();
+		individuals.clear();
+		hybridKB.dispose();
+		ontologyManager.removeOntology(ontology);
+		setup();
+		clear = true;
 	}
 
 	public OWLClassExpression complement(OWLClassExpression concept) {
-		return df.getOWLObjectComplementOf(concept);
+		return dataFactory.getOWLObjectComplementOf(concept);
 	}
 
 	public OWLClassExpression complement(String conceptName) {
-		return df.getOWLObjectComplementOf(conc(conceptName));
+		return dataFactory.getOWLObjectComplementOf(conc(conceptName));
 	}
 
 	public OWLClass conc(String name) {
 		OWLClass concept = concepts.get(name);
 		if (concept == null) {
-			concept = df.getOWLClass(getEntityIRI(name));
-			addAxiom(df.getOWLDeclarationAxiom(concept));
+			concept = dataFactory.getOWLClass(getEntityIRI(name));
+			final OWLAxiom axiom = dataFactory.getOWLDeclarationAxiom(concept);
+			addAxiom(axiom);
 			concepts.put(name, concept);
 		}
 		return concept;
@@ -205,14 +200,15 @@ public class KB {
 	}
 
 	public OWLObjectIntersectionOf conj(String... conceptNames) {
-		return df.getOWLObjectIntersectionOf(concepts(conceptNames));
+		return dataFactory.getOWLObjectIntersectionOf(concepts(conceptNames));
 	}
 
 	public OWLDataProperty data(String name) {
 		OWLDataProperty dataRole = dataRoles.get(name);
 		if (dataRole == null) {
-			dataRole = df.getOWLDataProperty(getEntityIRI(name));
-			addAxiom(df.getOWLDeclarationAxiom(dataRole));
+			dataRole = dataFactory.getOWLDataProperty(getEntityIRI(name));
+			final OWLAxiom axiom = dataFactory.getOWLDeclarationAxiom(dataRole);
+			addAxiom(axiom);
 			dataRoles.put(name, dataRole);
 		}
 		return dataRole;
@@ -225,52 +221,76 @@ public class KB {
 		return result;
 	}
 
-	public void disjointConcepts(OWLClassExpression... concepts) {
-		addAxiom(df.getOWLDisjointClassesAxiom(concepts));
+	public OWLAxiom disjointConcepts(OWLClassExpression... concepts) {
+		final OWLAxiom axiom = dataFactory.getOWLDisjointClassesAxiom(concepts);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void disjointConcepts(String... conceptNames) {
-		addAxiom(df.getOWLDisjointClassesAxiom(concepts(conceptNames)));
+	public OWLAxiom disjointConcepts(String... conceptNames) {
+		final OWLAxiom axiom = dataFactory.getOWLDisjointClassesAxiom(concepts(conceptNames));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void disjointRoles(OWLObjectPropertyExpression... ope) {
-		addAxiom(df.getOWLDisjointObjectPropertiesAxiom(ope));
+	public OWLAxiom disjointRoles(OWLObjectPropertyExpression... ope) {
+		final OWLAxiom axiom = dataFactory.getOWLDisjointObjectPropertiesAxiom(ope);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void disjointRoles(String... roleNames) {
-		addAxiom(df.getOWLDisjointObjectPropertiesAxiom(roles(roleNames)));
+	public OWLAxiom disjointRoles(String... roleNames) {
+		final OWLAxiom axiom = dataFactory.getOWLDisjointObjectPropertiesAxiom(roles(roleNames));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void domain(OWLObjectProperty ope, OWLClassExpression ce) {
-		addAxiom(getDataFactory().getOWLObjectPropertyDomainAxiom(ope, ce));
+	public OWLAxiom domain(OWLObjectProperty ope, OWLClassExpression ce) {
+		final OWLAxiom axiom = getDataFactory().getOWLObjectPropertyDomainAxiom(ope, ce);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void domain(String roleName, String fillerName) {
-		addAxiom(df.getOWLObjectPropertyDomainAxiom(role(roleName), conc(fillerName)));
+	public OWLAxiom domain(String roleName, String fillerName) {
+		final OWLAxiom axiom = dataFactory.getOWLObjectPropertyDomainAxiom(role(roleName), conc(fillerName));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void equivalentConcepts(OWLClassExpression... ope) {
-		addAxiom(df.getOWLEquivalentClassesAxiom(ope));
+	public OWLAxiom equivalentConcepts(OWLClassExpression... ope) {
+		final OWLAxiom axiom = dataFactory.getOWLEquivalentClassesAxiom(ope);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void equivalentConcepts(String... conceptNames) {
-		addAxiom(df.getOWLEquivalentClassesAxiom(concepts(conceptNames)));
+	public OWLAxiom equivalentConcepts(String... conceptNames) {
+		final OWLAxiom axiom = dataFactory.getOWLEquivalentClassesAxiom(concepts(conceptNames));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void equivalentData(OWLDataPropertyExpression sub, OWLDataPropertyExpression sup) {
-		addAxiom(getDataFactory().getOWLEquivalentDataPropertiesAxiom(sub, sup));
+	public OWLAxiom equivalentData(OWLDataPropertyExpression sub, OWLDataPropertyExpression sup) {
+		final OWLAxiom axiom = getDataFactory().getOWLEquivalentDataPropertiesAxiom(sub, sup);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void equivalentData(String... dataRoleNames) {
-		addAxiom(df.getOWLEquivalentDataPropertiesAxiom(dataRoles(dataRoleNames)));
+	public OWLAxiom equivalentData(String... dataRoleNames) {
+		final OWLAxiom axiom = dataFactory.getOWLEquivalentDataPropertiesAxiom(dataRoles(dataRoleNames));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void equivalentRoles(OWLObjectPropertyExpression... ope) {
-		addAxiom(getDataFactory().getOWLEquivalentObjectPropertiesAxiom(ope));
+	public OWLAxiom equivalentRoles(OWLObjectPropertyExpression... ope) {
+		final OWLAxiom axiom = getDataFactory().getOWLEquivalentObjectPropertiesAxiom(ope);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void equivalentRoles(String... roleNames) {
-		addAxiom(df.getOWLEquivalentObjectPropertiesAxiom(roles(roleNames)));
+	public OWLAxiom equivalentRoles(String... roleNames) {
+		final OWLAxiom axiom = dataFactory.getOWLEquivalentObjectPropertiesAxiom(roles(roleNames));
+		addAxiom(axiom);
+		return axiom;
 	}
 
 	private void fail(Exception e) {
@@ -298,7 +318,7 @@ public class KB {
 	}
 
 	private OWLDataFactory getDataFactory() {
-		return df;
+		return dataFactory;
 	}
 
 	private OWLDataProperty getDataRole() {
@@ -317,17 +337,6 @@ public class KB {
 		return IRI.create(ontIRI + "#" + name);
 	}
 
-	String getLabel(Object obj) {
-		if (obj instanceof OWLEntity)
-			return getLabel(obj);
-		else if (obj instanceof OWLIndividual)
-			return getLabel(obj);
-		else if (obj instanceof OWLLiteral)
-			return ((OWLLiteral) obj).getLiteral();
-		else
-			return null;
-	}
-
 	public QLOntologyNormalization getQLNormalizedOntology() throws UnsupportedAxiomsException {
 		return new QLOntologyNormalizationImpl(ontology);
 	}
@@ -342,15 +351,11 @@ public class KB {
 	private boolean hasAnswer(String query, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) {
 		try {
-			parser = new NoHRParser(new VocabularyMappingImpl(ontology));
 			if (!query.endsWith("."))
 				query += ".";
 			final Query q = parser.parseQuery(query);
 			return hybridKB.hasAnswer(q, trueAnswers, undefinedAnswers, inconsistentAnswers);
 		} catch (final OWLProfilesViolationsException e) {
-			Assert.fail(e.getMessage());
-			return false;
-		} catch (final IOException e) {
 			Assert.fail(e.getMessage());
 			return false;
 		} catch (final UnsupportedAxiomsException e) {
@@ -372,52 +377,68 @@ public class KB {
 	public OWLIndividual individual(String name) {
 		OWLIndividual individual = individuals.get(name);
 		if (individual == null) {
-			individual = df.getOWLNamedIndividual(getEntityIRI(name));
+			individual = dataFactory.getOWLNamedIndividual(getEntityIRI(name));
 			individuals.put(name, individual);
 		}
 		return individual;
 	}
 
 	public OWLObjectPropertyExpression inv(OWLObjectProperty role) {
-		return df.getOWLObjectInverseOf(role);
+		return dataFactory.getOWLObjectInverseOf(role);
 	}
 
 	public OWLObjectPropertyExpression inv(String roleName) {
 		final OWLObjectProperty role = role(roleName);
-		return df.getOWLObjectInverseOf(role);
+		return dataFactory.getOWLObjectInverseOf(role);
 	}
 
-	public void inverse(String subRole, String superRole) {
-		addAxiom(df.getOWLInverseObjectPropertiesAxiom(role(subRole), role(superRole)));
+	public OWLAxiom inverse(String subRole, String superRole) {
+		final OWLAxiom axiom = dataFactory.getOWLInverseObjectPropertiesAxiom(role(subRole), role(superRole));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void irreflexive(String role) {
-		addAxiom(df.getOWLIrreflexiveObjectPropertyAxiom(role(role)));
+	public OWLAxiom irreflexive(String role) {
+		final OWLAxiom axiom = dataFactory.getOWLIrreflexiveObjectPropertyAxiom(role(role));
+		addAxiom(axiom);
+		return axiom;
 	}
 
 	public OWLObjectComplementOf neg(OWLClassExpression ce) {
-		return df.getOWLObjectComplementOf(ce);
+		return dataFactory.getOWLObjectComplementOf(ce);
 	}
 
 	public OWLObjectComplementOf neg(String conceptName) {
-		return df.getOWLObjectComplementOf(conc(conceptName));
+		return dataFactory.getOWLObjectComplementOf(conc(conceptName));
 	}
 
-	public void object(OWLObjectProperty role, OWLIndividual ind1, OWLIndividual ind2) {
-		addAxiom(df.getOWLObjectPropertyAssertionAxiom(role, ind1, ind2));
+	public OWLAxiom object(OWLObjectProperty role, OWLIndividual ind1, OWLIndividual ind2) {
+		final OWLAxiom axiom = dataFactory.getOWLObjectPropertyAssertionAxiom(role, ind1, ind2);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void object(String roleName, String subjectIndividualName, String individualName) {
-		addAxiom(df.getOWLObjectPropertyAssertionAxiom(role(roleName), individual(subjectIndividualName),
-				individual(individualName)));
+	public OWLAxiom object(String roleName, String subjectIndividualName, String individualName) {
+		final OWLObjectPropertyAssertionAxiom axiom = dataFactory.getOWLObjectPropertyAssertionAxiom(role(roleName),
+				individual(subjectIndividualName), individual(individualName));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void range(String roleName, String fillerName) {
-		addAxiom(df.getOWLObjectPropertyRangeAxiom(role(roleName), conc(fillerName)));
+	public OWLAxiom range(String roleName, String fillerName) {
+		final OWLAxiom axiom = dataFactory.getOWLObjectPropertyRangeAxiom(role(roleName), conc(fillerName));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void reflexive(String role) {
-		addAxiom(df.getOWLReflexiveObjectPropertyAxiom(role(role)));
+	public OWLAxiom reflexive(String role) {
+		final OWLAxiom axiom = dataFactory.getOWLReflexiveObjectPropertyAxiom(role(role));
+		addAxiom(axiom);
+		return axiom;
+	}
+
+	protected void removeAxiom(OWLAxiom axiom) {
+		ontologyManager.removeAxiom(ontology, axiom);
 	}
 
 	public OWLObjectProperty role() {
@@ -427,8 +448,9 @@ public class KB {
 	public OWLObjectProperty role(String name) {
 		OWLObjectProperty role = roles.get(name);
 		if (role == null) {
-			role = df.getOWLObjectProperty(getEntityIRI(name));
-			addAxiom(df.getOWLDeclarationAxiom(role));
+			role = dataFactory.getOWLObjectProperty(getEntityIRI(name));
+			final OWLAxiom axiom = dataFactory.getOWLDeclarationAxiom(role);
+			addAxiom(axiom);
 			roles.put(name, role);
 		}
 		return role;
@@ -441,77 +463,104 @@ public class KB {
 		return result;
 	}
 
-	public void rule(String rule) {
-		parser = new NoHRParser(new VocabularyMappingImpl(ontology));
-		pt.unl.fct.di.centria.nohr.model.Rule r;
+	public Rule rule(String rule) {
 		try {
-			r = parser.parseRule(rule);
-			hybridKB.getRuleBase().add(r);
+			final Rule r = parser.parseRule(rule);
+			hybridKB.getProgram().add(r);
+			return r;
 		} catch (final ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void setup() {
+		try {
+			ontology = ontologyManager.createOntology(IRI.generateDocumentIRI());
+			hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profile);
+			parser = new NoHRParser(hybridKB.getVocabularyMapping());
+		} catch (IPException | OWLOntologyCreationException | UnsupportedAxiomsException
+				| PrologEngineCreationException e) {
+			throw new RuntimeException(e);
 		}
 
 	}
 
 	public OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression owlObjectPropertyExpression) {
-		return df.getOWLObjectSomeValuesFrom(owlObjectPropertyExpression, df.getOWLThing());
+		return dataFactory.getOWLObjectSomeValuesFrom(owlObjectPropertyExpression, dataFactory.getOWLThing());
 	}
 
 	public OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression role, OWLClassExpression filler) {
-		return df.getOWLObjectSomeValuesFrom(role, filler);
+		return dataFactory.getOWLObjectSomeValuesFrom(role, filler);
 	}
 
 	public OWLObjectSomeValuesFrom some(String roleName) {
 		final OWLObjectProperty role = role(roleName);
-		return df.getOWLObjectSomeValuesFrom(role, df.getOWLThing());
+		return dataFactory.getOWLObjectSomeValuesFrom(role, dataFactory.getOWLThing());
 	}
 
 	public OWLObjectSomeValuesFrom some(String roleName, String fillerName) {
-		return df.getOWLObjectSomeValuesFrom(role(roleName), conc(fillerName));
+		return dataFactory.getOWLObjectSomeValuesFrom(role(roleName), conc(fillerName));
 	}
 
-	public void subConcept(OWLClassExpression b1, OWLClassExpression b2) {
-		addAxiom(df.getOWLSubClassOfAxiom(b1, b2));
+	public OWLAxiom subConcept(OWLClassExpression b1, OWLClassExpression b2) {
+		final OWLAxiom axiom = dataFactory.getOWLSubClassOfAxiom(b1, b2);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void subConcept(String subName, String superName) {
-		addAxiom(df.getOWLSubClassOfAxiom(conc(subName), conc(superName)));
+	public OWLAxiom subConcept(String subName, String superName) {
+		final OWLAxiom axiom = dataFactory.getOWLSubClassOfAxiom(conc(subName), conc(superName));
+		addAxiom(axiom);
+		return axiom;
 	}
 
 	/**
 	 * @param d1
 	 * @param d2
 	 */
-	public void subData(OWLDataProperty d1, OWLDataProperty d2) {
-		addAxiom(getDataFactory().getOWLSubDataPropertyOfAxiom(d1, d2));
+	public OWLAxiom subData(OWLDataProperty d1, OWLDataProperty d2) {
+		final OWLAxiom axiom = getDataFactory().getOWLSubDataPropertyOfAxiom(d1, d2);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void subData(String subName, String superName) {
-		addAxiom(getDataFactory().getOWLSubDataPropertyOfAxiom(data(subName), data(superName)));
+	public OWLAxiom subData(String subName, String superName) {
+		final OWLAxiom axiom = getDataFactory().getOWLSubDataPropertyOfAxiom(data(subName), data(superName));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void subRole(List<? extends OWLObjectPropertyExpression> chain, OWLObjectPropertyExpression q2) {
-		addAxiom(df.getOWLSubPropertyChainOfAxiom(chain, q2));
+	public OWLAxiom subRole(List<? extends OWLObjectPropertyExpression> chain, OWLObjectPropertyExpression q2) {
+		final OWLAxiom axiom = dataFactory.getOWLSubPropertyChainOfAxiom(chain, q2);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void subRole(OWLObjectPropertyExpression q1, OWLObjectPropertyExpression q2) {
-		addAxiom(df.getOWLSubObjectPropertyOfAxiom(q1, q2));
+	public OWLAxiom subRole(OWLObjectPropertyExpression q1, OWLObjectPropertyExpression q2) {
+		final OWLAxiom axiom = dataFactory.getOWLSubObjectPropertyOfAxiom(q1, q2);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void subRole(String subName, String superName) {
-		addAxiom(df.getOWLSubObjectPropertyOfAxiom(role(subName), role(superName)));
+	public OWLAxiom subRole(String subName, String superName) {
+		final OWLAxiom axiom = dataFactory.getOWLSubObjectPropertyOfAxiom(role(subName), role(superName));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void subRolesChain(String... roleNames) {
+	public OWLAxiom subRolesChain(String... roleNames) {
 		final List<OWLObjectPropertyExpression> chain = new ArrayList<>(roleNames.length - 1);
 		for (int i = 0; i < roleNames.length - 1; i++)
 			chain.add(role(roleNames[i]));
-		addAxiom(df.getOWLSubPropertyChainOfAxiom(chain, role(roleNames[roleNames.length - 1])));
+		final OWLAxiom axiom = dataFactory.getOWLSubPropertyChainOfAxiom(chain, role(roleNames[roleNames.length - 1]));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void symmetric(String role) {
-		addAxiom(df.getOWLSymmetricObjectPropertyAxiom(role(role)));
+	public OWLAxiom symmetric(String role) {
+		final OWLAxiom axiom = dataFactory.getOWLSymmetricObjectPropertyAxiom(role(role));
+		addAxiom(axiom);
+		return axiom;
 	}
 
 	/**
@@ -522,36 +571,49 @@ public class KB {
 	}
 
 	public OWLDataProperty topData() {
-		return df.getOWLTopDataProperty();
+		return dataFactory.getOWLTopDataProperty();
 	}
 
 	public OWLObjectProperty topRole() {
-		return df.getOWLTopObjectProperty();
+		return dataFactory.getOWLTopObjectProperty();
 	}
 
-	public void transitive(OWLObjectPropertyExpression ope) {
-		addAxiom(getDataFactory().getOWLTransitiveObjectPropertyAxiom(ope));
+	public OWLAxiom transitive(OWLObjectPropertyExpression ope) {
+		final OWLAxiom axiom = getDataFactory().getOWLTransitiveObjectPropertyAxiom(ope);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void transitive(String roleName) {
-		addAxiom(df.getOWLTransitiveObjectPropertyAxiom(role(roleName)));
+	public OWLAxiom transitive(String roleName) {
+		final OWLAxiom axiom = dataFactory.getOWLTransitiveObjectPropertyAxiom(role(roleName));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void typeOf(OWLClassExpression concept, OWLIndividual individual) {
-		addAxiom(df.getOWLClassAssertionAxiom(concept, individual));
+	public OWLAxiom typeOf(OWLClassExpression concept, OWLIndividual individual) {
+		final OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(concept, individual);
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void typeOf(String conceptName, String individualName) {
-		addAxiom(df.getOWLClassAssertionAxiom(conc(conceptName), individual(individualName)));
+	public OWLAxiom typeOf(String conceptName, String individualName) {
+		final OWLAxiom axiom = dataFactory.getOWLClassAssertionAxiom(conc(conceptName), individual(individualName));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void value(OWLDataProperty role, OWLIndividual ind1, String litral) {
-		addAxiom(df.getOWLDataPropertyAssertionAxiom(role, ind1, df.getOWLLiteral(litral)));
+	public OWLAxiom value(OWLDataProperty role, OWLIndividual ind1, String litral) {
+		final OWLAxiom axiom = dataFactory.getOWLDataPropertyAssertionAxiom(role, ind1,
+				dataFactory.getOWLLiteral(litral));
+		addAxiom(axiom);
+		return axiom;
 	}
 
-	public void value(String dataRoleName, String subjectIndividualName, String literal) {
-		addAxiom(df.getOWLDataPropertyAssertionAxiom(data(dataRoleName), individual(subjectIndividualName),
-				df.getOWLLiteral(literal)));
+	public OWLAxiom value(String dataRoleName, String subjectIndividualName, String literal) {
+		final OWLDataPropertyAssertionAxiom axiom = dataFactory.getOWLDataPropertyAssertionAxiom(data(dataRoleName),
+				individual(subjectIndividualName), dataFactory.getOWLLiteral(literal));
+		addAxiom(axiom);
+		return axiom;
 	}
 
 }

@@ -3,7 +3,6 @@
  */
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,7 @@ import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 
 /**
- * Maintains a set of {@link Program programs} and can answer queries to the union of that programs (i.e. the logic program formed by all the
+ * Maintains a set of {@link DatabaseProgram programs} and can answer queries to the union of that programs (i.e. the logic program formed by all the
  * {@link Rule rules} of those programs).
  *
  * @author Nuno Costa
@@ -22,18 +21,16 @@ import pt.unl.fct.di.centria.nohr.model.TruthValue;
 public interface DeductiveDatabase {
 
 	/**
-	 * Deterministically obtains one answer to a given query, based on the loaded {@link Program programs}.
+	 * Deterministically obtains one answer to a given query, based on the loaded {@link DatabaseProgram programs}.
 	 *
 	 * @param query
 	 *            the query that will be answered.
-	 * @return one answer to {@code query}.
-	 * @throws IOException
-	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 * @return one answer to {@code query}. @ if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
-	Answer answer(Query query) throws IOException;
+	Answer answer(Query query);
 
 	/**
-	 * Obtains one answer to a given query, based on the loaded {@link Program programs}.
+	 * Obtains one answer to a given query, based on the loaded {@link DatabaseProgram programs}.
 	 *
 	 * @param query
 	 *            the query that will be answered.
@@ -41,25 +38,23 @@ public interface DeductiveDatabase {
 	 *            specifies whether the answer valuation will be {@link TruthValue#TRUE true}. The answer will have a {@link TruthValue#TRUE true}
 	 *            valuation if {@code trueAnswers == true}; a {@link TruthValue#UNDEFINED} valuation if {@code trueAnswers == false}; and any of the
 	 *            two if {@code trueAnswers == null}.
-	 * @return one answer to {@code query} valuated according to {@code two answers}.
-	 * @throws IOException
-	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 * @return one answer to {@code query} valuated according to {@code two answers}. @ if {@link DeductiveDatabase} needed to read or write some file
+	 *         and was unsuccessful.
 	 */
-	Answer answer(Query query, Boolean trueAnswers) throws IOException;
+	Answer answer(Query query, Boolean trueAnswers);
 
 	/**
-	 * Obtains the answers to a given query, based on the loaded {@link Program programs}.
+	 * Obtains the answers to a given query, based on the loaded {@link DatabaseProgram programs}.
 	 *
 	 * @param query
 	 *            the query that will be answered.
-	 * @return one {@link Iterable} of all the answers to {@code query}.
-	 * @throws IOException
-	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 * @return one {@link Iterable} of all the answers to {@code query}. @ if {@link DeductiveDatabase} needed to read or write some file and was
+	 *         unsuccessful.
 	 */
-	Iterable<Answer> answers(Query query) throws IOException;
+	Iterable<Answer> answers(Query query);
 
 	/**
-	 * Obtains the answers to a given query, based on the loaded {@link Program programs}.
+	 * Obtains the answers to a given query, based on the loaded {@link DatabaseProgram programs}.
 	 *
 	 * @param query
 	 *            the query that will be answered.
@@ -67,29 +62,26 @@ public interface DeductiveDatabase {
 	 *            specifies whether the answers valuation will be {@link TruthValue#TRUE true}. The answers will have a {@link TruthValue#TRUE true}
 	 *            valuation if {@code trueAnswers == true}; a {@link TruthValue#UNDEFINED} valuation if {@code trueAnswers == false}; and any of the
 	 *            two if {@code trueAnswers == null}.
-	 * @return one {@link Iterable} of all the answers to {@code query}.
-	 * @throws IOException
-	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 * @return one {@link Iterable} of all the answers to {@code query}. @ if {@link DeductiveDatabase} needed to read or write some file and was
+	 *         unsuccessful.
 	 */
-	Iterable<Answer> answers(Query query, Boolean trueAnswers) throws IOException;
+	Iterable<Answer> answers(Query query, Boolean trueAnswers);
 
 	/**
 	 * Obtains the valuation of each substitution corresponding to an {@link Answer answer} to given {@link Query query}, based on the loaded
-	 * {@link Program programs}.
+	 * {@link DatabaseProgram programs}.
 	 *
 	 * @param query
 	 *            the query that will be answered.
 	 * @return the {@link Map mapping} between each substitution corresponding to an {@link Answer answer} to {@code query} - represented by the list
 	 *         of terms to which each {@code query}'s free variable is mapped, in the same order that those variables appear - and the
-	 *         {@link TruthValue valuation} of that answer.
-	 * @throws IOException
-	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 *         {@link TruthValue valuation} of that answer. @ if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
-	Map<List<Term>, TruthValue> answersValuations(Query query) throws IOException;
+	Map<List<Term>, TruthValue> answersValuations(Query query);
 
 	/**
 	 * Obtains the valuation of each substitution corresponding to an {@link Answer answer} to given {@link Query query}, based on the loaded
-	 * {@link Program programs}.
+	 * {@link DatabaseProgram programs}.
 	 *
 	 * @param query
 	 *            the query that will be answered.
@@ -99,37 +91,33 @@ public interface DeductiveDatabase {
 	 *            any of the two if {@code trueAnswers == null}.
 	 * @return the {@link Map mapping} between each substitution corresponding to an {@link Answer answer} to {@code query} - represented by the list
 	 *         of terms to which each {@code query}'s free variable is mapped, in the same order that those variables appear - and the
-	 *         {@link TruthValue valuation} of that answer.
-	 * @throws IOException
-	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 *         {@link TruthValue valuation} of that answer. @ if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
-	Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) throws IOException;
+	Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers);
 
 	/**
-	 * Creates and loads a new {@link Program program}.
+	 * Creates and loads a new {@link DatabaseProgram program}.
 	 *
-	 * @return a new {@link Program program}.
+	 * @return a new {@link DatabaseProgram program}.
 	 */
-	Program createProgram();
+	DatabaseProgram createProgram();
 
 	/**
-	 * Dispose all {@link Program programs} and release all the reclaimed resources.
+	 * Dispose all {@link DatabaseProgram programs} and release all the reclaimed resources.
 	 */
 	void dipose();
 
 	/**
-	 * Checks if there is some answer to given query, based on the loaded {@link Program programs}.
+	 * Checks if there is some answer to given query, based on the loaded {@link DatabaseProgram programs}.
 	 *
 	 * @param query
 	 *            the query that will be checked for answers.
-	 * @return true iff there is some answer to {@code query}.
-	 * @throws IOException
-	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 * @return true iff there is some answer to {@code query}. @ if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
-	boolean hasAnswers(Query query) throws IOException;
+	boolean hasAnswers(Query query);
 
 	/**
-	 * Checks if there is some answer to given query, based on the loaded {@link Program programs}.
+	 * Checks if there is some answer to given query, based on the loaded {@link DatabaseProgram programs}.
 	 *
 	 * @param query
 	 *            the query that will be checked for answers.
@@ -137,11 +125,9 @@ public interface DeductiveDatabase {
 	 *            specifies whether the checked answers valuation will be {@link TruthValue#TRUE true}. The checked answers will have a
 	 *            {@link TruthValue#TRUE true} valuation if {@code trueAnswers == true}; a {@link TruthValue#UNDEFINED} valuation if
 	 *            {@code trueAnswers == false}; and any of the two if {@code trueAnswers == null}.
-	 * @return true iff there is some answer to {@code query}.
-	 * @throws IOException
-	 *             if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 * @return true iff there is some answer to {@code query}. @ if {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
-	boolean hasAnswers(Query query, Boolean trueAnswers) throws IOException;
+	boolean hasAnswers(Query query, Boolean trueAnswers);
 
 	/**
 	 * Check if the {@link Query queries} will be answered according to the Well Founded Semantic.

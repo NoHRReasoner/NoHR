@@ -5,7 +5,6 @@ package pt.unl.fct.di.centria.nohr.plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -17,14 +16,12 @@ import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
-import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 
 import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
@@ -37,7 +34,6 @@ import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
-import pt.unl.fct.di.centria.nohr.rulebase.RuleBase;
 
 /**
  * @author nunocosta
@@ -46,10 +42,10 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 
 	protected class DisposableHybridKB extends HybridKBImpl implements Disposable {
 
-		public DisposableHybridKB(File xsbBinDirectory, Set<OWLAxiom> axioms, RuleBase ruleBase)
+		public DisposableHybridKB(File xsbBinDirectory, OWLOntology ontology, Program ruleBase)
 				throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, IOException,
 				PrologEngineCreationException {
-			super(xsbBinDirectory, axioms, ruleBase);
+			super(xsbBinDirectory, ontology, ruleBase);
 		}
 
 	}
@@ -152,7 +148,7 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 			return null;
 		}
 		try {
-			return new DisposableHybridKB(xsbBinDirectory, axioms, getRuleBase());
+			return new DisposableHybridKB(xsbBinDirectory, getOntology(), getRuleBase());
 		} catch (final IPException e) {
 			MessageDialogs.xsbProblems(this, e);
 			return null;
@@ -240,17 +236,6 @@ public abstract class AbstractHybridViewComponent extends AbstractOWLViewCompone
 		getOWLModelManager().put(VocabularyMapping.class,
 				new DisposableObject<VocabularyMapping>(new VocabularyMappingImpl(getOntology())));
 		getOWLModelManager().put(HybridKBImpl.class, createHybridKB(getOntology().getAxioms()));
-		getOWLModelManager().addOntologyChangeListener(new OWLOntologyChangeListener() {
-
-			@Override
-			public void ontologiesChanged(List<? extends OWLOntologyChange> changes) throws OWLException {
-				for (final OWLOntologyChange change : changes)
-					if (change.isAddAxiom())
-						getHybridKB().addAxiom(change.getAxiom());
-					else if (change.isRemoveAxiom())
-						getHybridKB().removeAxiom(change.getAxiom());
-			}
-		});
 		getOWLModelManager().addListener(new OWLModelManagerListener() {
 
 			@Override

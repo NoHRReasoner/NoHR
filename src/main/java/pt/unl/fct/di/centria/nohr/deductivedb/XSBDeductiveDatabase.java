@@ -32,7 +32,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	 * @throws IOException
 	 */
 	public XSBDeductiveDatabase(File binDirectory, VocabularyMapping vocabularyMapping)
-			throws IPException, PrologEngineCreationException, IOException {
+			throws PrologEngineCreationException {
 		super(binDirectory, "xsbmodule", new XSBFormatVisitor(), vocabularyMapping);
 	}
 

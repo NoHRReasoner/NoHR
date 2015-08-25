@@ -5,7 +5,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
@@ -63,10 +62,9 @@ public class HybridKBTest extends KB {
 	public void test2() throws OWLProfilesViolationsException, IPException, IOException, UnsupportedAxiomsException,
 			PrologEngineCreationException {
 		clear();
-		final OWLAxiom axiom = OWLManager.getOWLDataFactory().getOWLClassAssertionAxiom(conc("a"), individual("i"));
-		addAxiom(axiom);
+		final OWLAxiom axiom = typeOf(conc("a"), individual("i"));
 		assertTrue("a(i)");
-		hybridKB.removeAxiom(axiom);
+		removeAxiom(axiom);
 		assertFalse("a(i)");
 	}
 

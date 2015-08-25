@@ -79,17 +79,17 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 	 */
 	private Set<Rule> disjunctionsTranslation() {
 		final Set<Rule> result = new HashSet<Rule>();
-		for (final OWLDisjointClassesAxiom disjunction : ontologyNormalization.getConceptDisjunctions()) {
+		for (final OWLDisjointClassesAxiom disjunction : ontologyNormalization.conceptDisjunctions()) {
 			final List<OWLClassExpression> concepts = disjunction.getClassExpressionsAsList();
 			assert concepts.size() <= 2;
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(concepts.get(0), concepts.get(1)));
 		}
-		for (final OWLDisjointObjectPropertiesAxiom disjunction : ontologyNormalization.getRoleDisjunctions()) {
+		for (final OWLDisjointObjectPropertiesAxiom disjunction : ontologyNormalization.roleDisjunctions()) {
 			final List<OWLObjectPropertyExpression> roles = new LinkedList<>(disjunction.getProperties());
 			assert roles.size() <= 2;
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(roles.get(0), roles.get(1)));
 		}
-		for (final OWLDisjointDataPropertiesAxiom disjunction : ontologyNormalization.getDataDisjunctions()) {
+		for (final OWLDisjointDataPropertiesAxiom disjunction : ontologyNormalization.dataDisjunctions()) {
 			final List<OWLDataPropertyExpression> roles = new LinkedList<>(disjunction.getProperties());
 			assert roles.size() <= 2;
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(roles.get(0), roles.get(1)));
@@ -131,16 +131,16 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 	// aren't assertions
 	private Set<Rule> translation(QLAxiomsTranslator axiomsTranslator) {
 		final Set<Rule> result = new HashSet<Rule>();
-		for (final OWLClassAssertionAxiom assertion : ontologyNormalization.getConceptAssertions())
+		for (final OWLClassAssertionAxiom assertion : ontologyNormalization.conceptAssertions())
 			result.addAll(axiomsTranslator.assertionTranslation(assertion));
-		for (final OWLObjectPropertyAssertionAxiom assertion : ontologyNormalization.getRoleAssertions())
+		for (final OWLObjectPropertyAssertionAxiom assertion : ontologyNormalization.roleAssertions())
 			result.addAll(axiomsTranslator.assertionTranslation(assertion));
-		for (final OWLDataPropertyAssertionAxiom assertion : ontologyNormalization.getDataAssertions())
+		for (final OWLDataPropertyAssertionAxiom assertion : ontologyNormalization.dataAssertions())
 			result.addAll(axiomsTranslator.assertionTranslation(assertion));
-		for (final OWLSubClassOfAxiom subsumption : ontologyNormalization.getConceptSubsumptions())
+		for (final OWLSubClassOfAxiom subsumption : ontologyNormalization.conceptSubsumptions())
 			result.addAll(
 					axiomsTranslator.subsumptionTranslation(subsumption.getSubClass(), subsumption.getSuperClass()));
-		for (final OWLSubPropertyAxiom<?> subsumption : ontologyNormalization.getRoleSubsumptions())
+		for (final OWLSubPropertyAxiom<?> subsumption : ontologyNormalization.roleSubsumptions())
 			if (subsumption instanceof OWLSubObjectPropertyOfAxiom) {
 				result.addAll(axiomsTranslator.subsumptionTranslation(subsumption.getSubProperty(),
 						subsumption.getSuperProperty()));

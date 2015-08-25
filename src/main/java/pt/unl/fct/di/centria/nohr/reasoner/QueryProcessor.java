@@ -2,7 +2,6 @@ package pt.unl.fct.di.centria.nohr.reasoner;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class QueryProcessor {
 	 *            the {@link DeductiveDatabase} where the queries will be posed.
 	 */
 	protected QueryProcessor(DeductiveDatabase deductiveDatabaseManager) {
-		this.deductiveDatabase = deductiveDatabaseManager;
+		deductiveDatabase = deductiveDatabaseManager;
 	}
 
 	/**
@@ -46,11 +45,10 @@ public class QueryProcessor {
 	 *            the query.
 	 * @param isDoubled
 	 *            specifies whether the KB is doubled is doubled.
-	 * @return the list of all answers {@code query}.
-	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 * @return the list of all answers {@code query}. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was
+	 *         unsuccessful.
 	 */
-	protected List<Answer> allAnswers(Query query, boolean hasDoubled) throws IOException {
+	protected List<Answer> allAnswers(Query query, boolean hasDoubled) {
 		return allAnswers(query, hasDoubled, true, true, hasDoubled);
 	}
 
@@ -68,12 +66,11 @@ public class QueryProcessor {
 	 * @param inconsistentAnswers
 	 *            specifies whether to obtain {@link TruthValue#INCONSISTENT inconsistent} answers.
 	 * @return the list of all answers {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
-	 *         {@code inconsistentAnswers} flags.
-	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 *         {@code inconsistentAnswers} flags. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was
+	 *         unsuccessful.
 	 */
 	protected List<Answer> allAnswers(Query query, boolean isDoubled, boolean trueAnswers, boolean undefinedAnswers,
-			boolean inconsistentAnswers) throws IOException {
+			boolean inconsistentAnswers) {
 		if (inconsistentAnswers && isDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
@@ -123,11 +120,10 @@ public class QueryProcessor {
 	 * @param inconsistentAnswers
 	 *            specifies whether to consider :w {@link TruthValue#INCONSISTENT inconsistent} answers.
 	 * @return true iff there is at least one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
-	 *         {@code inconsistentAnswers} flags.
-	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 *         {@code inconsistentAnswers} flags. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was
+	 *         unsuccessful.
 	 */
-	protected boolean hasAnswer(Query query, boolean hasDoubled) throws IOException {
+	protected boolean hasAnswer(Query query, boolean hasDoubled) {
 		return hasAnswer(query, hasDoubled, true, true, hasDoubled);
 	}
 
@@ -145,12 +141,11 @@ public class QueryProcessor {
 	 * @param inconsistentAnswers
 	 *            specifies whether to consider :w {@link TruthValue#INCONSISTENT inconsistent} answers.
 	 * @return true iff there is at least one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
-	 *         {@code inconsistentAnswers} flags.
-	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 *         {@code inconsistentAnswers} flags. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was
+	 *         unsuccessful.
 	 */
 	protected boolean hasAnswer(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
-			boolean inconsistentAnswers) throws IOException {
+			boolean inconsistentAnswers) {
 		if (inconsistentAnswers && hasDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
@@ -216,11 +211,9 @@ public class QueryProcessor {
 	 *            the query.
 	 * @param isDoubled
 	 *            specifies whether the KB is doubled.
-	 * @return one answer to {@code query}.
-	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 * @return one answer to {@code query}. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
-	protected Answer oneAnswer(Query query, boolean hasDoubled) throws IOException {
+	protected Answer oneAnswer(Query query, boolean hasDoubled) {
 		return oneAnswer(query, hasDoubled, true, true, hasDoubled);
 	}
 
@@ -238,12 +231,10 @@ public class QueryProcessor {
 	 * @param inconsistentAnswers
 	 *            specifies whether to obtain a {@link TruthValue#INCONSISTENT inconsistent} answers.
 	 * @return one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and {@code inconsistentAnswers}
-	 *         flags.
-	 * @throws IOException
-	 *             if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
+	 *         flags. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	protected Answer oneAnswer(Query query, boolean isDoubled, boolean trueAnswers, boolean undefinedAnswers,
-			boolean inconsistentAnswers) throws IOException {
+			boolean inconsistentAnswers) {
 		if (inconsistentAnswers && isDoubled == false)
 			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)

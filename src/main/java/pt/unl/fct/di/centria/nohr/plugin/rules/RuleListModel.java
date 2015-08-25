@@ -10,8 +10,8 @@ import javax.swing.AbstractListModel;
 
 import org.protege.editor.core.ui.list.MListSectionHeader;
 
+import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.rulebase.RuleBase;
 
 public class RuleListModel extends AbstractListModel<Object> {
 
@@ -30,7 +30,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 
 	private static final long serialVersionUID = -5766699966244129502L;
 
-	private final RuleBase ruleBase;
+	private final Program ruleBase;
 
 	private final RuleEditor ruleEditor;
 
@@ -40,7 +40,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 	 *
 	 */
 
-	public RuleListModel(RuleEditor ruleEditor, RuleBase ruleBase) {
+	public RuleListModel(RuleEditor ruleEditor, Program ruleBase) {
 		super();
 		this.ruleEditor = ruleEditor;
 		this.ruleBase = ruleBase;

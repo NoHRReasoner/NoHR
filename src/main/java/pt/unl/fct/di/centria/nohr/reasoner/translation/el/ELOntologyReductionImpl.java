@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
+import org.semanticweb.elk.reasoner.taxonomy.InvalidTaxonomyException;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -19,7 +20,6 @@ import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
@@ -293,7 +293,11 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 		final Set<OWLClassAssertionAxiom> conceptAssertions = ontology.getAxioms(AxiomType.CLASS_ASSERTION);
 		final Set<OWLSubClassOfAxiom> conceptSubsumptions = conceptSubsumptions(ontology);
 		roleSubsumptions = roleSubsumptions(ontology);
-		closure = closure(conceptAssertions, conceptSubsumptions, roleSubsumptions);
+		try {
+			closure = closure(conceptAssertions, conceptSubsumptions, roleSubsumptions);
+		} catch (final InvalidTaxonomyException e) {
+			throw new UnsupportedAxiomsException(null);
+		}
 		int negAssertions = ontology.getAxiomCount(AxiomType.NEGATIVE_OBJECT_PROPERTY_ASSERTION);
 		negAssertions += ontology.getAxiomCount(AxiomType.NEGATIVE_DATA_PROPERTY_ASSERTION);
 		hasDisjunctions = hasDisjunctions(closure) || negAssertions > 0;
@@ -348,7 +352,6 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	 *         2. <i>O &vDash; C&sqsube;A</i> iff <i>C&sqsube;&bot; &in;</i><b>Closure</b> or <i>C&sqsube;A &in; </i><b>Closure</b>;<br>
 	 */
 	private void classify(OWLOntology ontology) {
-		assert hasFraments(ontology);
 		RuntimesLogger.start("ontology classification");
 		Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
 		final OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
@@ -426,27 +429,27 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	}
 
 	@Override
-	public Set<OWLSubPropertyChainOfAxiom> getChainSubsumptions() {
+	public Iterable<OWLSubPropertyChainOfAxiom> chainSubsumptions() {
 		return chainSubsumptions;
 	}
 
 	@Override
-	public Set<OWLClassAssertionAxiom> getConceptAssertions() {
+	public Iterable<OWLClassAssertionAxiom> conceptAssertions() {
 		return closure.getAxioms(AxiomType.CLASS_ASSERTION);
 	}
 
 	@Override
-	public Set<OWLSubClassOfAxiom> getConceptSubsumptions() {
+	public Iterable<OWLSubClassOfAxiom> conceptSubsumptions() {
 		return closure.getAxioms(AxiomType.SUBCLASS_OF);
 	}
 
 	@Override
-	public Set<OWLDataPropertyAssertionAxiom> getDataAssertion() {
+	public Iterable<OWLDataPropertyAssertionAxiom> dataAssertion() {
 		return ontology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION);
 	}
 
 	@Override
-	public Set<OWLSubDataPropertyOfAxiom> getDataSubsuptions() {
+	public Iterable<OWLSubDataPropertyOfAxiom> dataSubsuptions() {
 		final Set<OWLSubDataPropertyOfAxiom> result = new HashSet<OWLSubDataPropertyOfAxiom>(
 				ontology.getAxioms(AxiomType.SUB_DATA_PROPERTY));
 		for (final OWLEquivalentDataPropertiesAxiom axiom : ontology.getAxioms(AxiomType.EQUIVALENT_DATA_PROPERTIES))
@@ -455,12 +458,12 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	}
 
 	@Override
-	public Set<OWLObjectPropertyAssertionAxiom> getRoleAssertions() {
+	public Iterable<OWLObjectPropertyAssertionAxiom> roleAssertions() {
 		return ontology.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION);
 	}
 
 	@Override
-	public Set<OWLSubObjectPropertyOfAxiom> getRoleSubsumptions() {
+	public Iterable<OWLSubObjectPropertyOfAxiom> roleSubsumptions() {
 		return roleSubsumptions;
 	}
 
@@ -491,13 +494,6 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 			if (isExistential(cei))
 				return true;
 		return false;
-	}
-
-	private boolean hasFraments(OWLOntology ontology) {
-		for (final OWLEntity entity : ontology.getSignature())
-			if (entity.getIRI().toURI().getFragment() == null)
-				return false;
-		return true;
 	}
 
 	/**

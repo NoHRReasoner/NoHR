@@ -4,162 +4,223 @@
 package pt.unl.fct.di.centria.nohr.reasoner;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
+import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.deductivedb.DatabaseProgram;
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.deductivedb.Program;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Program;
+import pt.unl.fct.di.centria.nohr.model.ProgramChangeListener;
+import pt.unl.fct.di.centria.nohr.model.ProgramImpl;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
+import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
-import pt.unl.fct.di.centria.nohr.rulebase.RuleBase;
-import pt.unl.fct.di.centria.nohr.rulebase.RuleBaseImpl;
-import pt.unl.fct.di.centria.nohr.rulebase.RuleBaseListener;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
+/**
+ * Implementation of {@link HybridKB} according to {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} and
+ * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}.
+ *
+ * @author Nuno Costa
+ */
 public class HybridKBImpl implements HybridKB {
 
-	private boolean hasDisjunctions;
-
-	private boolean hasOntologyChanges;
-
-	private boolean hasRuleChanges;
-
+	/** The <i>ontology</i> component of this {@link HybridKB} */
 	private final OWLOntology ontology;
 
-	private final OntologyTranslator ontologyTranslator;
+	/** The <i>program</i> component of this {@link HybridKB} */
+	private final Program program;
 
-	private final QueryProcessor queryProcessor;
-
-	private final RuleBase ruleBase;
-
-	private final DeductiveDatabase dedutiveDatabaseManager;
-
+	/** The {@link VocabularyMapping} that this {@link HybridKB} applies. */
 	private final VocabularyMapping vocabularyMapping;
 
-	private final Program rulesDoubling;
+	/**
+	 * The underlying {@link DeductiveDatabase}, where the <i>ontology</i> translation and the <i>program</i> rules (and double rules, when necessary)
+	 * are loaded for querying
+	 */
+	private final DeductiveDatabase dedutiveDatabase;
 
-	public HybridKBImpl(final File xsbBinDirectory) throws OWLProfilesViolationsException, IOException,
-			UnsupportedAxiomsException, IPException, PrologEngineCreationException {
-		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet());
-	}
+	/** The underlying {@link OntologyTranslator}, that translates the <i>ontology</i> component to rules. */
+	private final OntologyTranslator ontologyTranslator;
 
-	public HybridKBImpl(final File xsbBinDirectory, final Profile profile) throws OWLProfilesViolationsException,
-			IPException, UnsupportedAxiomsException, IOException, PrologEngineCreationException {
-		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBaseImpl(), profile);
-	}
+	/** The underlying {@link QueryProcessor} that mediates the queries to the underlying {@link DeductiveDatabase}. */
+	private final QueryProcessor queryProcessor;
 
-	public HybridKBImpl(final File xsbBinDirectory, final RuleBase ruleBase) throws IOException,
-			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, PrologEngineCreationException {
-		this(xsbBinDirectory, Collections.<OWLAxiom> emptySet(), new RuleBaseImpl(), null);
-	}
+	/**
+	 * The {@link DatabaseProgram} that contains the doubled (or only the original ones, if the ontology doesn't have disjunctions) rules of the
+	 * <i>program</i> component.
+	 */
+	private final DatabaseProgram doubledProgram;
 
-	public HybridKBImpl(final File xsbBinDirectory, final Set<OWLAxiom> axioms) throws IOException,
-			OWLProfilesViolationsException, UnsupportedAxiomsException, IPException, PrologEngineCreationException {
-		this(xsbBinDirectory, axioms, new RuleBaseImpl(), null);
-	}
+	/** Whether the ontology had disjunctions at last call to {@link #preprocess()}. */
+	private boolean hadDisjunctions;
 
-	public HybridKBImpl(final File xsbBinDirectory, final Set<OWLAxiom> axioms, Profile profile)
-			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
+	/** Whether the ontology has changed since the last call to {@link #preprocess()}. */
+	private boolean hasOntologyChanges;
+
+	/** Whether the program has changed since the last call to {@link #preprocess()}. */
+	private boolean hasProgramChanges;
+
+	/** The {@link OWLOntologyChangeListener} that tracks the {@link OWLOntology ontology} changes. */
+	private final OWLOntologyChangeListener ontologyChangeListener;
+
+	/** The {@link ProgramChangeListener} that will track the tracks the {@link Program} changes. */
+	private final ProgramChangeListener programChangeListener;
+
+	/**
+	 * Constructs a {@link HybridKBImpl} from a given {@link OWLOntology ontology} and {@link Program program}.
+	 *
+	 * @param binDirectory
+	 *            the directory where the Prolog system to use as underlying Prolog engine is located.
+	 * @param ontology
+	 *            the <i>ontology</i> component of this {@link HybridKB}.
+	 * @param profile
+	 *            the {@link Profile OWL profile} that will be considered during the ontology translation. That will determine which the translation -
+	 *            {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} or
+	 *            {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} will
+	 *            be applied. If none is specified the preferred one will be applied. Whenever the ontology isn't in the specified profile, if some is
+	 *            specified, an {@link OWLProfilesViolationsException} will be thrown.
+	 * @throws OWLProfilesViolationsException
+	 *             if {@code profile != null} and {@code ontology} isn't in the profile {@code profile}; or {@code profile == null} and the
+	 *             {@code ontology} isn't in any supported profile.
+	 * @throws UnsupportedAxiomsException
+	 *             if {@code ontology} has some profile of an unsupported type.
+	 * @throws PrologEngineCreationException
+	 *             if there was some problem during the creation of the underlying Prolog engine.
+	 */
+	public HybridKBImpl(final File binDirectory, final OWLOntology ontology, Profile profile)
+			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException,
 			PrologEngineCreationException {
-		this(xsbBinDirectory, axioms, new RuleBaseImpl(), profile);
+		this(binDirectory, ontology, new ProgramImpl(), profile);
 	}
 
-	public HybridKBImpl(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase)
-			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException, IOException,
+	/**
+	 * Constructs a {@link HybridKBImpl} from a given {@link OWLOntology ontology} and {@link Program program}.
+	 *
+	 * @param binDirectory
+	 *            the directory where the Prolog system to use as underlying Prolog engine is located.
+	 * @param ontology
+	 *            the <i>ontology</i> component of this {@link HybridKB}.
+	 * @param program
+	 *            the <i>program</i> component of this {@link HybridKB}.
+	 * @throws OWLProfilesViolationsException
+	 *             if {@code profile != null} and {@code ontology} isn't in the profile {@code profile}; or {@code profile == null} and the
+	 *             {@code ontology} isn't in any supported profile.
+	 * @throws UnsupportedAxiomsException
+	 *             if {@code ontology} has some profile of an unsupported type.
+	 * @throws PrologEngineCreationException
+	 *             if there was some problem during the creation of the underlying Prolog engine.
+	 */
+	public HybridKBImpl(final File binDirectory, final OWLOntology ontology, final Program program)
+			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException,
 			PrologEngineCreationException {
-		this(xsbBinDirectory, axioms, ruleBase, null);
+		this(binDirectory, ontology, program, null);
 	}
 
-	public HybridKBImpl(final File xsbBinDirectory, final Set<OWLAxiom> axioms, final RuleBase ruleBase,
-			Profile profile) throws OWLProfilesViolationsException, UnsupportedAxiomsException, IPException,
-					IOException, PrologEngineCreationException {
-		Objects.requireNonNull(xsbBinDirectory);
-		try {
-			ontology = OWLManager.createOWLOntologyManager().createOntology(axioms, IRI.generateDocumentIRI());
-		} catch (final OWLOntologyCreationException e) {
-			throw new RuntimeException(e);
-		}
-		final Set<OWLOntology> ontologies = new HashSet<>();
-		ontologies.add(ontology);
-		vocabularyMapping = new VocabularyMappingImpl(ontologies);
+	/**
+	 * Constructs a {@link HybridKBImpl} from a given {@link OWLOntology ontology} and {@link Program program}.
+	 *
+	 * @param binDirectory
+	 *            the directory where the Prolog system to use as underlying Prolog engine is located.
+	 * @param ontology
+	 *            the <i>ontology</i> component of this {@link HybridKB}.
+	 * @param program
+	 *            the <i>program</i> component of this {@link HybridKB}.
+	 * @param profile
+	 *            the {@link Profile OWL profile} that will be considered during the ontology translation. That will determine which the translation -
+	 *            {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} or
+	 *            {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} will
+	 *            be applied. If none is specified the preferred one will be applied. Whenever the ontology isn't in the specified profile, if some is
+	 *            specified, an {@link OWLProfilesViolationsException} will be thrown.
+	 * @throws OWLProfilesViolationsException
+	 *             if {@code profile != null} and {@code ontology} isn't in the profile {@code profile}; or {@code profile == null} and the
+	 *             {@code ontology} isn't in any supported profile.
+	 * @throws UnsupportedAxiomsException
+	 *             if {@code ontology} has some profile of an unsupported type.
+	 * @throws PrologEngineCreationException
+	 *             if there was some problem during the creation of the underlying Prolog engine.
+	 */
+	public HybridKBImpl(final File binDirectory, final OWLOntology ontology, final Program program, Profile profile)
+			throws OWLProfilesViolationsException, UnsupportedAxiomsException, PrologEngineCreationException {
+		Objects.requireNonNull(binDirectory);
+		this.ontology = ontology;
+		this.program = program;
+		vocabularyMapping = new VocabularyMappingImpl(ontology);
+		dedutiveDatabase = new XSBDeductiveDatabase(binDirectory, vocabularyMapping);
+		doubledProgram = dedutiveDatabase.createProgram();
+		queryProcessor = new QueryProcessor(dedutiveDatabase);
+		ontologyTranslator = new OntologyTranslatorImpl(ontology, dedutiveDatabase, profile);
 		hasOntologyChanges = true;
-		dedutiveDatabaseManager = new XSBDeductiveDatabase(xsbBinDirectory, vocabularyMapping);
-		rulesDoubling = dedutiveDatabaseManager.createProgram();
-		ontologyTranslator = new OntologyTranslatorImpl(ontology, dedutiveDatabaseManager, profile);
-		queryProcessor = new QueryProcessor(dedutiveDatabaseManager);
-		this.ruleBase = ruleBase;
-		ruleBase.addListner(new RuleBaseListener() {
+		hasProgramChanges = true;
+		ontologyChangeListener = new OWLOntologyChangeListener() {
+
+			@Override
+			public void ontologiesChanged(List<? extends OWLOntologyChange> changes) throws OWLException {
+				for (final OWLOntologyChange change : changes)
+					if (change.getOntology() == ontology && change.isAxiomChange()
+							&& change.getAxiom().isLogicalAxiom())
+						hasOntologyChanges = true;
+			}
+		};
+		programChangeListener = new ProgramChangeListener() {
 
 			@Override
 			public void added(Rule rule) {
-				hasRuleChanges = true;
+				hasProgramChanges = true;
 			}
 
 			@Override
 			public void cleaned() {
-				hasRuleChanges = true;
+				hasProgramChanges = true;
 			}
 
 			@Override
 			public void removed(Rule rule) {
-				hasRuleChanges = true;
+				hasProgramChanges = true;
 			}
 
 			@Override
 			public void updated(Rule oldRule, Rule newRule) {
-				hasRuleChanges = true;
+				hasProgramChanges = true;
 			}
-		});
+		};
+		ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
+		program.addListener(programChangeListener);
 		preprocess();
 	}
 
 	@Override
-	public boolean addAxiom(OWLAxiom axiom) {
-		final List<OWLOntologyChange> changes = ontology.getOWLOntologyManager().addAxiom(ontology, axiom);
-		if (!changes.isEmpty()) {
-			hasOntologyChanges = true;
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public List<Answer> allAnswers(Query query)
-			throws OWLProfilesViolationsException, UnsupportedAxiomsException, IOException {
+	public List<Answer> allAnswers(Query query) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		return allAnswers(query, true, true, true);
 	}
 
 	@Override
 	public List<Answer> allAnswers(Query query, boolean trueAnswer, boolean undefinedAnswers,
-			boolean inconsistentAnswers)
-					throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
-		if (hasOntologyChanges || hasRuleChanges)
+			boolean inconsistentAnswers) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+		if (hasOntologyChanges || hasProgramChanges)
 			preprocess();
 		RuntimesLogger.start("query");
 		RuntimesLogger.info("querying: " + query);
-		final List<Answer> answers = queryProcessor.allAnswers(query, hasDisjunctions, trueAnswer, undefinedAnswers,
-				hasDisjunctions ? inconsistentAnswers : false);
+		final List<Answer> answers = queryProcessor.allAnswers(query, hadDisjunctions, trueAnswer, undefinedAnswers,
+				hadDisjunctions ? inconsistentAnswers : false);
 		RuntimesLogger.stop("query", "queries");
 		final List<Answer> result = new LinkedList<Answer>();
 		for (final Answer ans : answers)
@@ -169,26 +230,28 @@ public class HybridKBImpl implements HybridKB {
 
 	@Override
 	public void dispose() {
-		dedutiveDatabaseManager.dipose();
+		dedutiveDatabase.dipose();
+		ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
+		program.removeListener(programChangeListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#finalize()
-	 */
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
 		dispose();
 	}
 
+	@Override
+	public OWLOntology getOntology() {
+		return ontology;
+	}
+
 	/**
 	 * @return the ruleBase
 	 */
 	@Override
-	public RuleBase getRuleBase() {
-		return ruleBase;
+	public Program getProgram() {
+		return program;
 	}
 
 	@Override
@@ -198,61 +261,71 @@ public class HybridKBImpl implements HybridKB {
 
 	@Override
 	public boolean hasAnswer(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
-			throws OWLProfilesViolationsException, IOException, UnsupportedAxiomsException {
-		if (hasOntologyChanges || hasRuleChanges)
+			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+		if (hasOntologyChanges || hasProgramChanges)
 			preprocess();
 		RuntimesLogger.start("query");
-		final boolean hasAnswer = queryProcessor.hasAnswer(query, hasDisjunctions, trueAnswer, undefinedAnswers,
-				hasDisjunctions ? inconsistentAnswers : false);
+		final boolean hasAnswer = queryProcessor.hasAnswer(query, hadDisjunctions, trueAnswer, undefinedAnswers,
+				hadDisjunctions ? inconsistentAnswers : false);
 		RuntimesLogger.stop("query", "queries");
 		return hasAnswer;
 	}
 
 	@Override
 	public Answer oneAnswer(Query query) throws OWLOntologyCreationException, OWLOntologyStorageException,
-			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException {
+			OWLProfilesViolationsException, UnsupportedAxiomsException {
 		return oneAnswer(query, true, true, true);
 	}
 
 	@Override
 	public Answer oneAnswer(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
-			throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
-			IOException, CloneNotSupportedException, UnsupportedAxiomsException {
-		if (hasOntologyChanges || hasRuleChanges)
+			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+		if (hasOntologyChanges || hasProgramChanges)
 			preprocess();
 		RuntimesLogger.start("query");
 
-		final Answer answer = queryProcessor.oneAnswer(query, hasDisjunctions, trueAnswer, undefinedAnswers,
-				hasDisjunctions ? inconsistentAnswers : false);
+		final Answer answer = queryProcessor.oneAnswer(query, hadDisjunctions, trueAnswer, undefinedAnswers,
+				hadDisjunctions ? inconsistentAnswers : false);
 		RuntimesLogger.stop("query", "queries");
 		return answer;
 	}
 
-	private void preprocess() throws IOException, OWLProfilesViolationsException, UnsupportedAxiomsException {
+	/**
+	 * Preprocesses this {@link HybridKB} according to {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} and
+	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}, depending on
+	 * the current ontolgy profile, so that it can be queried. The translation {@link DatabaseProgram}s, loaded in {@link #dedutiveDatabase} are
+	 * updated, if the ontology has changed since the last call; {@link #doubledProgram} is updated, if they were introduced disjunctions in the
+	 * ontology, or if the program has changed, since the last call.
+	 *
+	 * @throws UnsupportedAxiomsException
+	 *             if the current version of the ontology has some axioms of an unsupported type.
+	 * @throws OWLProfilesViolationsException
+	 *             if the { ontology isn't in any supported OWL profile.
+	 */
+	private void preprocess() throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		if (hasOntologyChanges) {
 			RuntimesLogger.start("ontology processing");
 			ontologyTranslator.updateTranslation();
 			RuntimesLogger.stop("ontology processing", "loading");
 		}
-		if (hasRuleChanges || ontologyTranslator.hasDisjunctions() != hasDisjunctions) {
+		if (hasProgramChanges || ontologyTranslator.hasDisjunctions() != hadDisjunctions) {
 			RuntimesLogger.start("rules parsing");
-			rulesDoubling.clear();
-			for (final Rule rule : ruleBase)
-				for (final Rule doublingRule : RulesDoubling.doubleRule(rule))
-					rulesDoubling.add(doublingRule);
+			doubledProgram.clear();
+			if (ontologyTranslator.hasDisjunctions())
+
+				for (final Rule rule : program)
+					doubledProgram.addAll(ProgramDoubling.doubleRule(rule));
+			else {
+				final ModelVisitor originalPredicates = new PredicateTypeVisitor(PredicateType.ORIGINAL);
+				for (final Rule rule : program)
+					doubledProgram.add(rule.accept(originalPredicates));
+			}
+
 			RuntimesLogger.stop("rules parsing", "loading");
 		}
 		hasOntologyChanges = false;
-		hasRuleChanges = false;
-		hasDisjunctions = ontologyTranslator.hasDisjunctions();
-	}
-
-	@Override
-	public boolean removeAxiom(OWLAxiom axiom) {
-		final List<OWLOntologyChange> changes = ontology.getOWLOntologyManager().removeAxiom(ontology, axiom);
-		if (!changes.isEmpty())
-			hasOntologyChanges = true;
-		return !changes.isEmpty();
+		hasProgramChanges = false;
+		hadDisjunctions = ontologyTranslator.hasDisjunctions();
 	}
 
 }

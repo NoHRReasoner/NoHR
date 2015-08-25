@@ -3,6 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
@@ -19,7 +20,7 @@ import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
  *
  * @author Nuno Costa
  */
-public class RulesDoubling {
+public class ProgramDoubling {
 
 	/**
 	 * Double a given rule according to <b>Definition 3.1</b> of {@link <a href="http://tocl.acm.org/accepted/464knorr.pdf"><i> Query-driven
@@ -30,8 +31,8 @@ public class RulesDoubling {
 	 * @return the pair of rules corresponding to the doubling of {@code rule}.
 	 */
 
-	public static Rule[] doubleRule(Rule rule) {
-		final Rule[] result = new Rule[2];
+	public static List<Rule> doubleRule(Rule rule) {
+		final List<Rule> result = new ArrayList<>(2);
 		final ModelVisitor originalEncoder = new PredicateTypeVisitor(PredicateType.ORIGINAL);
 		final ModelVisitor doubleEncoder = new PredicateTypeVisitor(PredicateType.DOUBLE);
 		final Atom head = rule.getHead();
@@ -55,8 +56,8 @@ public class RulesDoubling {
 			final ModelVisitor negativeEncoder = new PredicateTypeVisitor(PredicateType.NEGATIVE);
 			doubleBody[i] = Model.negLiteral(head.accept(negativeEncoder));
 		}
-		result[0] = Model.rule(head.accept(originalEncoder), originalBody);
-		result[1] = Model.rule(head.accept(doubleEncoder), doubleBody);
+		result.add(Model.rule(head.accept(originalEncoder), originalBody));
+		result.add(Model.rule(head.accept(doubleEncoder), doubleBody));
 		return result;
 	}
 }

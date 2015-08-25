@@ -26,74 +26,53 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 public interface QLOntologyNormalization {
 
 	/**
-	 * Returns the set of DL-Lite<sub>R</sub> concept assertions in this {@link QLOntologyNormalization}.
+	 * Returns the DL-Lite<sub>R</sub> concept assertions in this {@link QLOntologyNormalization}.
 	 *
-	 * @return the set of DL-Lite<sub>R</sub> concept assertions in this {@link QLOntologyNormalization}.
+	 * @return the DL-Lite<sub>R</sub> concept assertions in this {@link QLOntologyNormalization}.
 	 */
-	public Set<OWLClassAssertionAxiom> getConceptAssertions();
+	public Iterable<OWLClassAssertionAxiom> conceptAssertions();
 
 	/**
-	 * Returns the set of DL-Lite<sub>R</sub> concept disjunctions in this {@link QLOntologyNormalization}.
+	 * Returns the DL-Lite<sub>R</sub> concept disjunctions in this {@link QLOntologyNormalization}.
 	 *
-	 * @return the set of DL-Lite<sub>R</sub> concept disjunctions in this {@link QLOntologyNormalization}.
+	 * @return the DL-Lite<sub>R</sub> concept disjunctions in this {@link QLOntologyNormalization}.
 	 */
-	public Set<OWLDisjointClassesAxiom> getConceptDisjunctions();
+	public Iterable<OWLDisjointClassesAxiom> conceptDisjunctions();
 
 	/**
-	 * Returns the set of DL-Lite<sub>R</sub> concept subsumptions in this {@link QLOntologyNormalization}.
+	 * Returns the DL-Lite<sub>R</sub> concept subsumptions in this {@link QLOntologyNormalization}.
 	 *
-	 * @return the set of DL-Lite<sub>R</sub> concept subsumptions in this {@link QLOntologyNormalization}.
+	 * @return the DL-Lite<sub>R</sub> concept subsumptions in this {@link QLOntologyNormalization}.
 	 */
-	public Set<OWLSubClassOfAxiom> getConceptSubsumptions();
+	public Iterable<OWLSubClassOfAxiom> conceptSubsumptions();
 
 	/**
-	 * Returns the set of DL-Lite<sub>R</sub> (data) role assertions in this {@link QLOntologyNormalization}.
+	 * Returns the DL-Lite<sub>R</sub> (data) role assertions in this {@link QLOntologyNormalization}.
 	 *
-	 * @return the set of DL-Lite<sub>R</sub> (data) role assertions in this {@link QLOntologyNormalization}.
+	 * @return the DL-Lite<sub>R</sub> (data) role assertions in this {@link QLOntologyNormalization}.
 	 */
-	public Set<OWLDataPropertyAssertionAxiom> getDataAssertions();
+	public Iterable<OWLDataPropertyAssertionAxiom> dataAssertions();
 
 	/**
-	 * Returns the set of DL-Lite<sub>R</sub> (data) role disjunctions in this {@link QLOntologyNormalization}.
+	 * Returns the DL-Lite<sub>R</sub> (data) role disjunctions in this {@link QLOntologyNormalization}.
 	 *
-	 * @return the set of DL-Lite<sub>R</sub> (data) role disjunctions in this {@link QLOntologyNormalization}.
+	 * @return the DL-Lite<sub>R</sub> (data) role disjunctions in this {@link QLOntologyNormalization}.
 	 */
-	public Set<OWLDisjointDataPropertiesAxiom> getDataDisjunctions();
+	public Iterable<OWLDisjointDataPropertiesAxiom> dataDisjunctions();
 
 	/**
 	 * The ontology of which this {@link QLOntologyTranslator} is normalization.
 	 *
 	 * @return the ontology of which this {@link QLOntologyTranslator} is normalization.
 	 */
-	public OWLOntology getOriginalOntology();
+	public OWLOntology getOntology();
 
 	/**
-	 * Returns the set of DL-Lite<sub>R</sub> role assertions in this {@link QLOntologyNormalization}.
+	 * Returns the DL-Lite<sub>R</sub> roles occurring in this {@link QLOntologyNormalization}.
 	 *
-	 * @return the set of DL-Lite<sub>R</sub> role assertions in this {@link QLOntologyNormalization}.
-	 */
-	public Set<OWLObjectPropertyAssertionAxiom> getRoleAssertions();
-
-	/**
-	 * Returns the set of DL-Lite<sub>R</sub> role disjunctions in this {@link QLOntologyNormalization}.
-	 *
-	 * @return the set of DL-Lite<sub>R</sub> role disjunctions in this {@link QLOntologyNormalization}.
-	 */
-	public Set<OWLDisjointObjectPropertiesAxiom> getRoleDisjunctions();
-
-	/**
-	 * Returns the set of DL-Lite<sub>R</sub> roles occurring in this {@link QLOntologyNormalization}.
-	 *
-	 * @return the set of DL-Lite<sub>R</sub> roles occurring in this {@link QLOntologyNormalization}.
+	 * @return the DL-Lite<sub>R</sub> roles occurring in this {@link QLOntologyNormalization}.
 	 */
 	public Set<OWLObjectProperty> getRoles();
-
-	/**
-	 * Returns the set of DL-Lite<sub>R</sub> role subsumptions in this {@link QLOntologyNormalization}.
-	 *
-	 * @return the set of DL-Lite<sub>R</sub> role subsumptions in this {@link QLOntologyNormalization}.
-	 */
-	public Set<OWLSubPropertyAxiom<?>> getRoleSubsumptions();
 
 	/**
 	 * Returns the set of DL-Lite<sub>R</sub> concepts occurring as subsumed concept in some subsumption in this {@link QLOntologyNormalization}.
@@ -169,4 +148,25 @@ public interface QLOntologyNormalization {
 	 * @return true iff {@code r} occur as subsuming role in some subumption of this {@link QLOntologyNormalization}.
 	 */
 	public boolean isSuper(OWLPropertyExpression<?, ?> r);
+
+	/**
+	 * Returns the DL-Lite<sub>R</sub> role assertions in this {@link QLOntologyNormalization}.
+	 *
+	 * @return the DL-Lite<sub>R</sub> role assertions in this {@link QLOntologyNormalization}.
+	 */
+	public Iterable<OWLObjectPropertyAssertionAxiom> roleAssertions();
+
+	/**
+	 * Returns the DL-Lite<sub>R</sub> role disjunctions in this {@link QLOntologyNormalization}.
+	 *
+	 * @return the DL-Lite<sub>R</sub> role disjunctions in this {@link QLOntologyNormalization}.
+	 */
+	public Iterable<OWLDisjointObjectPropertiesAxiom> roleDisjunctions();
+
+	/**
+	 * Returns the DL-Lite<sub>R</sub> role subsumptions in this {@link QLOntologyNormalization}.
+	 *
+	 * @return the DL-Lite<sub>R</sub> role subsumptions in this {@link QLOntologyNormalization}.
+	 */
+	public Iterable<OWLSubPropertyAxiom<?>> roleSubsumptions();
 }

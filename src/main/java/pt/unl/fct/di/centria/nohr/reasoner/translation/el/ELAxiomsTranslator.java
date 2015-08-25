@@ -31,6 +31,7 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
+import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedExpressionException;
 
 /**
  * Provides EL<sub>&perp;</sub><sup>+</sup> axiom translation operations according to {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>}.
@@ -153,6 +154,8 @@ public abstract class ELAxiomsTranslator {
 	 *            a variable <i>x</i>.
 	 * @param doub
 	 *            specifies whether the atom will be doubled (i.e. with an double meta-predicate functor).
+	 * @throws UnsupportedExpressionException
+	 *             if {@code ce} isn't a supported expression - atomic concept, a conjunction or a existential (SomeObjectFrom only).
 	 * @return <i>{A(x)}</i> if <i>C</i> is an atomic concept <i>A</i>; <br>
 	 *         <i>{}</i> if <i>C</i> is the top concept &#x22A5; <br>
 	 *         <i>tr(C<sub>1</sub>, x) &cup; tr(C<sub>2</sub>, x) if <i>C</i> is an conjunction <i>C<sub>1</sub> &prod; <i>C<sub>2</sub></i>; </br>
@@ -175,7 +178,8 @@ public abstract class ELAxiomsTranslator {
 			final OWLClassExpression filler = some.getFiller();
 			result.add(tr(p, X, Y, doub));
 			result.addAll(tr(filler, Y, doub));
-		}
+		} else
+			throw new UnsupportedExpressionException(ce);
 		return result;
 	}
 
@@ -191,6 +195,8 @@ public abstract class ELAxiomsTranslator {
 	 *            a variable <i>x<sub>1</sub>.
 	 * @param doub
 	 *            specifies whether the returned axioms will be doubled (i.e. with a double meta-predicate functor).
+	 * @throws IllegalArgumentException
+	 *             if {@code r} isn't an atomic role.
 	 * @return <i>R<sup>d</sup>(x, x<sub>1</sub>)</i>, if {@code doub} is true; <br>
 	 *         <i>R(x, x<sub>1</sub></i>), otherwise.
 	 */
@@ -198,7 +204,8 @@ public abstract class ELAxiomsTranslator {
 		final Predicate pred = Predicates.pred(r, doub);
 		if (r instanceof OWLProperty)
 			return atom(pred, x, x1);
-		return null;
+		else
+			throw new IllegalArgumentException("r: must be an atomic (non data) rule");
 	}
 
 	/**

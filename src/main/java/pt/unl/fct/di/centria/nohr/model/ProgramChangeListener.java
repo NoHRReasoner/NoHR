@@ -1,14 +1,12 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.rulebase;
-
-import pt.unl.fct.di.centria.nohr.model.Rule;
+package pt.unl.fct.di.centria.nohr.model;
 
 /**
  * @author nunocosta
  */
-public interface RuleBaseListener {
+public interface ProgramChangeListener {
 
 	public void added(Rule rule);
 

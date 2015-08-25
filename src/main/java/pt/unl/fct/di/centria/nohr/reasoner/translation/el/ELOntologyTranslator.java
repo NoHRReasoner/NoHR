@@ -72,21 +72,21 @@ public class ELOntologyTranslator extends OntologyTranslatorImplementor {
 	 *            the {@link ELAxiomsTranslator} that will be used.
 	 */
 	private void translate(ELAxiomsTranslator axiomTranslator) {
-		for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology.getChainSubsumptions())
+		for (final OWLSubPropertyChainOfAxiom axiom : reducedOntology.chainSubsumptions())
 			translation.addAll(axiomTranslator.translation(axiom));
-		for (final OWLClassAssertionAxiom assertion : reducedOntology.getConceptAssertions())
+		for (final OWLClassAssertionAxiom assertion : reducedOntology.conceptAssertions())
 			translation.addAll(axiomTranslator.translation(assertion));
-		for (final OWLSubClassOfAxiom axiom : reducedOntology.getConceptSubsumptions())
+		for (final OWLSubClassOfAxiom axiom : reducedOntology.conceptSubsumptions())
 			translation.addAll(axiomTranslator.translation(axiom));
-		for (final OWLDataPropertyAssertionAxiom assertion : reducedOntology.getDataAssertion())
+		for (final OWLDataPropertyAssertionAxiom assertion : reducedOntology.dataAssertion())
 			translation.addAll(axiomTranslator.translation(assertion));
-		for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology.getDataSubsuptions())
+		for (final OWLSubDataPropertyOfAxiom axiom : reducedOntology.dataSubsuptions())
 			translation.addAll(axiomTranslator.translation(axiom));
-		for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions())
+		for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.roleSubsumptions())
 			translation.addAll(axiomTranslator.translation(axiom));
-		for (final OWLObjectPropertyAssertionAxiom assertion : reducedOntology.getRoleAssertions())
+		for (final OWLObjectPropertyAssertionAxiom assertion : reducedOntology.roleAssertions())
 			translation.addAll(axiomTranslator.translation(assertion));
-		for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.getRoleSubsumptions())
+		for (final OWLSubObjectPropertyOfAxiom axiom : reducedOntology.roleSubsumptions())
 			translation.addAll(axiomTranslator.translation(axiom));
 	}
 

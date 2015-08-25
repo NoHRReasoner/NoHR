@@ -3,8 +3,6 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import java.util.Set;
-
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -32,55 +30,41 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 public interface ELOntologyReduction {
 
 	/**
-	 * Returns the set of role chain subsumptions <i>R<sub>1</sub>&SmallCircle; ... &SmallCircle;S<sub>n</sub> &sqsube; A</i> in this
+	 * Returns the role chain subsumptions <i>R<sub>1</sub>&SmallCircle; ... &SmallCircle;S<sub>n</sub> &sqsube; A</i> in this
 	 * {@link ELOntologyReduction reduction}.
 	 *
-	 * @return Returns the set of role chain subsumptions <i>R<sub>1</sub>&SmallCircle; ... &SmallCircle;S<sub>n</sub> &sqsube; A</i> in this
+	 * @return Returns the role chain subsumptions <i>R<sub>1</sub>&SmallCircle; ... &SmallCircle;S<sub>n</sub> &sqsube; A</i> in this
 	 *         {@link ELOntologyReduction reduction}.
 	 */
-	public Set<OWLSubPropertyChainOfAxiom> getChainSubsumptions();
+	public Iterable<OWLSubPropertyChainOfAxiom> chainSubsumptions();
 
 	/**
-	 * Returns the set of concept assertions <i>A(a)</i> in this {@link ELOntologyReduction reduction}.
+	 * Returns the concept assertions <i>A(a)</i> in this {@link ELOntologyReduction reduction}.
 	 *
-	 * @return the set of concept assertions <i>A(a)</i> in this {@link ELOntologyReduction reduction}.
+	 * @return the concept assertions <i>A(a)</i> in this {@link ELOntologyReduction reduction}.
 	 */
-	public Set<OWLClassAssertionAxiom> getConceptAssertions();
+	public Iterable<OWLClassAssertionAxiom> conceptAssertions();
 
 	/**
-	 * Returns the set of concept subsumptions <i>C &sqsube; A</i> in this {@link ELOntologyReduction reduction}.
+	 * Returns the concept subsumptions <i>C &sqsube; A</i> in this {@link ELOntologyReduction reduction}.
 	 *
-	 * @return the set of concept subsumptions <i>C &sqsube; A</i> in this {@link ELOntologyReduction reduction}.
+	 * @return the concept subsumptions <i>C &sqsube; A</i> in this {@link ELOntologyReduction reduction}.
 	 */
-	public Set<OWLSubClassOfAxiom> getConceptSubsumptions();
+	public Iterable<OWLSubClassOfAxiom> conceptSubsumptions();
 
 	/**
-	 * Returns the set of data role assertions <i>R(a,b)</i> in this {@link ELOntologyReduction reduction}.
+	 * Returns the data role assertions <i>R(a,b)</i> in this {@link ELOntologyReduction reduction}.
 	 *
-	 * @return the set of data role assertions <i>R(a,b)</i> in this {@link ELOntologyReduction reduction}.
+	 * @return the data role assertions <i>R(a,b)</i> in this {@link ELOntologyReduction reduction}.
 	 */
-	public Set<OWLDataPropertyAssertionAxiom> getDataAssertion();
+	public Iterable<OWLDataPropertyAssertionAxiom> dataAssertion();
 
 	/**
-	 * Returns the set of role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}.
+	 * Returns the role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}.
 	 *
-	 * @return the set of role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}.
+	 * @return the role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}.
 	 */
-	public Set<OWLSubDataPropertyOfAxiom> getDataSubsuptions();
-
-	/**
-	 * Returns the set of data role assertions <i>R(a,b)</i> in this {@link ELOntologyReduction reduction}.
-	 *
-	 * @return the set of data role assertions <i>R(a,b)</i> in this {@link ELOntologyReduction reduction}.
-	 */
-	public Set<OWLObjectPropertyAssertionAxiom> getRoleAssertions();
-
-	/**
-	 * Returns the set of role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}.
-	 *
-	 * @return the set of role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}.
-	 */
-	public Set<OWLSubObjectPropertyOfAxiom> getRoleSubsumptions();
+	public Iterable<OWLSubDataPropertyOfAxiom> dataSubsuptions();
 
 	/**
 	 * Returns true iff this reduction has disjunctions.
@@ -88,5 +72,19 @@ public interface ELOntologyReduction {
 	 * @return rue iff this reduction has disjunctions.
 	 */
 	public boolean hasDisjunctions();
+
+	/**
+	 * Returns the data role assertions <i>R(a,b)</i> in this {@link ELOntologyReduction reduction}.
+	 *
+	 * @return the data role assertions <i>R(a,b)</i> in this {@link ELOntologyReduction reduction}.
+	 */
+	public Iterable<OWLObjectPropertyAssertionAxiom> roleAssertions();
+
+	/**
+	 * Returns the role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}.
+	 *
+	 * @return the role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}.
+	 */
+	public Iterable<OWLSubObjectPropertyOfAxiom> roleSubsumptions();
 
 }

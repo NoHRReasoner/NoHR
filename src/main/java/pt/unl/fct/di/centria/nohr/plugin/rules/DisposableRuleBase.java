@@ -5,12 +5,12 @@ package pt.unl.fct.di.centria.nohr.plugin.rules;
 
 import org.protege.editor.core.Disposable;
 
-import pt.unl.fct.di.centria.nohr.rulebase.RuleBaseImpl;
+import pt.unl.fct.di.centria.nohr.model.ProgramImpl;
 
 /**
  * @author nunocosta
  */
-public class DisposableRuleBase extends RuleBaseImpl implements Disposable {
+public class DisposableRuleBase extends ProgramImpl implements Disposable {
 
 	/**
 	 *

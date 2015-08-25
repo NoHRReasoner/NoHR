@@ -1,36 +1,34 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.rulebase;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import pt.unl.fct.di.centria.nohr.model.Rule;
-
 /**
- * Implementation of {@link RuleBase}.
+ * Implementation of {@link Program}.
  *
  * @author Nuno Costa
  */
-public class RuleBaseImpl implements RuleBase {
+public class ProgramImpl implements Program {
 
-	private final Set<RuleBaseListener> listeners;
+	private final Set<ProgramChangeListener> listeners;
 
 	private final Set<Rule> rules;
 
-	public RuleBaseImpl() {
+	public ProgramImpl() {
 		rules = new HashSet<Rule>();
-		listeners = new HashSet<RuleBaseListener>();
+		listeners = new HashSet<ProgramChangeListener>();
 	}
 
 	@Override
 	public boolean add(Rule rule) {
 		final boolean added = rules.add(rule);
 		if (added)
-			for (final RuleBaseListener listener : listeners)
+			for (final ProgramChangeListener listener : listeners)
 				listener.added(rule);
 		return added;
 	}
@@ -45,14 +43,14 @@ public class RuleBaseImpl implements RuleBase {
 	}
 
 	@Override
-	public void addListner(RuleBaseListener listner) {
+	public void addListener(ProgramChangeListener listner) {
 		listeners.add(listner);
 	}
 
 	@Override
 	public void clear() {
 		if (!rules.isEmpty())
-			for (final RuleBaseListener listner : listeners)
+			for (final ProgramChangeListener listner : listeners)
 				listner.cleaned();
 		rules.clear();
 	}
@@ -81,7 +79,7 @@ public class RuleBaseImpl implements RuleBase {
 	public boolean remove(Object rule) {
 		final boolean removed = rules.remove(rule);
 		if (removed)
-			for (final RuleBaseListener listener : listeners)
+			for (final ProgramChangeListener listener : listeners)
 				listener.removed((Rule) rule);
 		return removed;
 	}
@@ -96,7 +94,7 @@ public class RuleBaseImpl implements RuleBase {
 	}
 
 	@Override
-	public void removeListener(RuleBaseListener listener) {
+	public void removeListener(ProgramChangeListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -129,7 +127,7 @@ public class RuleBaseImpl implements RuleBase {
 			return false;
 		remove(oldRule);
 		add(newRule);
-		for (final RuleBaseListener listener : listeners)
+		for (final ProgramChangeListener listener : listeners)
 			listener.updated(oldRule, newRule);
 		return true;
 	}
