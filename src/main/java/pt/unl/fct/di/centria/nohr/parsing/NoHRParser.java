@@ -3,6 +3,10 @@
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 
@@ -12,6 +16,7 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
  * are {@link TokenType tokens}: <br>
  * <br>
  * <code>
+ * program = {rule "."}. <br>
  * rule = atom [":-" literals ]. <br>
  * query = literals. <br>
  * literals = literal {"," literal}. <br>
@@ -24,6 +29,18 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
  * @author Nuno Costa
  */
 public interface NoHRParser {
+
+	/**
+	 * Parses a given {@link File file} and returns the corresponding {@link Program program}, if the file represents a program.
+	 *
+	 * @param file
+	 *            the file to be parsed.
+	 * @return the {@link Program program} that {@code file} represents.
+	 * @throws ParseException
+	 *             {@code file} violates the queries syntax.
+	 * @throws FileNotFoundException
+	 */
+	public Program parseProgram(File file) throws ParseException, FileNotFoundException;
 
 	/**
 	 * Parses a given string and returns the corresponding {@link Query query}, if the string represents a query.

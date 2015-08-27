@@ -1,0 +1,4 @@
+JAVA=java
+XMX=2g
+export XSB_BIN_DIRECTORY='/opt/XSB/config/x86_64-unknown-linux-gnu/bin'
+

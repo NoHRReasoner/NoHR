@@ -3,6 +3,7 @@ package pt.unl.fct.di.centria.nohr.model;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,7 +16,6 @@ import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
 
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
-import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 
 /**
  * Model factory. For more conciseness statically import (see
@@ -324,6 +324,28 @@ public class Model {
 		final List<Term> argsList = new LinkedList<Term>();
 		Collections.addAll(argsList, args);
 		return negLiteral(atom(functor, argsList));
+	}
+
+	/**
+	 * Create a program from an array of rules.
+	 *
+	 * @param rules
+	 *            the array of rules;
+	 * @return the program containing the given rules.
+	 */
+	public static Program program(Rule... rules) {
+		return new ProgramImpl(new HashSet<>(Arrays.asList(rules)));
+	}
+
+	/**
+	 * Create a program from a set of rules.
+	 *
+	 * @param rules
+	 *            the set of rules;
+	 * @return the program containing the given rules.
+	 */
+	public static Program program(Set<Rule> rules) {
+		return new ProgramImpl(rules);
 	}
 
 	/**

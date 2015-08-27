@@ -111,10 +111,14 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 	 *             if {@code ontology} has some axiom of an unsupported type (i.e. that aren't in {@link #SUPPORTED_AXIOM_TYPES}).
 	 */
 	public QLOntologyNormalizationImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
-		final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(ontology.getAxioms(),
-				SUPPORTED_AXIOM_TYPES);
-		if (unsupportedAxioms.size() > 0)
-			throw new UnsupportedAxiomsException(unsupportedAxioms);
+		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
+		if (ignoreUnsupported == null || !ignoreUnsupported.equals("true")) {
+			@SuppressWarnings("unchecked")
+			final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(
+					(Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), SUPPORTED_AXIOM_TYPES);
+			if (unsupportedAxioms.size() > 0)
+				throw new UnsupportedAxiomsException(unsupportedAxioms);
+		}
 		this.ontology = ontology;
 		entitiesGenerator = new OWLEntityGenerator(ontology);
 		conceptSubsumptions = new HashSet<>();

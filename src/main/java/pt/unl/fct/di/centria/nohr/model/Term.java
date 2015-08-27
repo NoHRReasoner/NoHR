@@ -1,7 +1,5 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import java.util.List;
-
 /**
  * Represents a rule term. Can be a variable, a constant, or a list.
  *
@@ -22,15 +20,6 @@ public interface Term extends FormatVisitable {
 	 *             if this term isn't a constant.
 	 */
 	public Constant asConstant();
-
-	/**
-	 * Returns this term as a list of terms if it is indeed a list.
-	 *
-	 * @return this term as a list of terms.
-	 * @throws ClassCastException
-	 *             if this term isn't a list.
-	 */
-	public List<Term> asList();
 
 	/**
 	 * Returns this term as a variable if it is indeed a variable.

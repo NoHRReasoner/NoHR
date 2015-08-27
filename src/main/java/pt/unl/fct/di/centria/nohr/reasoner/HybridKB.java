@@ -12,6 +12,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 
 /**
  * Represents an <i> MKNF Hybrid Knowledge Base </i> (see {@link <a href="http://knoesis.wright.edu/pascal/resources/publications/mknftheo.pdf">Local

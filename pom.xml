@@ -31,6 +31,12 @@
 			<artifactId>interprolog</artifactId>
 			<version>95ff1c9</version>
 		</dependency>
+		<dependency>
+			<groupId>com.lexicalscope.jewelcli</groupId>
+			<artifactId>jewelcli</artifactId>
+			<version>0.8.9</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -40,7 +46,7 @@
 				<!-- Use resource filtering to replace references to the artifactId in 
 					the plugin.xml file -->
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<filtering>true</filtering>	
 			</resource>
 		</resources>
 
@@ -76,6 +82,7 @@
 						<Import-Package>
 							org.apache.log4j.*;version="[1.2,2)",
 							org.protege.editor.owl.*;version="4.3", <!-- equivalent to [4.3,infinity) -->
+							!com.lexicalscope.jewelcli.*,
 							!junit.*,
 							!org.junit.*,
 							!org.semanticweb.elk.*,
@@ -113,5 +120,5 @@
 			<name>project</name>
 			<url>file:${project.basedir}/repo</url>
 		</repository>
-	</repositories> 
+	</repositories>
 </project>

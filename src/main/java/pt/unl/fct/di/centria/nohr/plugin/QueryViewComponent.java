@@ -17,22 +17,28 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
-import org.protege.editor.owl.model.event.OWLModelManagerListener;
+import org.protege.editor.core.ui.view.ViewComponent;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
-import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.semanticweb.owlapi.model.OWLException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.plugin.query.AnswersTable;
+import pt.unl.fct.di.centria.nohr.plugin.query.QueryExpressionChecker;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 
-public class QueryViewComponent extends AbstractHybridViewComponent {
+/**
+ * The {@link ViewComponent} where the the queries are executed.
+ *
+ * @author Nuno Costa
+ */
+public class QueryViewComponent extends AbstractNoHRViewComponent {
 
 	private class QueryAction extends AbstractAction {
 
@@ -47,6 +53,12 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			showTrueAnswersCheckBox.setEnabled(
+					showUndefinedAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
+			showUndefinedAnswersCheckBox
+					.setEnabled(showTrueAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
+			showInconsistentAnswersCheckBox
+					.setEnabled(!showTrueAnswersCheckBox.isSelected() && !showUndefinedAnswersCheckBox.isSelected());
 			doQuery();
 		}
 	}
@@ -70,8 +82,6 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 
 	private JButton executeButton;
 
-	private OWLModelManagerListener listener;
-
 	private boolean requiresRefresh = false;
 
 	private JComponent createAnswersPanel() {
@@ -80,22 +90,28 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 				BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Query answers"),
 				BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 		answersTable = new AnswersTable(getOWLEditorKit());
-		answersPanel.add(ComponentFactory.createScrollPane(answersTable));
+		answersTable.setAutoCreateColumnsFromModel(true);
+		final JScrollPane answersScrollPane = new JScrollPane(answersTable);
+		answersTable.setFillsViewportHeight(true);
+		// answersPanel.add(ComponentFactory.createScrollPane(answersTable));
+		answersPanel.add(answersScrollPane);
 		return answersPanel;
 	};
 
 	private JComponent createOptionsBox() {
 		final Box optionsBox = new Box(BoxLayout.Y_AXIS);
 		showTrueAnswersCheckBox = new JCheckBox(new QueryAction("true"));
+		showTrueAnswersCheckBox.setSelected(true);
 		optionsBox.add(showTrueAnswersCheckBox);
 		optionsBox.add(Box.createVerticalStrut(3));
 
 		showUndefinedAnswersCheckBox = new JCheckBox(new QueryAction("undefined"));
-		showUndefinedAnswersCheckBox.setSelected(false);
+		showUndefinedAnswersCheckBox.setSelected(true);
 		optionsBox.add(showUndefinedAnswersCheckBox);
 		optionsBox.add(Box.createVerticalStrut(3));
 
 		showInconsistentAnswersCheckBox = new JCheckBox(new QueryAction("inconsistent"));
+		showInconsistentAnswersCheckBox.setSelected(true);
 		optionsBox.add(showInconsistentAnswersCheckBox);
 		optionsBox.add(Box.createVerticalStrut(3));
 		return optionsBox;
@@ -104,7 +120,7 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 	private JComponent createQueryPanel() {
 		final JPanel editorPanel = new JPanel(new BorderLayout());
 
-		final OWLExpressionChecker<Query> checker = getQueryExpressionChecker();
+		final QueryExpressionChecker checker = new QueryExpressionChecker(getParser());
 		queryEditor = new ExpressionEditor<Query>(getOWLEditorKit(), checker);
 		queryEditor.addStatusChangedListener(new InputVerificationStatusChangedListener() {
 			@Override
@@ -141,11 +157,6 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 		return editorPanel;
 	}
 
-	@Override
-	protected void disposeOWLView() {
-		getOWLModelManager().removeListener(listener);
-	}
-
 	private void doQuery() {
 		if (isShowing()) {
 			try {
@@ -153,13 +164,13 @@ public class QueryViewComponent extends AbstractHybridViewComponent {
 				if (query != null && isNoHRStarted()) {
 					final List<Answer> answers = getHybridKB().allAnswers(query, showTrueAnswersCheckBox.isSelected(),
 							showUndefinedAnswersCheckBox.isSelected(), showInconsistentAnswersCheckBox.isSelected());
-					answersTable.setAnswers(answers);
+					answersTable.setAnswers(query, answers);
 				}
 			} catch (final OWLException e) {
 				if (log.isDebugEnabled())
 					log.debug("Exception caught trying to do the query", e);
 			} catch (final UnsupportedAxiomsException e) {
-				MessageDialogs.violations(this, e);
+				Messages.violations(this, e);
 			}
 			requiresRefresh = false;
 		} else

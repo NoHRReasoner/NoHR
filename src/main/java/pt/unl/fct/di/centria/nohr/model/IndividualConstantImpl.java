@@ -3,7 +3,6 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -43,11 +42,6 @@ public class IndividualConstantImpl implements Constant {
 
 	@Override
 	public Constant asConstant() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public List<Term> asList() {
 		throw new ClassCastException();
 	}
 

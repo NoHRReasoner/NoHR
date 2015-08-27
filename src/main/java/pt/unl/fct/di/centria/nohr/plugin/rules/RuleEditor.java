@@ -11,10 +11,13 @@ import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.semanticweb.owlapi.model.OWLException;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.plugin.ParserSingleton;
+import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 
 /**
- * @author nunocosta
+ * An editor, showed in an dialog, that can be used to edit text containing rule expressions. The editor is backed by a parser that checks that the
+ * text is well formed and provides feedback if the text is not well formed.
+ *
+ * @author Nuno Costa
  */
 public class RuleEditor {
 
@@ -25,9 +28,9 @@ public class RuleEditor {
 	/**
 	 *
 	 */
-	public RuleEditor(OWLEditorKit editorKit) {
+	public RuleEditor(OWLEditorKit editorKit, NoHRParser parser) {
 		this.editorKit = editorKit;
-		editor = new ExpressionEditor<Rule>(editorKit, new RuleExpressionChecker(ParserSingleton.getParser()));
+		editor = new ExpressionEditor<Rule>(editorKit, new RuleExpressionChecker(parser));
 	}
 
 	public Rule show() {

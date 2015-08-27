@@ -7,14 +7,27 @@ import org.protege.editor.core.ui.list.MListItem;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
 
+/**
+ * A {@link final Rule rule} {@link final MListItem item} of a certain {@link RulesList}.**
+ *
+ * @author Nuno Costa
+ */
 class RuleListItem implements MListItem {
 
+	/** The index of the item in the {@link RuleListModel} that it belongs. */
 	private final int index;
 
+	/** The {@link RuleListModel} to which the item belongs. */
 	private final RuleListModel model;
 
 	private Rule rule;
 
+	/**
+	 * @param model
+	 *            the {@link RuleListModel} to which the item belongs.
+	 * @param the
+	 *            index of the item in the {@link RuleListModel} that it belongs .
+	 */
 	RuleListItem(int index, RuleListModel model, Rule rule) {
 		this.index = index;
 		this.model = model;
@@ -27,7 +40,7 @@ class RuleListItem implements MListItem {
 
 	@Override
 	public String getTooltip() {
-		return "rule";
+		return "A nonmonotonic rule.";
 	}
 
 	@Override
@@ -52,11 +65,6 @@ class RuleListItem implements MListItem {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return rule.toString();

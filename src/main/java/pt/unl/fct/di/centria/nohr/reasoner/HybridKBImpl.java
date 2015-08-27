@@ -22,12 +22,14 @@ import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.ProgramChangeListener;
-import pt.unl.fct.di.centria.nohr.model.ProgramImpl;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
@@ -109,7 +111,7 @@ public class HybridKBImpl implements HybridKB {
 	public HybridKBImpl(final File binDirectory, final OWLOntology ontology, Profile profile)
 			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException,
 			PrologEngineCreationException {
-		this(binDirectory, ontology, new ProgramImpl(), profile);
+		this(binDirectory, ontology, Model.program(), null, profile);
 	}
 
 	/**
@@ -132,7 +134,7 @@ public class HybridKBImpl implements HybridKB {
 	public HybridKBImpl(final File binDirectory, final OWLOntology ontology, final Program program)
 			throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException,
 			PrologEngineCreationException {
-		this(binDirectory, ontology, program, null);
+		this(binDirectory, ontology, program, null, null);
 	}
 
 	/**
@@ -150,6 +152,8 @@ public class HybridKBImpl implements HybridKB {
 	 *            {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} will
 	 *            be applied. If none is specified the preferred one will be applied. Whenever the ontology isn't in the specified profile, if some is
 	 *            specified, an {@link OWLProfilesViolationsException} will be thrown.
+	 * @param vocabularyMapping
+	 *            the {@link VocabularyMapping} that will be used in this {@link HybridKB}.
 	 * @throws OWLProfilesViolationsException
 	 *             if {@code profile != null} and {@code ontology} isn't in the profile {@code profile}; or {@code profile == null} and the
 	 *             {@code ontology} isn't in any supported profile.
@@ -157,13 +161,21 @@ public class HybridKBImpl implements HybridKB {
 	 *             if {@code ontology} has some profile of an unsupported type.
 	 * @throws PrologEngineCreationException
 	 *             if there was some problem during the creation of the underlying Prolog engine.
+	 * @throws IllegalArgumentException
+	 *             if {@code vocabularyMapping doesn't contains {@code ontology}.
 	 */
-	public HybridKBImpl(final File binDirectory, final OWLOntology ontology, final Program program, Profile profile)
-			throws OWLProfilesViolationsException, UnsupportedAxiomsException, PrologEngineCreationException {
+	public HybridKBImpl(final File binDirectory, final OWLOntology ontology, final Program program,
+			VocabularyMapping vocabularyMapping, Profile profile)
+					throws OWLProfilesViolationsException, UnsupportedAxiomsException, PrologEngineCreationException {
 		Objects.requireNonNull(binDirectory);
 		this.ontology = ontology;
 		this.program = program;
-		vocabularyMapping = new VocabularyMappingImpl(ontology);
+		if (vocabularyMapping != null) {
+			this.vocabularyMapping = vocabularyMapping;
+			if (!vocabularyMapping.getOntologies().contains(ontology))
+				throw new IllegalArgumentException("vocabularyMapping: must contain the given ontology");
+		} else
+			this.vocabularyMapping = new DefaultVocabularyMapping(ontology);
 		dedutiveDatabase = new XSBDeductiveDatabase(binDirectory, vocabularyMapping);
 		doubledProgram = dedutiveDatabase.createProgram();
 		queryProcessor = new QueryProcessor(dedutiveDatabase);

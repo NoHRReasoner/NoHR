@@ -9,7 +9,9 @@ import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
 
 /**
- * @author nunocosta
+ * Represents the NoHR preferences.
+ *
+ * @author Nuno Costa
  */
 public class NoHRPreferences {
 

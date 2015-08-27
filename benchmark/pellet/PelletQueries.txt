@@ -1,0 +1,208 @@
+#LUBM 14 queries
+PREFIX ub:<http://swat.cse.lehigh.edu/onto/univ-bench.owl#>
+
+	#Query1
+	SELECT ?x WHERE {
+	?x rdf:type ub:GraduateStudent.
+	?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>. }
+
+	#Query2
+	SELECT ?x ?y ?z WHERE { 
+	?x rdf:type ub:GraduateStudent. 
+	?y rdf:type ub:University. 
+	?z rdf:type ub:Department. 
+	?x ub:memberOf ?z. 
+	?z ub:subOrganizationOf ?y.
+	?x ub:undergraduateDegreeFrom ?y. }
+	
+	#Query3
+	SELECT ?x WHERE {
+	?x rdf:type ub:Publication.
+	?x ub:publicationAuthor <http://www.Department0.University0.edu/AssistantProfessor0>. }
+			
+	#Query4
+	SELECT ?x ?y1 ?y2 ?y3 WHERE { 
+	?x rdf:type ub:Professor. 
+	?x ub:worksFor <http://www.Department0.University0.edu>. 
+	?x ub:name ?y1. 
+	?x ub:emailAddress ?y2. 
+	?x ub:telephone ?y3. }
+	
+	#Query5
+	SELECT ?x WHERE { 
+	?x rdf:type ub:Person. 
+	?x ub:memberOf <http://www.Department0.University0.edu>. }
+	
+	#Query6
+	SELECT ?x WHERE {
+	?x rdf:type ub:Student. }
+	
+	#Query7
+	SELECT ?x ?y WHERE {
+	?x rdf:type ub:Student. 
+	?y rdf:type ub:Course. 
+	?x ub:takesCourse ?y. 
+	<http://www.Department0.University0.edu/AssociateProfessor0> ub:teacherOf ?y. }
+	
+	#Query8
+	SELECT ?x ?y ?z WHERE { 
+	?x rdf:type ub:Student. 
+	?y rdf:type ub:Department. 
+	?x ub:memberOf ?y. 
+	?y ub:subOrganizationOf <http://www.University0.edu>.
+	?x ub:emailAddress ?z. }
+	
+	#Query9
+	SELECT ?x ?y ?z WHERE { 
+	?x rdf:type ub:Student. 
+	?y rdf:type ub:Faculty. 
+	?z rdf:type ub:Course. 
+	?x ub:advisor ?y. 
+	?y ub:teacherOf ?z. 
+	?x ub:takesCourse ?z. 
+	#Query10
+	SELECT ?x WHERE {
+	?x rdf:type ub:Student. 
+	?x ub:takesCourse <http://www.Department0.University0.edu/GraduateCourse0>.}
+	
+	#Query11
+	SELECT ?x WHERE {
+	?x rdf:type ub:ResearchGroup. 
+	?x ub:subOrganizationOf <http://www.University0.edu>.}
+	
+	#Query12
+	SELECT ?x ?y WHERE {
+	?x rdf:type ub:Chair. 
+	?y rdf:type ub:Department. 
+	?x ub:worksFor ?y. 
+	?y ub:subOrganizationOf <http://www.University0.edu>. }
+	
+	#Query13
+	SELECT ?x WHERE { 
+	?x rdf:type ub:Person. 
+	<http://www.University0.edu> ub:hasAlumnus ?x.}
+	
+	#Query14
+	SELECT ?x WHERE { 
+	?x rdf:type ub:UndergraduateStudent. }
+	
+#Special 4 queries
+
+	#Query15 modification of LUBM query4
+	SELECT ?x ?y1 ?y2 ?y3 ?z WHERE {  
+				?x rdf:type ?z.  
+				?z rdf:type owl:Class.  
+				?x ub:worksFor <http://www.Department0.University0.edu>.  
+				?x ub:name ?y1.  
+				?x ub:emailAddress ?y2.  
+				?x ub:telephone ?y3. }
+				
+	#Query16 modification of LUBM query4
+	SELECT ?x ?y1 ?y2 ?y3 ?z WHERE {  
+				?x rdf:type ub:Professor.  
+				ub:Professor rdfs:subClassOf ?z.  
+				?x ub:worksFor <http://www.Department0.University0.edu>.  
+				?x ub:name ?y1.  
+				?x ub:emailAddress ?y2.  
+				?x ub:telephone ?y3. }
+				
+	#Query17 modification of LUBM query9
+	SELECT ?x1 ?x2 ?y ?z WHERE {  
+				?x1 rdf:type ?x2.  
+				?x2 rdfs:subClassOf ub:Student.  
+				?y rdf:type ub:Faculty.  
+				?z rdf:type ub:Course.  
+				?x1 ub:advisor ?y.  
+				?y ub:teacherOf ?z.  
+				?x1 ub:takesCourse ?z. }
+				
+	#Query18 modification of LUBM query9
+	SELECT ?x ?y1 ?y2 ?z WHERE {  
+				?x rdf:type ub:Student.  
+				?y1 rdf:type ?y2.  
+				?y2 owl:equivalentClass ub:Faculty.  
+				?z rdf:type ub:Course.  
+				?x ub:advisor ?y1.  
+				?y1 ub:teacherOf ?z.  
+				?x ub:takesCourse ?z. }
+
+#SPARQLDL 10 queries
+
+	#Query1
+	SELECT * WHERE { 
+				?x rdf:type ub:GraduateStudent. 
+				?x ?y ?z. 
+				?y rdf:type owl:ObjectProperty.
+				?w rdf:type ub:Course.
+				 }
+				
+	#Query2
+	SELECT * WHERE { 
+				?x rdf:type ub:Student.
+				?x rdf:type ?C.
+				?C rdfs:subClassOf ub:Employee.
+				?x ub:undergraduateDegreeFrom ?y.
+				}
+	#Query3
+	SELECT * WHERE { 
+				?x rdf:type ub:Person.
+				?x ?y <http://www.Department0.University0.edu>.
+				?y rdf:type owl:ObjectProperty.
+				?y rdfs:subPropertyOf ub:memberOf.
+				}
+	#Query4
+	SELECT * WHERE { 
+				<http://www.Department0.University0.edu/GraduateStudent5> ?y ?w.
+				?w rdf:type ?z.
+				?z rdfs:subClassOf ub:Course.
+				?y rdf:type owl:ObjectProperty.
+				}
+	#Query5
+	SELECT * WHERE { 
+				?x rdf:type ub:GraduateStudent.
+				?x ?y ?w.
+				?y rdf:type owl:ObjectProperty.
+				?w rdf:type ?z.
+				?z rdfs:subClassOf ub:Course.
+				}
+	#Query6
+	SELECT * WHERE { 
+				?x rdf:type ub:GraduateStudent.
+				?x ?y ?w.
+				?y rdf:type owl:ObjectProperty.
+				?w rdf:type ?z.
+				?z owl:disjointWith ub:GraduateCourse.
+				}
+	#Query7
+	SELECT * WHERE { 
+				?c rdfs:subClassOf owl:Thing.
+				?x rdf:type ?c.
+				?x ub:takesCourse ?a.
+				?x ub:teachingAssistantOf ?a.
+				}
+	#Query8
+	SELECT * WHERE { 
+				?x ub:advisor ?y.
+				?x rdf:type ?a.
+				?a rdfs:subClassOf ub:Person.
+				}
+				
+	#Query9
+	SELECT * WHERE { 
+				?a rdfs:subClassOf ub:Person.
+				?x rdf:type ?a.
+				?x ub:teachingAssistantOf ?y.
+				?y rdf:type ub:Course.
+				}
+				
+	#Query10
+	SELECT * WHERE { 
+				?x rdf:type ub:GraduateStudent.
+				?x ub:memberOf ?w.
+				?a ?p ?w.
+				?p rdf:type owl:ObjectProperty.
+				?a rdf:type ?b.
+				?p rdfs:subPropertyOf ub:worksFor.
+				?b rdfs:subClassOf ub:Faculty.
+				?x ub:advisor ?a.
+				}

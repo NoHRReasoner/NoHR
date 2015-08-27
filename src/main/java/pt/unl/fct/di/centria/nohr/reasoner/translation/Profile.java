@@ -42,13 +42,23 @@ public enum Profile {
 	 */
 	public static Profile getProfile(OWLOntology ontology) throws OWLProfilesViolationsException {
 		final List<OWLProfileReport> reports = new LinkedList<>();
+		int minViolations = Integer.MAX_VALUE;
+		Profile minViolationsProfile = Profile.values()[0];
 		for (final Profile profile : Profile.values()) {
 			final OWLProfileReport report = profile.owlProfile().checkOntology(ontology);
 			if (report.isInProfile())
 				return profile;
+			if (report.getViolations().size() < minViolations) {
+				minViolations = report.getViolations().size();
+				minViolationsProfile = profile;
+			}
 			reports.add(report);
 		}
-		throw new OWLProfilesViolationsException(reports);
+		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
+		if (ignoreUnsupported != null && ignoreUnsupported.equals("true"))
+			return minViolationsProfile;
+		else
+			throw new OWLProfilesViolationsException(reports);
 	}
 
 	/**
@@ -67,7 +77,8 @@ public enum Profile {
 	public OntologyTranslator createOntologyTranslator(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		final OWLProfileReport report = owlProfile().checkOntology(ontology);
-		if (!report.isInProfile())
+		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
+		if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
 			throw new OWLProfilesViolationsException(report);
 		switch (this) {
 		case OWL2_QL:

@@ -22,7 +22,9 @@ import org.protege.editor.owl.ui.preferences.OWLPreferencesPanel;
 import layout.SpringUtilities;
 
 /**
- * @author nunocosta
+ * The NoHR preferences panel.
+ *
+ * @author Nuno Costa
  */
 public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 
@@ -39,18 +41,10 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 
 	private final NoHRPreferences preferences;
 
-	/**
-	 *
-	 */
 	public NoHRPreferencesPanel() {
 		preferences = NoHRPreferences.getInstance();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.protege.editor.core.ui.preferences.PreferencesPanel#applyChanges()
-	 */
 	@Override
 	public void applyChanges() {
 		preferences.setXSBBinDirectory(xsbBinDirectory);
@@ -82,21 +76,11 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.protege.editor.core.Disposable#dispose()
-	 */
 	@Override
 	public void dispose() throws Exception {
 		// TODO Auto-generated method stubn)
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.protege.editor.core.plugin.ProtegePluginInstance#initialise()
-	 */
 	@Override
 	public void initialise() throws Exception {
 		txtXSBBinDirectory = createXSBDirectoryTextField(preferences.getXSBBinDirectory());
@@ -117,7 +101,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 		File xsbBinDirectory = null;
 		final File xsbConfigDir = xsbDir.toPath().resolve("config").toFile();
 		if (!xsbConfigDir.exists()) {
-			MessageDialogs.invalidXSBDirectory(this, xsbConfigDir.toPath());
+			Messages.invalidXSBDirectory(this, xsbConfigDir.toPath());
 			return;
 		}
 		final File[] platformDirs = xsbConfigDir.listFiles(new FileFilter() {
@@ -128,20 +112,20 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 			}
 		});
 		if (platformDirs.length < 1) {
-			MessageDialogs.invalidXSBDirectory(this, xsbConfigDir.toPath().resolve("<platform>"));
+			Messages.invalidXSBDirectory(this, xsbConfigDir.toPath().resolve("<platform>"));
 			return;
 		}
 		if (platformDirs.length > 1) {
 			final String[] platforms = new String[platformDirs.length];
 			for (int i = 0; i < platformDirs.length; i++)
 				platforms[i] = platformDirs[i].toPath().getFileName().toString();
-			final String platform = MessageDialogs.selectPlataform(this, platforms);
+			final String platform = Messages.selectPlataform(this, platforms);
 			xsbBinDirectory = xsbConfigDir.toPath().resolve(platform).toFile();
 		} else if (platformDirs.length == 1)
 			xsbBinDirectory = platformDirs[0];
 		final Path expectedPath = xsbBinDirectory.toPath().resolve("bin").resolve("xsb");
 		if (!expectedPath.toFile().exists()) {
-			MessageDialogs.invalidXSBDirectory(this, expectedPath);
+			Messages.invalidXSBDirectory(this, expectedPath);
 			return;
 		}
 		this.xsbBinDirectory = xsbBinDirectory;

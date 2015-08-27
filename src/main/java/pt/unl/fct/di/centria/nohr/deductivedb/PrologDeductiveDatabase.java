@@ -38,8 +38,8 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
+import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**

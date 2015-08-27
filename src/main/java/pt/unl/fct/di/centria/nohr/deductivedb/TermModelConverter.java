@@ -8,7 +8,7 @@ import com.declarativa.interprolog.TermModel;
 
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 
 /**
  * Convert {@link TermModel term models} obtained from a {@link PrologEngine Prolog engine} to {@link Terms terms}.

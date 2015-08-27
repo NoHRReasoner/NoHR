@@ -8,6 +8,11 @@ import org.protege.editor.core.ui.list.MList;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
 
+/**
+ * An {@link MList list} of {@link Rule rules}.
+ *
+ * @author Nuno Costa
+ */
 public class RulesList extends MList {
 
 	/**
@@ -32,9 +37,6 @@ public class RulesList extends MList {
 		this.ruleEditor = ruleEditor;
 		setModel(model);
 		addMouseListener(mouseListener);
-	}
-
-	public void dispose() {
 	}
 
 	@Override

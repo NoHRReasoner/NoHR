@@ -1,0 +1,14 @@
+[1]
+'Acyl_Ester_Chain'(?X)
+
+[2]
+'Lipid'(?X)
+
+[3]
+'Organic_Group'(?X)
+
+[4]
+'Entity'(?X)
+
+[5]
+'isPart_Of'(?X,?Y)

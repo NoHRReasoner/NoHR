@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
-import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
 
 /**

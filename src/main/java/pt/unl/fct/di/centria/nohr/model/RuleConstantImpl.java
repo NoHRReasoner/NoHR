@@ -1,7 +1,5 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import java.util.List;
-
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
@@ -40,11 +38,6 @@ public class RuleConstantImpl implements Constant {
 	@Override
 	public Constant asConstant() {
 		return this;
-	}
-
-	@Override
-	public List<Term> asList() {
-		throw new ClassCastException();
 	}
 
 	@Override

@@ -64,7 +64,12 @@ public class OWLEntityGenerator {
 	 *         don't occur in none {@link #ontology} entity IRI as fragment.
 	 */
 	private IRI generateIRI() {
-		final String ontologyIRI = ontology.getOntologyID().getOntologyIRI().toString();
+
+		final String ontologyIRI;
+		if (ontology.getOntologyID() != null && ontology.getOntologyID().getOntologyIRI() != null)
+			ontologyIRI = ontology.getOntologyID().getOntologyIRI().toString();
+		else
+			ontologyIRI = "_";
 		final IRI iri = IRI.create(ontologyIRI + "#", filler + counter++);
 		assert iri.toURI().getFragment() != null;
 		return iri;

@@ -3,17 +3,23 @@ package pt.unl.fct.di.centria.nohr.plugin.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.table.BasicLinkedOWLObjectTable;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Query;
 
+/**
+ * An {@link JTable} for {@link Answer answers}.
+ *
+ * @author Nuno Costa
+ */
 public class AnswersTable extends BasicLinkedOWLObjectTable {
 
 	/**
@@ -27,7 +33,8 @@ public class AnswersTable extends BasicLinkedOWLObjectTable {
 	private final List<ChangeListener> copyListeners = new ArrayList<>();
 
 	public AnswersTable(OWLEditorKit owlEditorKit) {
-		super(new DefaultTableModel(), owlEditorKit);
+		super(new AnswersTableModel(), owlEditorKit);
+		setAutoCreateColumnsFromModel(true);
 		getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent event) {
@@ -40,8 +47,8 @@ public class AnswersTable extends BasicLinkedOWLObjectTable {
 		});
 	}
 
-	public void setAnswers(List<Answer> answers) {
-		setModel(new AnswersTableModel(answers));
+	public void setAnswers(Query query, List<Answer> answers) {
+		((AnswersTableModel) getModel()).setAnswers(query, answers);
 	}
 
 }

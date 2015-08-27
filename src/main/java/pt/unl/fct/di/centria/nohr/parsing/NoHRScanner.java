@@ -3,6 +3,8 @@
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -14,7 +16,11 @@ import java.util.Scanner;
  */
 public class NoHRScanner {
 
+	/** The position of the scanner in the current line. */
 	private int position;
+
+	/** The current line. */
+	private int line;
 
 	/** The underlying {@link Scanner} */
 	private final Scanner scanner;
@@ -23,31 +29,69 @@ public class NoHRScanner {
 	private final int length;
 
 	/**
+	 * Constructs a {@link NoHRScanner} for a given {@link File file}.
+	 *
+	 * @param file
+	 *            the file that will be scanned.
+	 * @throws FileNotFoundException
+	 */
+	public NoHRScanner(File file) throws FileNotFoundException {
+		scanner = new Scanner(file);
+		length = 0;
+		position = 0;
+		line = 1;
+	}
+
+	/**
 	 * Constructs a {@link NoHRScanner} for a given {@link String string}.
 	 *
-	 * @param the
-	 *            string that will be scanned.
+	 * @param str
+	 *            the string that will be scanned.
 	 */
 	public NoHRScanner(String str) {
 		scanner = new Scanner(str);
 		length = str.length();
+		position = 0;
 	}
 
 	/**
-	 * The final last position of the scanned string.
+	 * Returns true if this scanner has another token in its input. This method may block while waiting for input to scan.
 	 *
-	 * @return the last position of the scanned string.
+	 * @return true if and only if this scanner has another token.
 	 */
-	public int end() {
-		return length - 1;
-	}
-
-	public boolean ended() {
-		return !scanner.hasNext();
+	public boolean hasNext() {
+		return scanner.hasNext();
 	}
 
 	/**
-	 * Try to consume a token of a given {@link TokenType type}. If no token of the given type is found, maintains the current position. Then value of
+	 * Returns true if there is another line in the input of this scanner. This method may block while waiting for input.
+	 *
+	 * @return true if and only if this scanner has another line of input.
+	 */
+	public boolean hasNextLine() {
+		return scanner.hasNextLine();
+	}
+
+	/**
+	 * The the length of the scanned string.
+	 *
+	 * @return the length of the scanned string.
+	 */
+	public int length() {
+		return length;
+	}
+
+	/**
+	 * Returns the current line.
+	 *
+	 * @return the current line.
+	 */
+	public int line() {
+		return line;
+	}
+
+	/**
+	 * Try to consume a token of a given {@link TokenType type}. If no token of the given type is found, maintains the current position. The value of
 	 * the consumed token is obtained calling {@link #token()}.
 	 *
 	 * @param type
@@ -58,10 +102,18 @@ public class NoHRScanner {
 		try {
 			scanner.skip(type.pattern());
 			position = scanner.match().end();
-		} catch (final NoSuchElementException e) {
+		} catch (final NoSuchElementException | IllegalStateException e) {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Advances this scanner past the current line.
+	 */
+	public void nextLine() {
+		scanner.nextLine();
+		line++;
 	}
 
 	/**
@@ -81,4 +133,5 @@ public class NoHRScanner {
 	public String token() {
 		return scanner.match().group();
 	}
+
 }

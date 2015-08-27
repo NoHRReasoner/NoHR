@@ -7,50 +7,35 @@ import org.protege.editor.owl.model.classexpression.OWLExpressionParserException
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.centria.nohr.parsing.ParseException;
+import pt.unl.fct.di.centria.nohr.plugin.Messages;
 
 /**
- * @author nunocosta
+ * An {@link OWLExpressionChecker} for {@link Rules}.
+ *
+ * @author Nuno Costa
  */
 public class RuleExpressionChecker implements OWLExpressionChecker<Rule> {
 
 	private final NoHRParser parser;
 
-	/**
-	 *
-	 */
 	public RuleExpressionChecker(NoHRParser parser) {
 		this.parser = parser;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker# createObject(java.lang.String)
-	 */
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker#check (java.lang.String)
-	 */
 	@Override
 	public void check(String str) throws OWLExpressionParserException {
 		createObject(str);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker# createObject(java.lang.String)
-	 */
 	@Override
 	public Rule createObject(String str) throws OWLExpressionParserException {
 		try {
 			return parser.parseRule(str);
 		} catch (final ParseException e) {
-			throw new OWLExpressionParserException(e.getMessage(), e.getBegin(), e.getEnd(), false, false, false, false,
-					false, false, null);
+			throw new OWLExpressionParserException(Messages.invalidExpressionMessage(str, e), e.getBegin(),
+					e.getEnd(), false, false, false, false, false, false, null);
 		}
 	}
 }

@@ -181,7 +181,7 @@ public class AtomImpl implements Atom {
 
 	@Override
 	public String toString() {
-		return predicate + "(" + StringUtils.concat(",", arguments) + ")";
+		return predicate + (getArity() > 0 ? "(" + StringUtils.concat(",", arguments) + ")" : "");
 	}
 
 }

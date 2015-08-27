@@ -1,6 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import java.util.List;
+import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
@@ -22,6 +22,7 @@ public class NumericConstantImpl implements Constant {
 	 *            the number.
 	 */
 	NumericConstantImpl(Number number) {
+		Objects.requireNonNull(number);
 		final double dval = number.doubleValue();
 		if (number.shortValue() == dval)
 			number = number.shortValue();
@@ -48,11 +49,6 @@ public class NumericConstantImpl implements Constant {
 
 	@Override
 	public Constant asConstant() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public List<Term> asList() {
 		throw new ClassCastException();
 	}
 
@@ -95,10 +91,7 @@ public class NumericConstantImpl implements Constant {
 		if (getClass() != obj.getClass())
 			return false;
 		final NumericConstantImpl other = (NumericConstantImpl) obj;
-		if (number == null) {
-			if (other.number != null)
-				return false;
-		} else if (number.doubleValue() != other.number.doubleValue())
+		if (number.doubleValue() != other.number.doubleValue())
 			return false;
 		return true;
 	}

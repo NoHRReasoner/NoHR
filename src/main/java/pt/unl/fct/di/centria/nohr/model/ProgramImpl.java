@@ -19,8 +19,11 @@ public class ProgramImpl implements Program {
 
 	private final Set<Rule> rules;
 
-	public ProgramImpl() {
-		rules = new HashSet<Rule>();
+	ProgramImpl(Set<Rule> rules) {
+		if (rules != null)
+			this.rules = new HashSet<>(rules);
+		else
+			this.rules = new HashSet<>();
 		listeners = new HashSet<ProgramChangeListener>();
 	}
 
@@ -63,6 +66,28 @@ public class ProgramImpl implements Program {
 	@Override
 	public boolean containsAll(Collection<?> c) {
 		return rules.containsAll(c);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final ProgramImpl other = (ProgramImpl) obj;
+		if (!rules.equals(other.rules))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + rules.hashCode();
+		return result;
 	}
 
 	@Override

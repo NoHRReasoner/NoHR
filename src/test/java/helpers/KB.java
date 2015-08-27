@@ -39,13 +39,13 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMappingImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalization;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalizationImpl;
@@ -111,7 +111,8 @@ public class KB {
 
 	public void assertNegative(String query) {
 		try {
-			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(new VocabularyMappingImpl(ontology));
+			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(
+					new DefaultVocabularyMapping(ontology));
 			if (!query.endsWith("."))
 				query += ".";
 			final Query q = parser.parseQuery(query);
@@ -351,8 +352,6 @@ public class KB {
 	private boolean hasAnswer(String query, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) {
 		try {
-			if (!query.endsWith("."))
-				query += ".";
 			final Query q = parser.parseQuery(query);
 			return hybridKB.hasAnswer(q, trueAnswers, undefinedAnswers, inconsistentAnswers);
 		} catch (final OWLProfilesViolationsException e) {

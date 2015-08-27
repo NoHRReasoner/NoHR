@@ -284,10 +284,14 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	 *             if {@code ontology} has some concept that can't be reduced.
 	 */
 	public ELOntologyReductionImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
-		final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(ontology.getAxioms(),
-				SUPPORTED_AXIOM_TYPES);
-		if (unsupportedAxioms.size() > 0)
-			throw new UnsupportedAxiomsException(unsupportedAxioms);
+		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
+		if (ignoreUnsupported == null || !ignoreUnsupported.equals("true")) {
+			@SuppressWarnings("unchecked")
+			final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(
+					(Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), SUPPORTED_AXIOM_TYPES);
+			if (unsupportedAxioms.size() > 0)
+				throw new UnsupportedAxiomsException(unsupportedAxioms);
+		}
 		this.ontology = ontology;
 		concetpsGenerator = new OWLEntityGenerator(ontology);
 		final Set<OWLClassAssertionAxiom> conceptAssertions = ontology.getAxioms(AxiomType.CLASS_ASSERTION);
@@ -324,6 +328,11 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	 */
 	private OWLClass bottom() {
 		return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLNothing();
+	}
+
+	@Override
+	public Iterable<OWLSubPropertyChainOfAxiom> chainSubsumptions() {
+		return chainSubsumptions;
 	}
 
 	/**
@@ -394,6 +403,16 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 		return result;
 	}
 
+	@Override
+	public Iterable<OWLClassAssertionAxiom> conceptAssertions() {
+		return closure.getAxioms(AxiomType.CLASS_ASSERTION);
+	}
+
+	@Override
+	public Iterable<OWLSubClassOfAxiom> conceptSubsumptions() {
+		return closure.getAxioms(AxiomType.SUBCLASS_OF);
+	}
+
 	/**
 	 * Obtains the <i>EL<sub>&bot;</sub><sup>+</sup></i> concept subsumptions entailed by a given EL ontology.
 	 *
@@ -429,21 +448,6 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	}
 
 	@Override
-	public Iterable<OWLSubPropertyChainOfAxiom> chainSubsumptions() {
-		return chainSubsumptions;
-	}
-
-	@Override
-	public Iterable<OWLClassAssertionAxiom> conceptAssertions() {
-		return closure.getAxioms(AxiomType.CLASS_ASSERTION);
-	}
-
-	@Override
-	public Iterable<OWLSubClassOfAxiom> conceptSubsumptions() {
-		return closure.getAxioms(AxiomType.SUBCLASS_OF);
-	}
-
-	@Override
 	public Iterable<OWLDataPropertyAssertionAxiom> dataAssertion() {
 		return ontology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION);
 	}
@@ -455,16 +459,6 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 		for (final OWLEquivalentDataPropertiesAxiom axiom : ontology.getAxioms(AxiomType.EQUIVALENT_DATA_PROPERTIES))
 			result.addAll(axiom.asSubDataPropertyOfAxioms());
 		return result;
-	}
-
-	@Override
-	public Iterable<OWLObjectPropertyAssertionAxiom> roleAssertions() {
-		return ontology.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION);
-	}
-
-	@Override
-	public Iterable<OWLSubObjectPropertyOfAxiom> roleSubsumptions() {
-		return roleSubsumptions;
 	}
 
 	@Override
@@ -618,6 +612,16 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 		if (changed)
 			axioms.addAll(newAxioms);
 		return changed;
+	}
+
+	@Override
+	public Iterable<OWLObjectPropertyAssertionAxiom> roleAssertions() {
+		return ontology.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION);
+	}
+
+	@Override
+	public Iterable<OWLSubObjectPropertyOfAxiom> roleSubsumptions() {
+		return roleSubsumptions;
 	}
 
 	/**

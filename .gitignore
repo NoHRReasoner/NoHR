@@ -1,8 +1,9 @@
 .idea/
 build/
-bin/
-result.p
 **/.DS_Store
-src/local/translate/Test.java
-**/*.iml
 /target/
+benchmark/lubm/data/*.owl
+benchmark/ontoWithRules/lipid/*.p
+benchmark/pellet/Pellet.jar
+benchmark/pellet/PelletQueries.txt
+benchmark/pellet/*.owl

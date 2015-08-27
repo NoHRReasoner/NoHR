@@ -1,7 +1,5 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import java.util.List;
-
 /**
  * Implementation of {@link Variable}.
  *
@@ -35,11 +33,6 @@ public class VariableImpl implements Variable {
 
 	@Override
 	public Constant asConstant() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public List<Term> asList() {
 		throw new ClassCastException();
 	}
 

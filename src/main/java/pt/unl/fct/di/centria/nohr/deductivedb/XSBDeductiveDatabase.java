@@ -9,8 +9,8 @@ import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-import pt.unl.fct.di.centria.nohr.reasoner.VocabularyMapping;
 
 /**
  * Implements an {@link DeductiveDatabase} backed by a XSB Prolog system.

@@ -1,0 +1,5 @@
+[1]
+'Acyl_Ester_Chain'(?X)
+
+[5]
+'isPart_Of'(?X,?Y)
