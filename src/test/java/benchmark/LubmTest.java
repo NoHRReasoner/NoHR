@@ -134,7 +134,10 @@ public class LubmTest {
 			Profile profile)
 					throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
 					IOException, CloneNotSupportedException, UnsupportedAxiomsException, Exception {
-		RuntimesLogger.setDataset(String.valueOf(u));
+		if (u != null)
+			RuntimesLogger.setDataset(String.valueOf(u));
+		else
+			RuntimesLogger.setDataset(data.getFileName().toString());
 		final LubmRepository nohrRepository = new LubmRepository(data, test.getOutputDir(), profile);
 		nohrRepository.load(u);
 		final Iterator<QuerySpecification> queriesIt = queries.iterator();

@@ -12,7 +12,7 @@ for u in {${U1},${U2},${U3}}; do
 	echo "Uni${u}"
 	for ((i=1; i<= $RUNS; i++)); do
 		echo "Run ${i}"
-		sh ../runclass "benchmark.LubmTest" "--profile QL --warmup-file Uni1.owl --data-file Uni${u}.owl --queries-file ${QUERYFILE}"\
+		sh ../.runclass "benchmark.LubmTest" "--profile QL --warmup-file Uni1.owl --data-file Uni${u}.owl --queries-file ${QUERYFILE} --output-dir=output"\
 		 	2>&1 | tee logs/ql${u}_${i}.txt
 		mv queries.csv ./report/nohr-queries${u}_${i}.csv
 		mv loading.csv ./report/nohr-loading${u}_${i}.csv
@@ -24,6 +24,6 @@ for i in {${U1},${U2},${U3}}; do
 	echo "Uni${i}"
 	${JAVA} -Xmx${XMX}\
      -DentityExpansionLimit=100000000 \
-		 -jar .pellet.jar Uni${i}.owl LUBM \
+		 -jar Pellet.jar Uni${i}.owl LUBM \
 		 | tee ./report/pellet${i}.txt
 done

@@ -14,7 +14,8 @@ public enum TokenType {
 
 	/** The comma. */
 	COMMA(",", true), /** Any string started by a capital letter followed by letters, numbers or underscores. */
-	DOT("\\.", ".", true), /** The dot (at the end of the line) */
+	DOT("\\.(\\n|\\r)", "."), /** The dot (at the end of the line) */
+	// ^note that the java Scanner doesn't consume the end of line.
 	ID("[A-Z]\\w*+", "Id"), /** The Prolog operator {@literal :-}. */
 	IF(":-", true), /** The left bracket. */
 	L_BRACK("\\[", "["), /** The left parenthesis. */
@@ -23,10 +24,10 @@ public enum TokenType {
 	QUESTION_MARK("\\?", "?"), /** The right bracket. */
 	R_BRACK("\\]", "]"), /** The right parenthesis. */
 	R_PAREN("\\)", ")"), /**
-							 * Any string that doesn't contain any unescaped (i.e. not preceded by a slash) slash, space, comma, parenthesis, bracket,
+							 * Any string that doesn't contain any unescaped (i.e. not preceded by a slash) slash, comma, parenthesis, bracket,
 							 * question mark, nor any of the strings "{@literal :-}" or "{@literal not}".
 							 */
-	SYMBOL("([^\\.,\\[(?\\])\\s\\\\]|(?!-):|(\\\\\\\\)*\\\\.)++", "Symbol");
+	SYMBOL("([^\\.,\\[(?\\])\\\\]|(?!-):|(\\\\\\\\)*\\\\.|\\.(?!\\n|\\r))++", "Symbol");
 
 	/** The regular expression that matches the tokens of this {@link TokenType}. */
 	private final Pattern pattern;
@@ -80,7 +81,7 @@ public enum TokenType {
 	 */
 	TokenType(String regex, String representation, boolean separator) {
 		regex = separator ? "\\s*" + regex + "\\s*" : regex;
-		pattern = Pattern.compile(regex);
+		pattern = Pattern.compile(regex, Pattern.MULTILINE);
 		this.representation = representation;
 	}
 

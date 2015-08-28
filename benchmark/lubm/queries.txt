@@ -3,46 +3,46 @@
 # query
 
 [1]
-'GraduateStudent'(?X),takesCourse(?X,wwwDepartment0University0eduGraduateCourse0)
+GraduateStudent(?X),takesCourse(?X,http://www.Department0.University0.edu/GraduateCourse0)
 
 [2]
-subOrganizationOf(?Z,?Y),undergraduateDegreeFrom(?X,?Y),memberOf(?X,?Z),'GraduateStudent'(?X),'University'(?Y),'Department'(?Z)
+subOrganizationOf(?Z,?Y),undergraduateDegreeFrom(?X,?Y),memberOf(?X,?Z),GraduateStudent(?X),University(?Y),Department(?Z)
 
 [3]
-publicationAuthor(?X,wwwDepartment0University0eduAssistantProfessor0),'Publication'(?X)
+publicationAuthor(?X,http://www.Department0.University0.edu/AssistantProfessor0),Publication(?X)
 
 [4]
-worksFor(?X,wwwDepartment0University0edu),'Professor'(?X),name(?X,?Y1),emailAddress(?X,?Y2),telephone(?X,?Y3)
+worksFor(?X,http://www.Department0.University0.edu),Professor(?X),name(?X,?Y1),emailAddress(?X,?Y2),telephone(?X,?Y3)
 
 [5]
-memberOf(?X,wwwDepartment0University0edu),'Person'(?X)
+memberOf(?X,http://www.Department0.University0.edu),Person(?X)
 
 [6]
-'Student'(?X)
+Student(?X)
 
 [7]
-teacherOf(wwwDepartment0University0eduAssociateProfessor0,?Y),'Student'(?X),'Course'(?Y),takesCourse(?X,?Y)
+teacherOf(http://www.Department0.University0.edu/AssociateProfessor0,?Y),Student(?X),Course(?Y),takesCourse(?X,?Y)
 
 [8]
-subOrganizationOf(?Y,wwwUniversity0edu),'Student'(?X),'Department'(?Y),memberOf(?X,?Y),emailAddress(?X,?Z)
+subOrganizationOf(?Y,http://www.University0.edu),Student(?X),Department(?Y),memberOf(?X,?Y),emailAddress(?X,?Z)
 
 [9]
-advisor(?X,?Y),teacherOf(?Y,?Z),takesCourse(?X,?Z), 'Student'(?X),'Faculty'(?Y),'Course'(?Z)
+advisor(?X,?Y),teacherOf(?Y,?Z),takesCourse(?X,?Z), Student(?X),Faculty(?Y),Course(?Z)
 
 [10]
-takesCourse(?X,wwwDepartment0University0eduGraduateCourse0),'Student'(?X)
+takesCourse(?X,http://www.Department0.University0.edu/GraduateCourse0),Student(?X)
 
 #requires transitive roles
 #[11]
-#subOrganizationOf(?X,wwwUniversity0edu),ResearchGroup(?X)
+#subOrganizationOf(?X,http://www.University0.edu),ResearchGroup(?X)
 
 #requires intersection in subClass
 #[12]
-#subOrganizationOf(?Y,wwwUniversity0edu),Chair(?X),Department(?Y),worksFor(?X,?Y)
+#subOrganizationOf(?Y,http://www.University0.edu),Chair(?X),Department(?Y),worksFor(?X,?Y)
 
 #requires inverses
-[13]
-hasAlumnus(wwwUniversity0edu,?X),'Person'(?X)
+#[13]
+#hasAlumnus(http://www.University0.edu,?X),Person(?X)
 
 [14]
-'UndergraduateStudent'(?X)
+UndergraduateStudent(?X)

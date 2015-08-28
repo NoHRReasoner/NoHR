@@ -204,7 +204,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		this.formatVisitor = formatVisitor;
 		try {
 			file = File.createTempFile(FILE_PREFIX, PROLOG_EXTENSION);
-			file.deleteOnExit();
+			// file.deleteOnExit();
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}

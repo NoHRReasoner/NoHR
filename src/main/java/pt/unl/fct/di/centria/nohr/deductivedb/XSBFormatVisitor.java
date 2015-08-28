@@ -45,6 +45,8 @@ public class XSBFormatVisitor implements FormatVisitor {
 	public String visit(Constant constant) {
 		if (constant.isNumber())
 			return constant.asNumber().toString();
+		else if (constant.isOWLIndividual())
+			return quoted(constant.asOWLIndividual().toStringID());
 		return quoted(constant.asRuleConstant());
 	}
 

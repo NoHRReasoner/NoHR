@@ -1,4 +1,4 @@
 #!/bin/sh
 
-sh run 2 queries-test.txt 1 2
+sh .run 2 queries-test.txt 1 2
 

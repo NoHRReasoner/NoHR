@@ -3,7 +3,10 @@ build/
 **/.DS_Store
 /target/
 benchmark/lubm/data/*.owl
+benchmark/lubm/output/el/*
+benchmark/lubm/output/ql/*
 benchmark/ontoWithRules/lipid/*.p
 benchmark/pellet/Pellet.jar
 benchmark/pellet/PelletQueries.txt
 benchmark/pellet/*.owl
+benchmark/pellt/output/*

@@ -3,7 +3,6 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,7 +63,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	private final Map<String, OWLIndividual> individuals;
 
 	public DefaultVocabularyMapping(OWLOntology ontology) {
-		this(Collections.singleton(ontology));
+		this(ontology.getImportsClosure());
 	}
 
 	/**
@@ -151,12 +150,16 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 
 	@Override
 	public OWLClass getConcept(String symbol) {
-		return concepts.get(symbol);
+		final OWLClass result = concepts.get(symbol);
+		System.out.println(symbol + " -> " + result);
+		return result;
 	}
 
 	@Override
 	public OWLIndividual getIndividual(String symbol) {
-		return individuals.get(symbol);
+		final OWLIndividual result = individuals.get(symbol);
+		System.out.println(symbol + " ->  " + result);
+		return result;
 	}
 
 	@Override
@@ -166,6 +169,8 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 
 	@Override
 	public OWLProperty<?, ?> getRole(String symbol) {
+		final OWLProperty<?, ?> result = roles.get(symbol);
+		System.out.println(symbol + " -> " + result);
 		return roles.get(symbol);
 	}
 
@@ -213,7 +218,11 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 */
 	protected Set<String> symbols(OWLEntity entity) {
 		final Set<String> result = new HashSet<>();
-		result.add(entity.getIRI().toURI().getFragment());
+		result.add(entity.getIRI().toString());
+		String fragment = entity.getIRI().getFragment();
+		if (fragment == null)
+			fragment = entity.getIRI().toURI().getFragment();
+		result.add(fragment);
 		for (final OWLOntology ontology : ontologies)
 			for (final OWLAnnotation annotation : entity.getAnnotations(ontology, LABEL_ANNOTATION)) {
 				final OWLAnnotationValue value = annotation.getValue();
