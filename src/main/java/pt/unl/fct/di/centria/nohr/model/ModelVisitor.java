@@ -19,39 +19,21 @@ import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
  */
 public interface ModelVisitor {
 
-	public Answer visit(Answer visit);
-
-	public Atom visit(Atom atom);
-
 	public Predicate visit(ConceptPredicate pred);
 
-	public Constant visit(Constant constant);
-
 	public Constant visit(IndividualConstant constant);
-
-	public Literal visit(Literal visit);
 
 	public Constant visit(LiteralConstant constant);
 
 	public Predicate visit(MetaPredicate predicate);
 
-	public NegativeLiteral visit(NegativeLiteral literal);
-
 	public Constant visit(NumericConstant constant);
 
-	public Predicate visit(Predicate pred);
-
-	public Query visit(Query query);
-
 	public Predicate visit(RolePredicate pred);
-
-	public Rule visit(Rule rule);
 
 	public Constant visit(RuleConstant constant);
 
 	public Predicate visit(RulePredicate pred);
-
-	public Term visit(Term term);
 
 	public Variable visit(Variable variable);
 

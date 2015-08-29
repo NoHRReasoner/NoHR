@@ -13,6 +13,7 @@ import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link Atom}
@@ -66,6 +67,13 @@ public class AtomImpl implements Atom {
 		for (final Term term : arguments)
 			args.add(term.accept(visitor));
 		return new AtomImpl(pred, args);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		predicate.accept(visitor);
+		for (final Term term : arguments)
+			term.accept(visitor);
 	}
 
 	@Override

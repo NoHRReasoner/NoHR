@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of ontology literal {@link Constant}.
@@ -39,6 +40,11 @@ public class LiteralConstantImpl implements LiteralConstant {
 	@Override
 	public Constant accept(ModelVisitor visitor) {
 		return visitor.visit(this);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override

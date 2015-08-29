@@ -5,6 +5,7 @@ import java.util.Objects;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of a numeric {@link Constant}.
@@ -46,6 +47,11 @@ public class NumericConstantImpl implements NumericConstant {
 	@Override
 	public Constant accept(ModelVisitor visit) {
 		return visit.visit(this);
+	}
+
+	@Override
+	public void accept(Visitor visit) {
+		visit.visit(this);
 	}
 
 	@Override

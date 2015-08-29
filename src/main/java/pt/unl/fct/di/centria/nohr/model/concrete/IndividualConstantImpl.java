@@ -11,6 +11,7 @@ import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Ontology individual {@link Constant} implementation.
@@ -42,6 +43,11 @@ public class IndividualConstantImpl implements IndividualConstant {
 	@Override
 	public Constant accept(ModelVisitor visitor) {
 		return visitor.visit(this);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override

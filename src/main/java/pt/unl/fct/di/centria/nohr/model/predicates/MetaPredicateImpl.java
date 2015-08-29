@@ -8,6 +8,7 @@ import java.util.Objects;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link MetaPredicate}}.
@@ -52,6 +53,11 @@ public class MetaPredicateImpl implements MetaPredicate {
 	@Override
 	public MetaPredicate accept(ModelVisitor visitor) {
 		return new MetaPredicateImpl(predicate.accept(visitor), type);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		predicate.accept(visitor);
 	}
 
 	@Override

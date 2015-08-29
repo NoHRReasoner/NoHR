@@ -3,6 +3,7 @@ package pt.unl.fct.di.centria.nohr.model.concrete;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of rule {@link Constant}.
@@ -34,6 +35,11 @@ public class RuleConstantImpl implements RuleConstant {
 	@Override
 	public Constant accept(ModelVisitor visitor) {
 		return visitor.visit(this);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override

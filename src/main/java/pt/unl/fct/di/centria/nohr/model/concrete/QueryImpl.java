@@ -15,6 +15,7 @@ import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
 
@@ -68,10 +69,18 @@ public class QueryImpl implements Query {
 		final List<Literal> lits = new LinkedList<Literal>();
 		final List<Variable> vars = new LinkedList<Variable>();
 		for (final Literal literal : literals)
-			lits.add(visitor.visit(literal));
+			lits.add(literal.accept(visitor));
 		for (final Variable var : variables)
-			vars.add(visitor.visit(var));
+			vars.add(var.accept(visitor));
 		return new QueryImpl(lits, vars);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		for (final Literal literal : literals)
+			literal.accept(visitor);
+		for (final Variable var : variables)
+			var.accept(visitor);
 	}
 
 	@Override

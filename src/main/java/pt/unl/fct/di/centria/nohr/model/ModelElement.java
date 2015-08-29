@@ -15,4 +15,6 @@ public interface ModelElement<T extends ModelElement<T>> {
 
 	public T accept(ModelVisitor visitor);
 
+	public void accept(Visitor visitor);
+
 }

@@ -26,6 +26,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
  *
  * @author Nuno Costa
  */
+@SuppressWarnings("unused")
 public class Predicates {
 
 	/**
@@ -381,14 +382,14 @@ public class Predicates {
 		if (vocabularyMapping == null)
 			return pred(symbol, arity);
 		if (arity == 1) {
-			final OWLClass concept = vocabularyMapping.getConcept(symbol);
+			final Predicate concept = vocabularyMapping.getConcept(symbol);
 			if (concept != null)
-				return pred(concept);
+				return concept;
 		}
 		if (arity == 2) {
-			final OWLProperty<?, ?> role = vocabularyMapping.getRole(symbol);
+			final Predicate role = vocabularyMapping.getRole(symbol);
 			if (role != null)
-				return pred(role);
+				return role;
 		}
 		return pred(symbol, arity);
 	}

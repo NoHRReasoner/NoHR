@@ -33,33 +33,13 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public Answer visit(Answer answer) {
-		return answer.accept(this);
-	}
-
-	@Override
-	public Atom visit(Atom atom) {
-		return atom.accept(this);
-	}
-
-	@Override
 	public Predicate visit(ConceptPredicate pred) {
 		return pred;
 	}
 
 	@Override
-	public Constant visit(Constant constant) {
-		return constant;
-	}
-
-	@Override
 	public Constant visit(IndividualConstant constant) {
 		return constant;
-	}
-
-	@Override
-	public Literal visit(Literal literal) {
-		return literal.accept(this);
 	}
 
 	@Override
@@ -73,33 +53,13 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public NegativeLiteral visit(NegativeLiteral negativeLiteral) {
-		return negativeLiteral.accept(this);
-	}
-
-	@Override
 	public Constant visit(NumericConstant constant) {
 		return constant;
 	}
 
 	@Override
-	public Predicate visit(Predicate predicate) {
-		return predicate;
-	}
-
-	@Override
-	public Query visit(Query query) {
-		return query.accept(this);
-	}
-
-	@Override
 	public Predicate visit(RolePredicate pred) {
 		return pred;
-	}
-
-	@Override
-	public Rule visit(Rule rule) {
-		return rule.accept(this);
 	}
 
 	@Override
@@ -110,11 +70,6 @@ public class DefaultModelVisitor implements ModelVisitor {
 	@Override
 	public Predicate visit(RulePredicate pred) {
 		return pred;
-	}
-
-	@Override
-	public Term visit(Term term) {
-		return term.accept(this);
 	}
 
 	@Override

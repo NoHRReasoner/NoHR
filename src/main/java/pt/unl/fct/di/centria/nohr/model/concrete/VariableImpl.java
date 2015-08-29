@@ -3,6 +3,7 @@ package pt.unl.fct.di.centria.nohr.model.concrete;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link Variable}.
@@ -33,6 +34,11 @@ public class VariableImpl implements Variable {
 	@Override
 	public Variable accept(ModelVisitor visitor) {
 		return visitor.visit(this);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
 	}
 
 	@Override

@@ -3,6 +3,10 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
+import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,13 +58,17 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	private final Set<OWLOntology> ontologies;
 
 	/** The mapping between symbols and the concepts that they represent. */
-	private final Map<String, OWLClass> concepts;
+	private final Map<String, Predicate> concepts;
 
 	/** The mapping between symbols and the roles that they represent. */
-	private final Map<String, OWLProperty<?, ?>> roles;
+	private final Map<String, Predicate> roles;
 
 	/** The mapping between symbols and the individuals that they represent. */
-	private final Map<String, OWLIndividual> individuals;
+	private final Map<String, Constant> individuals;
+
+	private final Map<OWLEntity, Predicate> predicates;
+
+	private final Map<OWLIndividual, Constant> constants;
 
 	public DefaultVocabularyMapping(OWLOntology ontology) {
 		this(ontology.getImportsClosure());
@@ -78,6 +86,8 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 		concepts = new HashMap<>();
 		roles = new HashMap<>();
 		individuals = new HashMap<>();
+		predicates = new HashMap<>();
+		constants = new HashMap<>();
 		for (final OWLOntology ontology : ontologies) {
 			for (final OWLClass c : ontology.getClassesInSignature())
 				register(c);
@@ -149,12 +159,12 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	}
 
 	@Override
-	public OWLClass getConcept(String symbol) {
+	public Predicate getConcept(String symbol) {
 		return concepts.get(symbol);
 	}
 
 	@Override
-	public OWLIndividual getIndividual(String symbol) {
+	public Constant getIndividual(String symbol) {
 		return individuals.get(symbol);
 	}
 
@@ -164,7 +174,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	}
 
 	@Override
-	public OWLProperty<?, ?> getRole(String symbol) {
+	public Predicate getRole(String symbol) {
 		return roles.get(symbol);
 	}
 
@@ -175,8 +185,11 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 *            the concept.
 	 */
 	private void register(OWLClass concept) {
+		final Predicate pred = pred(concept);
+		predicates.put(concept, pred);
+		concepts.put(pred.getSymbol(), pred);
 		for (final String symbol : symbols(concept))
-			concepts.put(symbol, concept);
+			concepts.put(symbol, pred);
 		references.add(concept);
 	}
 
@@ -186,8 +199,11 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 * @param individual
 	 */
 	private void register(OWLIndividual individual) {
+		final Constant cons = cons(individual);
+		constants.put(individual, cons);
+		individuals.put(cons.getSymbol(), cons);
 		for (final String symbol : symbols(individual))
-			individuals.put(symbol, individual);
+			individuals.put(symbol, cons);
 		references.add(individual);
 	}
 
@@ -198,8 +214,11 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 *            a role.
 	 */
 	private void register(OWLProperty<?, ?> role) {
+		final Predicate pred = pred(role);
+		predicates.put(role, pred);
+		roles.put(pred.getSymbol(), pred);
 		for (final String symbol : symbols(role))
-			roles.put(symbol, role);
+			roles.put(symbol, pred);
 		references.add(role);
 	}
 
@@ -212,12 +231,9 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 */
 	protected Set<String> symbols(OWLEntity entity) {
 		final Set<String> result = new HashSet<>();
-		result.add(entity.getIRI().toQuotedString());
-		result.add(entity.getIRI().toString());
-		String fragment = entity.getIRI().getFragment();
-		if (fragment == null)
-			fragment = entity.getIRI().toURI().getFragment();
-		result.add(fragment);
+		final String fragment = entity.getIRI().toURI().getFragment();
+		if (fragment != null)
+			result.add(fragment);
 		for (final OWLOntology ontology : ontologies)
 			for (final OWLAnnotation annotation : entity.getAnnotations(ontology, LABEL_ANNOTATION)) {
 				final OWLAnnotationValue value = annotation.getValue();
@@ -235,12 +251,9 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 * @return the set of symbols that represent {@code individual}
 	 */
 	protected Set<String> symbols(OWLIndividual individual) {
-		final Set<String> result = new HashSet<>();
 		if (individual.isNamed())
 			return symbols((OWLEntity) individual.asOWLNamedIndividual());
-		else
-			result.add(individual.toStringID());
-		return result;
+		return Collections.<String> emptySet();
 	}
 
 	/**
@@ -251,9 +264,12 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 */
 	private void unregister(OWLClass concept) {
 		references.remove(concept);
-		if (!references.contains(concept))
+		if (!references.contains(concept)) {
+			final Predicate pred = predicates.remove(concept);
+			concepts.remove(pred.getSymbol());
 			for (final String symbol : symbols(concept))
 				concepts.remove(symbol);
+		}
 	}
 
 	/**
@@ -264,9 +280,12 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 */
 	private void unregister(OWLProperty<?, ?> role) {
 		references.remove(role);
-		if (!references.contains(role))
+		if (!references.contains(role)) {
+			final Predicate pred = predicates.remove(role);
+			roles.remove(pred.getSymbol());
 			for (final String symbol : symbols(role))
-				roles.put(symbol, role);
+				roles.put(symbol, pred(role));
+		}
 	}
 
 	/**
@@ -277,9 +296,12 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 */
 	private void unregiter(OWLIndividual individual) {
 		references.remove(individual);
-		if (!references.contains(individual))
+		if (!references.contains(individual)) {
+			final Constant cons = constants.remove(individual);
+			individuals.remove(cons);
 			for (final String symbol : symbols(individual))
 				individuals.remove(symbol);
+		}
 	}
 
 }

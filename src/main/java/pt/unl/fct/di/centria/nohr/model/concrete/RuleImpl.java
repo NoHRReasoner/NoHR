@@ -13,6 +13,7 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link Rule}.
@@ -50,8 +51,15 @@ public class RuleImpl implements Rule {
 	public Rule accept(ModelVisitor visitor) {
 		final List<Literal> body = new LinkedList<Literal>();
 		for (final Literal literal : this.body)
-			body.add(visitor.visit(literal));
-		return new RuleImpl(visitor.visit(head).getAtom(), body);
+			body.add(literal.accept(visitor));
+		return new RuleImpl(head.accept(visitor), body);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		head.accept(visitor);
+		for (final Literal literal : body)
+			literal.accept(visitor);
 	}
 
 	@Override

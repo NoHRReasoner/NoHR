@@ -17,6 +17,7 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link Answer}.
@@ -69,13 +70,16 @@ public class AnswerImpl implements Answer {
 
 	@Override
 	public Answer accept(ModelVisitor visitor) {
-		final Map<Variable, Integer> varsIdx = new HashMap<Variable, Integer>();
 		final List<Term> vals = new ArrayList<Term>();
-		for (final Entry<Variable, Integer> entry : query.getIndex().entrySet())
-			varsIdx.put(entry.getKey().accept(visitor), entry.getValue());
 		for (final Term val : values)
 			vals.add(val.accept(visitor));
 		return new AnswerImpl(query, truthValue, vals);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		for (final Term val : values)
+			val.accept(visitor);
 	}
 
 	@Override

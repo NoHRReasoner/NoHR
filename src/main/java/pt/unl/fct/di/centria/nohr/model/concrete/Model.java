@@ -295,9 +295,9 @@ public class Model {
 
 	public static Constant cons(String symbol, VocabularyMapping vocabularyMapping) {
 		if (vocabularyMapping != null) {
-			final OWLIndividual individual = vocabularyMapping.getIndividual(symbol);
+			final Constant individual = vocabularyMapping.getIndividual(symbol);
 			if (individual != null)
-				return cons(individual);
+				return individual;
 		}
 		return cons(symbol);
 	}

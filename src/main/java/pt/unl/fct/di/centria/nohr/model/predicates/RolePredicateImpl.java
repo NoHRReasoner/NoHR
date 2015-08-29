@@ -10,6 +10,7 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of a {@link Predicate} representing a role.
@@ -49,6 +50,11 @@ public class RolePredicateImpl implements RolePredicate {
 	@Override
 	public Predicate accept(ModelVisitor visitor) {
 		return visitor.visit(this);
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
 	}
 
 	/*

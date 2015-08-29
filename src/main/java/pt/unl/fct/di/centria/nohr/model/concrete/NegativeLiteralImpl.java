@@ -11,6 +11,7 @@ import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link NegativeLiteral}.
@@ -45,7 +46,12 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 
 	@Override
 	public NegativeLiteral accept(ModelVisitor visitor) {
-		return new NegativeLiteralImpl(visitor.visit(atom).getAtom());
+		return new NegativeLiteralImpl(atom.accept(visitor));
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		atom.accept(visitor);
 	}
 
 	@Override
