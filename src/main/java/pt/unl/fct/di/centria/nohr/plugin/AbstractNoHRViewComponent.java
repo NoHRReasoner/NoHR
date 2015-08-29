@@ -16,9 +16,9 @@ import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;

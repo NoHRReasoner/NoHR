@@ -1,12 +1,16 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import pt.unl.fct.di.centria.nohr.model.Program;
+import pt.unl.fct.di.centria.nohr.model.ProgramChangeListener;
+import pt.unl.fct.di.centria.nohr.model.Rule;
 
 /**
  * Implementation of {@link Program}.

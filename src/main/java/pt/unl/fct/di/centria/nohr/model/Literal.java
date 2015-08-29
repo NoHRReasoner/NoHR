@@ -3,8 +3,6 @@ package pt.unl.fct.di.centria.nohr.model;
 import java.util.List;
 import java.util.Map;
 
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-
 /**
  * Represents an rule literal. Can be a positive literal, i.e. an atom <i>P(t <sub>1</sub>, ..., t<sub>n</sub>)</i>, or a negative literal, i.e. an
  * negated atom <i><b>not</b> P(t<sub>1</sub>, ..., t<sub>n</sub>)</i>, where <i>P</i> is a predicate, <i>t<sub>i</sub></i>, with <i>1&le;i&le;n</i> ,

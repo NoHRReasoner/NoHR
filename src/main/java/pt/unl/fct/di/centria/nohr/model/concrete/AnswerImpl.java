@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,14 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
+import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.TruthValue;
+import pt.unl.fct.di.centria.nohr.model.Variable;
 
 /**
  * Implementation of {@link Answer}.

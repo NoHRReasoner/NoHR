@@ -3,9 +3,9 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ruleSet;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,9 +27,9 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedExpressionException;
 

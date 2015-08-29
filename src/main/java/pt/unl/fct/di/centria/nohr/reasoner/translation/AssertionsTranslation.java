@@ -3,11 +3,11 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ruleSet;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.doubPred;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origPred;
@@ -22,8 +22,8 @@ import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 /**
  * Auxiliary methods to translate ABox assertions, that can be used in different OWL profiles.

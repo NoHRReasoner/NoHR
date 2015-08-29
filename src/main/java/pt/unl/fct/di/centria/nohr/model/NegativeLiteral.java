@@ -1,7 +1,5 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
-
 /**
  * Represents an negative literal <i><b>not</b> P(t<sub>1</sub>, ..., t <sub>n</sub>)</i>, where <i>P</i> is a predicate, <i>t<sub>i</sub></i>, with
  * <i>1&le;i&le;n</i> terms and <i><b>not</b></i> the default negation operator.

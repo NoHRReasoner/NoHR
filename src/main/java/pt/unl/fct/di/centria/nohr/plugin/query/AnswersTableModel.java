@@ -10,10 +10,10 @@ import javax.swing.table.TableModel;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Constant;
-import pt.unl.fct.di.centria.nohr.model.IndividualConstant;
-import pt.unl.fct.di.centria.nohr.model.LiteralConstant;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.concrete.IndividualConstant;
+import pt.unl.fct.di.centria.nohr.model.concrete.LiteralConstant;
 
 /**
  * A {@link TableModel} for {@link Answer answers}.

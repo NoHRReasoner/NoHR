@@ -1,11 +1,16 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
+
+import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Term;
 
 /**
  * Ontology individual {@link Constant} implementation.

@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
 

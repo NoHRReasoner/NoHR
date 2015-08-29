@@ -1,7 +1,6 @@
 package unittest;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.*;
-
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.*;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
 import org.junit.After;

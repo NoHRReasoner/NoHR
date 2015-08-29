@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
@@ -14,7 +14,21 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
 
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Atom;
+import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.ModelElement;
+import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Program;
+import pt.unl.fct.di.centria.nohr.model.Query;
+import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.TruthValue;
+import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
 
 /**

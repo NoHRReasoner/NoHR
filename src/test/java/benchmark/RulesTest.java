@@ -34,8 +34,8 @@ import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Program;
+import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 

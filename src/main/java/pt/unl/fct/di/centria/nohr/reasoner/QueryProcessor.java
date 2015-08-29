@@ -1,6 +1,6 @@
 package pt.unl.fct.di.centria.nohr.reasoner;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.ans;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ans;
 
 import java.util.HashMap;
 import java.util.LinkedList;

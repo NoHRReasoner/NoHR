@@ -3,11 +3,11 @@
  */
 package benchmark.data;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
 import java.io.BufferedWriter;
@@ -36,11 +36,11 @@ import com.lexicalscope.jewel.cli.Option;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 
 /**
  * @author Nuno Costa

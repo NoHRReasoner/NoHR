@@ -3,8 +3,8 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ql;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.domPred;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;

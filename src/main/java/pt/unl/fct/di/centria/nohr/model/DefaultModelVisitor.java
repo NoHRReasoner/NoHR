@@ -3,9 +3,12 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
+import pt.unl.fct.di.centria.nohr.model.concrete.IndividualConstant;
+import pt.unl.fct.di.centria.nohr.model.concrete.LiteralConstant;
+import pt.unl.fct.di.centria.nohr.model.concrete.NumericConstant;
+import pt.unl.fct.di.centria.nohr.model.concrete.RuleConstant;
 import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.RolePredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
 
@@ -110,8 +113,8 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public Term visit(Term termList) {
-		return termList.accept(this);
+	public Term visit(Term term) {
+		return term.accept(this);
 	}
 
 	@Override

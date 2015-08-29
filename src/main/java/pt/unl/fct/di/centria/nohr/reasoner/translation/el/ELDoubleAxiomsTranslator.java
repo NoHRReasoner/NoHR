@@ -3,10 +3,10 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ruleSet;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
 
 import java.util.ArrayList;
@@ -24,9 +24,9 @@ import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 
 /**

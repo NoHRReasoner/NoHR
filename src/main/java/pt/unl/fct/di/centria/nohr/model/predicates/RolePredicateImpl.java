@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 
 /**
  * Implementation of a {@link Predicate} representing a role.

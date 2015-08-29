@@ -8,9 +8,9 @@ import java.util.List;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;

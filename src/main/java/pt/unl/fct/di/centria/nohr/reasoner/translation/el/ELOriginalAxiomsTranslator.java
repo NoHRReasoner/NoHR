@@ -3,8 +3,8 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ruleSet;
 
 import java.util.List;
 import java.util.Set;

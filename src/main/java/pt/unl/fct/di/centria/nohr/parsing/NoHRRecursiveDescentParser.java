@@ -3,9 +3,9 @@
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.COMMA;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.ID;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.IF;
@@ -26,13 +26,13 @@ import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 
 /**
  * A {@link <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser"> recursive descent parser</a>} that implements {@link NoHRParser}.

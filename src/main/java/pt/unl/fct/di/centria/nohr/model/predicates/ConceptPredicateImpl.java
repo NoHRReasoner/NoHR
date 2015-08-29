@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.semanticweb.owlapi.model.OWLClass;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 
 /**
  * Implementation of a {@link Predicate} representing a concept.

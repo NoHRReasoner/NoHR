@@ -3,8 +3,14 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
+import pt.unl.fct.di.centria.nohr.model.concrete.IndividualConstant;
+import pt.unl.fct.di.centria.nohr.model.concrete.LiteralConstant;
+import pt.unl.fct.di.centria.nohr.model.concrete.NumericConstant;
+import pt.unl.fct.di.centria.nohr.model.concrete.RuleConstant;
+import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.RolePredicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
 
 /**
  * A model visitor (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>} ) to support different model formats, i.e.
@@ -29,10 +35,10 @@ public interface FormatVisitor {
 	public String visit(Atom atom);
 
 	/**
-	 * @param constant
-	 * @return the string representation of the constant {@code constant}.
+	 * @param predicate
+	 * @return the string representation of the predicate {@code predicate}.
 	 */
-	public String visit(Constant constant);
+	public String visit(ConceptPredicate predicate);
 
 	/**
 	 * @param constant
@@ -68,16 +74,16 @@ public interface FormatVisitor {
 	public String visit(NumericConstant constant);
 
 	/**
-	 * @param predicate
-	 * @return the string representation of the predicate {@code predicate}.
-	 */
-	public String visit(Predicate predicate);
-
-	/**
 	 * @param query
 	 * @return the string representation of the query {@code query}.
 	 */
 	public String visit(Query query);
+
+	/**
+	 * @param predicate
+	 * @return the string representation of the predicate {@code predicate}.
+	 */
+	public String visit(RolePredicate predicate);
 
 	/**
 	 * @param rule
@@ -91,6 +97,14 @@ public interface FormatVisitor {
 	 * @return the string representation of the rule constant {@code constant}.
 	 */
 	public String visit(RuleConstant constant);
+
+	/**
+	 * @param predicate
+	 * @return the string representation of the predicate {@code predicate}.
+	 */
+	public String visit(RulePredicate predicate);
+
+	public String visit(Symbolic symbolic);
 
 	/**
 	 * @param variable

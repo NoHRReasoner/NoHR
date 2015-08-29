@@ -1,7 +1,7 @@
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
 
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.TermModel;

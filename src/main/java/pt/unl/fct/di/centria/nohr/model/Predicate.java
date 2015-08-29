@@ -1,7 +1,6 @@
-package pt.unl.fct.di.centria.nohr.model.predicates;
+package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.ModelElement;
-import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 
 /**
  * Represents a predicate. Can be a rule predicate or represent a concept, a role or a meta-predicate (see {@link MetaPredicate}) in the translation
@@ -9,10 +8,10 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
  *
  * @author Nuno Costa
  */
-public interface Predicate extends ModelElement<Predicate> {
+public interface Predicate extends Symbolic {
 
 	@Override
-	public String accept(FormatVisitor visitor);
+	Predicate accept(ModelVisitor visitor);
 
 	/**
 	 * Returns the arity of this predicate.
@@ -27,12 +26,5 @@ public interface Predicate extends ModelElement<Predicate> {
 	 * @return the signature of this predicate.
 	 */
 	public String getSignature();
-
-	/**
-	 * Returns the symbol that represents this predicate.
-	 *
-	 * @return the symbol that represents this predicate.
-	 */
-	public String getSymbol();
 
 }

@@ -32,14 +32,14 @@ import pt.unl.fct.di.centria.nohr.Multiset;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
@@ -310,8 +310,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public Iterable<Answer> answers(final Query query, Boolean trueAnswers) {
-
-		RuntimesLogger.info(query.accept(formatVisitor));
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return Collections.<Answer> emptyList();
 		commit();
@@ -367,8 +365,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) {
-
-		RuntimesLogger.info(query.accept(formatVisitor));
 		final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
 		if (trueAnswers != null && trueAnswers == false && !hasWFS())
 			return answers;
@@ -453,7 +449,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public boolean hasAnswers(Query query, Boolean trueAnswers) {
-		RuntimesLogger.info(query.accept(formatVisitor));
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return false;
 		commit();

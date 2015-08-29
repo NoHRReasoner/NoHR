@@ -1,16 +1,16 @@
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.*;
+
 import java.io.File;
 import java.io.IOException;
-
-import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 /**
  * Implements an {@link DeductiveDatabase} backed by a XSB Prolog system.

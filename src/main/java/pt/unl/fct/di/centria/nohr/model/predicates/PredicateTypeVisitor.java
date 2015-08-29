@@ -4,6 +4,7 @@ import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
 import pt.unl.fct.di.centria.nohr.model.DefaultModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 
 /**
  * A {@link ModelVisitor} that replace each {@link Predicate} appearing at each model element by the correspondent {@link MetaPredicate} of a

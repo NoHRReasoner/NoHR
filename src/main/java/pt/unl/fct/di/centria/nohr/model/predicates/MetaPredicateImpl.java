@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 
 /**
  * Implementation of {@link MetaPredicate}}.

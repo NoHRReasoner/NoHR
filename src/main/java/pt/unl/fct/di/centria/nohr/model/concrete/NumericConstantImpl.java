@@ -1,6 +1,10 @@
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import java.util.Objects;
+
+import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
 /**
  * Implementation of a numeric {@link Constant}.
@@ -65,7 +69,7 @@ public class NumericConstantImpl implements NumericConstant {
 
 	@Override
 	public String getSymbol() {
-		throw new ClassCastException();
+		return String.valueOf(number);
 	}
 
 	@Override
@@ -75,6 +79,6 @@ public class NumericConstantImpl implements NumericConstant {
 
 	@Override
 	public String toString() {
-		return number.toString();
+		return getSymbol();
 	}
 }

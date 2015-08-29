@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +7,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Atom;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.Variable;
 
 /**
  * Implementation of {@link Atom}

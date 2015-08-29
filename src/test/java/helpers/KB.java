@@ -36,10 +36,10 @@ import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;

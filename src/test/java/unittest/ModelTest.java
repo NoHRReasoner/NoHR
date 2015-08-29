@@ -1,8 +1,8 @@
 package unittest;
 import static org.junit.Assert.assertTrue;
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
+import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
 import org.junit.After;
@@ -12,9 +12,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 /**
  *
