@@ -40,18 +40,23 @@ public class PredicateTypeVisitor extends DefaultModelVisitor {
 	}
 
 	@Override
+	public Predicate visit(ConceptPredicate pred) {
+		return pred(pred.getConcept(), predicateType);
+	}
+
+	@Override
 	public Predicate visit(MetaPredicate pred) {
 		return pred(pred.getPredicate(), predicateType);
 	}
 
 	@Override
-	public Predicate visit(Predicate pred) {
-		if (pred.isConcept())
-			return pred(pred.asConcept(), predicateType);
-		else if (pred.isRole())
-			return pred(pred.asRole(), predicateType);
-		else
-			return pred(pred.getSymbol(), pred.getArity(), predicateType);
+	public Predicate visit(RolePredicate pred) {
+		return pred(pred.getRole(), predicateType);
+	}
+
+	@Override
+	public Predicate visit(RulePredicate pred) {
+		return pred(pred.getSymbol(), pred.getArity(), predicateType);
 	}
 
 }

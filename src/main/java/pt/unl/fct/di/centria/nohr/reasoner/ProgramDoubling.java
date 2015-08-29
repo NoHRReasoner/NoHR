@@ -11,8 +11,10 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
+import pt.unl.fct.di.centria.nohr.model.predicates.RolePredicate;
 
 /**
  * Provides an auxiliary method that double a given rule according to <b>Definition 3.1</b> of
@@ -40,7 +42,8 @@ public class ProgramDoubling {
 		final List<Literal> negativeBody = rule.getNegativeBody();
 		final Literal[] originalBody = new Literal[rule.getBody().size()];
 		final Literal[] doubleBody = new Literal[rule.getBody().size()
-				+ (head.getFunctor().isConcept() || head.getFunctor().isRole() ? 1 : 0)];
+				+ (head.getFunctor() instanceof ConceptPredicate || head.getFunctor() instanceof RolePredicate ? 1
+						: 0)];
 		int i = 0;
 		for (final Literal literal : positiveBody) {
 			originalBody[i] = literal.accept(originalEncoder);
@@ -52,7 +55,7 @@ public class ProgramDoubling {
 			doubleBody[i] = literal.accept(originalEncoder);
 			i++;
 		}
-		if (head.getFunctor().isConcept() || head.getFunctor().isRole()) {
+		if (head.getFunctor() instanceof ConceptPredicate || head.getFunctor() instanceof RolePredicate) {
 			final ModelVisitor negativeEncoder = new PredicateTypeVisitor(PredicateType.NEGATIVE);
 			doubleBody[i] = Model.negLiteral(head.accept(negativeEncoder));
 		}

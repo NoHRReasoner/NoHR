@@ -277,6 +277,7 @@ public class HybridKBImpl implements HybridKB {
 		if (hasOntologyChanges || hasProgramChanges)
 			preprocess();
 		RuntimesLogger.start("query");
+		RuntimesLogger.info("querying: " + query);
 		final boolean hasAnswer = queryProcessor.hasAnswer(query, hadDisjunctions, trueAnswer, undefinedAnswers,
 				hadDisjunctions ? inconsistentAnswers : false);
 		RuntimesLogger.stop("query", "queries");
@@ -295,7 +296,7 @@ public class HybridKBImpl implements HybridKB {
 		if (hasOntologyChanges || hasProgramChanges)
 			preprocess();
 		RuntimesLogger.start("query");
-
+		RuntimesLogger.info("querying: " + query);
 		final Answer answer = queryProcessor.oneAnswer(query, hadDisjunctions, trueAnswer, undefinedAnswers,
 				hadDisjunctions ? inconsistentAnswers : false);
 		RuntimesLogger.stop("query", "queries");

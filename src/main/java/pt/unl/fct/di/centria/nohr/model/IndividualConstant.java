@@ -10,12 +10,6 @@ import org.semanticweb.owlapi.model.OWLIndividual;
  */
 public interface IndividualConstant extends Constant {
 
-	@Override
-	String accept(FormatVisitor visitor);
-
-	@Override
-	IndividualConstant accept(ModelVisitor visitor);
-
 	OWLIndividual getOWLIndividual();
 
 }

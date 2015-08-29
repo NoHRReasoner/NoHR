@@ -310,6 +310,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public Iterable<Answer> answers(final Query query, Boolean trueAnswers) {
+
+		RuntimesLogger.info(query.accept(formatVisitor));
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return Collections.<Answer> emptyList();
 		commit();
@@ -365,6 +367,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) {
+
+		RuntimesLogger.info(query.accept(formatVisitor));
 		final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
 		if (trueAnswers != null && trueAnswers == false && !hasWFS())
 			return answers;
@@ -449,6 +453,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public boolean hasAnswers(Query query, Boolean trueAnswers) {
+		RuntimesLogger.info(query.accept(formatVisitor));
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return false;
 		commit();

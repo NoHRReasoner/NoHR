@@ -1,7 +1,10 @@
 package pt.unl.fct.di.centria.nohr.model;
 
+import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.RolePredicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
 
 /**
  * A model visitor (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>} ) to support different model operations.
@@ -15,27 +18,35 @@ public interface ModelVisitor {
 
 	public Answer visit(Answer visit);
 
+	public Atom visit(Atom atom);
+
+	public Predicate visit(ConceptPredicate pred);
+
 	public Constant visit(Constant constant);
 
-	public IndividualConstant visit(IndividualConstant constant);
+	public Constant visit(IndividualConstant constant);
 
-	public Literal visit(Literal literal);
+	public Literal visit(Literal visit);
 
-	public LiteralConstant visit(LiteralConstant constant);
+	public Constant visit(LiteralConstant constant);
 
 	public Predicate visit(MetaPredicate predicate);
 
 	public NegativeLiteral visit(NegativeLiteral literal);
 
-	public NumericConstant visit(NumericConstant constant);
+	public Constant visit(NumericConstant constant);
 
 	public Predicate visit(Predicate pred);
 
 	public Query visit(Query query);
 
+	public Predicate visit(RolePredicate pred);
+
 	public Rule visit(Rule rule);
 
-	public RuleConstant visit(RuleConstant constant);
+	public Constant visit(RuleConstant constant);
+
+	public Predicate visit(RulePredicate pred);
 
 	public Term visit(Term term);
 

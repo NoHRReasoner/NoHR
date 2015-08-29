@@ -3,8 +3,11 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
+import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.RolePredicate;
+import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
 
 /**
  * An implementation of {@link ModelVisitor} that simply returns {@code element} in each {@code visit(E element)} method if {@code E} is an leaf type
@@ -15,9 +18,30 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
  */
 public class DefaultModelVisitor implements ModelVisitor {
 
+	/**
+	 * Returns the string representation of a given model element.
+	 *
+	 * @param element
+	 *            the model element.
+	 * @return the representation of {@code element}.
+	 */
+	static String toString(FormatVisitor formatVisitor, ModelElement<?> element) {
+		return element.accept(formatVisitor);
+	}
+
 	@Override
 	public Answer visit(Answer answer) {
 		return answer.accept(this);
+	}
+
+	@Override
+	public Atom visit(Atom atom) {
+		return atom.accept(this);
+	}
+
+	@Override
+	public Predicate visit(ConceptPredicate pred) {
+		return pred;
 	}
 
 	@Override
@@ -26,7 +50,7 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public IndividualConstant visit(IndividualConstant constant) {
+	public Constant visit(IndividualConstant constant) {
 		return constant;
 	}
 
@@ -36,7 +60,7 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public LiteralConstant visit(LiteralConstant constant) {
+	public Constant visit(LiteralConstant constant) {
 		return constant;
 	}
 
@@ -51,7 +75,7 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public NumericConstant visit(NumericConstant constant) {
+	public Constant visit(NumericConstant constant) {
 		return constant;
 	}
 
@@ -66,13 +90,23 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
+	public Predicate visit(RolePredicate pred) {
+		return pred;
+	}
+
+	@Override
 	public Rule visit(Rule rule) {
 		return rule.accept(this);
 	}
 
 	@Override
-	public RuleConstant visit(RuleConstant constant) {
+	public Constant visit(RuleConstant constant) {
 		return constant;
+	}
+
+	@Override
+	public Predicate visit(RulePredicate pred) {
+		return pred;
 	}
 
 	@Override

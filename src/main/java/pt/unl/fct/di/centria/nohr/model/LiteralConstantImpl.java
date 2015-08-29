@@ -33,7 +33,7 @@ public class LiteralConstantImpl implements LiteralConstant {
 	}
 
 	@Override
-	public LiteralConstant accept(ModelVisitor visitor) {
+	public Constant accept(ModelVisitor visitor) {
 		return visitor.visit(this);
 	}
 

@@ -28,7 +28,7 @@ public class RuleConstantImpl implements RuleConstant {
 	}
 
 	@Override
-	public RuleConstant accept(ModelVisitor visitor) {
+	public Constant accept(ModelVisitor visitor) {
 		return visitor.visit(this);
 	}
 

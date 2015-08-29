@@ -11,7 +11,6 @@ public interface RuleConstant extends Constant {
 	@Override
 	String accept(FormatVisitor visitor);
 
-	@Override
-	RuleConstant accept(ModelVisitor visitor);
+	public Constant accept(ModelVisitor visitor);
 
 }

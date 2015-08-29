@@ -5,9 +5,6 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 
 import java.util.Objects;
 
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLProperty;
-
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
@@ -38,9 +35,9 @@ public class MetaPredicateImpl implements MetaPredicate {
 	MetaPredicateImpl(Predicate predicate, PredicateType type) {
 		Objects.requireNonNull(predicate);
 		Objects.requireNonNull(type);
-		if (predicate.isMetaPredicate())
+		if (predicate instanceof MetaPredicate)
 			throw new IllegalArgumentException("predicate: shouldn't be a meta-predicate");
-		if (type.isQuantification() && !predicate.isRole())
+		if (type.isQuantification() && !(predicate instanceof RolePredicate))
 			throw new IllegalArgumentException("type: can't be the quantification type " + type.name());
 		this.predicate = predicate;
 		this.type = type;
@@ -54,21 +51,6 @@ public class MetaPredicateImpl implements MetaPredicate {
 	@Override
 	public MetaPredicate accept(ModelVisitor visitor) {
 		return new MetaPredicateImpl(predicate.accept(visitor), type);
-	}
-
-	@Override
-	public OWLClass asConcept() {
-		return predicate.asConcept();
-	}
-
-	@Override
-	public MetaPredicate asMetaPredicate() {
-		return this;
-	}
-
-	@Override
-	public OWLProperty<?, ?> asRole() {
-		return predicate.asRole();
 	}
 
 	@Override
@@ -126,26 +108,6 @@ public class MetaPredicateImpl implements MetaPredicate {
 	@Override
 	public boolean hasType(PredicateType type) {
 		return type == this.type;
-	}
-
-	@Override
-	public boolean isConcept() {
-		return predicate.isConcept();
-	}
-
-	@Override
-	public boolean isMetaPredicate() {
-		return true;
-	}
-
-	@Override
-	public boolean isRole() {
-		return predicate.isRole();
-	}
-
-	@Override
-	public boolean isRulePredicate() {
-		return isRulePredicate();
 	}
 
 	@Override

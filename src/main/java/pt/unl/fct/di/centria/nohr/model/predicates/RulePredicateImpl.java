@@ -2,9 +2,6 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 
 import java.util.Objects;
 
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLProperty;
-
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
@@ -13,7 +10,7 @@ import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
  *
  * @author Nuno Costa
  */
-public class RulePredicateImpl implements Predicate {
+public class RulePredicateImpl implements RulePredicate {
 
 	/** The arity of this predicate */
 	protected final int arity;
@@ -50,21 +47,6 @@ public class RulePredicateImpl implements Predicate {
 	@Override
 	public Predicate accept(ModelVisitor visitor) {
 		return visitor.visit(this);
-	}
-
-	@Override
-	public OWLClass asConcept() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public MetaPredicate asMetaPredicate() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public OWLProperty<?, ?> asRole() {
-		throw new ClassCastException();
 	}
 
 	@Override
@@ -105,26 +87,6 @@ public class RulePredicateImpl implements Predicate {
 		result = prime * result + arity;
 		result = prime * result + symbol.hashCode();
 		return result;
-	}
-
-	@Override
-	public boolean isConcept() {
-		return false;
-	}
-
-	@Override
-	public boolean isMetaPredicate() {
-		return false;
-	}
-
-	@Override
-	public boolean isRole() {
-		return false;
-	}
-
-	@Override
-	public boolean isRulePredicate() {
-		return true;
 	}
 
 	@Override

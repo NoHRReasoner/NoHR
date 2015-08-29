@@ -9,8 +9,10 @@ package pt.unl.fct.di.centria.nohr.model;
  * @see FormatVisitor
  * @author nunocosta
  */
-public interface FormatVisitable {
+public interface ModelElement<T extends ModelElement<T>> {
 
 	public String accept(FormatVisitor visitor);
+
+	public T accept(ModelVisitor visitor);
 
 }

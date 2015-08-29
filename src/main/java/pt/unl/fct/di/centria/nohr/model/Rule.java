@@ -12,9 +12,7 @@ import java.util.List;
  * @see Literal
  * @author Nuno Costa
  */
-public interface Rule extends FormatVisitable {
-
-	public Rule accept(ModelVisitor visitor);
+public interface Rule extends ModelElement<Rule> {
 
 	/**
 	 * Returns the body of this literal.

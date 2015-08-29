@@ -10,9 +10,7 @@ import java.util.Map;
  *
  * @author Nuno Costa
  */
-public interface Query extends FormatVisitable {
-
-	public Query accept(ModelVisitor visitor);
+public interface Query extends ModelElement<Query> {
 
 	/**
 	 * Apply, to all the query's literal, a substitution that maps each variable of the list of free variables to the term at the same position in a

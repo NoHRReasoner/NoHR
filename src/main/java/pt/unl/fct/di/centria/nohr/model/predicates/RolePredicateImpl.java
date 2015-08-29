@@ -5,7 +5,6 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 
 import java.util.Objects;
 
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
@@ -16,7 +15,7 @@ import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
  *
  * @author Nuno Costa
  */
-public class RolePredicateImpl implements Predicate {
+public class RolePredicateImpl implements RolePredicate {
 
 	/** The role represented by this predicate. */
 	private final OWLProperty<?, ?> role;
@@ -46,44 +45,9 @@ public class RolePredicateImpl implements Predicate {
 		return visitor.visit(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct .di.centria.nohr.model.Visitor)
-	 */
 	@Override
 	public Predicate accept(ModelVisitor visitor) {
 		return visitor.visit(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asConcept()
-	 */
-	@Override
-	public OWLClass asConcept() {
-		throw new ClassCastException();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asMetaPredicate()
-	 */
-	@Override
-	public MetaPredicate asMetaPredicate() {
-		throw new ClassCastException();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRole()
-	 */
-	@Override
-	public OWLProperty<?, ?> asRole() {
-		return role;
 	}
 
 	/*
@@ -118,8 +82,13 @@ public class RolePredicateImpl implements Predicate {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getName()
+	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRole()
 	 */
+	@Override
+	public OWLProperty<?, ?> getRole() {
+		return role;
+	}
+
 	@Override
 	public String getSignature() {
 		return getSymbol() + "/" + getArity();
@@ -141,47 +110,6 @@ public class RolePredicateImpl implements Predicate {
 		int result = 1;
 		result = prime * result + role.getIRI().hashCode();
 		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isConcept()
-	 */
-	@Override
-	public boolean isConcept() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isMetaPredicate()
-	 */
-	@Override
-	public boolean isMetaPredicate() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRole()
-	 */
-	@Override
-	public boolean isRole() {
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#isRulePredicate()
-	 */
-	@Override
-	public boolean isRulePredicate() {
-		return false;
 	}
 
 	/*

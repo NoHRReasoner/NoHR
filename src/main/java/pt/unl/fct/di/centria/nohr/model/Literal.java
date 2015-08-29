@@ -16,9 +16,7 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
  * @see Atom
  * @author Nuno Costa
  */
-public interface Literal extends FormatVisitable {
-
-	public Literal accept(ModelVisitor visitor);
+public interface Literal extends ModelElement<Literal> {
 
 	/**
 	 * Apply a substitution to this literal.

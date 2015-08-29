@@ -169,10 +169,10 @@ public class Model {
 	 *            the string that separates the elements representations.
 	 * @return the concatenation of the string representations of {@code elements}, given {@code format}, separated by {@code separator}.
 	 */
-	public static <E extends FormatVisitable> String concat(E[] elements, FormatVisitor format, String separator) {
+	public static <E extends ModelElement<?>> String concat(E[] elements, FormatVisitor format, String separator) {
 		final StringBuffer sb = new StringBuffer();
 		String sepToken = "";
-		for (final FormatVisitable obj : elements) {
+		for (final ModelElement<?> obj : elements) {
 			sb.append(sepToken + obj.accept(format));
 			sepToken = separator;
 		}
@@ -190,10 +190,10 @@ public class Model {
 	 *            the string that separates the elements representations.
 	 * @return the concatenation of the string representations of {@code elements}, given {@code format}, separated by {@code separator}.
 	 */
-	public static <E extends FormatVisitable> String concat(List<E> elements, FormatVisitor format, String separator) {
+	public static <E extends ModelElement<?>> String concat(List<E> elements, FormatVisitor format, String separator) {
 		final StringBuffer sb = new StringBuffer();
 		String sepToken = "";
-		for (final FormatVisitable obj : elements) {
+		for (final ModelElement<?> obj : elements) {
 			sb.append(sepToken + obj.accept(format));
 			sepToken = separator;
 		}

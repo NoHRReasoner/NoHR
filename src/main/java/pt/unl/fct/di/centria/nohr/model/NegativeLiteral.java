@@ -14,7 +14,6 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
 
 public interface NegativeLiteral extends Literal {
 
-	@Override
 	public NegativeLiteral accept(ModelVisitor visitor);
 
 	// TODO revise the need of this method (maybe the FormatVistor must be

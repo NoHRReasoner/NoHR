@@ -11,7 +11,7 @@ import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
  * string representation of the model elements. Implement this interface if you want to support a new model formant, returning the desired string
  * representation of each model element, in the corresponding {@code visit} method.
  *
- * @see FormatVisitable
+ * @see ModelElement
  * @author nunocosta
  */
 public interface FormatVisitor {

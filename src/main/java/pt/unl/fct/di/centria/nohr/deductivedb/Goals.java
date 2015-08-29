@@ -3,7 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
-import pt.unl.fct.di.centria.nohr.model.FormatVisitable;
+import pt.unl.fct.di.centria.nohr.model.ModelElement;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -109,7 +109,7 @@ class Goals {
 	 *            the model element.
 	 * @return the representation of {@code element}.
 	 */
-	static String toString(FormatVisitor formatVisitor, FormatVisitable element) {
+	static String toString(FormatVisitor formatVisitor, ModelElement<?> element) {
 		return element.accept(formatVisitor);
 	}
 

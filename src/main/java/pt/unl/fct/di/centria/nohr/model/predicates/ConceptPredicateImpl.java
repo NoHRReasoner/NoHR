@@ -6,8 +6,6 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLProperty;
-
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
@@ -16,7 +14,7 @@ import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
  *
  * @author Nuno Costa
  */
-public class ConceptPredicateImpl implements Predicate {
+public class ConceptPredicateImpl implements ConceptPredicate {
 
 	/** The concept represented by this predicate. */
 	private final OWLClass concept;
@@ -47,21 +45,6 @@ public class ConceptPredicateImpl implements Predicate {
 	}
 
 	@Override
-	public OWLClass asConcept() {
-		return concept;
-	}
-
-	@Override
-	public MetaPredicate asMetaPredicate() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public OWLProperty<?, ?> asRole() {
-		throw new ClassCastException();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -81,6 +64,11 @@ public class ConceptPredicateImpl implements Predicate {
 	}
 
 	@Override
+	public OWLClass getConcept() {
+		return concept;
+	}
+
+	@Override
 	public String getSignature() {
 		return getSymbol() + "/" + getArity();
 	}
@@ -96,26 +84,6 @@ public class ConceptPredicateImpl implements Predicate {
 		int result = 1;
 		result = prime * result + concept.getIRI().hashCode();
 		return result;
-	}
-
-	@Override
-	public boolean isConcept() {
-		return true;
-	}
-
-	@Override
-	public boolean isMetaPredicate() {
-		return false;
-	}
-
-	@Override
-	public boolean isRole() {
-		return false;
-	}
-
-	@Override
-	public boolean isRulePredicate() {
-		return false;
 	}
 
 	@Override

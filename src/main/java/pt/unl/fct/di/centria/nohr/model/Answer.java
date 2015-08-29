@@ -11,8 +11,9 @@ import java.util.List;
  * @author Nuno Costa
  */
 
-public interface Answer extends FormatVisitable {
+public interface Answer extends ModelElement<Answer> {
 
+	@Override
 	public Answer accept(ModelVisitor visitor);
 
 	/**

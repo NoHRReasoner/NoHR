@@ -35,7 +35,7 @@ public class IndividualConstantImpl implements IndividualConstant {
 	}
 
 	@Override
-	public IndividualConstant accept(ModelVisitor visitor) {
+	public Constant accept(ModelVisitor visitor) {
 		return visitor.visit(this);
 	}
 

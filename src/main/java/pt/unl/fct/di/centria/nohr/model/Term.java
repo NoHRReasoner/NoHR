@@ -8,8 +8,6 @@ package pt.unl.fct.di.centria.nohr.model;
  * @see ListTerm
  * @author Nuno Costa
  */
-public interface Term extends FormatVisitable {
-
-	public Term accept(ModelVisitor visitor);
+public interface Term extends ModelElement<Term> {
 
 }
