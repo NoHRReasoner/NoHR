@@ -230,7 +230,7 @@ public class Model {
 	 * @return the constant representing {@code literal}.
 	 */
 	public static Constant cons(OWLLiteral literal) {
-		return new LiteralConstant(literal);
+		return new LiteralConstantImpl(literal);
 	}
 
 	/**

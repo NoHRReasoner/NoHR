@@ -26,8 +26,18 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
+	public IndividualConstant visit(IndividualConstant constant) {
+		return constant;
+	}
+
+	@Override
 	public Literal visit(Literal literal) {
 		return literal.accept(this);
+	}
+
+	@Override
+	public LiteralConstant visit(LiteralConstant constant) {
+		return constant;
 	}
 
 	@Override
@@ -38,6 +48,11 @@ public class DefaultModelVisitor implements ModelVisitor {
 	@Override
 	public NegativeLiteral visit(NegativeLiteral negativeLiteral) {
 		return negativeLiteral.accept(this);
+	}
+
+	@Override
+	public NumericConstant visit(NumericConstant constant) {
+		return constant;
 	}
 
 	@Override
@@ -53,6 +68,11 @@ public class DefaultModelVisitor implements ModelVisitor {
 	@Override
 	public Rule visit(Rule rule) {
 		return rule.accept(this);
+	}
+
+	@Override
+	public RuleConstant visit(RuleConstant constant) {
+		return constant;
 	}
 
 	@Override

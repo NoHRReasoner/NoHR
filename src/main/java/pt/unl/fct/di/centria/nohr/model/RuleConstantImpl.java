@@ -1,14 +1,11 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
-
 /**
  * Implementation of rule {@link Constant}.
  *
  * @author Nuno Costa
  */
-public class RuleConstantImpl implements Constant {
+public class RuleConstantImpl implements RuleConstant {
 
 	/**
 	 * The symbol that represents this constant.
@@ -31,50 +28,8 @@ public class RuleConstantImpl implements Constant {
 	}
 
 	@Override
-	public Constant accept(ModelVisitor visitor) {
+	public RuleConstant accept(ModelVisitor visitor) {
 		return visitor.visit(this);
-	}
-
-	@Override
-	public Constant asConstant() {
-		return this;
-	}
-
-	@Override
-	public Number asNumber() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public OWLIndividual asOWLIndividual() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public OWLLiteral asOWLLiteral() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public String asRuleConstant() {
-		return symbol;
-	}
-
-	@Override
-	public TruthValue asTruthValue() {
-		if (symbol.equals("true"))
-			return TruthValue.TRUE;
-		else if (symbol.equals("undefined"))
-			return TruthValue.UNDEFINED;
-		else if (symbol.equals("false"))
-			return TruthValue.FALSE;
-		else
-			throw new ClassCastException();
-	}
-
-	@Override
-	public Variable asVariable() {
-		throw new ClassCastException();
 	}
 
 	@Override
@@ -94,6 +49,11 @@ public class RuleConstantImpl implements Constant {
 		return true;
 	}
 
+	@Override
+	public String getSymbol() {
+		return symbol;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -102,46 +62,6 @@ public class RuleConstantImpl implements Constant {
 	@Override
 	public int hashCode() {
 		return symbol.hashCode();
-	}
-
-	@Override
-	public boolean isConstant() {
-		return true;
-	}
-
-	@Override
-	public boolean isList() {
-		return false;
-	}
-
-	@Override
-	public boolean isNumber() {
-		return false;
-	}
-
-	@Override
-	public boolean isOWLIndividual() {
-		return false;
-	}
-
-	@Override
-	public boolean isOWLLiteral() {
-		return false;
-	}
-
-	@Override
-	public boolean isRuleConstant() {
-		return true;
-	}
-
-	@Override
-	public boolean isTruthValue() {
-		return symbol.equals("true") || symbol.equals("undefined") || symbol.equals("false");
-	}
-
-	@Override
-	public boolean isVariable() {
-		return false;
 	}
 
 	@Override

@@ -92,16 +92,6 @@ public class AtomImpl implements Atom {
 	}
 
 	@Override
-	public NegativeLiteral asNegativeLiteral() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public Atom asPositiveLiteral() {
-		return this;
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -147,8 +137,8 @@ public class AtomImpl implements Atom {
 	public List<Variable> getVariables() {
 		final List<Variable> result = new LinkedList<Variable>();
 		for (final Term arg : arguments)
-			if (arg.isVariable() && !result.contains(arg))
-				result.add(arg.asVariable());
+			if (arg instanceof Variable && !result.contains(arg))
+				result.add((Variable) arg);
 		return result;
 	}
 
@@ -164,18 +154,8 @@ public class AtomImpl implements Atom {
 	@Override
 	public boolean isGrounded() {
 		for (final Term term : arguments)
-			if (term.isVariable())
+			if (term instanceof Variable)
 				return false;
-		return true;
-	}
-
-	@Override
-	public boolean isNegative() {
-		return false;
-	}
-
-	@Override
-	public boolean isPositive() {
 		return true;
 	}
 

@@ -35,6 +35,20 @@ public interface FormatVisitor {
 	public String visit(Constant constant);
 
 	/**
+	 * @param constant
+	 *            individual constant
+	 * @return the string representation of the individual constant {@code constant}.
+	 */
+	public String visit(IndividualConstant constant);
+
+	/**
+	 * @param constant
+	 *            literal constant
+	 * @return the string representation of the literal constant {@code constant}.
+	 */
+	public String visit(LiteralConstant constant);
+
+	/**
 	 * @param metaPredicate
 	 * @return the string representation of the meta-predicate {@code metaPredicate}.
 	 */
@@ -45,6 +59,13 @@ public interface FormatVisitor {
 	 * @return the string representation of the negative literal {@code negativeLiteral}.
 	 */
 	public String visit(NegativeLiteral negativeLiteral);
+
+	/**
+	 * @param constant
+	 *            numeric constant
+	 * @return the string representation of the numeric constant {@code constant}.
+	 */
+	public String visit(NumericConstant constant);
 
 	/**
 	 * @param predicate
@@ -63,6 +84,13 @@ public interface FormatVisitor {
 	 * @return the string representation of the rule {@code rule}.
 	 */
 	public String visit(Rule rule);
+
+	/**
+	 * @param constant
+	 *            literal constant
+	 * @return the string representation of the rule constant {@code constant}.
+	 */
+	public String visit(RuleConstant constant);
 
 	/**
 	 * @param variable

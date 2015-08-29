@@ -11,12 +11,6 @@ public abstract class LiteralImpl implements Literal {
 	}
 
 	@Override
-	public abstract NegativeLiteral asNegativeLiteral();
-
-	@Override
-	public abstract Atom asPositiveLiteral();
-
-	@Override
 	public Atom getAtom() {
 		return atom;
 	}
@@ -30,11 +24,5 @@ public abstract class LiteralImpl implements Literal {
 	public boolean isGrounded() {
 		return atom.isGrounded();
 	}
-
-	@Override
-	public abstract boolean isNegative();
-
-	@Override
-	public abstract boolean isPositive();
 
 }

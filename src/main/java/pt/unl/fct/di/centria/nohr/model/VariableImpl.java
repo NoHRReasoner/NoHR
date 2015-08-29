@@ -32,16 +32,6 @@ public class VariableImpl implements Variable {
 	}
 
 	@Override
-	public Constant asConstant() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public Variable asVariable() {
-		return this;
-	}
-
-	@Override
 	public int compareTo(Variable o) {
 		return symbol.compareTo(o.getSymbol());
 	}
@@ -74,21 +64,6 @@ public class VariableImpl implements Variable {
 		int result = 1;
 		result = prime * result + (symbol == null ? 0 : symbol.hashCode());
 		return result;
-	}
-
-	@Override
-	public boolean isConstant() {
-		return false;
-	}
-
-	@Override
-	public boolean isList() {
-		return false;
-	}
-
-	@Override
-	public boolean isVariable() {
-		return true;
 	}
 
 	@Override

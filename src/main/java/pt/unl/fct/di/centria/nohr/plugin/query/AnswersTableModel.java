@@ -10,6 +10,8 @@ import javax.swing.table.TableModel;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.IndividualConstant;
+import pt.unl.fct.di.centria.nohr.model.LiteralConstant;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 
@@ -69,12 +71,12 @@ public class AnswersTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		final Term term = answers.get(rowIndex).getValues().get(columnIndex);
-		if (term.isConstant()) {
-			final Constant constant = term.asConstant();
-			if (constant.isOWLIndividual())
-				return constant.asOWLIndividual();
-			else if (constant.isOWLLiteral())
-				return constant.asOWLLiteral();
+		if (term instanceof Constant) {
+			final Constant constant = (Constant) term;
+			if (constant instanceof IndividualConstant)
+				return ((IndividualConstant) constant).getOWLIndividual();
+			else if (constant instanceof LiteralConstant)
+				return ((LiteralConstant) constant).getOWLLiteral();
 			else
 				return constant;
 		}

@@ -52,16 +52,6 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 	}
 
 	@Override
-	public NegativeLiteral asNegativeLiteral() {
-		return this;
-	}
-
-	@Override
-	public Atom asPositiveLiteral() {
-		throw new ClassCastException();
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -104,16 +94,6 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 	@Override
 	public boolean isExistentiallyNegative() {
 		return existentially;
-	}
-
-	@Override
-	public boolean isNegative() {
-		return true;
-	}
-
-	@Override
-	public boolean isPositive() {
-		return false;
 	}
 
 	@Override

@@ -2,15 +2,12 @@ package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.Objects;
 
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
-
 /**
  * Implementation of a numeric {@link Constant}.
  *
  * @author Nuno Costa
  */
-public class NumericConstantImpl implements Constant {
+public class NumericConstantImpl implements NumericConstant {
 
 	/** The number that this constant represents */
 	private final Number number;
@@ -43,43 +40,8 @@ public class NumericConstantImpl implements Constant {
 	}
 
 	@Override
-	public Constant accept(ModelVisitor visit) {
+	public NumericConstant accept(ModelVisitor visit) {
 		return visit.visit(this);
-	}
-
-	@Override
-	public Constant asConstant() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public Number asNumber() {
-		return number;
-	}
-
-	@Override
-	public OWLIndividual asOWLIndividual() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public OWLLiteral asOWLLiteral() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public String asRuleConstant() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public TruthValue asTruthValue() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public Variable asVariable() {
-		throw new ClassCastException();
 	}
 
 	@Override
@@ -97,48 +59,18 @@ public class NumericConstantImpl implements Constant {
 	}
 
 	@Override
+	public Number getNumber() {
+		return number;
+	}
+
+	@Override
+	public String getSymbol() {
+		throw new ClassCastException();
+	}
+
+	@Override
 	public int hashCode() {
 		return number.hashCode();
-	}
-
-	@Override
-	public boolean isConstant() {
-		return true;
-	}
-
-	@Override
-	public boolean isList() {
-		return false;
-	}
-
-	@Override
-	public boolean isNumber() {
-		return true;
-	}
-
-	@Override
-	public boolean isOWLIndividual() {
-		return false;
-	}
-
-	@Override
-	public boolean isOWLLiteral() {
-		return false;
-	}
-
-	@Override
-	public boolean isRuleConstant() {
-		return false;
-	}
-
-	@Override
-	public boolean isTruthValue() {
-		return false;
-	}
-
-	@Override
-	public boolean isVariable() {
-		return false;
 	}
 
 	@Override

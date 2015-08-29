@@ -7,10 +7,14 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.IndividualConstant;
+import pt.unl.fct.di.centria.nohr.model.LiteralConstant;
 import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
+import pt.unl.fct.di.centria.nohr.model.NumericConstant;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.RuleConstant;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicate;
@@ -43,11 +47,18 @@ public class XSBFormatVisitor implements FormatVisitor {
 
 	@Override
 	public String visit(Constant constant) {
-		if (constant.isNumber())
-			return constant.asNumber().toString();
-		else if (constant.isOWLIndividual())
-			return quoted(constant.asOWLIndividual().toStringID());
-		return quoted(constant.asRuleConstant());
+		return quoted(constant.getSymbol());
+	}
+
+	@Override
+	public String visit(IndividualConstant constant) {
+		return quoted(constant.getOWLIndividual().toStringID());
+	}
+
+	@Override
+	public String visit(LiteralConstant constant) {
+		return quoted(constant.getOWLLiteral().getLiteral()
+				+ (constant.getOWLLiteral().getLang() != null ? constant.getOWLLiteral().getLang() : ""));
 	}
 
 	@Override
@@ -59,6 +70,11 @@ public class XSBFormatVisitor implements FormatVisitor {
 	public String visit(NegativeLiteral literal) {
 		final String format = literal.isExistentiallyNegative() ? "not_exists(%s)" : "tnot(%s)";
 		return String.format(format, literal.getAtom().accept(this));
+	}
+
+	@Override
+	public String visit(NumericConstant constant) {
+		return constant.getNumber().toString();
 	}
 
 	@Override
@@ -81,6 +97,11 @@ public class XSBFormatVisitor implements FormatVisitor {
 			return head + ".";
 		else
 			return head + ":-" + body + ".";
+	}
+
+	@Override
+	public String visit(RuleConstant constant) {
+		return quoted(constant.getSymbol());
 	}
 
 	@Override

@@ -41,24 +41,6 @@ public interface Literal extends FormatVisitable {
 	public Literal apply(Variable variable, Term term);
 
 	/**
-	 * Returns this literal as a {@link NegativeLiteral} if it is negative (i.e. if it is a negated).
-	 *
-	 * @return this literal as a {@link NegativeLiteral}
-	 * @throws ClassCastException
-	 *             if this literal isn't negative.
-	 */
-	public NegativeLiteral asNegativeLiteral();
-
-	/**
-	 * Returns this literal as an atom if it is positive (i.e. is a non negated literal).
-	 *
-	 * @return this literal an an atom.
-	 * @throws ClassCastException
-	 *             if this isn't a positive literal.
-	 */
-	public Atom asPositiveLiteral();
-
-	/**
 	 * Returns the arguments list of this literal.
 	 *
 	 * @return the arguments list of this literal.
@@ -101,19 +83,5 @@ public interface Literal extends FormatVisitable {
 	 * @return true iff no variable occur in this literal.
 	 */
 	public boolean isGrounded();
-
-	/**
-	 * Returns true iff this literal is negative (i.e. has default negation).
-	 *
-	 * @return true iff this literal is negative (i.e. has default negation).
-	 */
-	public boolean isNegative();
-
-	/**
-	 * Returns true iff this literal is atomic (i.e. non negated).
-	 *
-	 * @return true iff this literal is atomic (i.e. non negated).
-	 */
-	public boolean isPositive();
 
 }

@@ -37,6 +37,7 @@ import com.declarativa.interprolog.util.IPException;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Model;
+import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
@@ -117,7 +118,7 @@ public class KB {
 				query += ".";
 			final Query q = parser.parseQuery(query);
 			for (final Literal l : q.getLiterals()) {
-				if (l.isNegative())
+				if (l instanceof NegativeLiteral)
 					throw new IllegalArgumentException("literals must be positive");
 				if (!l.isGrounded())
 					throw new IllegalArgumentException("literals must be grounded");

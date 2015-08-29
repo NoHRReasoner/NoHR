@@ -85,7 +85,7 @@ public class RuleImpl implements Rule {
 			return Collections.<Literal> emptyList();
 		final List<Literal> result = new ArrayList<Literal>(body.size());
 		for (final Literal literal : body)
-			if (literal.isNegative())
+			if (literal instanceof NegativeLiteral)
 				result.add(literal);
 		return result;
 	}
@@ -96,8 +96,8 @@ public class RuleImpl implements Rule {
 			return Collections.<Atom> emptyList();
 		final List<Atom> result = new ArrayList<Atom>(body.size());
 		for (final Literal literal : body)
-			if (literal.isPositive())
-				result.add(literal.asPositiveLiteral());
+			if (literal instanceof Atom)
+				result.add((Atom) literal);
 		return result;
 	}
 

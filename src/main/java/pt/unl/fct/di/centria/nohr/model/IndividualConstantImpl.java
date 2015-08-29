@@ -6,7 +6,6 @@ package pt.unl.fct.di.centria.nohr.model;
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
 
 /**
  * Ontology individual {@link Constant} implementation.
@@ -14,7 +13,7 @@ import org.semanticweb.owlapi.model.OWLLiteral;
  * @see Term
  * @author nunocosta
  */
-public class IndividualConstantImpl implements Constant {
+public class IndividualConstantImpl implements IndividualConstant {
 
 	/** The ontology individual. */
 	private final OWLIndividual individual;
@@ -36,46 +35,8 @@ public class IndividualConstantImpl implements Constant {
 	}
 
 	@Override
-	public Constant accept(ModelVisitor visitor) {
+	public IndividualConstant accept(ModelVisitor visitor) {
 		return visitor.visit(this);
-	}
-
-	@Override
-	public Constant asConstant() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public Number asNumber() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public OWLIndividual asOWLIndividual() {
-		return individual;
-	}
-
-	@Override
-	public OWLLiteral asOWLLiteral() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public String asRuleConstant() {
-		if (individual.isNamed())
-			return individual.asOWLNamedIndividual().getIRI().toQuotedString();
-		else
-			return individual.toStringID();
-	}
-
-	@Override
-	public TruthValue asTruthValue() {
-		throw new ClassCastException();
-	}
-
-	@Override
-	public Variable asVariable() {
-		throw new ClassCastException();
 	}
 
 	@Override
@@ -96,6 +57,19 @@ public class IndividualConstantImpl implements Constant {
 	}
 
 	@Override
+	public OWLIndividual getOWLIndividual() {
+		return individual;
+	}
+
+	@Override
+	public String getSymbol() {
+		if (individual.isNamed())
+			return individual.asOWLNamedIndividual().getIRI().toQuotedString();
+		else
+			return individual.toStringID();
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -104,48 +78,8 @@ public class IndividualConstantImpl implements Constant {
 	}
 
 	@Override
-	public boolean isConstant() {
-		return false;
-	}
-
-	@Override
-	public boolean isList() {
-		return false;
-	}
-
-	@Override
-	public boolean isNumber() {
-		return false;
-	}
-
-	@Override
-	public boolean isOWLIndividual() {
-		return true;
-	}
-
-	@Override
-	public boolean isOWLLiteral() {
-		return false;
-	}
-
-	@Override
-	public boolean isRuleConstant() {
-		return true;
-	}
-
-	@Override
-	public boolean isTruthValue() {
-		return false;
-	}
-
-	@Override
-	public boolean isVariable() {
-		return false;
-	}
-
-	@Override
 	public String toString() {
-		return asRuleConstant();
+		return getSymbol();
 	}
 
 }

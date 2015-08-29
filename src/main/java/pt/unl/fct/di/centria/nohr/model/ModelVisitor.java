@@ -17,17 +17,25 @@ public interface ModelVisitor {
 
 	public Constant visit(Constant constant);
 
+	public IndividualConstant visit(IndividualConstant constant);
+
 	public Literal visit(Literal literal);
+
+	public LiteralConstant visit(LiteralConstant constant);
 
 	public Predicate visit(MetaPredicate predicate);
 
 	public NegativeLiteral visit(NegativeLiteral literal);
+
+	public NumericConstant visit(NumericConstant constant);
 
 	public Predicate visit(Predicate pred);
 
 	public Query visit(Query query);
 
 	public Rule visit(Rule rule);
+
+	public RuleConstant visit(RuleConstant constant);
 
 	public Term visit(Term term);
 
