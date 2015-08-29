@@ -150,16 +150,12 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 
 	@Override
 	public OWLClass getConcept(String symbol) {
-		final OWLClass result = concepts.get(symbol);
-		System.out.println(symbol + " -> " + result);
-		return result;
+		return concepts.get(symbol);
 	}
 
 	@Override
 	public OWLIndividual getIndividual(String symbol) {
-		final OWLIndividual result = individuals.get(symbol);
-		System.out.println(symbol + " ->  " + result);
-		return result;
+		return individuals.get(symbol);
 	}
 
 	@Override
@@ -169,8 +165,6 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 
 	@Override
 	public OWLProperty<?, ?> getRole(String symbol) {
-		final OWLProperty<?, ?> result = roles.get(symbol);
-		System.out.println(symbol + " -> " + result);
 		return roles.get(symbol);
 	}
 
@@ -218,6 +212,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 */
 	protected Set<String> symbols(OWLEntity entity) {
 		final Set<String> result = new HashSet<>();
+		result.add(entity.getIRI().toQuotedString());
 		result.add(entity.getIRI().toString());
 		String fragment = entity.getIRI().getFragment();
 		if (fragment == null)

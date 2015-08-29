@@ -87,7 +87,7 @@ public class ConceptPredicateImpl implements Predicate {
 
 	@Override
 	public String getSymbol() {
-		return concept.getIRI().toURI().getFragment();
+		return concept.getIRI().toQuotedString();
 	}
 
 	@Override

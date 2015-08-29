@@ -312,11 +312,28 @@ public class Model {
 	}
 
 	/**
-	 * Create a negative literal from a specified atom.
+	 * Create a negative literal from a specified functor and list of terms.
 	 *
-	 * @param atom
-	 *            the atom, <i>P(t<sub>1</sub>, ..., t<sub>n</sub>)</i>
-	 * @return the negative literal <i><b>not</b> P(t<sub>1</sub>, ..., t <sub>n</sub>)</i>
+	 * @param functor
+	 *            the functor predicate <i>P</i>.
+	 * @param args
+	 *            the list of the arguments <i>t<sub>1</sub>, ..., t<sub>n</sub></i>.
+	 * @return the negative literal <i><b>not</b> P(t<sub>1</sub>, ..., t <sub>n</sub>)</i>.
+	 * @throws IllegalArgumentException
+	 *             if arguments have a size different from the {@code predicate} 's arity.
+	 */
+	public static NegativeLiteral negLiteral(Predicate functor, List<Term> args) {
+		return negLiteral(atom(functor, args));
+	}
+
+	/**
+	 * Create a negative literal from a specified functor and array of terms.
+	 *
+	 * @param functor
+	 *            the functor predicate <i>P</i>.
+	 * @param args
+	 *            the array of the arguments <i>t<sub>1</sub>, ..., t<sub>n</sub></i>.
+	 * @return the negative literal <i><b>not</b> P(t<sub>1</sub>, ..., t <sub>n</sub>)</i>.
 	 * @throws IllegalArgumentException
 	 *             if arguments have a size different from the {@code predicate} 's arity.
 	 */

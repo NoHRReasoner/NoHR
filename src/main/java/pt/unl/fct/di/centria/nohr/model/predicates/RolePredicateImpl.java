@@ -125,14 +125,9 @@ public class RolePredicateImpl implements Predicate {
 		return getSymbol() + "/" + getArity();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#getSymbol()
-	 */
 	@Override
 	public String getSymbol() {
-		return role.getIRI().toURI().getFragment();
+		return role.getIRI().toQuotedString();
 	}
 
 	/*

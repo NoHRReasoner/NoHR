@@ -1,4 +1,5 @@
 package unittest;
+
 import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
@@ -69,7 +70,7 @@ public class ParserTest {
 			Assert.assertEquals(query(atom("p", cons("a"))), parser.parseQuery("p(a)"));
 			Assert.assertEquals(query(atom("p", X), atom("q", X), atom("r", X)),
 					parser.parseQuery("p(?X),  q(?X), r(?X)"));
-			Assert.assertEquals(query(atom("p", cons("a"), cons("b"), cons("c"))), parser.parseQuery("p(a, b ,  c)"));
+			Assert.assertEquals(query(atom("p", cons("a"), cons("b"), cons("c"))), parser.parseQuery("p(a, b, c)"));
 			Assert.assertEquals(query(atom("p", cons(1))), parser.parseQuery("p(1)"));
 			Assert.assertEquals(query(atom("p", cons(1.1))), parser.parseQuery("p(1.1)"));
 		} catch (final ExceptionInInitializerError e) {

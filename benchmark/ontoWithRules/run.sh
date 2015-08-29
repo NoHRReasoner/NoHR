@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sh run 5 queries.txt 
+sh .run 5 queries.txt 

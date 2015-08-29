@@ -1,14 +1,14 @@
 [1]
-'Acyl_Ester_Chain'(?X)
+Acyl_Ester_Chain(?X)
 
 [2]
-'Lipid'(?X)
+Lipid(?X)
 
 [3]
-'Organic_Group'(?X)
+Organic_Group(?X)
 
 [4]
-'Entity'(?X)
+Entity(?X)
 
 [5]
-'isPart_Of'(?X,?Y)
+isPart_Of(?X,?Y)

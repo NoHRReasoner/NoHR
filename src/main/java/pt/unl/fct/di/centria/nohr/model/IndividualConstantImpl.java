@@ -62,7 +62,10 @@ public class IndividualConstantImpl implements Constant {
 
 	@Override
 	public String asRuleConstant() {
-		return individual.asOWLNamedIndividual().getIRI().getFragment();
+		if (individual.isNamed())
+			return individual.asOWLNamedIndividual().getIRI().toQuotedString();
+		else
+			return individual.toStringID();
 	}
 
 	@Override
@@ -142,7 +145,7 @@ public class IndividualConstantImpl implements Constant {
 
 	@Override
 	public String toString() {
-		return individual.toStringID();
+		return asRuleConstant();
 	}
 
 }

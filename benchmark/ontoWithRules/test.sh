@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sh run 1 queries-test.txt
+sh .run 1 queries-test.txt
