@@ -1,34 +1,37 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.model.concrete;
+package pt.unl.fct.di.centria.nohr.model.terminals;
+
+import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.Term;
 
 /**
- * Implementation of ontology literal {@link Constant}.
+ * Ontology individual {@link Constant} implementation.
  *
- * @author Nuno Costa
+ * @see Term
+ * @author nunocosta
  */
-public class LiteralConstantImpl implements HybridConstant {
+public class IndividualConstantImpl implements HybridConstant {
+
+	/** The ontology individual. */
+	private final OWLIndividual individual;
 
 	/**
-	 * The OWL literal.
-	 */
-	private final OWLLiteral literal;
-
-	/**
-	 * Constructs a constant with a specified OWL literal.
+	 * Constructs an ontology individual constant with a specified individual.
 	 *
-	 * @param literal
-	 *            the OWL literal
+	 * @param individual
+	 *            the ontology individual
 	 */
-	public LiteralConstantImpl(OWLLiteral literal) {
-		this.literal = literal;
+	IndividualConstantImpl(OWLIndividual individual) {
+		Objects.requireNonNull(individual);
+		this.individual = individual;
 	}
 
 	@Override
@@ -43,12 +46,12 @@ public class LiteralConstantImpl implements HybridConstant {
 
 	@Override
 	public OWLIndividual asIndividual() {
-		throw new ClassCastException();
+		return individual;
 	}
 
 	@Override
 	public OWLLiteral asLiteral() {
-		return literal;
+		throw new ClassCastException();
 	}
 
 	@Override
@@ -64,9 +67,9 @@ public class LiteralConstantImpl implements HybridConstant {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final LiteralConstantImpl other = (LiteralConstantImpl) obj;
-		if (literal == null) {
-			if (other.literal != null)
+		final IndividualConstantImpl other = (IndividualConstantImpl) obj;
+		if (individual == null) {
+			if (other.individual != null)
 				return false;
 		} else if (!toString().equals(other.toString()))
 			return false;
@@ -75,25 +78,28 @@ public class LiteralConstantImpl implements HybridConstant {
 
 	@Override
 	public String getSymbol() {
-		return literal.getLiteral();
+		if (individual.isNamed())
+			return individual.asOWLNamedIndividual().getIRI().toQuotedString();
+		else
+			return individual.toStringID();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (literal == null ? 0 : toString().hashCode());
+		result = prime * result + (individual == null ? 0 : toString().hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean isIndividual() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isLiteral() {
-		return true;
+		return false;
 	}
 
 	@Override

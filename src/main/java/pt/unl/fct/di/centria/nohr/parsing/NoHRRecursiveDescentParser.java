@@ -3,9 +3,8 @@
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.COMMA;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.ID;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.IF;
@@ -26,13 +25,14 @@ import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
  * A {@link <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser"> recursive descent parser</a>} that implements {@link NoHRParser}.
@@ -46,10 +46,9 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	private NoHRScanner scanner;
 
 	/**
-	 * The {@link VocabularyMapping} used to recognize {@link OWLClass concepts}, {@link OWLProperty role} and {@link OWLIndividual individual}
-	 * symbols.
+	 * The {@link Vocabulary} used to recognize {@link OWLClass concepts}, {@link OWLProperty role} and {@link OWLIndividual individual} symbols.
 	 */
-	private final VocabularyMapping vocabularyMapping;
+	private final Vocabulary v;
 
 	/**
 	 * Constructs a {@link NoHRRecursiveDescentParser}.
@@ -60,13 +59,13 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 
 	/**
 	 * Constructs a {@link NoHRRecursiveDescentParser}, that recognizes the {@link OWLClass concept}, {@link OWLProperty role}, and
-	 * {@link OWLIndividual individual} symbols mapped in a given {@link VocabularyMapping}.
+	 * {@link OWLIndividual individual} symbols mapped in a given {@link Vocabulary}.
 	 *
 	 * @param vocabularyMapping
-	 *            the {@link VocabularyMapping} used to recognize {@link OWLClass concepts}, {@link OWLProperty roles} and {@link individuals}.
+	 *            the {@link Vocabulary} used to recognize {@link OWLClass concepts}, {@link OWLProperty roles} and {@link individuals}.
 	 */
-	public NoHRRecursiveDescentParser(VocabularyMapping vocabularyMapping) {
-		this.vocabularyMapping = vocabularyMapping;
+	public NoHRRecursiveDescentParser(Vocabulary vocabularyMapping) {
+		this.v = vocabularyMapping;
 	}
 
 	/**
@@ -84,7 +83,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 			throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL);
 		final String predicateSymbol = scanner.token();
 		if (!scanner.next(L_PAREN))
-			return Model.atom(predicateSymbol, vocabularyMapping);
+			return Model.atom(v, predicateSymbol);
 		else {
 			final List<Term> args = new LinkedList<>();
 			do
@@ -92,7 +91,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 			while (scanner.next(COMMA));
 			if (!scanner.next(R_PAREN))
 				throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
-			return Model.atom(predicateSymbol, vocabularyMapping, args);
+			return Model.atom(v, predicateSymbol, args);
 		}
 	}
 
@@ -228,7 +227,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 		if (variable != null)
 			return variable;
 		if (scanner.next(SYMBOL))
-			return cons(scanner.token(), vocabularyMapping);
+			return v.cons(scanner.token(), v);
 		throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL, QUESTION_MARK);
 	}
 

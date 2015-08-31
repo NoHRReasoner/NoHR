@@ -3,13 +3,10 @@
  */
 package benchmark.data;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
-
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -40,7 +37,8 @@ import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
  * @author Nuno Costa
@@ -194,22 +192,23 @@ public class ProgramGenerator {
 		predicates = new ArrayList<>();
 		constants = new ArrayList<>();
 		program = new HashSet<>();
+		final Vocabulary v = new DefaultVocabulary(ontology);
 		for (final OWLClass concept : ontology.getClassesInSignature())
-			predicates.add(pred(concept));
+			predicates.add(v.pred(concept));
 		for (final OWLProperty<?, ?> role : ontology.getObjectPropertiesInSignature())
-			predicates.add(pred(role));
+			predicates.add(v.pred(role));
 		for (final OWLProperty<?, ?> data : ontology.getDataPropertiesInSignature())
-			predicates.add(pred(data));
+			predicates.add(v.pred(data));
 		for (final OWLIndividual individual : ontology.getIndividualsInSignature())
-			constants.add(Model.cons(individual));
+			constants.add(v.cons(individual));
 		if (newPredicates == null)
 			newPredicates = predicates.size();
 		if (newConstants == null)
 			newConstants = constants.size();
 		for (int i = 1; i <= newPredicates; i++)
-			predicates.add(pred(PRED_PREFIX + i, Math.max(0, arity.next())));
+			predicates.add(v.pred(PRED_PREFIX + i, Math.max(0, arity.next())));
 		for (int i = 1; i <= newConstants; i++)
-			constants.add(cons(CONST_PREFIX + i));
+			constants.add(v.cons(CONST_PREFIX + i));
 	}
 
 	public Set<Rule> generate(int facts, int rules, DiscreteRandomVariable positiveBodyLength,

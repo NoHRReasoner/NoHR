@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model.concrete;
+package pt.unl.fct.di.centria.nohr.model.terminals;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;

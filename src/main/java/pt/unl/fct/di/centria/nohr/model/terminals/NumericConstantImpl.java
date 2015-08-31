@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model.concrete;
+package pt.unl.fct.di.centria.nohr.model.terminals;
 
 import java.util.Objects;
 

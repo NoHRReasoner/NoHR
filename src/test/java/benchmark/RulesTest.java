@@ -26,6 +26,7 @@ import com.declarativa.interprolog.util.IPException;
 import benchmark.ubt.api.QueryConfigParser;
 import benchmark.ubt.api.QuerySpecification;
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
@@ -33,9 +34,8 @@ import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
 import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
@@ -77,7 +77,7 @@ public class RulesTest {
 			RuntimesLogger.stop("ontology loading", "loading");
 			final HybridKB nohr = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology,
 					Model.program());
-			final NoHRParser parser = new NoHRRecursiveDescentParser(new DefaultVocabularyMapping(ontology));
+			final NoHRParser parser = new NoHRRecursiveDescentParser(new DefaultVocabulary(ontology));
 			final Iterator<?> queriesIt1 = queries.iterator();
 			while (queriesIt1.hasNext()) {
 				final QuerySpecification querySpecification = (QuerySpecification) queriesIt1.next();

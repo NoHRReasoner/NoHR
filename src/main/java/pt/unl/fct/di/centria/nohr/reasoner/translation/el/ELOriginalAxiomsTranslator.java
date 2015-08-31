@@ -3,8 +3,8 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ruleSet;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
 
 import java.util.List;
 import java.util.Set;
@@ -21,6 +21,7 @@ import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 
 /**
@@ -30,6 +31,10 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
  * @author Nuno Costa
  */
 public class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
+
+	ELOriginalAxiomsTranslator(Vocabulary v) {
+		super(v);
+	}
 
 	/**
 	 * Translate a role chain subsumption axiom to a set of original rules according to <b>(r2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL
@@ -159,7 +164,7 @@ public class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
 	 */
 	@Override
 	public Set<Rule> translation(OWLClassAssertionAxiom assertion) {
-		return AssertionsTranslation.translateOriginal(assertion);
+		return AssertionsTranslation.translateOriginal(v, assertion);
 	}
 
 	/**
@@ -172,7 +177,7 @@ public class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
 	 */
 	@Override
 	public Set<Rule> translation(OWLPropertyAssertionAxiom<?, ?> assertion) {
-		return AssertionsTranslation.translateOriginal(assertion);
+		return AssertionsTranslation.translateOriginal(v, assertion);
 	}
 
 }

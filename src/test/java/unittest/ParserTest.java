@@ -1,17 +1,20 @@
 package unittest;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.*;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
-
+import static pt.unl.fct.di.centria.nohr.model.Model.*;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
@@ -63,25 +66,30 @@ public class ParserTest {
 	@Test
 	public final void testParseQuery() throws Throwable {
 		try {
-			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser();
+			final Vocabulary v = new DefaultVocabulary(
+					OWLManager.createOWLOntologyManager().createOntology(IRI.generateDocumentIRI()));
+			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(v);
 			final Variable X = var("X");
-			Assert.assertEquals(query(atom("p", X)), parser.parseQuery("p(?X)"));
-			Assert.assertEquals(query(atom("p", cons("a"))), parser.parseQuery("p(a)"));
-			Assert.assertEquals(query(atom("p", X), atom("q", X), atom("r", X)),
+			Assert.assertEquals(query(atom(v, "p", X)), parser.parseQuery("p(?X)"));
+			Assert.assertEquals(query(atom(v, "p", v.cons("a"))), parser.parseQuery("p(a)"));
+			Assert.assertEquals(query(atom(v, "p", X), atom(v, "q", X), atom(v, "r", X)),
 					parser.parseQuery("p(?X),  q(?X), r(?X)"));
-			Assert.assertEquals(query(atom("p", cons("a"), cons("b"), cons("c"))), parser.parseQuery("p(a, b, c)"));
-			Assert.assertEquals(query(atom("p", cons(1))), parser.parseQuery("p(1)"));
-			Assert.assertEquals(query(atom("p", cons(1.1))), parser.parseQuery("p(1.1)"));
+			Assert.assertEquals(query(atom(v, "p", v.cons("a"), v.cons("b"), v.cons("c"))),
+					parser.parseQuery("p(a, b, c)"));
+			Assert.assertEquals(query(atom(v, "p", v.cons(1))), parser.parseQuery("p(1)"));
+			Assert.assertEquals(query(atom(v, "p", v.cons(1.1))), parser.parseQuery("p(1.1)"));
 		} catch (final ExceptionInInitializerError e) {
 			throw e.getCause();
 		}
 	}
 
 	@Test
-	public void testParseRule() throws ParseException {
-		final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser();
-		final Rule expectedRule = rule(atom("p", var("X"), var("Y"), var("Z")), atom("q", var("X"), var("Y")),
-				atom("r", cons("a")), negLiteral(atom("z", var("X"))), negLiteral(pred("w", 1), var("Y")));
+	public void testParseRule() throws ParseException, OWLOntologyCreationException {
+		final Vocabulary v = new DefaultVocabulary(
+				OWLManager.createOWLOntologyManager().createOntology(IRI.generateDocumentIRI()));
+		final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(v);
+		final Rule expectedRule = rule(atom(v, "p", var("X"), var("Y"), var("Z")), atom(v, "q", var("X"), var("Y")),
+				atom(v, "r", v.cons("a")), negLiteral(atom(v, "z", var("X"))), negLiteral(v.pred("w", 1), var("Y")));
 		final Rule actualRule = parser.parseRule("p(?X, ?Y,  ?Z) :- q(?X, ?Y),r(a), not z(?X),  not w(?Y)");
 		Assert.assertEquals(expectedRule, actualRule);
 	}

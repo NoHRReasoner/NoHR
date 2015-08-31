@@ -3,14 +3,10 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ql;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ruleSet;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origDomPred;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origPred;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.origRanPred;
-
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -24,6 +20,8 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 
 /**
@@ -34,6 +32,10 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
  * @author Nuno Costa
  */
 public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
+
+	QLOriginalAxiomsTranslator(Vocabulary v) {
+		super(v);
+	}
 
 	/**
 	 * Translate a concept assertion to a set of original rules according to <b>(a1)</b> of <b>Definition 9.</b> of
@@ -47,7 +49,7 @@ public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 */
 	@Override
 	public Set<Rule> assertionTranslation(OWLClassAssertionAxiom assertion) {
-		return AssertionsTranslation.translateOriginal(assertion);
+		return AssertionsTranslation.translateOriginal(v, assertion);
 	}
 
 	/**
@@ -60,7 +62,7 @@ public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 */
 	@Override
 	public Set<Rule> assertionTranslation(OWLPropertyAssertionAxiom<?, ?> alpha) {
-		return AssertionsTranslation.translateOriginal(alpha);
+		return AssertionsTranslation.translateOriginal(v, alpha);
 	}
 
 	/**
@@ -88,7 +90,7 @@ public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 */
 	@Override
 	public Rule domainTranslation(OWLObjectProperty p) {
-		return rule(atom(origDomPred(p), X), atom(origPred(p), X, var()));
+		return rule(atom(v.origDomPred(p), X), atom(v.origPred(p), X, var()));
 	}
 
 	/**
@@ -106,9 +108,9 @@ public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 */
 	Atom existTr(OWLObjectPropertyExpression q, Variable x) {
 		if (q.getSimplified() instanceof OWLObjectProperty)
-			return atom(origDomPred(q), x);
+			return atom(v.origDomPred(q), x);
 		else if (q.getSimplified() instanceof OWLObjectInverseOf)
-			return atom(origRanPred(q), x);
+			return atom(v.origRanPred(q), x);
 		else
 			throw new IllegalArgumentException("q: must be a basic role");
 	}
@@ -138,7 +140,7 @@ public class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 */
 	@Override
 	public Rule rangeTranslation(OWLObjectProperty p) {
-		return rule(atom(origRanPred(p), X), atom(origPred(p), var(), X));
+		return rule(atom(v.origRanPred(p), X), atom(v.origPred(p), var(), X));
 	}
 
 	/**

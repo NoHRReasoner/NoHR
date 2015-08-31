@@ -1,14 +1,14 @@
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.TermModel;
 
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
  * Convert {@link TermModel term models} obtained from a {@link PrologEngine Prolog engine} to {@link Terms terms}.
@@ -21,10 +21,10 @@ public class TermModelConverter {
 		return str.replaceAll("''", "'");
 	}
 
-	private final VocabularyMapping vocabularyMapping;
+	private final Vocabulary v;
 
-	public TermModelConverter(VocabularyMapping vocabularyMapping) {
-		this.vocabularyMapping = vocabularyMapping;
+	public TermModelConverter(Vocabulary vocabularyMapping) {
+		v = vocabularyMapping;
 	}
 
 	/**
@@ -36,10 +36,10 @@ public class TermModelConverter {
 	 */
 	public Term term(TermModel termModel) {
 		if (termModel.isAtom())
-			return cons(unquote(termModel.toString()), vocabularyMapping);
+			return v.cons(unquote(termModel.toString()), v);
 		else if (termModel.isNumber()) {
 			final Number number = termModel.intValue();
-			return cons(number);
+			return v.cons(number);
 		} else if (termModel.isVar())
 			return var(termModel.toString());
 		else

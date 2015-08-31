@@ -1,7 +1,7 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.model.concrete;
+package pt.unl.fct.di.centria.nohr.model.terminals;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLProperty;

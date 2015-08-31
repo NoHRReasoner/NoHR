@@ -3,13 +3,14 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ruleSet;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
@@ -30,7 +31,8 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedExpressionException;
 
 /**
@@ -49,6 +51,13 @@ public abstract class ELAxiomsTranslator {
 	 * An variable "Y".
 	 */
 	protected static final Variable Y = var("Y");
+
+	protected final Vocabulary v;
+
+	ELAxiomsTranslator(Vocabulary v) {
+		Objects.requireNonNull(v);
+		this.v = v;
+	}
 
 	/**
 	 * Returns a specified literal array as a literal list.
@@ -140,7 +149,7 @@ public abstract class ELAxiomsTranslator {
 	 *         <i>A(x)</i>, otherwise.
 	 */
 	protected Atom tr(OWLClass c, Variable x, boolean doub) {
-		final Predicate pred = Predicates.pred(c, doub);
+		final Predicate pred = v.pred(c, doub);
 		return atom(pred, x);
 	}
 
@@ -201,7 +210,7 @@ public abstract class ELAxiomsTranslator {
 	 *         <i>R(x, x<sub>1</sub></i>), otherwise.
 	 */
 	protected Atom tr(OWLProperty<?, ?> r, Variable x, Variable x1, boolean doub) {
-		final Predicate pred = Predicates.pred(r, doub);
+		final Predicate pred = v.pred(r, doub);
 		if (r instanceof OWLProperty)
 			return atom(pred, x, x1);
 		else

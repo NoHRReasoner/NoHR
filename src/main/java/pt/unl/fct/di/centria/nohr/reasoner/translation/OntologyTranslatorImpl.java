@@ -3,9 +3,12 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
+import java.util.Objects;
+
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 
@@ -18,6 +21,8 @@ import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
  * @author Nuno Costa
  */
 public class OntologyTranslatorImpl implements OntologyTranslator {
+
+	private final Vocabulary v;
 
 	/**
 	 * The {@link Profile profile} that this {@link OntologyTranslator} will handle. If none is specified (i.e. if it is {@code null} ), the preferred
@@ -44,12 +49,16 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} has some axioms of an unsupported type.
 	 */
-	public OntologyTranslatorImpl(OWLOntology ontology, DeductiveDatabase dedutiveDatabaseManager, Profile profile)
-			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+	public OntologyTranslatorImpl(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabaseManager,
+			Profile profile) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+		Objects.requireNonNull(ontology);
+		Objects.requireNonNull(v);
+		Objects.requireNonNull(dedutiveDatabaseManager);
 		this.profile = profile;
+		this.v = v;
 		if (profile == null)
 			profile = Profile.getProfile(ontology);
-		implementor = profile.createOntologyTranslator(ontology, dedutiveDatabaseManager);
+		implementor = profile.createOntologyTranslator(ontology, v, dedutiveDatabaseManager);
 	}
 
 	@Override
@@ -84,7 +93,7 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
 			newProfile = Profile.getProfile(getOntology());
 		if (newProfile != getProfile()) {
 			implementor.clear();
-			implementor = newProfile.createOntologyTranslator(getOntology(), getDedutiveDatabase());
+			implementor = newProfile.createOntologyTranslator(getOntology(), v, getDedutiveDatabase());
 		}
 		implementor.updateTranslation();
 	}

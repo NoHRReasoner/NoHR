@@ -1,6 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
+import pt.unl.fct.di.centria.nohr.model.terminals.MetaPredicate;
 
 public abstract class DefaultFormatVisitor implements FormatVisitor {
 

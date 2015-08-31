@@ -1,7 +1,6 @@
-package pt.unl.fct.di.centria.nohr.model.concrete;
+package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
 
 /**
  * Implementation of {@link Variable}.

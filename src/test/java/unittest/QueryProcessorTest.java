@@ -8,10 +8,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ans;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
+import static pt.unl.fct.di.centria.nohr.model.Model.ans;
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -27,16 +26,19 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DatabaseProgram;
 import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
-import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
@@ -47,13 +49,14 @@ import pt.unl.fct.di.centria.nohr.reasoner.QueryProcessor;
  */
 public class QueryProcessorTest extends QueryProcessor {
 
-	public static final NoHRParser parser = new NoHRRecursiveDescentParser();
+	public static Vocabulary v;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		v = new DefaultVocabulary(OWLManager.createOWLOntologyManager().createOntology(IRI.generateDocumentIRI()));
 	}
 
 	/**
@@ -63,6 +66,8 @@ public class QueryProcessorTest extends QueryProcessor {
 	public static void tearDownAfterClass() throws Exception {
 	}
 
+	public final NoHRParser parser;
+
 	private final DatabaseProgram program;
 
 	/**
@@ -71,8 +76,8 @@ public class QueryProcessorTest extends QueryProcessor {
 	 */
 	public QueryProcessorTest() throws Exception {
 		super(new XSBDeductiveDatabase(
-				FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb").toFile(),
-				new DefaultVocabularyMapping(OWLManager.createOWLOntologyManager().createOntology())));
+				FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb").toFile(), v));
+		parser = new NoHRRecursiveDescentParser(v);
 		program = deductiveDatabase.createProgram();
 	}
 
@@ -102,10 +107,9 @@ public class QueryProcessorTest extends QueryProcessor {
 
 	@Test
 	public final void testHasAnswer() throws IOException, ParseException {
-
 		final Variable var = var("X");
 		// true true
-		Query q = Model.query(atom("p", var));
+		Query q = Model.query(atom(v, "p", var));
 		add("ap(a)");
 		add("dp(a)");
 		assertTrue(hasAnswer(q, true));
@@ -116,7 +120,7 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertTrue(hasAnswer(q, false, true, false, false));
 		assertFalse(hasAnswer(q, false, false, true, false));
 		// true undefined
-		q = Model.query(atom("q", var));
+		q = Model.query(atom(v, "q", var));
 		add("aq(b)");
 
 		add("dq(b):-not dq(b)");
@@ -127,7 +131,7 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertTrue(hasAnswer(q, false, true, false, false));
 		assertFalse(hasAnswer(q, false, false, true, false));
 		// true false
-		q = Model.query(atom("r", var));
+		q = Model.query(atom(v, "r", var));
 		add("ar(c)");
 		add("dr(o)");
 		assertTrue(hasAnswer(q, true));
@@ -138,7 +142,7 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertTrue(hasAnswer(q, false, true, false, false));
 		assertFalse(hasAnswer(q, false, false, true, false));
 		// undefined true
-		q = Model.query(atom("s", var));
+		q = Model.query(atom(v, "s", var));
 
 		add("as(d):-not as(d)");
 		add("ds(d)");
@@ -150,7 +154,7 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertFalse(hasAnswer(q, false, true, false, false));
 		assertTrue(hasAnswer(q, false, false, true, false));
 		// undefined undefined
-		q = Model.query(atom("t", var));
+		q = Model.query(atom(v, "t", var));
 
 		add("at(e):-not at(e)");
 
@@ -163,7 +167,7 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertFalse(hasAnswer(q, false, true, false, false));
 		assertTrue(hasAnswer(q, false, false, true, false));
 		// undefined false
-		q = Model.query(atom("u", var));
+		q = Model.query(atom(v, "u", var));
 
 		add("au(f):-not au(f)");
 		add("du(o)");
@@ -175,21 +179,20 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertFalse(hasAnswer(q, false, true, false, false));
 		assertTrue(hasAnswer(q, false, false, true, false));
 		// false false
-		q = Model.query(atom("v", var));
+		q = Model.query(atom(v, "v", var));
 		add("av(o)");
 		add("dv(l)");
 		assertFalse(hasAnswer(q, true, true, true, false));
 	}
 
 	@Test
-	public final void testQuery() throws IOException, ParseException {
-
+	public final void testQuery() throws IOException, ParseException, OWLOntologyCreationException {
 		final Variable var = var("X");
 		// true true
-		Query q = Model.query(atom("p", var));
+		Query q = Model.query(atom(v, "p", var));
 		add("ap(a)");
 		add("dp(a)");
-		Answer ans = ans(q, TruthValue.TRUE, l(cons("a")));
+		Answer ans = ans(q, TruthValue.TRUE, l(v.cons("a")));
 		assertEquals(ans, oneAnswer(q, true));
 		assertEquals(ans, oneAnswer(q, true, true, false, false));
 		assertNull(oneAnswer(q, true, false, true, false));
@@ -198,11 +201,11 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertEquals(ans, oneAnswer(q, false, true, false, false));
 		assertNull(oneAnswer(q, false, false, true, false));
 		// true undefined
-		q = Model.query(atom("q", var));
+		q = Model.query(atom(v, "q", var));
 		add("aq(b)");
 
 		add("dq(b):-not dq(b)");
-		ans = ans(q, TruthValue.TRUE, l(cons("b")));
+		ans = ans(q, TruthValue.TRUE, l(v.cons("b")));
 		assertEquals(ans, oneAnswer(q, true));
 		assertEquals(ans, oneAnswer(q, true, true, false, false));
 		assertNull(oneAnswer(q, true, false, true, false));
@@ -211,39 +214,39 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertEquals(ans, oneAnswer(q, false, true, false, false));
 		assertNull(oneAnswer(q, false, false, true, false));
 		// true false
-		q = Model.query(atom("r", var));
+		q = Model.query(atom(v, "r", var));
 		add("ar(c)");
 		add("dr(o)");
-		ans = ans(q, TruthValue.INCONSISTENT, l(cons("c")));
+		ans = ans(q, TruthValue.INCONSISTENT, l(v.cons("c")));
 		assertEquals(ans, oneAnswer(q, true));
 		assertNull(oneAnswer(q, true, true, false, false));
 		assertNull(oneAnswer(q, true, false, true, false));
 		assertEquals(ans, oneAnswer(q, true, false, false, true));
-		ans = ans(q, TruthValue.TRUE, l(cons("c")));
+		ans = ans(q, TruthValue.TRUE, l(v.cons("c")));
 		assertEquals(ans, oneAnswer(q, false));
 		assertEquals(ans, oneAnswer(q, false, true, false, false));
 		assertNull(oneAnswer(q, false, false, true, false));
 		// undefined true
-		q = Model.query(atom("s", var));
+		q = Model.query(atom(v, "s", var));
 
 		add("as(d):-not as(d)");
 		add("ds(d)");
-		ans = ans(q, TruthValue.TRUE, l(cons("d")));
+		ans = ans(q, TruthValue.TRUE, l(v.cons("d")));
 		assertEquals(ans, oneAnswer(q, true));
 		assertEquals(ans, oneAnswer(q, true, true, false, false));
 		assertNull(oneAnswer(q, true, false, true, false));
 		assertNull(oneAnswer(q, true, false, false, true));
-		ans = ans(q, TruthValue.UNDEFINED, l(cons("d")));
+		ans = ans(q, TruthValue.UNDEFINED, l(v.cons("d")));
 		assertEquals(ans, oneAnswer(q, false));
 		assertNull(oneAnswer(q, false, true, false, false));
 		assertEquals(ans, oneAnswer(q, false, false, true, false));
 		// undefined undefined
-		q = Model.query(atom("t", var));
+		q = Model.query(atom(v, "t", var));
 
 		add("at(e):-not at(e)");
 
 		add("dt(e):-not at(e)");
-		ans = ans(q, TruthValue.UNDEFINED, l(cons("e")));
+		ans = ans(q, TruthValue.UNDEFINED, l(v.cons("e")));
 		assertEquals(ans, oneAnswer(q, true));
 		assertNull(oneAnswer(q, true, true, false, false));
 		assertEquals(ans, oneAnswer(q, true, false, true, false));
@@ -252,7 +255,7 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertNull(oneAnswer(q, false, true, false, false));
 		assertEquals(ans, oneAnswer(q, false, false, true, false));
 		// undefined false
-		q = Model.query(atom("u", var));
+		q = Model.query(atom(v, "u", var));
 
 		add("au(f):-not au(f)");
 		add("du(o)");
@@ -260,12 +263,12 @@ public class QueryProcessorTest extends QueryProcessor {
 		assertNull(oneAnswer(q, true, true, false, false));
 		assertNull(oneAnswer(q, true, false, true, false));
 		assertNull(oneAnswer(q, true, false, false, true));
-		ans = ans(q, TruthValue.UNDEFINED, l(cons("f")));
+		ans = ans(q, TruthValue.UNDEFINED, l(v.cons("f")));
 		assertEquals(ans, oneAnswer(q, false));
 		assertNull(oneAnswer(q, false, true, false, false));
 		assertEquals(ans, oneAnswer(q, false, false, true, false));
 		// false false
-		q = Model.query(atom("v", var));
+		q = Model.query(atom(v, "v", var));
 		add("av(o)");
 		add("dv(l)");
 		assertNull(oneAnswer(q, true, true, true, false));
@@ -276,10 +279,10 @@ public class QueryProcessorTest extends QueryProcessor {
 	 *
 	 * @throws IOException
 	 * @throws ParseException
+	 * @throws OWLOntologyCreationException
 	 */
 	@Test
-	public final void testQueryAll() throws IOException, ParseException {
-
+	public final void testQueryAll() throws IOException, ParseException, OWLOntologyCreationException {
 		add("ap(a)");
 		add("dp(a)");
 
@@ -301,47 +304,47 @@ public class QueryProcessorTest extends QueryProcessor {
 		add("dp(h):-not dp(h)");
 
 		final Variable var = var("X");
-		final Query q = Model.query(atom("p", var));
+		final Query q = Model.query(atom(v, "p", var));
 
 		Collection<Answer> ans = allAnswers(q, true, true, true, true);
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(cons("c")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(cons("e")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("a")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("b")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(v.cons("c")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("d")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(v.cons("e")))));
 		Assert.assertTrue(ans.size() == 5);
 
 		ans = allAnswers(q, true, true, true, false);
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(cons("e")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("a")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("b")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("d")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(v.cons("e")))));
 		Assert.assertTrue(ans.size() == 4);
 
 		ans = allAnswers(q, true, true, false, true);
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(cons("c")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("a")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("b")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(v.cons("c")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("d")))));
 		Assert.assertTrue(ans.size() == 4);
 
 		ans = allAnswers(q, true, false, true, true);
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(cons("c")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(cons("e")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(v.cons("c")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(v.cons("e")))));
 		Assert.assertTrue(ans.size() == 2);
 
 		ans = allAnswers(q, true, true, false, false);
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("a")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("b")))));
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(cons("d")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("a")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("b")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.TRUE, l(v.cons("d")))));
 		Assert.assertTrue(ans.size() == 3);
 
 		ans = allAnswers(q, true, false, true, false);
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(cons("e")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.UNDEFINED, l(v.cons("e")))));
 		Assert.assertTrue(ans.size() == 1);
 
 		ans = allAnswers(q, true, false, false, true);
-		Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(cons("c")))));
+		Assert.assertTrue(ans.contains(ans(q, TruthValue.INCONSISTENT, l(v.cons("c")))));
 		Assert.assertTrue(ans.size() == 1);
 
 	}

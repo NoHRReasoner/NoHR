@@ -32,14 +32,14 @@ import pt.unl.fct.di.centria.nohr.Multiset;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
@@ -184,6 +184,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	 */
 	private final Multiset<Predicate> negativeBodyFunctors;
 
+	protected final Vocabulary vocabulary;
+
 	/**
 	 * Constructs a {@link DeductiveDatabase} with the Prolog system located in a given directory as underlying Prolog engine.
 	 *
@@ -196,12 +198,15 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	 *             isn't an operational Prolog system. @
 	 */
 	public PrologDeductiveDatabase(File binDirectory, String prologModule, FormatVisitor formatVisitor,
-			VocabularyMapping vocabularyMapping) throws PrologEngineCreationException {
+			Vocabulary vocabulary) throws PrologEngineCreationException {
 		Objects.requireNonNull(binDirectory);
 		Objects.requireNonNull(prologModule);
+		Objects.requireNonNull(formatVisitor);
+		Objects.requireNonNull(vocabulary);
 		this.binDirectory = binDirectory;
 		this.prologModule = prologModule;
 		this.formatVisitor = formatVisitor;
+		this.vocabulary = vocabulary;
 		try {
 			file = File.createTempFile(FILE_PREFIX, PROLOG_EXTENSION);
 			// file.deleteOnExit();
@@ -214,7 +219,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		headFunctors = new HashMultiset<>();
 		positiveBodyFunctors = new HashMultiset<>();
 		negativeBodyFunctors = new HashMultiset<>();
-		termModelConverter = new TermModelConverter(vocabularyMapping);
+		termModelConverter = new TermModelConverter(vocabulary);
 		try {
 			startPrologEngine();
 		} catch (final IPException e) {

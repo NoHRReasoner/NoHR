@@ -12,7 +12,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
  * Represents an <i> MKNF Hybrid Knowledge Base </i> (see {@link <a href="http://knoesis.wright.edu/pascal/resources/publications/mknftheo.pdf">Local
@@ -76,11 +76,11 @@ public interface HybridKB {
 	Program getProgram();
 
 	/**
-	 * Returns the {@link VocabularyMapping} that this {@link HybridKB} applies.
+	 * Returns the {@link Vocabulary} that this {@link HybridKB} applies.
 	 *
-	 * @return the {@link VocabularyMapping} that this {@link HybridKB} applies.
+	 * @return the {@link Vocabulary} that this {@link HybridKB} applies.
 	 */
-	VocabularyMapping getVocabularyMapping();
+	Vocabulary getVocabularyMapping();
 
 	/**
 	 * Checks if there is some answer to a given query.

@@ -22,16 +22,16 @@ import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.ProgramChangeListener;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
-import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.PredicateType;
+import pt.unl.fct.di.centria.nohr.model.terminals.PredicateTypeVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
@@ -51,8 +51,8 @@ public class HybridKBImpl implements HybridKB {
 	/** The <i>program</i> component of this {@link HybridKB} */
 	private final Program program;
 
-	/** The {@link VocabularyMapping} that this {@link HybridKB} applies. */
-	private final VocabularyMapping vocabularyMapping;
+	/** The {@link Vocabulary} that this {@link HybridKB} applies. */
+	private final Vocabulary vocabulary;
 
 	/**
 	 * The underlying {@link DeductiveDatabase}, where the <i>ontology</i> translation and the <i>program</i> rules (and double rules, when necessary)
@@ -152,8 +152,8 @@ public class HybridKBImpl implements HybridKB {
 	 *            {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>} will
 	 *            be applied. If none is specified the preferred one will be applied. Whenever the ontology isn't in the specified profile, if some is
 	 *            specified, an {@link OWLProfilesViolationsException} will be thrown.
-	 * @param vocabularyMapping
-	 *            the {@link VocabularyMapping} that will be used in this {@link HybridKB}.
+	 * @param vocabulary
+	 *            the {@link Vocabulary} that will be used in this {@link HybridKB}.
 	 * @throws OWLProfilesViolationsException
 	 *             if {@code profile != null} and {@code ontology} isn't in the profile {@code profile}; or {@code profile == null} and the
 	 *             {@code ontology} isn't in any supported profile.
@@ -165,21 +165,22 @@ public class HybridKBImpl implements HybridKB {
 	 *             if {@code vocabularyMapping doesn't contains {@code ontology}.
 	 */
 	public HybridKBImpl(final File binDirectory, final OWLOntology ontology, final Program program,
-			VocabularyMapping vocabularyMapping, Profile profile)
+			Vocabulary vocabulary, Profile profile)
 					throws OWLProfilesViolationsException, UnsupportedAxiomsException, PrologEngineCreationException {
 		Objects.requireNonNull(binDirectory);
 		this.ontology = ontology;
 		this.program = program;
-		if (vocabularyMapping != null) {
-			this.vocabularyMapping = vocabularyMapping;
-			if (!vocabularyMapping.getOntologies().contains(ontology))
+		if (vocabulary != null) {
+			if (!vocabulary.getOntologies().contains(ontology))
 				throw new IllegalArgumentException("vocabularyMapping: must contain the given ontology");
+			this.vocabulary = vocabulary;
 		} else
-			this.vocabularyMapping = new DefaultVocabularyMapping(ontology);
-		dedutiveDatabase = new XSBDeductiveDatabase(binDirectory, vocabularyMapping);
+			this.vocabulary = new DefaultVocabulary(ontology);
+		assert this.vocabulary != null;
+		dedutiveDatabase = new XSBDeductiveDatabase(binDirectory, this.vocabulary);
 		doubledProgram = dedutiveDatabase.createProgram();
 		queryProcessor = new QueryProcessor(dedutiveDatabase);
-		ontologyTranslator = new OntologyTranslatorImpl(ontology, dedutiveDatabase, profile);
+		ontologyTranslator = new OntologyTranslatorImpl(ontology, this.vocabulary, dedutiveDatabase, profile);
 		hasOntologyChanges = true;
 		hasProgramChanges = true;
 		ontologyChangeListener = new OWLOntologyChangeListener() {
@@ -267,8 +268,8 @@ public class HybridKBImpl implements HybridKB {
 	}
 
 	@Override
-	public VocabularyMapping getVocabularyMapping() {
-		return vocabularyMapping;
+	public Vocabulary getVocabularyMapping() {
+		return vocabulary;
 	}
 
 	@Override

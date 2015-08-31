@@ -1,10 +1,6 @@
-package pt.unl.fct.di.centria.nohr.model.concrete;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
-
-import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Variable;
 
 public abstract class LiteralImpl implements Literal {
 

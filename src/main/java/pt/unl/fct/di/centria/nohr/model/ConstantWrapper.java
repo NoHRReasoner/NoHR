@@ -3,8 +3,8 @@ package pt.unl.fct.di.centria.nohr.model;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
-import pt.unl.fct.di.centria.nohr.model.concrete.HybridConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.HybridConstant;
+import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
 
 public class ConstantWrapper implements HybridConstant {
 

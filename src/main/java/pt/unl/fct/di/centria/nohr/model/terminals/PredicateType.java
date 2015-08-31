@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model.predicates;
+package pt.unl.fct.di.centria.nohr.model.terminals;
 
 /**
  * The possible types of a {@link MetaPredicate}: original, of <i>P</i>; double, of <i>P<sup>d</sup></i>; classical negation, of <i>NP</i>; original

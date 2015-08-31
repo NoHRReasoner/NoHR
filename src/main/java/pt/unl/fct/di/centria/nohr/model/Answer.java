@@ -2,7 +2,7 @@ package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 
-import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
 
 /**
  * An answer to a query. Represents a substitution (i.e. a mapping between variables and terms) for a query's literal list, corresponding to an answer

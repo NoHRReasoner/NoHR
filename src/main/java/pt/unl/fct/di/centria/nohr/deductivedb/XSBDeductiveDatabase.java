@@ -1,16 +1,18 @@
 package pt.unl.fct.di.centria.nohr.deductivedb;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.*;
+import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
  * Implements an {@link DeductiveDatabase} backed by a XSB Prolog system.
@@ -31,8 +33,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	 *             isn't an operational Prolog system.
 	 * @throws IOException
 	 */
-	public XSBDeductiveDatabase(File binDirectory, VocabularyMapping vocabularyMapping)
-			throws PrologEngineCreationException {
+	public XSBDeductiveDatabase(File binDirectory, Vocabulary vocabularyMapping) throws PrologEngineCreationException {
 		super(binDirectory, "xsbmodule", new XSBFormatVisitor(), vocabularyMapping);
 	}
 
@@ -43,7 +44,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	@Override
 	protected String failRule(Predicate pred) {
-		return rule(atom(pred), atom("fail")).accept(formatVisitor);
+		return rule(atom(pred), atom(vocabulary, "fail")).accept(formatVisitor);
 	}
 
 	@Override

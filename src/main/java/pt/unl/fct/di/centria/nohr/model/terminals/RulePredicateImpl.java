@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model.predicates;
+package pt.unl.fct.di.centria.nohr.model.terminals;
 
 import java.util.Objects;
 
@@ -7,8 +7,6 @@ import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.concrete.HybridPredicate;
-import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
 
 /**
  * Implementation of {@link Predicate}.

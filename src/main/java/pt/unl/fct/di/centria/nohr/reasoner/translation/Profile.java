@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.profiles.OWLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.el.ELOntologyTranslator;
@@ -74,17 +75,17 @@ public enum Profile {
 	 * @throws OWLProfilesViolationsException
 	 *             if {@code ontology} isn't in this profile.
 	 */
-	public OntologyTranslator createOntologyTranslator(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
-			throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+	public OntologyTranslator createOntologyTranslator(OWLOntology ontology, Vocabulary v,
+			DeductiveDatabase dedutiveDatabase) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 		final OWLProfileReport report = owlProfile().checkOntology(ontology);
 		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
 		if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
 			throw new OWLProfilesViolationsException(report);
 		switch (this) {
 		case OWL2_QL:
-			return new QLOntologyTranslator(ontology, dedutiveDatabase);
+			return new QLOntologyTranslator(ontology, v, dedutiveDatabase);
 		case OWL2_EL:
-			return new ELOntologyTranslator(ontology, dedutiveDatabase);
+			return new ELOntologyTranslator(ontology, v, dedutiveDatabase);
 		default:
 			throw new OWLProfilesViolationsException();
 		}

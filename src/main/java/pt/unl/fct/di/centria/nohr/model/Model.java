@@ -1,6 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model.concrete;
-
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,26 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
-
-import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Constant;
-import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.ModelElement;
-import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
  * Model factory. For more conciseness statically import (see
@@ -102,74 +82,47 @@ public class Model {
 	}
 
 	/**
-	 * Create an atom with a predicate with a specified symbol as functor and specified terms as arguments.
-	 *
-	 * @param functorSymbol
-	 *            the functor predicate's symbol, <i>P</i>.
-	 * @param arguments
-	 *            a list of terms arguments, <i>t<sub>1</sub>, ..., t <sub>n</sub></i>.
-	 * @return an atom with a predicate with symbol {@code functorSymbol} as functor and arguments {@code arguments}, <i>P(t<sub>1</sub>, ...,t
-	 *         <sub>n</sub>)</i>.
-	 */
-	public static Atom atom(String functorSymbol, List<Term> arguments) {
-		return atom(functorSymbol, null, arguments);
-	}
-
-	/**
-	 * Create an atom with a predicate with a specified symbol as functor and specified terms as arguments.
-	 *
-	 * @param functorSymbol
-	 *            the functor predicate's symbol, <i>P</i>.
-	 * @param arguments
-	 *            an array of terms arguments, <i>t<sub>1</sub>, ..., t <sub>n</sub></i>.
-	 * @return an atom with a predicate with symbol {@code functorSymbol} as functor and arguments {@code arguments}..
-	 */
-	public static Atom atom(String functorSymbol, Term... arguments) {
-		return atom(functorSymbol, null, arguments);
-	}
-
-	/**
 	 * Create an atom with the predicate corresponding to a specified symbol, given a {@code VocabularyMapping}, as functor and anonymous variables as
 	 * arguments.
-	 *
+	 * 
 	 * @param functor
 	 *            the functor predicate, <i>P</i>.
 	 * @return an atom <i>P(_,..., _)</i> where {@code _} represents an anonymous variable.
 	 */
-	public static Atom atom(String functorSymbol, VocabularyMapping ontologyIndex) {
-		return atom(functorSymbol, ontologyIndex, Collections.<Term> emptyList());
+	public static Atom atom(Vocabulary v, String functorSymbol) {
+		return atom(v, functorSymbol, Collections.<Term> emptyList());
 	}
 
 	/**
-	 * Create an atom with a predicate corresponding to a specified symbol, given a specified {@link VocabularyMapping}, as functor and specified
-	 * terms as arguments.
-	 *
+	 * Create an atom with a predicate corresponding to a specified symbol, given a specified {@link Vocabulary}, as functor and specified terms as
+	 * arguments.
+	 * 
+	 * @param v
+	 *            an {@link Vocabulary}
 	 * @param functorSymbol
 	 *            the functor predicate's symbol.
-	 * @param vocabularyMapping
-	 *            an {@link VocabularyMapping}
 	 * @param arguments
 	 *            a list of terms arguments.
 	 * @return an atom with the predicate corresponding to {@code functorSymbol} , given {@code vocabularyMapping}, as functor and arguments
 	 *         {@code arguments}.
 	 */
-	public static Atom atom(String functorSymbol, VocabularyMapping vocabularyMapping, List<Term> arguments) {
-		return atom(pred(functorSymbol, arguments.size(), vocabularyMapping), arguments);
+	public static Atom atom(Vocabulary v, String functorSymbol, List<Term> arguments) {
+		return atom(v.pred(functorSymbol, arguments.size(), v), arguments);
 	}
 
 	/**
 	 * Create an atom with the predicate corresponding to a specified symbol as functor and specified terms as arguments.
-	 *
-	 * @param functorSymbol
-	 *            the functor predicate's symbol
+	 * 
 	 * @param arguments
 	 *            an array of terms arguments.
+	 * @param functorSymbol
+	 *            the functor predicate's symbol
 	 * @return an atom with a predicate with symbol {@code functorSymbol} as functor and arguments {@code arguments}.
 	 */
-	public static Atom atom(String predicate, VocabularyMapping vocabularyMapping, Term... arguments) {
+	public static Atom atom(Vocabulary v, String predicate, Term... arguments) {
 		final List<Term> argumentsList = new LinkedList<Term>();
 		Collections.addAll(argumentsList, arguments);
-		return atom(Predicates.pred(predicate, arguments.length, vocabularyMapping), argumentsList);
+		return atom(v.pred(predicate, arguments.length, v), argumentsList);
 	}
 
 	/**
@@ -212,94 +165,6 @@ public class Model {
 			sepToken = separator;
 		}
 		return new String(sb);
-	}
-
-	/**
-	 * Creates a constant representing a specified number.
-	 *
-	 * @param n
-	 *            the number
-	 * @return the numeric constant representing {@code n}.
-	 */
-	public static Constant cons(Number n) {
-		return new NumericConstantImpl(n);
-	}
-
-	/**
-	 * Create a constant representing a specified OWL individual.
-	 *
-	 * @param individual
-	 *            the OWL individual
-	 * @return the constant representing {@code individual}.
-	 */
-	public static Constant cons(OWLIndividual individual) {
-		return new IndividualConstantImpl(individual);
-	}
-
-	/**
-	 * Create a constant representing a specified OWL literal.
-	 *
-	 * @param literal
-	 *            the OWL literal.
-	 * @return the constant representing {@code literal}.
-	 */
-	public static Constant cons(OWLLiteral literal) {
-		return new LiteralConstantImpl(literal);
-	}
-
-	/**
-	 * Create a constant representing a OWL individual or OWL literal.
-	 *
-	 * @param object
-	 *            the OWL individual or OWL literal.
-	 * @return the constant representing {@code object}.
-	 */
-	public static Constant cons(OWLPropertyAssertionObject object) {
-		if (object instanceof OWLIndividual)
-			return cons((OWLIndividual) object);
-		else if (object instanceof OWLLiteral)
-			return cons((OWLLiteral) object);
-		else
-			return null;
-	}
-
-	/**
-	 * Creates a constant representing a specified symbol. If the symbol is a number, then the created constant is an numeric constant.
-	 *
-	 * @param symbol
-	 *            the symbol.
-	 * @return a numeric constant representing {@code symbol} if {@code symbol} is a number; or a rule constant representing {@code symbol},
-	 *         otherwise.
-	 */
-
-	public static Constant cons(String symbol) {
-		try {
-			final Double number = Double.valueOf(symbol);
-			return cons(number);
-		} catch (final NumberFormatException e) {
-			return new RuleConstantImpl(symbol);
-		}
-	}
-
-	/**
-	 * Creates a constant representation of a specified symbol, given a specified {@link VocabularyMapping}. If the symbol is a number, then the
-	 * created constant is an numeric constant.
-	 *
-	 * @param symbol
-	 *            the symbol.
-	 * @param vocabularyMapping
-	 *            {@link VocabularyMapping}
-	 * @return a numeric constant representing {@code symbol} if {@code symbol} is a number; or a constant representation of {@code symbol}, given
-	 *         {@link VocabularyMapping}, otherwise.
-	 */
-
-	public static Constant cons(String symbol, VocabularyMapping vocabularyMapping) {
-		if (vocabularyMapping != null) {
-			final Constant individual = vocabularyMapping.getIndividual(symbol);
-			if (individual != null)
-				return individual;
-		}
-		return cons(symbol);
 	}
 
 	/**

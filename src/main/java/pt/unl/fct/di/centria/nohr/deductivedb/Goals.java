@@ -5,9 +5,9 @@ package pt.unl.fct.di.centria.nohr.deductivedb;
 
 import pt.unl.fct.di.centria.nohr.model.ModelElement;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 
 /**
  * Constructs Prolog goals to query a {@link PrologEngine}, with a set of predicates that are assumed to be defined, to a given Prolog system, in a

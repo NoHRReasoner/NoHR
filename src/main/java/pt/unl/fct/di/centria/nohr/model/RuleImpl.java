@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model.concrete;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,11 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
-import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
 
 /**
  * Implementation of {@link Rule}.

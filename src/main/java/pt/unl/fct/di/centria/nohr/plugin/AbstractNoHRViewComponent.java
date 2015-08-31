@@ -15,10 +15,10 @@ import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
@@ -39,7 +39,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 		private final OWLModelManagerListener modelManagerListener;
 
 		public DisposableHybridKB(File xsbBinDirectory, OWLOntology ontology, Program program,
-				VocabularyMapping vocabularyMapping, OWLModelManagerListener modelListener)
+				Vocabulary vocabularyMapping, OWLModelManagerListener modelListener)
 						throws OWLProfilesViolationsException, UnsupportedAxiomsException,
 						PrologEngineCreationException {
 			super(xsbBinDirectory, ontology, program, vocabularyMapping, null);
@@ -137,11 +137,11 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 		return program.getObject();
 	}
 
-	protected VocabularyMapping getVocabularyMapping() {
-		DisposableObject<VocabularyMapping> disposableObject = getOWLModelManager().get(VocabularyMapping.class);
+	protected Vocabulary getVocabularyMapping() {
+		DisposableObject<Vocabulary> disposableObject = getOWLModelManager().get(Vocabulary.class);
 		if (disposableObject == null) {
-			disposableObject = new DisposableObject<VocabularyMapping>(new DefaultVocabularyMapping(getOntology()));
-			getOWLModelManager().put(VocabularyMapping.class, disposableObject);
+			disposableObject = new DisposableObject<Vocabulary>(new DefaultVocabulary(getOntology()));
+			getOWLModelManager().put(Vocabulary.class, disposableObject);
 		}
 		return disposableObject.getObject();
 	}
@@ -149,8 +149,8 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 	@Override
 	public void handleChange(OWLModelManagerChangeEvent event) {
 		if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-			getOWLModelManager().put(VocabularyMapping.class,
-					new DisposableObject<VocabularyMapping>(new DefaultVocabularyMapping(getOntology())));
+			getOWLModelManager().put(Vocabulary.class,
+					new DisposableObject<Vocabulary>(new DefaultVocabulary(getOntology())));
 			getOWLModelManager().put(NoHRParser.class,
 					new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getVocabularyMapping())));
 			startNoHR();

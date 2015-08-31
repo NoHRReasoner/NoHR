@@ -1,20 +1,23 @@
 package unittest;
-import static org.junit.Assert.assertTrue;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.cons;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
+import static org.junit.Assert.assertTrue;
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
  *
@@ -54,13 +57,15 @@ public class ModelTest {
 	}
 
 	@Test
-	public final void test() {
-		final Predicate pred1 = pred("a", 1);
-		final Predicate pred2 = pred("a", 1);
+	public final void test() throws OWLOntologyCreationException {
+		final Vocabulary v = new DefaultVocabulary(
+				OWLManager.createOWLOntologyManager().createOntology(IRI.generateDocumentIRI()));
+		final Predicate pred1 = v.pred("a", 1);
+		final Predicate pred2 = v.pred("a", 1);
 		assertTrue("predicates hashCode", pred1.hashCode() == pred2.hashCode());
 		assertTrue("predicates equals", pred1.equals(pred2));
-		final Term cons1 = cons("a");
-		final Term cons2 = cons("a");
+		final Term cons1 = v.cons("a");
+		final Term cons2 = v.cons("a");
 		assertTrue("constants hashCode", cons1.hashCode() == cons2.hashCode());
 		assertTrue("constants equals", cons1.equals(cons2));
 		final Atom atom1 = atom(pred1, cons1);

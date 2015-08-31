@@ -3,12 +3,10 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.ruleSet;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
-
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.centria.nohr.model.Model.rule;
+import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +25,8 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 
 /**
@@ -38,6 +38,10 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
  */
 public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 
+	ELDoubleAxiomsTranslator(Vocabulary v) {
+		super(v);
+	}
+
 	/**
 	 * Obtains the negated atom (i.e. with a negative meta-predicate) of a given literal.
 	 *
@@ -48,7 +52,7 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 */
 	Atom negTr(Literal b) {
 		final Predicate pred0 = b.getFunctor();
-		final Predicate pred = negPred(pred0);
+		final Predicate pred = v.negPred(pred0);
 		return atom(pred, b.getAtom().getArguments());
 	}
 
@@ -62,7 +66,7 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i>NA(x)</i>.
 	 */
 	Atom negTr(OWLClass a, Variable x) {
-		final Predicate pred = negPred(a);
+		final Predicate pred = v.negPred(a);
 		return atom(pred, x);
 	}
 
@@ -78,7 +82,7 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i>NR(x, y)</i>
 	 */
 	Atom negTr(OWLProperty<?, ?> r, Variable x, Variable y) {
-		final Predicate pred = negPred(r);
+		final Predicate pred = v.negPred(r);
 		return atom(pred, x, y);
 	}
 
@@ -247,7 +251,7 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 */
 	@Override
 	public Set<Rule> translation(OWLClassAssertionAxiom assertion) {
-		return AssertionsTranslation.translateDouble(assertion);
+		return AssertionsTranslation.translateDouble(v, assertion);
 	}
 
 	/**
@@ -260,6 +264,6 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 */
 	@Override
 	public Set<Rule> translation(OWLPropertyAssertionAxiom<?, ?> alpha) {
-		return AssertionsTranslation.translateDouble(alpha);
+		return AssertionsTranslation.translateDouble(v, alpha);
 	}
 }

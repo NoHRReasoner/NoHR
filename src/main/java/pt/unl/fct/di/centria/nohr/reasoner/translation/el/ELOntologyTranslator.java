@@ -1,5 +1,7 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
+import java.util.Objects;
+
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -10,6 +12,7 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImplementor;
@@ -41,11 +44,14 @@ public class ELOntologyTranslator extends OntologyTranslatorImplementor {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} contains some axioms of unsupported types.
 	 */
-	public ELOntologyTranslator(OWLOntology ontology, DeductiveDatabase dedutiveDatabase)
+	public ELOntologyTranslator(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabase)
 			throws UnsupportedAxiomsException {
 		super(ontology, dedutiveDatabase);
-		originalAxiomsTranslator = new ELOriginalAxiomsTranslator();
-		doubleAxiomsTranslator = new ELDoubleAxiomsTranslator();
+		Objects.requireNonNull(ontology);
+		Objects.requireNonNull(v);
+		Objects.requireNonNull(dedutiveDatabase);
+		originalAxiomsTranslator = new ELOriginalAxiomsTranslator(v);
+		doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(v);
 		RuntimesLogger.start("ontology reduction");
 		reducedOntology = new ELOntologyReductionImpl(ontology);
 		RuntimesLogger.stop("ontology reduction", "loading");

@@ -1,4 +1,4 @@
-package pt.unl.fct.di.centria.nohr.model.concrete;
+package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,13 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import pt.unl.fct.di.centria.nohr.StringUtils;
-import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.PredicateType;
+import pt.unl.fct.di.centria.nohr.model.terminals.PredicateTypeVisitor;
 
 /**
  * Implementation of {@link Query}.

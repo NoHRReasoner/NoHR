@@ -11,7 +11,7 @@ import javax.swing.table.TableModel;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.concrete.HybridConstant;
+import pt.unl.fct.di.centria.nohr.model.terminals.HybridConstant;
 
 /**
  * A {@link TableModel} for {@link Answer answers}.

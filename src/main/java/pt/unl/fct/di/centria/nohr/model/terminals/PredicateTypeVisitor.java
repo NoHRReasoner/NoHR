@@ -1,11 +1,6 @@
-package pt.unl.fct.di.centria.nohr.model.predicates;
-
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
+package pt.unl.fct.di.centria.nohr.model.terminals;
 
 import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.concrete.DefaultModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.concrete.HybridPredicate;
-import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
 
 /**
  * A {@link ModelVisitor} that replace each {@link Predicate} appearing at each model element by the correspondent {@link MetaPredicate} of a
@@ -43,12 +38,12 @@ public class PredicateTypeVisitor extends DefaultModelVisitor {
 
 	@Override
 	public Predicate visit(HybridPredicate pred) {
-		return pred(pred, predicateType);
+		return new MetaPredicateImpl(pred, predicateType);
 	}
 
 	@Override
 	public Predicate visit(MetaPredicate pred) {
-		return pred(pred.getPredicate(), predicateType);
+		return new MetaPredicateImpl(pred.getPredicate(), predicateType);
 	}
 
 }

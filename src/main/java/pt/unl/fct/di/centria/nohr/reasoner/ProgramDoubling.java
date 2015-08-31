@@ -8,13 +8,13 @@ import java.util.List;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.concrete.HybridPredicate;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
-import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
-import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.PredicateType;
+import pt.unl.fct.di.centria.nohr.model.terminals.PredicateTypeVisitor;
 
 /**
  * Provides an auxiliary method that double a given rule according to <b>Definition 3.1</b> of

@@ -1,6 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
 
 /**
  * Represents an negative literal <i><b>not</b> P(t<sub>1</sub>, ..., t <sub>n</sub>)</i>, where <i>P</i> is a predicate, <i>t<sub>i</sub></i>, with

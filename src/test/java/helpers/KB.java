@@ -36,11 +36,11 @@ import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.concrete.Model;
-import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
@@ -113,7 +113,7 @@ public class KB {
 	public void assertNegative(String query) {
 		try {
 			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(
-					new DefaultVocabularyMapping(ontology));
+					new DefaultVocabulary(ontology));
 			if (!query.endsWith("."))
 				query += ".";
 			final Query q = parser.parseQuery(query);

@@ -3,7 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
+import pt.unl.fct.di.centria.nohr.model.terminals.MetaPredicate;
 
 /**
  * A model visitor (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>} ) to support different model formats, i.e.

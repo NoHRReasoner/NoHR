@@ -3,13 +3,8 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ql;
 
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.concrete.Model.var;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.domPred;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.negPred;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
-import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.ranPred;
-
+import static pt.unl.fct.di.centria.nohr.model.Model.atom;
+import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClass;
@@ -25,6 +20,8 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
  * Provides DL-Lite<sub>R</sub> axiom translation operations according to
@@ -43,6 +40,12 @@ public abstract class QLAxiomsTranslator {
 	 * An variable <i>y</i>.
 	 */
 	protected static final Variable Y = var("Y");
+
+	protected final Vocabulary v;
+
+	QLAxiomsTranslator(Vocabulary v) {
+		this.v = v;
+	}
 
 	/**
 	 * Partially (depending on the concrete {@link QLAxiomsTranslator} used) translate a concept assertion to a set of rules according to <b>(a1)</b>
@@ -108,7 +111,7 @@ public abstract class QLAxiomsTranslator {
 	 */
 	protected Atom negTr(OWLClassExpression b, Variable x) {
 		if (b instanceof OWLClass)
-			return atom(negPred((OWLClass) b), x);
+			return atom(v.negPred((OWLClass) b), x);
 		else if (b instanceof OWLObjectSomeValuesFrom) {
 			final OWLObjectSomeValuesFrom b1 = (OWLObjectSomeValuesFrom) b;
 			if (!b1.getFiller().isOWLThing())
@@ -133,11 +136,11 @@ public abstract class QLAxiomsTranslator {
 	 */
 	protected Atom negTr(OWLPropertyExpression<?, ?> q, Variable x, Variable y) {
 		if (q instanceof OWLObjectProperty)
-			return atom(negPred(q), x, y);
+			return atom(v.negPred(q), x, y);
 		else if (q instanceof OWLDataProperty)
-			return atom(negPred(q), x, y);
+			return atom(v.negPred(q), x, y);
 		else
-			return atom(negPred(q), y, x);
+			return atom(v.negPred(q), y, x);
 	}
 
 	/**
@@ -153,9 +156,9 @@ public abstract class QLAxiomsTranslator {
 	 */
 	protected Atom negTrExist(OWLObjectPropertyExpression q, Variable x) {
 		if (q instanceof OWLObjectProperty)
-			return atom(negPred(q), x, var());
+			return atom(v.negPred(q), x, var());
 		else
-			return atom(negPred(q), var(), x);
+			return atom(v.negPred(q), var(), x);
 	}
 
 	/**
@@ -233,13 +236,13 @@ public abstract class QLAxiomsTranslator {
 	 */
 	protected Atom tr(OWLClassExpression b, Variable x, boolean doub) {
 		if (b instanceof OWLClass)
-			return atom(pred((OWLClass) b, doub), x);
+			return atom(v.pred((OWLClass) b, doub), x);
 		else if (b instanceof OWLObjectSomeValuesFrom) {
 			final OWLObjectPropertyExpression q = ((OWLObjectSomeValuesFrom) b).getProperty();
 			if (q instanceof OWLObjectProperty)
-				return atom(domPred(q, doub), x);
+				return atom(v.domPred(q, doub), x);
 			else
-				return atom(ranPred(q, doub), x);
+				return atom(v.ranPred(q, doub), x);
 		} else
 			throw new IllegalArgumentException("c: must be an DL-LiteR concept, but was: " + b);
 	}
@@ -262,11 +265,11 @@ public abstract class QLAxiomsTranslator {
 	 */
 	protected Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y, boolean doub) {
 		if (r instanceof OWLObjectProperty)
-			return atom(pred(r, doub), x, y);
+			return atom(v.pred(r, doub), x, y);
 		else if (r instanceof OWLDataProperty)
-			return atom(pred(r, doub), x, y);
+			return atom(v.pred(r, doub), x, y);
 		else
-			return atom(pred(r, doub), y, x);
+			return atom(v.pred(r, doub), y, x);
 	}
 
 }

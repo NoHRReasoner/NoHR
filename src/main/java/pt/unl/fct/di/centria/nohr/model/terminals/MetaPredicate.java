@@ -1,11 +1,10 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.model.predicates;
+package pt.unl.fct.di.centria.nohr.model.terminals;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
 
 /**
  * Encode special predicates that can distinguish different views, in a KB translation, of the same {@link Predicate}. These predicates can, among

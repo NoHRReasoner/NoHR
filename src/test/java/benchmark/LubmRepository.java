@@ -24,12 +24,12 @@ import benchmark.ubt.api.QueryResult;
 import benchmark.ubt.api.QuerySpecification;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.model.DefaultVocabularyMapping;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
@@ -97,7 +97,7 @@ public class LubmRepository {
 		RuntimesLogger.stop("ontology loading", "loading");
 		ontologyManager = null;
 		hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profiles);
-		parser = new NoHRRecursiveDescentParser(new DefaultVocabularyMapping(ontology));
+		parser = new NoHRRecursiveDescentParser(new DefaultVocabulary(ontology));
 		System.gc();
 		return true;
 
