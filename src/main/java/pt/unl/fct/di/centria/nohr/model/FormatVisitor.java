@@ -3,14 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.concrete.IndividualConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.LiteralConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.NumericConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.RuleConstant;
-import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.RolePredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
 
 /**
  * A model visitor (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>} ) to support different model formats, i.e.
@@ -35,26 +28,6 @@ public interface FormatVisitor {
 	public String visit(Atom atom);
 
 	/**
-	 * @param predicate
-	 * @return the string representation of the predicate {@code predicate}.
-	 */
-	public String visit(ConceptPredicate predicate);
-
-	/**
-	 * @param constant
-	 *            individual constant
-	 * @return the string representation of the individual constant {@code constant}.
-	 */
-	public String visit(IndividualConstant constant);
-
-	/**
-	 * @param constant
-	 *            literal constant
-	 * @return the string representation of the literal constant {@code constant}.
-	 */
-	public String visit(LiteralConstant constant);
-
-	/**
 	 * @param metaPredicate
 	 * @return the string representation of the meta-predicate {@code metaPredicate}.
 	 */
@@ -67,23 +40,10 @@ public interface FormatVisitor {
 	public String visit(NegativeLiteral negativeLiteral);
 
 	/**
-	 * @param constant
-	 *            numeric constant
-	 * @return the string representation of the numeric constant {@code constant}.
-	 */
-	public String visit(NumericConstant constant);
-
-	/**
 	 * @param query
 	 * @return the string representation of the query {@code query}.
 	 */
 	public String visit(Query query);
-
-	/**
-	 * @param predicate
-	 * @return the string representation of the predicate {@code predicate}.
-	 */
-	public String visit(RolePredicate predicate);
 
 	/**
 	 * @param rule
@@ -91,20 +51,7 @@ public interface FormatVisitor {
 	 */
 	public String visit(Rule rule);
 
-	/**
-	 * @param constant
-	 *            literal constant
-	 * @return the string representation of the rule constant {@code constant}.
-	 */
-	public String visit(RuleConstant constant);
-
-	/**
-	 * @param predicate
-	 * @return the string representation of the predicate {@code predicate}.
-	 */
-	public String visit(RulePredicate predicate);
-
-	public String visit(Symbolic symbolic);
+	public String visit(Symbol symbolic);
 
 	/**
 	 * @param variable

@@ -1,13 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.concrete.IndividualConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.LiteralConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.NumericConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.RuleConstant;
-import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.RolePredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
 
 /**
  * A model visitor (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>} ) to support different model operations.
@@ -19,21 +12,11 @@ import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
  */
 public interface ModelVisitor {
 
-	public Predicate visit(ConceptPredicate pred);
+	public Constant visit(Constant constant);
 
-	public Constant visit(IndividualConstant constant);
+	public HybridPredicate visit(HybridPredicate hybridPredicate);
 
-	public Constant visit(LiteralConstant constant);
-
-	public Predicate visit(MetaPredicate predicate);
-
-	public Constant visit(NumericConstant constant);
-
-	public Predicate visit(RolePredicate pred);
-
-	public Constant visit(RuleConstant constant);
-
-	public Predicate visit(RulePredicate pred);
+	public HybridPredicate visit(MetaPredicate predicate);
 
 	public Variable visit(Variable variable);
 

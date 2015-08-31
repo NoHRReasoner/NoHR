@@ -4,10 +4,10 @@ import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
 import pt.unl.fct.di.centria.nohr.model.DefaultModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 
 /**
- * A {@link ModelVisitor} that replace each {@link Predicate} appearing at each model element by the correspondent {@link MetaPredicate} of a
+ * A {@link ModelVisitor} that replace each {@link HybridPredicate} appearing at each model element by the correspondent {@link MetaPredicate} of a
  * specified {@link PredicateType}. Each predicate is replaced by a meta-predicate of the specified type, referring that predicate. Each
  * meta-predicate is replaced by a new meta-predicate of the specified type, referring the predicate that such meta-predicate refer.
  *
@@ -21,7 +21,7 @@ public class PredicateTypeVisitor extends DefaultModelVisitor {
 	private final PredicateType predicateType;
 
 	/**
-	 * Constructs a {@link ModelVisitor} that replace all the {@link Predicate}s appearing at each model element by the correspondent
+	 * Constructs a {@link ModelVisitor} that replace all the {@link HybridPredicate}s appearing at each model element by the correspondent
 	 * {@link MetaPredicate}s of a specified {@link PredicateType}.
 	 *
 	 * @param predicateType
@@ -41,23 +41,13 @@ public class PredicateTypeVisitor extends DefaultModelVisitor {
 	}
 
 	@Override
-	public Predicate visit(ConceptPredicate pred) {
-		return pred(pred.getConcept(), predicateType);
+	public HybridPredicate visit(HybridPredicate pred) {
+		return pred(pred, predicateType);
 	}
 
 	@Override
-	public Predicate visit(MetaPredicate pred) {
+	public HybridPredicate visit(MetaPredicate pred) {
 		return pred(pred.getPredicate(), predicateType);
-	}
-
-	@Override
-	public Predicate visit(RolePredicate pred) {
-		return pred(pred.getRole(), predicateType);
-	}
-
-	@Override
-	public Predicate visit(RulePredicate pred) {
-		return pred(pred.getSymbol(), pred.getArity(), predicateType);
 	}
 
 }

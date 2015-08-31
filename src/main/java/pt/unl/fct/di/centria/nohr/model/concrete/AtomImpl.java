@@ -10,10 +10,9 @@ import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link Atom}
@@ -30,7 +29,7 @@ public class AtomImpl implements Atom {
 	/**
 	 * The functor predicate.
 	 */
-	private final Predicate predicate;
+	private final HybridPredicate predicate;
 
 	/**
 	 * Constructs an atom with a specified predicate as functor and list of terms as arguments.
@@ -42,7 +41,7 @@ public class AtomImpl implements Atom {
 	 * @throws IllegalArgumentException
 	 *             if the size of {@code arguments} is different from the predicate arity.
 	 */
-	AtomImpl(Predicate predicate, List<Term> arguments) {
+	AtomImpl(HybridPredicate predicate, List<Term> arguments) {
 		Objects.requireNonNull(predicate);
 		if (arguments == null && predicate.getArity() > 0)
 			throw new IllegalArgumentException("arguments must have a size equal to the predicate arity");
@@ -60,20 +59,13 @@ public class AtomImpl implements Atom {
 
 	@Override
 	public Atom accept(ModelVisitor visitor) {
-		final Predicate pred = predicate.accept(visitor);
+		final HybridPredicate pred = predicate.accept(visitor);
 		final List<Term> args = new LinkedList<Term>();
 		if (arguments == null)
 			return new AtomImpl(pred, null);
 		for (final Term term : arguments)
 			args.add(term.accept(visitor));
 		return new AtomImpl(pred, args);
-	}
-
-	@Override
-	public void accept(Visitor visitor) {
-		predicate.accept(visitor);
-		for (final Term term : arguments)
-			term.accept(visitor);
 	}
 
 	@Override
@@ -142,7 +134,7 @@ public class AtomImpl implements Atom {
 	}
 
 	@Override
-	public Predicate getFunctor() {
+	public HybridPredicate getFunctor() {
 		return predicate;
 	}
 

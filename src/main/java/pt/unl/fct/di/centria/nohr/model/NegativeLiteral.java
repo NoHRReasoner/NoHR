@@ -5,7 +5,7 @@ package pt.unl.fct.di.centria.nohr.model;
  * <i>1&le;i&le;n</i> terms and <i><b>not</b></i> the default negation operator.
  *
  * @author Nuno Costa
- * @see Predicate
+ * @see HybridPredicate
  * @see Term
  * @see Literal
  */

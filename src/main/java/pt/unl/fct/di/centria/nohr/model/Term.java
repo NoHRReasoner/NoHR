@@ -8,7 +8,7 @@ package pt.unl.fct.di.centria.nohr.model;
  * @see ListTerm
  * @author Nuno Costa
  */
-public interface Term extends Symbolic {
+public interface Term extends Symbol {
 
 	@Override
 	Term accept(ModelVisitor visitor);

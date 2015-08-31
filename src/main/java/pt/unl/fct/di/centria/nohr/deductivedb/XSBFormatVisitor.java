@@ -10,7 +10,7 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Symbolic;
+import pt.unl.fct.di.centria.nohr.model.Symbol;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.concrete.Model;
 
@@ -62,7 +62,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 	}
 
 	@Override
-	public String visit(Symbolic symbolic) {
+	public String visit(Symbol symbolic) {
 		return quoted(symbolic.getSymbol());
 	}
 

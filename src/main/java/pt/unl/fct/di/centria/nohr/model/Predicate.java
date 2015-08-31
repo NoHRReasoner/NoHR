@@ -1,17 +1,12 @@
+/**
+ *
+ */
 package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
-
 /**
- * Represents a predicate. Can be a rule predicate or represent a concept, a role or a meta-predicate (see {@link MetaPredicate}) in the translation
- * of an ontology.
- *
  * @author Nuno Costa
  */
-public interface Predicate extends Symbolic {
-
-	@Override
-	Predicate accept(ModelVisitor visitor);
+public interface Predicate extends Symbol {
 
 	/**
 	 * Returns the arity of this predicate.

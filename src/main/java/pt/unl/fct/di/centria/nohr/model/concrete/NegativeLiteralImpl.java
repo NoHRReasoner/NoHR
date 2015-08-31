@@ -8,10 +8,9 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link NegativeLiteral}.
@@ -47,11 +46,6 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 	@Override
 	public NegativeLiteral accept(ModelVisitor visitor) {
 		return new NegativeLiteralImpl(atom.accept(visitor));
-	}
-
-	@Override
-	public void accept(Visitor visitor) {
-		atom.accept(visitor);
 	}
 
 	@Override
@@ -92,7 +86,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 	}
 
 	@Override
-	public Predicate getFunctor() {
+	public HybridPredicate getFunctor() {
 		return atom.getFunctor();
 	}
 

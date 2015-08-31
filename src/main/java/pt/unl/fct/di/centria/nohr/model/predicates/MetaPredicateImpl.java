@@ -5,10 +5,12 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 
 import java.util.Objects;
 
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLProperty;
+
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 
 /**
  * Implementation of {@link MetaPredicate}}.
@@ -18,7 +20,7 @@ import pt.unl.fct.di.centria.nohr.model.Visitor;
 public class MetaPredicateImpl implements MetaPredicate {
 
 	/** The predicate that this meta-predicate refers. */
-	protected final Predicate predicate;
+	protected final HybridPredicate predicate;
 
 	/** The type of this meta-predicate. */
 	protected final PredicateType type;
@@ -34,12 +36,12 @@ public class MetaPredicateImpl implements MetaPredicate {
 	 * @throws IllegalArgumentException
 	 *             if {@code predicate} is a meta-predicate; or {@code type} is an quantification type and {@code predicate} doesn't represent a role.
 	 */
-	MetaPredicateImpl(Predicate predicate, PredicateType type) {
+	MetaPredicateImpl(HybridPredicate predicate, PredicateType type) {
 		Objects.requireNonNull(predicate);
 		Objects.requireNonNull(type);
 		if (predicate instanceof MetaPredicate)
 			throw new IllegalArgumentException("predicate: shouldn't be a meta-predicate");
-		if (type.isQuantification() && !(predicate instanceof RolePredicate))
+		if (type.isQuantification() && !predicate.isRole())
 			throw new IllegalArgumentException("type: can't be the quantification type " + type.name());
 		this.predicate = predicate;
 		this.type = type;
@@ -56,8 +58,13 @@ public class MetaPredicateImpl implements MetaPredicate {
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
-		predicate.accept(visitor);
+	public OWLClass asConcept() {
+		return predicate.asConcept();
+	}
+
+	@Override
+	public OWLProperty<?, ?> asRole() {
+		return predicate.asRole();
 	}
 
 	@Override
@@ -84,7 +91,7 @@ public class MetaPredicateImpl implements MetaPredicate {
 	}
 
 	@Override
-	public Predicate getPredicate() {
+	public HybridPredicate getPredicate() {
 		return predicate;
 	}
 
@@ -115,6 +122,16 @@ public class MetaPredicateImpl implements MetaPredicate {
 	@Override
 	public boolean hasType(PredicateType type) {
 		return type == this.type;
+	}
+
+	@Override
+	public boolean isConcept() {
+		return predicate.isConcept();
+	}
+
+	@Override
+	public boolean isRole() {
+		return predicate.isRole();
 	}
 
 	@Override

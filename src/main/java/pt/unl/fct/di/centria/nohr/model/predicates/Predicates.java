@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
 
@@ -38,7 +38,7 @@ public class Predicates {
 	 *            specifies whether the meta-predicate is of a double type.
 	 * @return the domain meta-predicate <i>DP</i>, if {@code doub} is true; the double domain meta-predicate, <i>DP<sup>d</sup></i>, otherwise.
 	 */
-	public static Predicate domPred(OWLPropertyExpression<?, ?> role, boolean doub) {
+	public static HybridPredicate domPred(OWLPropertyExpression<?, ?> role, boolean doub) {
 		if (doub)
 			return pred(role, DOUBLE_DOMAIN);
 		else
@@ -52,7 +52,7 @@ public class Predicates {
 	 *            the role <i>P</i>.
 	 * @return the meta-predicate <i>DP<sup>d</sup></i>.
 	 */
-	public static Predicate doubDomPred(OWLPropertyExpression<?, ?> role) {
+	public static HybridPredicate doubDomPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, DOUBLE_DOMAIN);
 	}
 
@@ -63,7 +63,7 @@ public class Predicates {
 	 *            the concept <i>A</i>.
 	 * @return the double meta-predicate <i>A<sup>d</sup></i>.
 	 */
-	public static Predicate doubPred(OWLClass concept) {
+	public static HybridPredicate doubPred(OWLClass concept) {
 		return pred(concept, DOUBLE);
 	}
 
@@ -74,7 +74,7 @@ public class Predicates {
 	 *            a role <i>P</i>.
 	 * @return the meta-predicate <i>P<sup>d</sup></i>.
 	 */
-	public static Predicate doubPred(OWLPropertyExpression<?, ?> role) {
+	public static HybridPredicate doubPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, DOUBLE);
 	}
 
@@ -87,7 +87,7 @@ public class Predicates {
 	 *            the arity, <i>n</i>, of the predicate that {@code symbol} represents.
 	 * @return the double meta-predicate <i>S<sup>d</sup>/n</i>.
 	 */
-	public static Predicate doubPred(String symbol, int arity) {
+	public static HybridPredicate doubPred(String symbol, int arity) {
 		return pred(symbol, arity, DOUBLE);
 	}
 
@@ -98,7 +98,7 @@ public class Predicates {
 	 *            a role, <i>P</i>.
 	 * @return the double range meta-predicate <i>DP<sup>d</sup></i>.
 	 */
-	public static Predicate doubRanPred(OWLPropertyExpression<?, ?> role) {
+	public static HybridPredicate doubRanPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, DOUBLED_RANGE);
 	}
 
@@ -109,7 +109,7 @@ public class Predicates {
 	 *            a concept <i>A<i>.
 	 * @return a negative meta-predicate <i>NA</i>.
 	 */
-	public static Predicate negPred(OWLClass concept) {
+	public static HybridPredicate negPred(OWLClass concept) {
 		return pred(concept, NEGATIVE);
 	}
 
@@ -120,7 +120,7 @@ public class Predicates {
 	 *            a role <i>P</i>.
 	 * @return the negative meta-predicate <i>NP</i>.
 	 */
-	public static Predicate negPred(OWLPropertyExpression<?, ?> role) {
+	public static HybridPredicate negPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, NEGATIVE);
 	}
 
@@ -131,8 +131,8 @@ public class Predicates {
 	 *            a predicate <i>P</i> or a meta-predicate <i>NP</i>, <i>DP</i>, <i>RP</i>, <i>DP<sup>d</sup></i> or <i>RP<sup>d</sup></i>.
 	 * @return the meta-predicate <i>NP</i>.
 	 */
-	public static Predicate negPred(Predicate predicate) {
-		Predicate pred = predicate;
+	public static HybridPredicate negPred(HybridPredicate predicate) {
+		HybridPredicate pred = predicate;
 		if (predicate instanceof MetaPredicate)
 			pred = ((MetaPredicate) predicate).getPredicate();
 		return new MetaPredicateImpl(pred, NEGATIVE);
@@ -147,7 +147,7 @@ public class Predicates {
 	 *            the arity, <i>n</i>, of the predicate that {@code symbol} represents.
 	 * @return the negative meta-predicate <i>NS/n</i>.
 	 */
-	public static Predicate negPred(String symbol, int arity) {
+	public static HybridPredicate negPred(String symbol, int arity) {
 		return pred(symbol, arity, NEGATIVE);
 	}
 
@@ -158,7 +158,7 @@ public class Predicates {
 	 *            a role <i>P</i>.
 	 * @return the original domain meta-predicate <i>DP</i>.
 	 */
-	public static Predicate origDomPred(OWLPropertyExpression<?, ?> role) {
+	public static HybridPredicate origDomPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, ORIGINAL_DOMAIN);
 	}
 
@@ -169,7 +169,7 @@ public class Predicates {
 	 *            a concept <i>A</i>.
 	 * @return the original meta-predicate <i>A</i>.
 	 */
-	public static Predicate origPred(OWLClass concept) {
+	public static HybridPredicate origPred(OWLClass concept) {
 		return pred(concept, ORIGINAL);
 	}
 
@@ -180,7 +180,7 @@ public class Predicates {
 	 *            a role <i>P</i>.
 	 * @return the original meta-predicate <i>P</i>.
 	 */
-	public static Predicate origPred(OWLPropertyExpression<?, ?> role) {
+	public static HybridPredicate origPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, ORIGINAL);
 	}
 
@@ -193,7 +193,7 @@ public class Predicates {
 	 *            the arity, <i>n</i> of the predicate that {@code symbol} represents.
 	 * @return the original meta-predicate <i>S</i>.
 	 */
-	public static Predicate origPred(String symbol, int arity) {
+	public static HybridPredicate origPred(String symbol, int arity) {
 		return pred(symbol, arity, ORIGINAL);
 	}
 
@@ -204,7 +204,7 @@ public class Predicates {
 	 *            a role <i>P</i>.
 	 * @return the range original meta-predicate <i>RP</i>.
 	 */
-	public static Predicate origRanPred(OWLPropertyExpression<?, ?> role) {
+	public static HybridPredicate origRanPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, ORIGINAL_RANGE);
 	}
 
@@ -215,7 +215,7 @@ public class Predicates {
 	 *            a concept.
 	 * @return the predicate representing {@code concept}.
 	 */
-	public static Predicate pred(OWLClass concept) {
+	public static HybridPredicate pred(OWLClass concept) {
 		return new ConceptPredicateImpl(concept);
 	}
 
@@ -228,7 +228,7 @@ public class Predicates {
 	 *            specifies whether the meta-predicate is of a double type.
 	 * @return <i>A<sup>d</sup></i> if {@code doub} is true; <i>A</i>, otherwise.
 	 */
-	public static Predicate pred(OWLClass concept, boolean doub) {
+	public static HybridPredicate pred(OWLClass concept, boolean doub) {
 		if (doub)
 			return pred(concept, DOUBLE);
 		else
@@ -260,7 +260,7 @@ public class Predicates {
 	 *            a role.
 	 * @return the predicate representing {@code role}.
 	 */
-	public static Predicate pred(OWLPropertyExpression<?, ?> role) {
+	public static HybridPredicate pred(OWLPropertyExpression<?, ?> role) {
 		return new RolePredicateImpl(DLUtils.atomic(role));
 	}
 
@@ -273,7 +273,7 @@ public class Predicates {
 	 *            specified whether the meta-predicate if of a double type.
 	 * @return <i>P<sup>d</sup></i> if {@code doub} is true; <i>P</i>, otherwise.
 	 */
-	public static Predicate pred(OWLPropertyExpression<?, ?> role, boolean doub) {
+	public static HybridPredicate pred(OWLPropertyExpression<?, ?> role, boolean doub) {
 		if (doub)
 			return pred(role, DOUBLE);
 		else
@@ -295,7 +295,7 @@ public class Predicates {
 	 *         <i>DP<sup>d</sup></i> if {@code type} is {@link PredicateType#DOUBLE_DOMAIN double domain}; <br>
 	 *         <i>RP<sup>d</sup></i> if {@code type} is {@link PredicateType#DOUBLED_RANGE double range}.
 	 */
-	static Predicate pred(OWLPropertyExpression<?, ?> role, PredicateType type) {
+	static HybridPredicate pred(OWLPropertyExpression<?, ?> role, PredicateType type) {
 		return new MetaPredicateImpl(new RolePredicateImpl(DLUtils.atomic(role)), type);
 	}
 
@@ -308,7 +308,7 @@ public class Predicates {
 	 *            the type of the meta-predicate.
 	 * @return a meta-predicate referring {@code predicate} with type {@code type}.
 	 */
-	static MetaPredicate pred(Predicate predicate, PredicateType type) {
+	static MetaPredicate pred(HybridPredicate predicate, PredicateType type) {
 		return new MetaPredicateImpl(predicate, type);
 	}
 
@@ -321,7 +321,7 @@ public class Predicates {
 	 *            the arity, <i>n</i> of the predicate.
 	 * @return a predicate, <i>S/n</i> with symbol {@symbol} and arity {@code arity}.
 	 */
-	public static Predicate pred(String symbol, int arity) {
+	public static HybridPredicate pred(String symbol, int arity) {
 		return new RulePredicateImpl(symbol, arity);
 	}
 
@@ -336,7 +336,7 @@ public class Predicates {
 	 *            specifies whether the meta-predicate is of a double type.
 	 * @return the double meta-predicate <i>S/n</i> if {@code doub} is true; the original meta-predicate <i>S<sup>d</sup>/n</i>, otherwise.
 	 */
-	public static Predicate pred(String symbol, int arity, boolean doub) {
+	public static HybridPredicate pred(String symbol, int arity, boolean doub) {
 		if (doub)
 			return pred(symbol, arity, DOUBLE);
 		else
@@ -358,7 +358,7 @@ public class Predicates {
 	 *         <i>NS/n</i>, if {@code type} is {@link PredicateType#NEGATIVE negative}.
 	 * @throw IllegalArgumentException if {@code type.} {@link PredicateType#isQuantification() isQuantification()} is true.
 	 */
-	static Predicate pred(String symbol, int arity, PredicateType type) {
+	static HybridPredicate pred(String symbol, int arity, PredicateType type) {
 		return new MetaPredicateImpl(pred(symbol, arity), type);
 	}
 
@@ -378,16 +378,16 @@ public class Predicates {
 	 *         the predicate represented by {@code symbol} with arity {@code arity}, otherwise.
 	 */
 
-	public static Predicate pred(String symbol, int arity, VocabularyMapping vocabularyMapping) {
+	public static HybridPredicate pred(String symbol, int arity, VocabularyMapping vocabularyMapping) {
 		if (vocabularyMapping == null)
 			return pred(symbol, arity);
 		if (arity == 1) {
-			final Predicate concept = vocabularyMapping.getConcept(symbol);
+			final HybridPredicate concept = vocabularyMapping.getConcept(symbol);
 			if (concept != null)
 				return concept;
 		}
 		if (arity == 2) {
-			final Predicate role = vocabularyMapping.getRole(symbol);
+			final HybridPredicate role = vocabularyMapping.getRole(symbol);
 			if (role != null)
 				return role;
 		}
@@ -403,7 +403,7 @@ public class Predicates {
 	 *            specifies whether this role is of a double type.
 	 * @return <i>RP<sup>d</sup></i> if {@code doub} is true; <i>RP</i>, otherwise.
 	 */
-	public static Predicate ranPred(OWLPropertyExpression<?, ?> role, boolean doub) {
+	public static HybridPredicate ranPred(OWLPropertyExpression<?, ?> role, boolean doub) {
 		if (doub)
 			return pred(role, DOUBLED_RANGE);
 		else

@@ -2,17 +2,19 @@ package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import java.util.Objects;
 
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
+
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of a numeric {@link Constant}.
  *
  * @author Nuno Costa
  */
-public class NumericConstantImpl implements NumericConstant {
+public class NumericConstantImpl implements Constant {
 
 	/** The number that this constant represents */
 	private final Number number;
@@ -50,8 +52,18 @@ public class NumericConstantImpl implements NumericConstant {
 	}
 
 	@Override
-	public void accept(Visitor visit) {
-		visit.visit(this);
+	public OWLIndividual asIndividual() {
+		throw new ClassCastException();
+	}
+
+	@Override
+	public OWLLiteral asLiteral() {
+		throw new ClassCastException();
+	}
+
+	@Override
+	public Number asNumber() {
+		return number;
 	}
 
 	@Override
@@ -69,11 +81,6 @@ public class NumericConstantImpl implements NumericConstant {
 	}
 
 	@Override
-	public Number getNumber() {
-		return number;
-	}
-
-	@Override
 	public String getSymbol() {
 		return String.valueOf(number);
 	}
@@ -81,6 +88,21 @@ public class NumericConstantImpl implements NumericConstant {
 	@Override
 	public int hashCode() {
 		return number.hashCode();
+	}
+
+	@Override
+	public boolean isIndividual() {
+		return false;
+	}
+
+	@Override
+	public boolean isLiteral() {
+		return false;
+	}
+
+	@Override
+	public boolean isNumber() {
+		return true;
 	}
 
 	@Override

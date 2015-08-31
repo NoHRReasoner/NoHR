@@ -24,7 +24,7 @@ import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
@@ -47,8 +47,8 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i>NP</i>(t<sub>1</sub>, ..., t<sub>n</sub>)</i>.
 	 */
 	Atom negTr(Literal b) {
-		final Predicate pred0 = b.getFunctor();
-		final Predicate pred = negPred(pred0);
+		final HybridPredicate pred0 = b.getFunctor();
+		final HybridPredicate pred = negPred(pred0);
 		return atom(pred, b.getAtom().getArguments());
 	}
 
@@ -62,7 +62,7 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i>NA(x)</i>.
 	 */
 	Atom negTr(OWLClass a, Variable x) {
-		final Predicate pred = negPred(a);
+		final HybridPredicate pred = negPred(a);
 		return atom(pred, x);
 	}
 
@@ -78,7 +78,7 @@ public class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i>NR(x, y)</i>
 	 */
 	Atom negTr(OWLProperty<?, ?> r, Variable x, Variable y) {
-		final Predicate pred = negPred(r);
+		final HybridPredicate pred = negPred(r);
 		return atom(pred, x, y);
 	}
 

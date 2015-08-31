@@ -9,7 +9,7 @@ import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.VocabularyMapping;
 
 /**
@@ -42,7 +42,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	}
 
 	@Override
-	protected String failRule(Predicate pred) {
+	protected String failRule(HybridPredicate pred) {
 		return rule(atom(pred), atom("fail")).accept(formatVisitor);
 	}
 
@@ -64,7 +64,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	}
 
 	@Override
-	protected String tableDirective(Predicate pred) {
+	protected String tableDirective(HybridPredicate pred) {
 		return ":- table " + pred.accept(formatVisitor) + "/" + pred.getArity() + " as subsumptive.";
 	}
 

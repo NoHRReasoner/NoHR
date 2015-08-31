@@ -6,12 +6,12 @@ package pt.unl.fct.di.centria.nohr.model.concrete;
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Ontology individual {@link Constant} implementation.
@@ -19,7 +19,7 @@ import pt.unl.fct.di.centria.nohr.model.Visitor;
  * @see Term
  * @author nunocosta
  */
-public class IndividualConstantImpl implements IndividualConstant {
+public class IndividualConstantImpl implements Constant {
 
 	/** The ontology individual. */
 	private final OWLIndividual individual;
@@ -46,8 +46,18 @@ public class IndividualConstantImpl implements IndividualConstant {
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
-		visitor.visit(this);
+	public OWLIndividual asIndividual() {
+		return individual;
+	}
+
+	@Override
+	public OWLLiteral asLiteral() {
+		throw new ClassCastException();
+	}
+
+	@Override
+	public Number asNumber() {
+		throw new ClassCastException();
 	}
 
 	@Override
@@ -68,11 +78,6 @@ public class IndividualConstantImpl implements IndividualConstant {
 	}
 
 	@Override
-	public OWLIndividual getOWLIndividual() {
-		return individual;
-	}
-
-	@Override
 	public String getSymbol() {
 		if (individual.isNamed())
 			return individual.asOWLNamedIndividual().getIRI().toQuotedString();
@@ -86,6 +91,21 @@ public class IndividualConstantImpl implements IndividualConstant {
 		int result = 1;
 		result = prime * result + (individual == null ? 0 : toString().hashCode());
 		return result;
+	}
+
+	@Override
+	public boolean isIndividual() {
+		return true;
+	}
+
+	@Override
+	public boolean isLiteral() {
+		return false;
+	}
+
+	@Override
+	public boolean isNumber() {
+		return false;
 	}
 
 	@Override

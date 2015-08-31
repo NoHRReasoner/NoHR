@@ -5,19 +5,19 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 
 import java.util.Objects;
 
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 
 /**
- * Implementation of a {@link Predicate} representing a role.
+ * Implementation of a {@link HybridPredicate} representing a role.
  *
  * @author Nuno Costa
  */
-public class RolePredicateImpl implements RolePredicate {
+public class RolePredicateImpl implements HybridPredicate {
 
 	/** The role represented by this predicate. */
 	private final OWLProperty<?, ?> role;
@@ -48,13 +48,18 @@ public class RolePredicateImpl implements RolePredicate {
 	}
 
 	@Override
-	public Predicate accept(ModelVisitor visitor) {
+	public HybridPredicate accept(ModelVisitor visitor) {
 		return visitor.visit(this);
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
-		visitor.visit(this);
+	public OWLClass asConcept() {
+		throw new ClassCastException();
+	}
+
+	@Override
+	public OWLProperty<?, ?> asRole() {
+		return role;
 	}
 
 	/*
@@ -86,16 +91,6 @@ public class RolePredicateImpl implements RolePredicate {
 		return 2;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#asRole()
-	 */
-	@Override
-	public OWLProperty<?, ?> getRole() {
-		return role;
-	}
-
 	@Override
 	public String getSignature() {
 		return getSymbol() + "/" + getArity();
@@ -117,6 +112,16 @@ public class RolePredicateImpl implements RolePredicate {
 		int result = 1;
 		result = prime * result + role.getIRI().hashCode();
 		return result;
+	}
+
+	@Override
+	public boolean isConcept() {
+		return false;
+	}
+
+	@Override
+	public boolean isRole() {
+		return true;
 	}
 
 	/*

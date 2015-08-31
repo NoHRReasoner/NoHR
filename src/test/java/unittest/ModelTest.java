@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 
@@ -55,8 +55,8 @@ public class ModelTest {
 
 	@Test
 	public final void test() {
-		final Predicate pred1 = pred("a", 1);
-		final Predicate pred2 = pred("a", 1);
+		final HybridPredicate pred1 = pred("a", 1);
+		final HybridPredicate pred2 = pred("a", 1);
 		assertTrue("predicates hashCode", pred1.hashCode() == pred2.hashCode());
 		assertTrue("predicates equals", pred1.equals(pred2));
 		final Term cons1 = cons("a");

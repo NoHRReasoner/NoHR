@@ -12,8 +12,6 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.concrete.IndividualConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.LiteralConstant;
 
 /**
  * A {@link TableModel} for {@link Answer answers}.
@@ -73,10 +71,10 @@ public class AnswersTableModel extends AbstractTableModel {
 		final Term term = answers.get(rowIndex).getValues().get(columnIndex);
 		if (term instanceof Constant) {
 			final Constant constant = (Constant) term;
-			if (constant instanceof IndividualConstant)
-				return ((IndividualConstant) constant).getOWLIndividual();
-			else if (constant instanceof LiteralConstant)
-				return ((LiteralConstant) constant).getOWLLiteral();
+			if (constant.isIndividual())
+				return constant.asIndividual();
+			else if (constant.isLiteral())
+				return constant.asLiteral();
 			else
 				return constant;
 		}

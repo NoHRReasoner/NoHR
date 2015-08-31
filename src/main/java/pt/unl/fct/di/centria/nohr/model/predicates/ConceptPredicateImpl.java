@@ -6,17 +6,18 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLProperty;
+
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 
 /**
- * Implementation of a {@link Predicate} representing a concept.
+ * Implementation of a {@link HybridPredicate} representing a concept.
  *
  * @author Nuno Costa
  */
-public class ConceptPredicateImpl implements ConceptPredicate {
+public class ConceptPredicateImpl implements HybridPredicate {
 
 	/** The concept represented by this predicate. */
 	private final OWLClass concept;
@@ -42,13 +43,18 @@ public class ConceptPredicateImpl implements ConceptPredicate {
 	}
 
 	@Override
-	public Predicate accept(ModelVisitor visitor) {
+	public HybridPredicate accept(ModelVisitor visitor) {
 		return visitor.visit(this);
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
-		visitor.visit(this);
+	public OWLClass asConcept() {
+		return concept;
+	}
+
+	@Override
+	public OWLProperty<?, ?> asRole() {
+		throw new ClassCastException();
 	}
 
 	@Override
@@ -71,11 +77,6 @@ public class ConceptPredicateImpl implements ConceptPredicate {
 	}
 
 	@Override
-	public OWLClass getConcept() {
-		return concept;
-	}
-
-	@Override
 	public String getSignature() {
 		return getSymbol() + "/" + getArity();
 	}
@@ -91,6 +92,16 @@ public class ConceptPredicateImpl implements ConceptPredicate {
 		int result = 1;
 		result = prime * result + concept.getIRI().hashCode();
 		return result;
+	}
+
+	@Override
+	public boolean isConcept() {
+		return true;
+	}
+
+	@Override
+	public boolean isRole() {
+		return false;
 	}
 
 	@Override

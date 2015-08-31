@@ -33,7 +33,7 @@ import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
@@ -164,25 +164,25 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	 * The multiset of predicates that are functor of atoms that occur in heads of non fact (i.e. with non empty body) rules, where the multiplicity
 	 * represent the number of {@link Rule rules} of the loaded programs where that predicates occurs in such position.
 	 */
-	private final Multiset<Predicate> headFunctors;
+	private final Multiset<HybridPredicate> headFunctors;
 
 	/**
 	 * The multiset of predicates that are functor of atoms that occur in facts, where the multiplicity represents the number of {@link Rule rules} of
 	 * the loaded {@link DatabaseProgram programs} where that predicates occurs in such position.
 	 */
-	private final Multiset<Predicate> factFunctors;
+	private final Multiset<HybridPredicate> factFunctors;
 
 	/**
 	 * The multiset of predicates that are functor of atoms that occur in positive bodies (see {@link Rule#getPositiveBody()}), where the multiplicity
 	 * represents the number of {@link Rule rules} of the loaded {@link DatabaseProgram programs} where that predicates occurs in such position.
 	 */
-	private final Multiset<Predicate> positiveBodyFunctors;
+	private final Multiset<HybridPredicate> positiveBodyFunctors;
 
 	/**
 	 * The multiset of predicates that are functor of atoms that occur in negative bodies (see {@link Rule#getNegativeBody()} , where the multiplicity
 	 * represents the number of {@link Rule rules} of the loaded {@link Programs programs} where that predicates occur in such position.
 	 */
-	private final Multiset<Predicate> negativeBodyFunctors;
+	private final Multiset<HybridPredicate> negativeBodyFunctors;
 
 	/**
 	 * Constructs a {@link DeductiveDatabase} with the Prolog system located in a given directory as underlying Prolog engine.
@@ -248,19 +248,19 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	 *            a rule.
 	 */
 	private void addPredicates(Rule rule) {
-		final Predicate headFunctor = rule.getHead().getFunctor();
+		final HybridPredicate headFunctor = rule.getHead().getFunctor();
 		arities.add(headFunctor.getArity());
 		if (rule.isFact())
 			factFunctors.add(headFunctor);
 		else {
 			headFunctors.add(headFunctor);
 			for (final Literal literal : rule.getPositiveBody()) {
-				final Predicate pred = literal.getFunctor();
+				final HybridPredicate pred = literal.getFunctor();
 				arities.add(pred.getArity());
 				positiveBodyFunctors.add(pred);
 			}
 			for (final Literal literal : rule.getNegativeBody()) {
-				final Predicate pred = literal.getFunctor();
+				final HybridPredicate pred = literal.getFunctor();
 				arities.add(pred.getArity());
 				negativeBodyFunctors.add(pred);
 			}
@@ -437,7 +437,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	 *            the predicate.
 	 * @return the string representation of the fail rule for {@code pred}.
 	 */
-	protected abstract String failRule(Predicate pred);
+	protected abstract String failRule(HybridPredicate pred);
 
 	@Override
 	protected void finalize() throws Throwable {
@@ -483,19 +483,19 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	 *            a rule.
 	 */
 	private void removePredicates(Rule rule) {
-		final Predicate headFunctor = rule.getHead().getFunctor();
+		final HybridPredicate headFunctor = rule.getHead().getFunctor();
 		arities.add(headFunctor.getArity());
 		if (rule.isFact())
 			factFunctors.remove(headFunctor);
 		else {
 			headFunctors.remove(headFunctor);
 			for (final Literal literal : rule.getPositiveBody()) {
-				final Predicate pred = literal.getFunctor();
+				final HybridPredicate pred = literal.getFunctor();
 				arities.remove(pred.getArity());
 				positiveBodyFunctors.remove(pred);
 			}
 			for (final Literal literal : rule.getNegativeBody()) {
-				final Predicate pred = literal.getFunctor();
+				final HybridPredicate pred = literal.getFunctor();
 				arities.add(pred.getArity());
 				negativeBodyFunctors.remove(pred);
 			}
@@ -534,7 +534,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	 *            the predicate.
 	 * @return the table directive for {@code predicate}.
 	 */
-	abstract protected String tableDirective(Predicate predicate);
+	abstract protected String tableDirective(HybridPredicate predicate);
 
 	/**
 	 * Try to create a {@link PrologEngine} interrupting the creation and throwing an {@link PrologEngineCreationException} after the time specified
@@ -584,16 +584,16 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	protected void write() throws IOException {
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		writer.newLine();
-		for (final Predicate predicate : headFunctors)
+		for (final HybridPredicate predicate : headFunctors)
 			if (positiveBodyFunctors.contains(predicate)) {
 				writer.write(tableDirective(predicate));
 				writer.newLine();
 			}
-		for (final Predicate predicate : negativeBodyFunctors) {
+		for (final HybridPredicate predicate : negativeBodyFunctors) {
 			writer.write(tableDirective(predicate));
 			writer.newLine();
 		}
-		for (final Predicate pred : negativeBodyFunctors)
+		for (final HybridPredicate pred : negativeBodyFunctors)
 			if (!factFunctors.contains(pred) && !headFunctors.contains(pred)) {
 				writer.write(failRule(pred));
 				writer.newLine();

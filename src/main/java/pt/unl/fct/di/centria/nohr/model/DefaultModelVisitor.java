@@ -3,19 +3,12 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
-import pt.unl.fct.di.centria.nohr.model.concrete.IndividualConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.LiteralConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.NumericConstant;
-import pt.unl.fct.di.centria.nohr.model.concrete.RuleConstant;
-import pt.unl.fct.di.centria.nohr.model.predicates.ConceptPredicate;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.RolePredicate;
-import pt.unl.fct.di.centria.nohr.model.predicates.RulePredicate;
 
 /**
  * An implementation of {@link ModelVisitor} that simply returns {@code element} in each {@code visit(E element)} method if {@code E} is an leaf type
- * (i.e. {@link Constant}, {@link Predicate}, or {@link Variable}}), and {@code element.accept(this)} otherwise. Extend this class if you want create
- * a {@link ModelVisitor} that manipulates that only some model types.
+ * (i.e. {@link Constant}, {@link HybridPredicate}, or {@link Variable}}), and {@code element.accept(this)} otherwise. Extend this class if you want
+ * create a {@link ModelVisitor} that manipulates that only some model types.
  *
  * @author Nuno Costa
  */
@@ -33,43 +26,18 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public Predicate visit(ConceptPredicate pred) {
-		return pred;
-	}
-
-	@Override
-	public Constant visit(IndividualConstant constant) {
+	public Constant visit(Constant constant) {
 		return constant;
 	}
 
 	@Override
-	public Constant visit(LiteralConstant constant) {
-		return constant;
+	public HybridPredicate visit(HybridPredicate hybridPredicate) {
+		return hybridPredicate;
 	}
 
 	@Override
-	public Predicate visit(MetaPredicate metaPredicate) {
+	public HybridPredicate visit(MetaPredicate metaPredicate) {
 		return metaPredicate.accept(this);
-	}
-
-	@Override
-	public Constant visit(NumericConstant constant) {
-		return constant;
-	}
-
-	@Override
-	public Predicate visit(RolePredicate pred) {
-		return pred;
-	}
-
-	@Override
-	public Constant visit(RuleConstant constant) {
-		return constant;
-	}
-
-	@Override
-	public Predicate visit(RulePredicate pred) {
-		return pred;
 	}
 
 	@Override

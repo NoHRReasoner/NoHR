@@ -17,7 +17,6 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of {@link Answer}.
@@ -74,12 +73,6 @@ public class AnswerImpl implements Answer {
 		for (final Term val : values)
 			vals.add(val.accept(visitor));
 		return new AnswerImpl(query, truthValue, vals);
-	}
-
-	@Override
-	public void accept(Visitor visitor) {
-		for (final Term val : values)
-			val.accept(visitor);
 	}
 
 	@Override

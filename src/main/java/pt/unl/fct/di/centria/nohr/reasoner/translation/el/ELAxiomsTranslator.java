@@ -27,7 +27,7 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.Predicates;
@@ -140,7 +140,7 @@ public abstract class ELAxiomsTranslator {
 	 *         <i>A(x)</i>, otherwise.
 	 */
 	protected Atom tr(OWLClass c, Variable x, boolean doub) {
-		final Predicate pred = Predicates.pred(c, doub);
+		final HybridPredicate pred = Predicates.pred(c, doub);
 		return atom(pred, x);
 	}
 
@@ -201,7 +201,7 @@ public abstract class ELAxiomsTranslator {
 	 *         <i>R(x, x<sub>1</sub></i>), otherwise.
 	 */
 	protected Atom tr(OWLProperty<?, ?> r, Variable x, Variable x1, boolean doub) {
-		final Predicate pred = Predicates.pred(r, doub);
+		final HybridPredicate pred = Predicates.pred(r, doub);
 		if (r instanceof OWLProperty)
 			return atom(pred, x, x1);
 		else

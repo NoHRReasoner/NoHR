@@ -1,16 +1,18 @@
 package pt.unl.fct.di.centria.nohr.model.concrete;
 
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
+
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.Visitor;
 
 /**
  * Implementation of rule {@link Constant}.
  *
  * @author Nuno Costa
  */
-public class RuleConstantImpl implements RuleConstant {
+public class RuleConstantImpl implements Constant {
 
 	/**
 	 * The symbol that represents this constant.
@@ -38,8 +40,18 @@ public class RuleConstantImpl implements RuleConstant {
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
-		visitor.visit(this);
+	public OWLIndividual asIndividual() {
+		throw new ClassCastException();
+	}
+
+	@Override
+	public OWLLiteral asLiteral() {
+		throw new ClassCastException();
+	}
+
+	@Override
+	public Number asNumber() {
+		throw new ClassCastException();
 	}
 
 	@Override
@@ -72,6 +84,21 @@ public class RuleConstantImpl implements RuleConstant {
 	@Override
 	public int hashCode() {
 		return symbol.hashCode();
+	}
+
+	@Override
+	public boolean isIndividual() {
+		return false;
+	}
+
+	@Override
+	public boolean isLiteral() {
+		return false;
+	}
+
+	@Override
+	public boolean isNumber() {
+		return false;
 	}
 
 	@Override
