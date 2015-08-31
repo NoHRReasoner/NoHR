@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.elk.reasoner.taxonomy.InvalidTaxonomyException;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -45,8 +47,8 @@ import org.semanticweb.owlapi.util.InferredClassAssertionAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLEntityGenerator;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**
@@ -70,7 +72,7 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 			final OWLClassExpression ce1 = axiom.getSubClass();
 			final OWLClassExpression ce2 = axiom.getSuperClass();
 			if (ce1.isAnonymous() && hasExistential(ce2)) {
-				final OWLClass anew = concetpsGenerator.generateNewConcept();
+				final OWLClass anew = vocabulary.generateNewConcept();
 				newAxioms.add(subsumption(ce1, anew));
 				newAxioms.add(subsumption(anew, ce2));
 				return true;
@@ -138,7 +140,7 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 				final Set<OWLClassExpression> normCe1Conj = new HashSet<OWLClassExpression>();
 				for (final OWLClassExpression ci : ce1Conj)
 					if (isExistential(ci)) {
-						final OWLClass anew = concetpsGenerator.generateNewConcept();
+						final OWLClass anew = vocabulary.generateNewConcept();
 						newAxioms.add(subsumption(ci, anew));
 						normCe1Conj.add(anew);
 						changed = true;
@@ -175,7 +177,7 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 				final Set<OWLClassExpression> normFillerConj = new HashSet<OWLClassExpression>();
 				for (final OWLClassExpression ci : fillerConj)
 					if (isExistential(ci)) {
-						final OWLClass anew = concetpsGenerator.generateNewConcept();
+						final OWLClass anew = vocabulary.generateNewConcept();
 						newAxioms.add(subsumption(ci, anew));
 						normFillerConj.add(anew);
 						changed = true;
@@ -263,9 +265,6 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	 */
 	private final OWLOntology closure;
 
-	/** The {@link OWLEntityGenerator} used to generate new concepts. */
-	private final OWLEntityGenerator concetpsGenerator;
-
 	/** Whether this {@link ELOntologyReduction reduction} has disjunctions. */
 	private final boolean hasDisjunctions;
 
@@ -275,6 +274,8 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	/** The set of role subsumptions <i>R &sqsube; S</i> in this {@link ELOntologyReduction reduction}. */
 	private final Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions;
 
+	private final Vocabulary vocabulary;
+
 	/**
 	 * Constructs the {@code ELOntologyReduction reduction} of a specified ontology.
 	 *
@@ -283,7 +284,9 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} has some concept that can't be reduced.
 	 */
-	public ELOntologyReductionImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
+	public ELOntologyReductionImpl(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
+		Objects.requireNonNull(ontology);
+		Objects.requireNonNull(vocabulary);
 		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
 		if (ignoreUnsupported == null || !ignoreUnsupported.equals("true")) {
 			@SuppressWarnings("unchecked")
@@ -293,7 +296,7 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 				throw new UnsupportedAxiomsException(unsupportedAxioms);
 		}
 		this.ontology = ontology;
-		concetpsGenerator = new OWLEntityGenerator(ontology);
+		this.vocabulary = vocabulary;
 		final Set<OWLClassAssertionAxiom> conceptAssertions = ontology.getAxioms(AxiomType.CLASS_ASSERTION);
 		final Set<OWLSubClassOfAxiom> conceptSubsumptions = conceptSubsumptions(ontology);
 		roleSubsumptions = roleSubsumptions(ontology);
@@ -374,7 +377,6 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 		final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, generators);
 		inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager(), ontology);
 		RuntimesLogger.stop("ontology classification", "loading");
-		// assert hasFraments(ontology);
 	}
 
 	/**
@@ -544,9 +546,9 @@ public class ELOntologyReductionImpl implements ELOntologyReduction {
 	 */
 	private OWLOntology norm(Set<OWLClassAssertionAxiom> conceptAssertions, Set<OWLSubClassOfAxiom> conceptSubsumptions,
 			Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions) {
-		final OWLOntologyManager om = ontology.getOWLOntologyManager();
+		final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
 		try {
-			final OWLOntology result = om.createOntology();
+			final OWLOntology result = om.createOntology(ontology.getOntologyID());
 			norm(conceptAssertions, new ConceptAssertionsNormalizer());
 			norm(conceptSubsumptions);
 			om.addAxioms(result, conceptAssertions);

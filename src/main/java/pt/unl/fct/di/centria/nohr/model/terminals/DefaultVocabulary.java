@@ -5,11 +5,13 @@ package pt.unl.fct.di.centria.nohr.model.terminals;
 
 import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -17,10 +19,10 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLException;
@@ -34,7 +36,6 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import pt.unl.fct.di.centria.nohr.HashMultiset;
 import pt.unl.fct.di.centria.nohr.model.Constant;
@@ -49,8 +50,17 @@ import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
  */
 public class DefaultVocabulary implements Vocabulary {
 
-	private final OWLAnnotationProperty LABEL_ANNOTATION = OWLManager.getOWLDataFactory()
-			.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+	/** The character that fills the {@link #filler} string */
+	private static final char FILLER_CHAR = '0';
+
+	/** The entities counter which ensures that the generated concepts and roles are different from each other */
+	private int counter;
+
+	/**
+	 * A string with a size greater than all the ontology's concepts and roles names sizes, in order to ensure that when prefixed to a new concept or
+	 * role name that name will be different from all ontology's concept and role names.
+	 */
+	private final String filler;
 
 	/** The {@link OWLOntologyChangeListener} that handles concepts, roles, or individual addition or remotion */
 	private final OWLOntologyChangeListener ontologyChangeListener;
@@ -70,7 +80,11 @@ public class DefaultVocabulary implements Vocabulary {
 	/** The mapping between symbols and the individuals that they represent. */
 	private final Map<String, Constant> individuals;
 
-	private final Map<OWLEntity, Predicate> predicates;
+	private final Map<OWLClass, Predicate> conceptPredicates;
+
+	private final Map<OWLProperty<?, ?>, Predicate> rolePredicates;
+
+	private final Map<Integer, Map<String, Predicate>> predicates;
 
 	private final Map<OWLIndividual, Constant> constants;
 
@@ -85,13 +99,23 @@ public class DefaultVocabulary implements Vocabulary {
 	 *            the set of ontologies.
 	 */
 	public DefaultVocabulary(final Set<OWLOntology> ontologies) {
+		Objects.requireNonNull(ontologies);
 		this.ontologies = ontologies;
 		references = new HashMultiset<>();
 		concepts = new HashMap<>();
 		roles = new HashMap<>();
 		individuals = new HashMap<>();
 		predicates = new HashMap<>();
+		conceptPredicates = new HashMap<>();
+		rolePredicates = new HashMap<>();
 		constants = new HashMap<>();
+		final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
+		register(dataFactory.getOWLThing());
+		register(dataFactory.getOWLNothing());
+		register(dataFactory.getOWLTopObjectProperty());
+		register(dataFactory.getOWLBottomObjectProperty());
+		register(dataFactory.getOWLTopDataProperty());
+		register(dataFactory.getOWLBottomDataProperty());
 		for (final OWLOntology ontology : ontologies) {
 			for (final OWLClass c : ontology.getClassesInSignature())
 				register(c);
@@ -153,50 +177,57 @@ public class DefaultVocabulary implements Vocabulary {
 		};
 		for (final OWLOntology ontology : ontologies)
 			ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
+		// generator
+		counter = 0;
+		int maxNameLength = 0;
+		for (final OWLOntology ontology : ontologies)
+			for (final OWLEntity entity : ontology.getSignature()) {
+				final int len = entity.getIRI().toURI().getFragment().length();
+				if (len > maxNameLength)
+					maxNameLength = len;
+			}
+		final char[] fillerChars = new char[maxNameLength];
+		Arrays.fill(fillerChars, FILLER_CHAR);
+		filler = new String(fillerChars);
 	}
 
-	/**
-	 * Creates a constant representing a specified number.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param n
-	 *            the number
-	 * @return the numeric constant representing {@code n}.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.Number)
 	 */
 	@Override
 	public Constant cons(Number n) {
 		return new NumericConstantImpl(n);
 	}
 
-	/**
-	 * Create a constant representing a specified OWL individual.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param individual
-	 *            the OWL individual
-	 * @return the constant representing {@code individual}.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(org.semanticweb.owlapi.model.OWLIndividual)
 	 */
 	@Override
 	public Constant cons(OWLIndividual individual) {
-		return new IndividualConstantImpl(individual);
+		final Constant cons = constants.get(individual);
+		if (cons == null)
+			throw new UndefinedSymbolException();
+		return cons;
 	}
 
-	/**
-	 * Create a constant representing a specified OWL literal.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param literal
-	 *            the OWL literal.
-	 * @return the constant representing {@code literal}.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(org.semanticweb.owlapi.model.OWLLiteral)
 	 */
 	@Override
 	public Constant cons(OWLLiteral literal) {
 		return new LiteralConstantImpl(literal);
 	}
 
-	/**
-	 * Create a constant representing a OWL individual or OWL literal.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param object
-	 *            the OWL individual or OWL literal.
-	 * @return the constant representing {@code object}.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(org.semanticweb.owlapi.model.OWLPropertyAssertionObject)
 	 */
 	@Override
 	public Constant cons(OWLPropertyAssertionObject object) {
@@ -205,16 +236,13 @@ public class DefaultVocabulary implements Vocabulary {
 		else if (object instanceof OWLLiteral)
 			return cons((OWLLiteral) object);
 		else
-			return null;
+			throw new ClassCastException();
 	}
 
-	/**
-	 * Creates a constant representing a specified symbol. If the symbol is a number, then the created constant is an numeric constant.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param symbol
-	 *            the symbol.
-	 * @return a numeric constant representing {@code symbol} if {@code symbol} is a number; or a rule constant representing {@code symbol},
-	 *         otherwise.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.String)
 	 */
 
 	@Override
@@ -223,40 +251,19 @@ public class DefaultVocabulary implements Vocabulary {
 			final Double number = Double.valueOf(symbol);
 			return cons(number);
 		} catch (final NumberFormatException e) {
-			return new RuleConstantImpl(symbol);
+			Constant individual = individuals.get(symbol);
+			if (individual == null) {
+				individual = new ConstantWrapper(new RuleConstantImpl(symbol));
+				individuals.put(symbol, individual);
+			}
+			return individual;
 		}
 	}
 
-	/**
-	 * Creates a constant representation of a specified symbol, given a specified {@link Vocabulary}. If the symbol is a number, then the created
-	 * constant is an numeric constant.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param symbol
-	 *            the symbol.
-	 * @param vocabularyMapping
-	 *            {@link Vocabulary}
-	 * @return a numeric constant representing {@code symbol} if {@code symbol} is a number; or a constant representation of {@code symbol}, given
-	 *         {@link Vocabulary}, otherwise.
-	 */
-
-	@Override
-	public Constant cons(String symbol, Vocabulary vocabularyMapping) {
-		if (vocabularyMapping != null) {
-			final Constant individual = vocabularyMapping.getIndividual(symbol);
-			if (individual != null)
-				return individual;
-		}
-		return cons(symbol);
-	}
-
-	/**
-	 * Create a domain meta-predicate from a specified role.
-	 *
-	 * @param role
-	 *            a role <i>P</i>.
-	 * @param doub
-	 *            specifies whether the meta-predicate is of a double type.
-	 * @return the domain meta-predicate <i>DP</i>, if {@code doub} is true; the double domain meta-predicate, <i>DP<sup>d</sup></i>, otherwise.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#domPred(org.semanticweb.owlapi.model.OWLPropertyExpression, boolean)
 	 */
 	@Override
 	public Predicate domPred(OWLPropertyExpression<?, ?> role, boolean doub) {
@@ -266,62 +273,50 @@ public class DefaultVocabulary implements Vocabulary {
 			return pred(role, ORIGINAL_DOMAIN);
 	}
 
-	/**
-	 * Create a double domain meta-predicate from a specified role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            the role <i>P</i>.
-	 * @return the meta-predicate <i>DP<sup>d</sup></i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#doubDomPred(org.semanticweb.owlapi.model.OWLPropertyExpression)
 	 */
 	@Override
 	public Predicate doubDomPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, DOUBLE_DOMAIN);
 	}
 
-	/**
-	 * Create a double meta-predicate from a specified concept.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param concept
-	 *            the concept <i>A</i>.
-	 * @return the double meta-predicate <i>A<sup>d</sup></i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#doubPred(org.semanticweb.owlapi.model.OWLClass)
 	 */
 	@Override
 	public Predicate doubPred(OWLClass concept) {
 		return pred(concept, DOUBLE);
 	}
 
-	/**
-	 * Create a double meta-predicate from a specified role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a role <i>P</i>.
-	 * @return the meta-predicate <i>P<sup>d</sup></i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#doubPred(org.semanticweb.owlapi.model.OWLPropertyExpression)
 	 */
 	@Override
 	public Predicate doubPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, DOUBLE);
 	}
 
-	/**
-	 * Create a double meta-predicate from a specified predicate symbol and predicate arity.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param symbol
-	 *            a predicate symbol, <i>S</i>.
-	 * @param arity
-	 *            the arity, <i>n</i>, of the predicate that {@code symbol} represents.
-	 * @return the double meta-predicate <i>S<sup>d</sup>/n</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#doubPred(java.lang.String, int)
 	 */
 	@Override
 	public Predicate doubPred(String symbol, int arity) {
 		return pred(symbol, arity, DOUBLE);
 	}
 
-	/**
-	 * Create a double range meta-predicate from a specified role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a role, <i>P</i>.
-	 * @return the double range meta-predicate <i>DP<sup>d</sup></i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#doubRanPred(org.semanticweb.owlapi.model.OWLPropertyExpression)
 	 */
 	@Override
 	public Predicate doubRanPred(OWLPropertyExpression<?, ?> role) {
@@ -335,56 +330,106 @@ public class DefaultVocabulary implements Vocabulary {
 			ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
 	}
 
+	/**
+	 * Generate a new IRI that for {@link #ontology}.
+	 *
+	 * @return an IRI {@code <ontologyIRI#newFrament>}, where {@code ontologyIRI} is the {@link #ontology}'s IRI and {@code newFragment} a string that
+	 *         don't occur in none {@link #ontology} entity IRI as fragment.
+	 */
+	private IRI generateIRI() {
+		return IRI.create("#" + filler + counter++);
+	}
+
+	/**
+	 * Generate a new concept that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 *
+	 * @return a new concept that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 */
+	@Override
+	public OWLClass generateNewConcept() {
+		final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
+		final OWLClass concept = dataFactory.getOWLClass(generateIRI());
+		register(concept);
+		return concept;
+	}
+
+	/**
+	 * Generate a new role that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 *
+	 * @return a new role that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 */
+	@Override
+	public OWLObjectProperty generateNewRole() {
+		final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
+		final OWLObjectProperty role = dataFactory.getOWLObjectProperty(generateIRI());
+		register(role);
+		return role;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#getConcept(java.lang.String)
+	 */
 	@Override
 	public Predicate getConcept(String symbol) {
 		return concepts.get(symbol);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#getIndividual(java.lang.String)
+	 */
 	@Override
 	public Constant getIndividual(String symbol) {
 		return individuals.get(symbol);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#getOntologies()
+	 */
 	@Override
 	public Set<OWLOntology> getOntologies() {
 		return ontologies;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#getRole(java.lang.String)
+	 */
 	@Override
 	public Predicate getRole(String symbol) {
 		return roles.get(symbol);
 	}
 
-	/**
-	 * Create a negative meta-predicate from a specified concept.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param concept
-	 *            a concept <i>A<i>.
-	 * @return a negative meta-predicate <i>NA</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#negPred(org.semanticweb.owlapi.model.OWLClass)
 	 */
 	@Override
 	public Predicate negPred(OWLClass concept) {
 		return pred(concept, NEGATIVE);
 	}
 
-	/**
-	 * Create a negative meta-predicate from a specified role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a role <i>P</i>.
-	 * @return the negative meta-predicate <i>NP</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#negPred(org.semanticweb.owlapi.model.OWLPropertyExpression)
 	 */
 	@Override
 	public Predicate negPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, NEGATIVE);
 	}
 
-	/**
-	 * Create a negative meta-predicate from a specified predicate.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param predicate
-	 *            a predicate <i>P</i> or a meta-predicate <i>NP</i>, <i>DP</i>, <i>RP</i>, <i>DP<sup>d</sup></i> or <i>RP<sup>d</sup></i>.
-	 * @return the meta-predicate <i>NP</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#negPred(pt.unl.fct.di.centria.nohr.model.Predicate)
 	 */
 	@Override
 	public Predicate negPred(Predicate predicate) {
@@ -394,102 +439,83 @@ public class DefaultVocabulary implements Vocabulary {
 		return new MetaPredicateImpl(pred, NEGATIVE);
 	}
 
-	/**
-	 * Create a negative meta-predicate from a specified predicate symbol and predicate arity.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param symbol
-	 *            a symbol, <i>S</i>.
-	 * @param arity
-	 *            the arity, <i>n</i>, of the predicate that {@code symbol} represents.
-	 * @return the negative meta-predicate <i>NS/n</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#negPred(java.lang.String, int)
 	 */
 	@Override
 	public Predicate negPred(String symbol, int arity) {
 		return pred(symbol, arity, NEGATIVE);
 	}
 
-	/**
-	 * Create an original domain meta-predicate from a specified role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a role <i>P</i>.
-	 * @return the original domain meta-predicate <i>DP</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#origDomPred(org.semanticweb.owlapi.model.OWLPropertyExpression)
 	 */
 	@Override
 	public Predicate origDomPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, ORIGINAL_DOMAIN);
 	}
 
-	/**
-	 * Create an original meta-predicate from a specified concept.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param concept
-	 *            a concept <i>A</i>.
-	 * @return the original meta-predicate <i>A</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#origPred(org.semanticweb.owlapi.model.OWLClass)
 	 */
 	@Override
 	public Predicate origPred(OWLClass concept) {
 		return pred(concept, ORIGINAL);
 	}
 
-	/**
-	 * Create an original meta-predicate from a specifieid role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a role <i>P</i>.
-	 * @return the original meta-predicate <i>P</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#origPred(org.semanticweb.owlapi.model.OWLPropertyExpression)
 	 */
 	@Override
 	public Predicate origPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, ORIGINAL);
 	}
 
-	/**
-	 * Create an original meta-predicate from a specified predicate symbol and predicate arity.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param symbol
-	 *            a predicate symbol <i>S</i>.
-	 * @param arity
-	 *            the arity, <i>n</i> of the predicate that {@code symbol} represents.
-	 * @return the original meta-predicate <i>S</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#origPred(java.lang.String, int)
 	 */
 	@Override
 	public Predicate origPred(String symbol, int arity) {
 		return pred(symbol, arity, ORIGINAL);
 	}
 
-	/**
-	 * Create an original range meta-predicate from a specified role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a role <i>P</i>.
-	 * @return the range original meta-predicate <i>RP</i>.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#origRanPred(org.semanticweb.owlapi.model.OWLPropertyExpression)
 	 */
 	@Override
 	public Predicate origRanPred(OWLPropertyExpression<?, ?> role) {
 		return pred(role, ORIGINAL_RANGE);
 	}
 
-	/**
-	 * Create a predicate representing a specified concept.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param concept
-	 *            a concept.
-	 * @return the predicate representing {@code concept}.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(org.semanticweb.owlapi.model.OWLClass)
 	 */
 	@Override
 	public Predicate pred(OWLClass concept) {
-		return new ConceptPredicateImpl(concept);
+		final Predicate pred = conceptPredicates.get(concept);
+		if (pred == null)
+			throw new UndefinedSymbolException();
+		return pred;
 	}
 
-	/**
-	 * Create a meta-predicate from a specified concept.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param concept
-	 *            a concept <i>A</i>.
-	 * @param doub
-	 *            specifies whether the meta-predicate is of a double type.
-	 * @return <i>A<sup>d</sup></i> if {@code doub} is true; <i>A</i>, otherwise.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(org.semanticweb.owlapi.model.OWLClass, boolean)
 	 */
 	@Override
 	public Predicate pred(OWLClass concept, boolean doub) {
@@ -499,45 +525,34 @@ public class DefaultVocabulary implements Vocabulary {
 			return pred(concept, ORIGINAL);
 	}
 
-	/**
-	 * Create a meta-predicate from a specified concept of a specified type.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param concept
-	 *            a concept <i>A</i>.
-	 * @param type
-	 *            a type. Shoudln't represent a quantification (i.e. {@code type.}{@link PredicateType#isQuantification() isQuantification()} must be
-	 *            false).
-	 * @return <i>A</i> if {@code type} is {@link PredicateType#ORIGINAL original}; <br>
-	 *         <i>A<sup>d</sup></i> if {@code type} is {@link PredicateType#DOUBLE double}; <br>
-	 *         <i>NA</i> if {@code type} is {@link PredicateType#NEGATIVE negative}.
-	 * @throws IllegalArgumentException
-	 *             if {@code type.}{@link PredicateType#isQuantification() isQuantification()} is true.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(org.semanticweb.owlapi.model.OWLClass,
+	 * pt.unl.fct.di.centria.nohr.model.terminals.PredicateType)
 	 */
 	@Override
 	public MetaPredicate pred(OWLClass concept, PredicateType type) {
 		return new MetaPredicateImpl(pred(concept), type);
 	}
 
-	/**
-	 * Create a predicate representing a specified role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a role.
-	 * @return the predicate representing {@code role}.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(org.semanticweb.owlapi.model.OWLPropertyExpression)
 	 */
 	@Override
 	public Predicate pred(OWLPropertyExpression<?, ?> role) {
-		return new RolePredicateImpl(DLUtils.atomic(role));
+		final Predicate pred = rolePredicates.get(role);
+		if (pred == null)
+			throw new UndefinedSymbolException();
+		return pred;
 	}
 
-	/**
-	 * Create a meta-predicate from a specified role.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a role <i>P</i>
-	 * @param doub
-	 *            specified whether the meta-predicate if of a double type.
-	 * @return <i>P<sup>d</sup></i> if {@code doub} is true; <i>P</i>, otherwise.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(org.semanticweb.owlapi.model.OWLPropertyExpression, boolean)
 	 */
 	@Override
 	public Predicate pred(OWLPropertyExpression<?, ?> role, boolean doub) {
@@ -547,34 +562,22 @@ public class DefaultVocabulary implements Vocabulary {
 			return pred(role, ORIGINAL);
 	}
 
-	/**
-	 * Create a meta-predicate from a specified role of a specified type.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param role
-	 *            a concept <i>P</i>.
-	 * @param type
-	 *            a type.
-	 * @return <i>P</i> if {@code type} is {@link PredicateType#ORIGINAL original}; <br>
-	 *         <i>P<sup>d</sup></i> if {@code type} is {@link PredicateType#DOUBLE double}; <br>
-	 *         <i>NP</i> if {@code type} is {@link PredicateType#NEGATIVE negative}; <br>
-	 *         <i>DP</i> if {@code type} is {@link PredicateType#ORIGINAL_DOMAIN original domain}; <br>
-	 *         <i>RP</i> if {@code type} is {@link PredicateType#ORIGINAL_RANGE original range} ; <br>
-	 *         <i>DP<sup>d</sup></i> if {@code type} is {@link PredicateType#DOUBLE_DOMAIN double domain}; <br>
-	 *         <i>RP<sup>d</sup></i> if {@code type} is {@link PredicateType#DOUBLED_RANGE double range}.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(org.semanticweb.owlapi.model.OWLPropertyExpression,
+	 * pt.unl.fct.di.centria.nohr.model.terminals.PredicateType)
 	 */
 	@Override
 	public Predicate pred(OWLPropertyExpression<?, ?> role, PredicateType type) {
-		return new MetaPredicateImpl(new RolePredicateImpl(DLUtils.atomic(role)), type);
+		return new MetaPredicateImpl(pred(DLUtils.atomic(role)), type);
 	}
 
-	/**
-	 * Create a meta-predicate form a specified predicate with a specified type.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param predicate
-	 *            the predicate that the meta-predicate refers.
-	 * @param type
-	 *            the type of the meta-predicate.
-	 * @return a meta-predicate referring {@code predicate} with type {@code type}.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(pt.unl.fct.di.centria.nohr.model.Predicate,
+	 * pt.unl.fct.di.centria.nohr.model.terminals.PredicateType)
 	 */
 	@Override
 	public MetaPredicate pred(Predicate predicate, PredicateType type) {
@@ -585,26 +588,46 @@ public class DefaultVocabulary implements Vocabulary {
 	 * Create a predicate with a specified symbol and arity.
 	 *
 	 * @param symbol the symbol, <i>S</i>, that represents the predicate.
-	 * 
+	 *
 	 * @param arity the arity, <i>n</i> of the predicate.
-	 * 
+	 *
 	 * @return a predicate, <i>S/n</i> with symbol {@symbol} and arity {@code arity}.
+	 */
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(java.lang.String, int)
 	 */
 	@Override
 	public Predicate pred(String symbol, int arity) {
-		return new RulePredicateImpl(symbol, arity);
+		Predicate pred;
+		if (arity == 1) {
+			pred = getConcept(symbol);
+			if (pred != null)
+				return pred;
+		}
+		if (arity == 2) {
+			pred = getRole(symbol);
+			if (pred != null)
+				return pred;
+		}
+		Map<String, Predicate> map = predicates.get(arity);
+		if (map == null) {
+			map = new HashMap<>();
+			predicates.put(arity, map);
+		}
+		pred = map.get(symbol);
+		if (pred == null) {
+			pred = new HybridPredicateWrapper(new RulePredicateImpl(symbol, arity));
+			map.put(symbol, pred);
+		}
+		return pred;
 	}
 
-	/**
-	 * Create a meta-predicate from a specified predicate symbol and predicate arity.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param symbol
-	 *            a predicate <i>S</i>.
-	 * @param arity
-	 *            a predicate arity <i>n</i>.
-	 * @param doub
-	 *            specifies whether the meta-predicate is of a double type.
-	 * @return the double meta-predicate <i>S/n</i> if {@code doub} is true; the original meta-predicate <i>S<sup>d</sup>/n</i>, otherwise.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(java.lang.String, int, boolean)
 	 */
 	@Override
 	public Predicate pred(String symbol, int arity, boolean doub) {
@@ -614,68 +637,16 @@ public class DefaultVocabulary implements Vocabulary {
 			return pred(symbol, arity, ORIGINAL);
 	}
 
-	/**
-	 * Create a meta-predicate from a specified predicate symbol and predicate arity with a specified type.
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param symbol
-	 *            a predicate symbol <i>S</i>.
-	 * @param arity
-	 *            a predicate arity <i>n</i>.
-	 * @param type
-	 *            the type of the meta-predicate. Shoudn't represent a quantification (i.e. {@code type.} {@link PredicateType#isQuantification()
-	 *            isQuantification()} must be false).
-	 * @return <i>S/n</i> if {@code type} is {@link PredicateType#ORIGINAL original}; <br>
-	 *         <i>S<sup>d</sup>/n</i>, if {@code type} is {@link PredicateType#DOUBLE double}; <br>
-	 *         <i>NS/n</i>, if {@code type} is {@link PredicateType#NEGATIVE negative}.
-	 * @throw IllegalArgumentException if {@code type.} {@link PredicateType#isQuantification() isQuantification()} is true.
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#pred(java.lang.String, int, pt.unl.fct.di.centria.nohr.model.terminals.PredicateType)
 	 */
 	@Override
 	public Predicate pred(String symbol, int arity, PredicateType type) {
 		return new MetaPredicateImpl(pred(symbol, arity), type);
 	}
 
-	/**
-	 * Create the predicate represented by a specified symbol with a specified arity, given a specified {@link Vocabulary}.
-	 *
-	 * @param symbol
-	 *            a symbol <i>S</i>.
-	 * @param arity
-	 *            an arity <i>n</i>.
-	 * @param vocabularyMapping
-	 *            a {@link Vocabulary}.
-	 * @return the predicate representing a concept <i>A</i> if {@code arity} is {@literal 1} and {@code vocabularyMapping.}
-	 *         {@link Vocabulary#getConcept(String) getConcept(symbol)} returns <i>A</i>; <br>
-	 *         the predicate representing a role <i>P</i> if {@code arity} is {@literal 2} and {@code vocabularyMapping.}
-	 *         {@link Vocabulary#getRole(String) getRole(symbol)} returns the role <i>P</i>; <br>
-	 *         the predicate represented by {@code symbol} with arity {@code arity}, otherwise.
-	 */
-
-	@Override
-	public Predicate pred(String symbol, int arity, Vocabulary vocabularyMapping) {
-		if (vocabularyMapping == null)
-			return pred(symbol, arity);
-		if (arity == 1) {
-			final Predicate concept = vocabularyMapping.getConcept(symbol);
-			if (concept != null)
-				return concept;
-		}
-		if (arity == 2) {
-			final Predicate role = vocabularyMapping.getRole(symbol);
-			if (role != null)
-				return role;
-		}
-		return pred(symbol, arity);
-	}
-
-	/**
-	 * Create a range meta-predicate from a specified {@code role}.
-	 *
-	 * @param role
-	 *            a role <i>P</i>.
-	 * @param doub
-	 *            specifies whether this role is of a double type.
-	 * @return <i>RP<sup>d</sup></i> if {@code doub} is true; <i>RP</i>, otherwise.
-	 */
 	@Override
 	public Predicate ranPred(OWLPropertyExpression<?, ?> role, boolean doub) {
 		if (doub)
@@ -691,8 +662,12 @@ public class DefaultVocabulary implements Vocabulary {
 	 *            the concept.
 	 */
 	private void register(OWLClass concept) {
-		final Predicate pred = pred(concept);
-		predicates.put(concept, pred);
+		Predicate pred = conceptPredicates.get(concept);
+		if (pred == null) {
+			pred = new HybridPredicateWrapper(new ConceptPredicateImpl(concept));
+			conceptPredicates.put(concept, pred);
+		}
+		conceptPredicates.put(concept, pred);
 		concepts.put(pred.getSymbol(), pred);
 		for (final String symbol : symbols(concept))
 			concepts.put(symbol, pred);
@@ -705,7 +680,11 @@ public class DefaultVocabulary implements Vocabulary {
 	 * @param individual
 	 */
 	private void register(OWLIndividual individual) {
-		final Constant cons = cons(individual);
+		Constant cons = constants.get(individual);
+		if (cons == null) {
+			cons = new ConstantWrapper(new IndividualConstantImpl(individual));
+			constants.put(individual, cons);
+		}
 		constants.put(individual, cons);
 		individuals.put(cons.getSymbol(), cons);
 		for (final String symbol : symbols(individual))
@@ -720,8 +699,12 @@ public class DefaultVocabulary implements Vocabulary {
 	 *            a role.
 	 */
 	private void register(OWLProperty<?, ?> role) {
-		final Predicate pred = pred(role);
-		predicates.put(role, pred);
+		Predicate pred = rolePredicates.get(role);
+		if (pred == null) {
+			pred = new HybridPredicateWrapper(new RolePredicateImpl(role));
+			rolePredicates.put(role, pred);
+		}
+		rolePredicates.put(role, pred);
 		roles.put(pred.getSymbol(), pred);
 		for (final String symbol : symbols(role))
 			roles.put(symbol, pred);
@@ -741,7 +724,8 @@ public class DefaultVocabulary implements Vocabulary {
 		if (fragment != null)
 			result.add(fragment);
 		for (final OWLOntology ontology : ontologies)
-			for (final OWLAnnotation annotation : entity.getAnnotations(ontology, LABEL_ANNOTATION)) {
+			for (final OWLAnnotation annotation : entity.getAnnotations(ontology,
+					OWLManager.getOWLDataFactory().getRDFSLabel())) {
 				final OWLAnnotationValue value = annotation.getValue();
 				if (value instanceof OWLLiteral)
 					result.add(((OWLLiteral) value).getLiteral());
@@ -771,7 +755,7 @@ public class DefaultVocabulary implements Vocabulary {
 	private void unregister(OWLClass concept) {
 		references.remove(concept);
 		if (!references.contains(concept)) {
-			final Predicate pred = predicates.remove(concept);
+			final Predicate pred = conceptPredicates.remove(concept);
 			concepts.remove(pred.getSymbol());
 			for (final String symbol : symbols(concept))
 				concepts.remove(symbol);
@@ -787,7 +771,7 @@ public class DefaultVocabulary implements Vocabulary {
 	private void unregister(OWLProperty<?, ?> role) {
 		references.remove(role);
 		if (!references.contains(role)) {
-			final Predicate pred = predicates.remove(role);
+			final Predicate pred = rolePredicates.remove(role);
 			roles.remove(pred.getSymbol());
 			for (final String symbol : symbols(role))
 				roles.put(symbol, pred(role));

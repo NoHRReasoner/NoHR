@@ -25,7 +25,6 @@ import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 

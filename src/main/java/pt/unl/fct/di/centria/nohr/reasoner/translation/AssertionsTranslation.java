@@ -19,7 +19,6 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**

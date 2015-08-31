@@ -2,6 +2,7 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation.ql;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.AxiomType;
@@ -39,9 +40,9 @@ import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.OWLEntityGenerator;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
@@ -55,9 +56,6 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 			AxiomType.OBJECT_PROPERTY_ASSERTION, AxiomType.OBJECT_PROPERTY_DOMAIN, AxiomType.OBJECT_PROPERTY_RANGE,
 			AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY, AxiomType.SUBCLASS_OF,
 			AxiomType.SYMMETRIC_OBJECT_PROPERTY };
-
-	/** The entitiesGenerator used to obtain new roles */
-	private final OWLEntityGenerator entitiesGenerator;
 
 	/** The set of DL-Lite<sub>R</sub> concept disjunctions in this {@link QLOntologyNormalization} */
 	private final Set<OWLDisjointClassesAxiom> conceptDisjunctions;
@@ -101,6 +99,8 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 	 */
 	private final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles;
 
+	private final Vocabulary vocabulary;
+
 	/**
 	 * Constructs a {@link QLOntologyNormalization} from a given OWL 2 QL ontology according to <b>Appendix D</b> of
 	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}.
@@ -110,8 +110,10 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 	 * @throws UnsupportedAxiomsException
 	 *             if {@code ontology} has some axiom of an unsupported type (i.e. that aren't in {@link #SUPPORTED_AXIOM_TYPES}).
 	 */
-	public QLOntologyNormalizationImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
+	public QLOntologyNormalizationImpl(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
 		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
+		Objects.requireNonNull(ontology);
+		Objects.requireNonNull(vocabulary);
 		if (ignoreUnsupported == null || !ignoreUnsupported.equals("true")) {
 			@SuppressWarnings("unchecked")
 			final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(
@@ -120,7 +122,7 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 				throw new UnsupportedAxiomsException(unsupportedAxioms);
 		}
 		this.ontology = ontology;
-		entitiesGenerator = new OWLEntityGenerator(ontology);
+		this.vocabulary = vocabulary;
 		conceptSubsumptions = new HashSet<>();
 		roleSubsumptions = new HashSet<>();
 		conceptDisjunctions = new HashSet<>();
@@ -347,7 +349,7 @@ public class QLOntologyNormalizationImpl implements QLOntologyNormalization {
 				superConcepts.add(c);
 				conceptSubsumptions.add(getDataFactory().getOWLSubClassOfAxiom(b, c));
 			} else {
-				final OWLObjectProperty pnew = entitiesGenerator.generateNewRole();
+				final OWLObjectProperty pnew = vocabulary.generateNewRole();
 				normalize(getDataFactory().getOWLSubObjectPropertyOfAxiom(pnew, q));
 				normalize(getDataFactory().getOWLSubClassOfAxiom(some(pnew.getInverseProperty()), a));
 				normalize(getDataFactory().getOWLSubClassOfAxiom(b, some(pnew)));

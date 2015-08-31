@@ -1,7 +1,5 @@
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import java.util.Objects;
-
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -46,14 +44,11 @@ public class ELOntologyTranslator extends OntologyTranslatorImplementor {
 	 */
 	public ELOntologyTranslator(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabase)
 			throws UnsupportedAxiomsException {
-		super(ontology, dedutiveDatabase);
-		Objects.requireNonNull(ontology);
-		Objects.requireNonNull(v);
-		Objects.requireNonNull(dedutiveDatabase);
+		super(ontology, v, dedutiveDatabase);
 		originalAxiomsTranslator = new ELOriginalAxiomsTranslator(v);
 		doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(v);
 		RuntimesLogger.start("ontology reduction");
-		reducedOntology = new ELOntologyReductionImpl(ontology);
+		reducedOntology = new ELOntologyReductionImpl(ontology, v);
 		RuntimesLogger.stop("ontology reduction", "loading");
 	}
 
@@ -68,7 +63,7 @@ public class ELOntologyTranslator extends OntologyTranslatorImplementor {
 	}
 
 	private void prepareUpdate() throws UnsupportedAxiomsException {
-		reducedOntology = new ELOntologyReductionImpl(ontology);
+		reducedOntology = new ELOntologyReductionImpl(ontology, vocabulary);
 	}
 
 	/**

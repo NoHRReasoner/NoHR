@@ -112,8 +112,7 @@ public class KB {
 
 	public void assertNegative(String query) {
 		try {
-			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(
-					new DefaultVocabulary(ontology));
+			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(new DefaultVocabulary(ontology));
 			if (!query.endsWith("."))
 				query += ".";
 			final Query q = parser.parseQuery(query);
@@ -340,7 +339,7 @@ public class KB {
 	}
 
 	public QLOntologyNormalization getQLNormalizedOntology() throws UnsupportedAxiomsException {
-		return new QLOntologyNormalizationImpl(ontology);
+		return new QLOntologyNormalizationImpl(ontology, hybridKB.getVocabularyMapping());
 	}
 
 	public OWLObjectProperty[] getRoles(int n) {

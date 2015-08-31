@@ -31,8 +31,6 @@ public class RolePredicateImpl implements HybridPredicate {
 	 */
 	RolePredicateImpl(OWLProperty<?, ?> role) {
 		Objects.requireNonNull(role);
-		if (role.getIRI().toURI().getFragment() == null)
-			throw new IllegalArgumentException("role: must have an IRI fragment");
 		this.role = role;
 	}
 

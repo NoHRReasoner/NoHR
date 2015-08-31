@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
@@ -84,7 +83,7 @@ public class Model {
 	/**
 	 * Create an atom with the predicate corresponding to a specified symbol, given a {@code VocabularyMapping}, as functor and anonymous variables as
 	 * arguments.
-	 * 
+	 *
 	 * @param functor
 	 *            the functor predicate, <i>P</i>.
 	 * @return an atom <i>P(_,..., _)</i> where {@code _} represents an anonymous variable.
@@ -96,7 +95,7 @@ public class Model {
 	/**
 	 * Create an atom with a predicate corresponding to a specified symbol, given a specified {@link Vocabulary}, as functor and specified terms as
 	 * arguments.
-	 * 
+	 *
 	 * @param v
 	 *            an {@link Vocabulary}
 	 * @param functorSymbol
@@ -107,12 +106,12 @@ public class Model {
 	 *         {@code arguments}.
 	 */
 	public static Atom atom(Vocabulary v, String functorSymbol, List<Term> arguments) {
-		return atom(v.pred(functorSymbol, arguments.size(), v), arguments);
+		return atom(v.pred(functorSymbol, arguments.size()), arguments);
 	}
 
 	/**
 	 * Create an atom with the predicate corresponding to a specified symbol as functor and specified terms as arguments.
-	 * 
+	 *
 	 * @param arguments
 	 *            an array of terms arguments.
 	 * @param functorSymbol
@@ -122,7 +121,7 @@ public class Model {
 	public static Atom atom(Vocabulary v, String predicate, Term... arguments) {
 		final List<Term> argumentsList = new LinkedList<Term>();
 		Collections.addAll(argumentsList, arguments);
-		return atom(v.pred(predicate, arguments.length, v), argumentsList);
+		return atom(v.pred(predicate, arguments.length), argumentsList);
 	}
 
 	/**

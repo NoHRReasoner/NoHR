@@ -3,6 +3,7 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.deductivedb.DatabaseProgram;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 
@@ -28,6 +29,8 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 	 */
 	protected final OWLOntology ontology;
 
+	protected final Vocabulary vocabulary;
+
 	/**
 	 * Constructs a {@link OntologyTranslatorImplementor}, appropriately initializing its state.
 	 *
@@ -36,8 +39,10 @@ public abstract class OntologyTranslatorImplementor implements OntologyTranslato
 	 * @param dedutiveDatabase
 	 *            the {@link DeductiveDatabase} where the ontology translation will be mantained.
 	 */
-	public OntologyTranslatorImplementor(OWLOntology ontology, DeductiveDatabase dedutiveDatabase) {
+	public OntologyTranslatorImplementor(OWLOntology ontology, Vocabulary vocabulary,
+			DeductiveDatabase dedutiveDatabase) {
 		this.ontology = ontology;
+		this.vocabulary = vocabulary;
 		this.dedutiveDatabase = dedutiveDatabase;
 		translation = dedutiveDatabase.createProgram();
 	}

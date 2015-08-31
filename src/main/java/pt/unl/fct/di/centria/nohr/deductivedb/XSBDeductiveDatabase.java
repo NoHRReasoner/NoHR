@@ -4,13 +4,10 @@ import static pt.unl.fct.di.centria.nohr.model.Model.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 

@@ -66,8 +66,8 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 	 */
 	public QLOntologyTranslator(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabase)
 			throws UnsupportedAxiomsException {
-		super(ontology, dedutiveDatabase);
-		ontologyNormalization = new QLOntologyNormalizationImpl(ontology);
+		super(ontology, v, dedutiveDatabase);
+		ontologyNormalization = new QLOntologyNormalizationImpl(ontology, v);
 		graph = new TBoxDigraphImpl(ontologyNormalization);
 		originalAxiomsTranslator = new QLOriginalAxiomsTranslator(v);
 		doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(v);
@@ -112,7 +112,7 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 	 * Prepares the translation, creating a new {@link QLOntologyNormalization} and {@link TBoxDigraph} for the current version of the ontology.
 	 */
 	private void prepareUpdate() throws UnsupportedAxiomsException {
-		ontologyNormalization = new QLOntologyNormalizationImpl(ontology);
+		ontologyNormalization = new QLOntologyNormalizationImpl(ontology, vocabulary);
 		graph = new TBoxDigraphImpl(ontologyNormalization);
 	}
 

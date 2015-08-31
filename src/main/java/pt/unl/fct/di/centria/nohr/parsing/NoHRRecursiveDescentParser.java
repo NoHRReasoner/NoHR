@@ -31,7 +31,6 @@ import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
@@ -65,7 +64,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	 *            the {@link Vocabulary} used to recognize {@link OWLClass concepts}, {@link OWLProperty roles} and {@link individuals}.
 	 */
 	public NoHRRecursiveDescentParser(Vocabulary vocabularyMapping) {
-		this.v = vocabularyMapping;
+		v = vocabularyMapping;
 	}
 
 	/**
@@ -227,7 +226,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 		if (variable != null)
 			return variable;
 		if (scanner.next(SYMBOL))
-			return v.cons(scanner.token(), v);
+			return v.cons(scanner.token());
 		throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL, QUESTION_MARK);
 	}
 

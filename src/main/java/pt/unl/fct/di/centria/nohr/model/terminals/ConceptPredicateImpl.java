@@ -31,8 +31,6 @@ public class ConceptPredicateImpl implements HybridPredicate {
 	 */
 	ConceptPredicateImpl(OWLClass concept) {
 		Objects.requireNonNull(concept);
-		if (concept.getIRI().toURI().getFragment() == null)
-			throw new IllegalArgumentException("concept: must have an IRI fragment");
 		this.concept = concept;
 	}
 

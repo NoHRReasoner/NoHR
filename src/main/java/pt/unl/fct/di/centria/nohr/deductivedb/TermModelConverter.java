@@ -7,7 +7,6 @@ import com.declarativa.interprolog.TermModel;
 
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 
 /**
@@ -36,7 +35,7 @@ public class TermModelConverter {
 	 */
 	public Term term(TermModel termModel) {
 		if (termModel.isAtom())
-			return v.cons(unquote(termModel.toString()), v);
+			return v.cons(unquote(termModel.toString()));
 		else if (termModel.isNumber()) {
 			final Number number = termModel.intValue();
 			return v.cons(number);

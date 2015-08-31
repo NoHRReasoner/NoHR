@@ -23,7 +23,6 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
 
