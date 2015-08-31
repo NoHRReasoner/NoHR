@@ -1,5 +1,7 @@
 package pt.unl.fct.di.centria.nohr.model;
 
+import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
+
 /**
  * Represents a rule term. Can be a variable, a constant, or a list.
  *

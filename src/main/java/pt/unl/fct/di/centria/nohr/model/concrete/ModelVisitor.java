@@ -1,5 +1,8 @@
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
+import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 
 /**
@@ -14,9 +17,13 @@ public interface ModelVisitor {
 
 	public Constant visit(Constant constant);
 
-	public HybridPredicate visit(HybridPredicate hybridPredicate);
+	public Constant visit(HybridConstant constant);
 
-	public HybridPredicate visit(MetaPredicate predicate);
+	public Predicate visit(HybridPredicate hybridPredicate);
+
+	public Predicate visit(MetaPredicate predicate);
+
+	public Predicate visit(Predicate predicate);
 
 	public Variable visit(Variable variable);
 

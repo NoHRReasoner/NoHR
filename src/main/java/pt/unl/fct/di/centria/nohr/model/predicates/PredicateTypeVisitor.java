@@ -2,12 +2,13 @@ package pt.unl.fct.di.centria.nohr.model.predicates;
 
 import static pt.unl.fct.di.centria.nohr.model.predicates.Predicates.pred;
 
-import pt.unl.fct.di.centria.nohr.model.DefaultModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.concrete.DefaultModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.concrete.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
 
 /**
- * A {@link ModelVisitor} that replace each {@link HybridPredicate} appearing at each model element by the correspondent {@link MetaPredicate} of a
+ * A {@link ModelVisitor} that replace each {@link Predicate} appearing at each model element by the correspondent {@link MetaPredicate} of a
  * specified {@link PredicateType}. Each predicate is replaced by a meta-predicate of the specified type, referring that predicate. Each
  * meta-predicate is replaced by a new meta-predicate of the specified type, referring the predicate that such meta-predicate refer.
  *
@@ -21,7 +22,7 @@ public class PredicateTypeVisitor extends DefaultModelVisitor {
 	private final PredicateType predicateType;
 
 	/**
-	 * Constructs a {@link ModelVisitor} that replace all the {@link HybridPredicate}s appearing at each model element by the correspondent
+	 * Constructs a {@link ModelVisitor} that replace all the {@link Predicate}s appearing at each model element by the correspondent
 	 * {@link MetaPredicate}s of a specified {@link PredicateType}.
 	 *
 	 * @param predicateType
@@ -41,12 +42,12 @@ public class PredicateTypeVisitor extends DefaultModelVisitor {
 	}
 
 	@Override
-	public HybridPredicate visit(HybridPredicate pred) {
+	public Predicate visit(HybridPredicate pred) {
 		return pred(pred, predicateType);
 	}
 
 	@Override
-	public HybridPredicate visit(MetaPredicate pred) {
+	public Predicate visit(MetaPredicate pred) {
 		return pred(pred.getPredicate(), predicateType);
 	}
 

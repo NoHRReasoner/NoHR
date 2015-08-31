@@ -9,7 +9,7 @@ import java.util.Map;
  * terms, and <i><b>not</b></i> the default negation operator. <i>P</i> is called functor and <i>t<sub>1</sub>, ..., t<sub>n</sub></i> arguments.
  * <i>n</i> is the literal's arity.
  *
- * @see HybridPredicate
+ * @see Predicate
  * @see Term
  * @see Atom
  * @author Nuno Costa
@@ -64,7 +64,7 @@ public interface Literal extends ModelElement<Literal> {
 	 *
 	 * @return the functor predicate of this literal.
 	 */
-	public HybridPredicate getFunctor();
+	public Predicate getFunctor();
 
 	/**
 	 * Returns the variables occurring in this literal, in the same order that they appear, and without repetitions.

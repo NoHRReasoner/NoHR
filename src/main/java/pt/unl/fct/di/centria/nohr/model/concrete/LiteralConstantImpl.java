@@ -8,14 +8,13 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
 /**
  * Implementation of ontology literal {@link Constant}.
  *
  * @author Nuno Costa
  */
-public class LiteralConstantImpl implements Constant {
+public class LiteralConstantImpl implements HybridConstant {
 
 	/**
 	 * The OWL literal.

@@ -5,14 +5,13 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
 /**
  * Implementation of rule {@link Constant}.
  *
  * @author Nuno Costa
  */
-public class RuleConstantImpl implements Constant {
+public class RuleConstantImpl implements HybridConstant {
 
 	/**
 	 * The symbol that represents this constant.

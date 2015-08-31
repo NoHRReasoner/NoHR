@@ -9,8 +9,7 @@ import java.util.Objects;
 import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 
@@ -29,7 +28,7 @@ public class AtomImpl implements Atom {
 	/**
 	 * The functor predicate.
 	 */
-	private final HybridPredicate predicate;
+	private final Predicate predicate;
 
 	/**
 	 * Constructs an atom with a specified predicate as functor and list of terms as arguments.
@@ -41,7 +40,7 @@ public class AtomImpl implements Atom {
 	 * @throws IllegalArgumentException
 	 *             if the size of {@code arguments} is different from the predicate arity.
 	 */
-	AtomImpl(HybridPredicate predicate, List<Term> arguments) {
+	AtomImpl(Predicate predicate, List<Term> arguments) {
 		Objects.requireNonNull(predicate);
 		if (arguments == null && predicate.getArity() > 0)
 			throw new IllegalArgumentException("arguments must have a size equal to the predicate arity");
@@ -59,7 +58,7 @@ public class AtomImpl implements Atom {
 
 	@Override
 	public Atom accept(ModelVisitor visitor) {
-		final HybridPredicate pred = predicate.accept(visitor);
+		final Predicate pred = predicate.accept(visitor);
 		final List<Term> args = new LinkedList<Term>();
 		if (arguments == null)
 			return new AtomImpl(pred, null);
@@ -134,7 +133,7 @@ public class AtomImpl implements Atom {
 	}
 
 	@Override
-	public HybridPredicate getFunctor() {
+	public Predicate getFunctor() {
 		return predicate;
 	}
 

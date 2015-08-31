@@ -1,14 +1,19 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
+import pt.unl.fct.di.centria.nohr.model.Constant;
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.ModelElement;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.predicates.MetaPredicate;
 
 /**
  * An implementation of {@link ModelVisitor} that simply returns {@code element} in each {@code visit(E element)} method if {@code E} is an leaf type
- * (i.e. {@link Constant}, {@link HybridPredicate}, or {@link Variable}}), and {@code element.accept(this)} otherwise. Extend this class if you want
- * create a {@link ModelVisitor} that manipulates that only some model types.
+ * (i.e. {@link Constant}, {@link Predicate}, or {@link Variable}}), and {@code element.accept(this)} otherwise. Extend this class if you want create
+ * a {@link ModelVisitor} that manipulates that only some model types.
  *
  * @author Nuno Costa
  */
@@ -31,13 +36,23 @@ public class DefaultModelVisitor implements ModelVisitor {
 	}
 
 	@Override
-	public HybridPredicate visit(HybridPredicate hybridPredicate) {
+	public HybridConstant visit(HybridConstant constant) {
+		return constant;
+	}
+
+	@Override
+	public Predicate visit(HybridPredicate hybridPredicate) {
 		return hybridPredicate;
 	}
 
 	@Override
-	public HybridPredicate visit(MetaPredicate metaPredicate) {
+	public Predicate visit(MetaPredicate metaPredicate) {
 		return metaPredicate.accept(this);
+	}
+
+	@Override
+	public Predicate visit(Predicate predicate) {
+		return predicate;
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Term;
 
 /**
@@ -19,7 +18,7 @@ import pt.unl.fct.di.centria.nohr.model.Term;
  * @see Term
  * @author nunocosta
  */
-public class IndividualConstantImpl implements Constant {
+public class IndividualConstantImpl implements HybridConstant {
 
 	/** The ontology individual. */
 	private final OWLIndividual individual;

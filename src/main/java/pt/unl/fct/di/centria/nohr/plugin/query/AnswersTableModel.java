@@ -9,9 +9,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Term;
+import pt.unl.fct.di.centria.nohr.model.concrete.HybridConstant;
 
 /**
  * A {@link TableModel} for {@link Answer answers}.
@@ -69,8 +69,8 @@ public class AnswersTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		final Term term = answers.get(rowIndex).getValues().get(columnIndex);
-		if (term instanceof Constant) {
-			final Constant constant = (Constant) term;
+		if (term instanceof HybridConstant) {
+			final HybridConstant constant = (HybridConstant) term;
 			if (constant.isIndividual())
 				return constant.asIndividual();
 			else if (constant.isLiteral())

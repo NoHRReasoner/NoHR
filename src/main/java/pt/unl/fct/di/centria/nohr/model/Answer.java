@@ -2,6 +2,8 @@ package pt.unl.fct.di.centria.nohr.model;
 
 import java.util.List;
 
+import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
+
 /**
  * An answer to a query. Represents a substitution (i.e. a mapping between variables and terms) for a query's literal list, corresponding to an answer
  * to that query.

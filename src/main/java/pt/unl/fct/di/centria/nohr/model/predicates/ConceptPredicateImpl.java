@@ -9,11 +9,12 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLProperty;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.concrete.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
 
 /**
- * Implementation of a {@link HybridPredicate} representing a concept.
+ * Implementation of a {@link Predicate} representing a concept.
  *
  * @author Nuno Costa
  */
@@ -43,7 +44,7 @@ public class ConceptPredicateImpl implements HybridPredicate {
 	}
 
 	@Override
-	public HybridPredicate accept(ModelVisitor visitor) {
+	public Predicate accept(ModelVisitor visitor) {
 		return visitor.visit(this);
 	}
 

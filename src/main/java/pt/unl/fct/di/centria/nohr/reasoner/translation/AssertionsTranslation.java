@@ -22,7 +22,7 @@ import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 import pt.unl.fct.di.centria.nohr.model.Constant;
-import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 
 /**
@@ -47,8 +47,8 @@ public class AssertionsTranslation {
 		final OWLClassExpression c = assertion.getClassExpression();
 		if (!(c instanceof OWLClass))
 			throw new IllegalArgumentException("assertion's concepts must be atomic");
-		final HybridPredicate a = doubPred((OWLClass) c);
-		final HybridPredicate na = negPred((OWLClass) c);
+		final Predicate a = doubPred((OWLClass) c);
+		final Predicate na = negPred((OWLClass) c);
 		final Constant i = cons(assertion.getIndividual());
 		return ruleSet(rule(atom(a, i), negLiteral(na, i)));
 	}
@@ -64,8 +64,8 @@ public class AssertionsTranslation {
 	 */
 	public static Set<Rule> translateDouble(OWLPropertyAssertionAxiom<?, ?> assertion) {
 		final OWLPropertyExpression<?, ?> role = assertion.getProperty();
-		final HybridPredicate p = doubPred(role);
-		final HybridPredicate np = negPred(role);
+		final Predicate p = doubPred(role);
+		final Predicate np = negPred(role);
 		final Constant i1 = cons(assertion.getSubject());
 		final Constant i2 = cons(assertion.getObject());
 		return ruleSet(rule(atom(p, i1, i2), negLiteral(np, i1, i2)));
@@ -90,7 +90,7 @@ public class AssertionsTranslation {
 			throw new IllegalArgumentException("assertion's concepts must be atomic");
 		if (c.isTopEntity() || c.isBottomEntity())
 			return ruleSet();
-		final HybridPredicate a = origPred((OWLClass) c);
+		final Predicate a = origPred((OWLClass) c);
 		final Constant i = cons(assertion.getIndividual());
 		return ruleSet(rule(atom(a, i)));
 	}
@@ -108,7 +108,7 @@ public class AssertionsTranslation {
 		final OWLPropertyExpression<?, ?> ope = assertion.getProperty();
 		if (ope.isTopEntity() || ope.isBottomEntity())
 			return ruleSet();
-		final HybridPredicate p = origPred(assertion.getProperty());
+		final Predicate p = origPred(assertion.getProperty());
 		final Constant i1 = cons(assertion.getSubject());
 		final Constant i2 = cons(assertion.getObject());
 		return ruleSet(rule(atom(p, i1, i2)));

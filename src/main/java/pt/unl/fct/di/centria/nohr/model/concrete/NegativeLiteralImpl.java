@@ -6,9 +6,8 @@ import java.util.Map;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 
@@ -86,7 +85,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 	}
 
 	@Override
-	public HybridPredicate getFunctor() {
+	public Predicate getFunctor() {
 		return atom.getFunctor();
 	}
 

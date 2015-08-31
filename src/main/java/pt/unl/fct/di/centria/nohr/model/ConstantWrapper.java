@@ -3,9 +3,16 @@ package pt.unl.fct.di.centria.nohr.model;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
-public class ConstantWrapper implements Constant {
+import pt.unl.fct.di.centria.nohr.model.concrete.HybridConstant;
+import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
 
-	private Constant wrappee;
+public class ConstantWrapper implements HybridConstant {
+
+	private HybridConstant wrappee;
+
+	ConstantWrapper(HybridConstant wrappee) {
+		this.wrappee = wrappee;
+	}
 
 	@Override
 	public String accept(FormatVisitor visitor) {
@@ -50,6 +57,10 @@ public class ConstantWrapper implements Constant {
 	@Override
 	public boolean isNumber() {
 		return wrappee.isNumber();
+	}
+
+	void setWrappe(HybridConstant wrappee) {
+		this.wrappee = wrappee;
 	}
 
 }

@@ -58,15 +58,15 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	private final Set<OWLOntology> ontologies;
 
 	/** The mapping between symbols and the concepts that they represent. */
-	private final Map<String, HybridPredicate> concepts;
+	private final Map<String, Predicate> concepts;
 
 	/** The mapping between symbols and the roles that they represent. */
-	private final Map<String, HybridPredicate> roles;
+	private final Map<String, Predicate> roles;
 
 	/** The mapping between symbols and the individuals that they represent. */
 	private final Map<String, Constant> individuals;
 
-	private final Map<OWLEntity, HybridPredicate> predicates;
+	private final Map<OWLEntity, Predicate> predicates;
 
 	private final Map<OWLIndividual, Constant> constants;
 
@@ -159,7 +159,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	}
 
 	@Override
-	public HybridPredicate getConcept(String symbol) {
+	public Predicate getConcept(String symbol) {
 		return concepts.get(symbol);
 	}
 
@@ -174,7 +174,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	}
 
 	@Override
-	public HybridPredicate getRole(String symbol) {
+	public Predicate getRole(String symbol) {
 		return roles.get(symbol);
 	}
 
@@ -185,7 +185,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 *            the concept.
 	 */
 	private void register(OWLClass concept) {
-		final HybridPredicate pred = pred(concept);
+		final Predicate pred = pred(concept);
 		predicates.put(concept, pred);
 		concepts.put(pred.getSymbol(), pred);
 		for (final String symbol : symbols(concept))
@@ -214,7 +214,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	 *            a role.
 	 */
 	private void register(OWLProperty<?, ?> role) {
-		final HybridPredicate pred = pred(role);
+		final Predicate pred = pred(role);
 		predicates.put(role, pred);
 		roles.put(pred.getSymbol(), pred);
 		for (final String symbol : symbols(role))
@@ -265,7 +265,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	private void unregister(OWLClass concept) {
 		references.remove(concept);
 		if (!references.contains(concept)) {
-			final HybridPredicate pred = predicates.remove(concept);
+			final Predicate pred = predicates.remove(concept);
 			concepts.remove(pred.getSymbol());
 			for (final String symbol : symbols(concept))
 				concepts.remove(symbol);
@@ -281,7 +281,7 @@ public class DefaultVocabularyMapping implements VocabularyMapping {
 	private void unregister(OWLProperty<?, ?> role) {
 		references.remove(role);
 		if (!references.contains(role)) {
-			final HybridPredicate pred = predicates.remove(role);
+			final Predicate pred = predicates.remove(role);
 			roles.remove(pred.getSymbol());
 			for (final String symbol : symbols(role))
 				roles.put(symbol, pred(role));

@@ -8,9 +8,11 @@ import java.util.List;
 
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.centria.nohr.model.concrete.HybridPredicate;
 import pt.unl.fct.di.centria.nohr.model.concrete.Model;
+import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.predicates.PredicateTypeVisitor;
 
@@ -39,8 +41,14 @@ public class ProgramDoubling {
 		final List<Atom> positiveBody = rule.getPositiveBody();
 		final List<Literal> negativeBody = rule.getNegativeBody();
 		final Literal[] originalBody = new Literal[rule.getBody().size()];
-		final Literal[] doubleBody = new Literal[rule.getBody().size()
-				+ (head.getFunctor().isConcept() || head.getFunctor().isRole() ? 1 : 0)];
+		final Predicate headFunctor = head.getFunctor();
+		final boolean isDL;
+		if (headFunctor instanceof HybridPredicate) {
+			final HybridPredicate hybridHeadFunctor = (HybridPredicate) headFunctor;
+			isDL = hybridHeadFunctor.isConcept() || hybridHeadFunctor.isRole();
+		} else
+			isDL = false;
+		final Literal[] doubleBody = new Literal[rule.getBody().size() + (isDL ? 1 : 0)];
 		int i = 0;
 		for (final Literal literal : positiveBody) {
 			originalBody[i] = literal.accept(originalEncoder);
@@ -52,7 +60,7 @@ public class ProgramDoubling {
 			doubleBody[i] = literal.accept(originalEncoder);
 			i++;
 		}
-		if (head.getFunctor().isConcept() || head.getFunctor().isRole()) {
+		if (isDL) {
 			final ModelVisitor negativeEncoder = new PredicateTypeVisitor(PredicateType.NEGATIVE);
 			doubleBody[i] = Model.negLiteral(head.accept(negativeEncoder));
 		}

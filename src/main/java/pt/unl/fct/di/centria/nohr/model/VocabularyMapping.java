@@ -21,7 +21,7 @@ public interface VocabularyMapping {
 	 *            a symbol
 	 * @return the concept represented by {@code symbol}; or {@code null} if {@code symbol} doesn't represent any concept.
 	 */
-	public HybridPredicate getConcept(String symbol);
+	public Predicate getConcept(String symbol);
 
 	/**
 	 * Get the individual represented by a given symbol.
@@ -46,5 +46,5 @@ public interface VocabularyMapping {
 	 *            a symbol
 	 * @return the role represented by {@code symbol}; or {@code null} if {@code symbol} doesn't represent any role.
 	 */
-	public HybridPredicate getRole(String symbol);
+	public Predicate getRole(String symbol);
 }

@@ -36,7 +36,7 @@ import com.lexicalscope.jewel.cli.Option;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
@@ -183,7 +183,7 @@ public class ProgramGenerator {
 		}
 	}
 
-	private final List<HybridPredicate> predicates;
+	private final List<Predicate> predicates;
 	private final List<Constant> constants;
 	private final Random random;
 	private final Set<Rule> program;
@@ -222,7 +222,7 @@ public class ProgramGenerator {
 	}
 
 	private Rule generateFact() {
-		final HybridPredicate functor = nextPredicate();
+		final Predicate functor = nextPredicate();
 		final List<Term> args = new ArrayList<>(functor.getArity());
 		for (int i = 0; i < functor.getArity(); i++)
 			args.add(nextConstant());
@@ -239,10 +239,10 @@ public class ProgramGenerator {
 		final int posLen = Math.max(1, positiveBodyLength.next());
 		final int negLen = Math.max(0, negativeBodyLength.next());
 		// positive body functors:
-		final List<HybridPredicate> posFunctors = new ArrayList<>(posLen);
+		final List<Predicate> posFunctors = new ArrayList<>(posLen);
 		int posArgs = 0;
 		for (int i = 0; i < posLen; i++) {
-			final HybridPredicate pred = nextPredicate();
+			final Predicate pred = nextPredicate();
 			posFunctors.add(pred);
 			posArgs += pred.getArity();
 		}
@@ -255,7 +255,7 @@ public class ProgramGenerator {
 		final List<Literal> body = new ArrayList<>(posLen + negLen);
 		// positive body:
 		final List<Variable> safeVars = new ArrayList<>(n);
-		for (final HybridPredicate pred : posFunctors) {
+		for (final Predicate pred : posFunctors) {
 			final List<Term> args = new ArrayList<Term>(pred.getArity());
 			for (int i = 0; i < pred.getArity(); i++)
 				if (succeed(variablesRatio) && !vars.isEmpty()) {
@@ -268,7 +268,7 @@ public class ProgramGenerator {
 		}
 		// negative body:
 		for (int i = 0; i < negLen; i++) {
-			final HybridPredicate pred = nextPredicate();
+			final Predicate pred = nextPredicate();
 			final List<Term> args = new ArrayList<Term>(pred.getArity());
 			for (int j = 0; j < pred.getArity(); j++)
 				if (succeed(variablesRatio) && !safeVars.isEmpty())
@@ -278,7 +278,7 @@ public class ProgramGenerator {
 			body.add(negLiteral(pred, args));
 		}
 		// head:
-		final HybridPredicate pred = nextPredicate();
+		final Predicate pred = nextPredicate();
 		final List<Term> args = new ArrayList<Term>(pred.getArity());
 		for (int i = 0; i < pred.getArity(); i++)
 			if (succeed(variablesRatio) && !safeVars.isEmpty())
@@ -299,7 +299,7 @@ public class ProgramGenerator {
 		return constants.get(i);
 	}
 
-	private HybridPredicate nextPredicate() {
+	private Predicate nextPredicate() {
 		final int i = random.nextInt(predicates.size());
 		return predicates.get(i);
 	}

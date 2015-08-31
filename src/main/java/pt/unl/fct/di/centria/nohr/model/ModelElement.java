@@ -3,6 +3,8 @@
  */
 package pt.unl.fct.di.centria.nohr.model;
 
+import pt.unl.fct.di.centria.nohr.model.concrete.ModelVisitor;
+
 /**
  * An element that can accept an {@link FormatVisitor} (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>}).
  *

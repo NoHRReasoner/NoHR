@@ -1,7 +1,6 @@
 package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 
 /**

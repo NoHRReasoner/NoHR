@@ -1,7 +1,10 @@
-package pt.unl.fct.di.centria.nohr.model;
+package pt.unl.fct.di.centria.nohr.model.concrete;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLProperty;
+
+import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 
 public class HybridPredicateWrapper implements HybridPredicate {
 
@@ -17,7 +20,7 @@ public class HybridPredicateWrapper implements HybridPredicate {
 	}
 
 	@Override
-	public HybridPredicate accept(ModelVisitor visitor) {
+	public Predicate accept(ModelVisitor visitor) {
 		return wrappee.accept(visitor);
 	}
 

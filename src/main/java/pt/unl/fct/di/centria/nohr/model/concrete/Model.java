@@ -21,7 +21,7 @@ import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
 import pt.unl.fct.di.centria.nohr.model.ModelElement;
 import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.centria.nohr.model.HybridPredicate;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.model.Rule;
@@ -62,7 +62,7 @@ public class Model {
 	 *            the functor predicate, <i>P</i>.
 	 * @return an atom <i>P(_,..., _)</i> where {@code _} represents an anonymous variable.
 	 */
-	public static Atom atom(HybridPredicate functor) {
+	public static Atom atom(Predicate functor) {
 		final List<Term> args = new ArrayList<Term>(functor.getArity());
 		for (int i = 0; i < functor.getArity(); i++)
 			args.add(var());
@@ -80,7 +80,7 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 *             if arguments have a size different from the {@code predicate} 's arity.
 	 */
-	public static Atom atom(HybridPredicate functor, List<Term> arguments) {
+	public static Atom atom(Predicate functor, List<Term> arguments) {
 		return new AtomImpl(functor, arguments);
 	}
 
@@ -95,7 +95,7 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 *             if arguments have a size different from the {@code predicate} 's arity.
 	 */
-	public static Atom atom(HybridPredicate functor, Term... arguments) {
+	public static Atom atom(Predicate functor, Term... arguments) {
 		final List<Term> argumentsList = new LinkedList<Term>();
 		Collections.addAll(argumentsList, arguments);
 		return atom(functor, argumentsList);
@@ -336,7 +336,7 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 *             if arguments have a size different from the {@code predicate} 's arity.
 	 */
-	public static NegativeLiteral negLiteral(HybridPredicate functor, List<Term> args) {
+	public static NegativeLiteral negLiteral(Predicate functor, List<Term> args) {
 		return negLiteral(atom(functor, args));
 	}
 
@@ -351,7 +351,7 @@ public class Model {
 	 * @throws IllegalArgumentException
 	 *             if arguments have a size different from the {@code predicate} 's arity.
 	 */
-	public static NegativeLiteral negLiteral(HybridPredicate functor, Term... args) {
+	public static NegativeLiteral negLiteral(Predicate functor, Term... args) {
 		final List<Term> argsList = new LinkedList<Term>();
 		Collections.addAll(argsList, args);
 		return negLiteral(atom(functor, argsList));

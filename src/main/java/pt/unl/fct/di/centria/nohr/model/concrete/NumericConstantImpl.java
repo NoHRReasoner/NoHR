@@ -7,14 +7,13 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.ModelVisitor;
 
 /**
  * Implementation of a numeric {@link Constant}.
  *
  * @author Nuno Costa
  */
-public class NumericConstantImpl implements Constant {
+public class NumericConstantImpl implements HybridConstant {
 
 	/** The number that this constant represents */
 	private final Number number;
