@@ -3,7 +3,13 @@
  */
 package pt.unl.fct.di.centria.nohr.model.terminals;
 
-import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.*;
+import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.DOUBLE;
+import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.DOUBLED_RANGE;
+import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.DOUBLE_DOMAIN;
+import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.NEGATIVE;
+import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.ORIGINAL;
+import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.ORIGINAL_DOMAIN;
+import static pt.unl.fct.di.centria.nohr.model.terminals.PredicateType.ORIGINAL_RANGE;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,22 +77,16 @@ public class DefaultVocabulary implements Vocabulary {
 	/** The ontologies whose concepts, rules, and individuals this {@link Vocabulary} maps. */
 	private final Set<OWLOntology> ontologies;
 
-	/** The mapping between symbols and the concepts that they represent. */
-	private final Map<String, Predicate> concepts;
-
-	/** The mapping between symbols and the roles that they represent. */
-	private final Map<String, Predicate> roles;
-
 	/** The mapping between symbols and the individuals that they represent. */
 	private final Map<String, Constant> individuals;
 
-	private final Map<OWLClass, Predicate> conceptPredicates;
+	private final Map<OWLClass, HybridPredicateWrapper> conceptPredicates;
 
-	private final Map<OWLProperty<?, ?>, Predicate> rolePredicates;
+	private final Map<OWLProperty<?, ?>, HybridPredicateWrapper> rolePredicates;
 
-	private final Map<Integer, Map<String, Predicate>> predicates;
+	private final Map<Integer, Map<String, HybridPredicateWrapper>> predicates;
 
-	private final Map<OWLIndividual, Constant> constants;
+	private final Map<OWLIndividual, Constant> individualConstants;
 
 	public DefaultVocabulary(OWLOntology ontology) {
 		this(ontology.getImportsClosure());
@@ -102,13 +102,11 @@ public class DefaultVocabulary implements Vocabulary {
 		Objects.requireNonNull(ontologies);
 		this.ontologies = ontologies;
 		references = new HashMultiset<>();
-		concepts = new HashMap<>();
-		roles = new HashMap<>();
 		individuals = new HashMap<>();
 		predicates = new HashMap<>();
 		conceptPredicates = new HashMap<>();
 		rolePredicates = new HashMap<>();
-		constants = new HashMap<>();
+		individualConstants = new HashMap<>();
 		final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
 		register(dataFactory.getOWLThing());
 		register(dataFactory.getOWLNothing());
@@ -191,6 +189,21 @@ public class DefaultVocabulary implements Vocabulary {
 		filler = new String(fillerChars);
 	}
 
+	private HybridPredicateWrapper addPredicate(String symbol, int arity, HybridPredicate predicate, boolean change) {
+		Map<String, HybridPredicateWrapper> map = predicates.get(arity);
+		if (map == null) {
+			map = new HashMap<>();
+			predicates.put(arity, map);
+		}
+		HybridPredicateWrapper pred = map.get(symbol);
+		if (pred == null) {
+			pred = new HybridPredicateWrapper(predicate);
+			map.put(symbol, pred);
+		} else if (change)
+			pred.setWrapee(predicate);
+		return pred;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -208,11 +221,17 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	@Override
 	public Constant cons(OWLIndividual individual) {
-		final Constant cons = constants.get(individual);
+		final Constant cons = individualConstants.get(individual);
 		if (cons == null)
 			throw new UndefinedSymbolException();
 		return cons;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.String)
+	 */
 
 	/*
 	 * (non-Javadoc)
@@ -238,12 +257,6 @@ public class DefaultVocabulary implements Vocabulary {
 		else
 			throw new ClassCastException();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.String)
-	 */
 
 	@Override
 	public Constant cons(String symbol) {
@@ -369,41 +382,11 @@ public class DefaultVocabulary implements Vocabulary {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#getConcept(java.lang.String)
-	 */
-	@Override
-	public Predicate getConcept(String symbol) {
-		return concepts.get(symbol);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#getIndividual(java.lang.String)
-	 */
-	@Override
-	public Constant getIndividual(String symbol) {
-		return individuals.get(symbol);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#getOntologies()
 	 */
 	@Override
 	public Set<OWLOntology> getOntologies() {
 		return ontologies;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#getRole(java.lang.String)
-	 */
-	@Override
-	public Predicate getRole(String symbol) {
-		return roles.get(symbol);
 	}
 
 	/*
@@ -600,28 +583,8 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	@Override
 	public Predicate pred(String symbol, int arity) {
-		Predicate pred;
-		if (arity == 1) {
-			pred = getConcept(symbol);
-			if (pred != null)
-				return pred;
-		}
-		if (arity == 2) {
-			pred = getRole(symbol);
-			if (pred != null)
-				return pred;
-		}
-		Map<String, Predicate> map = predicates.get(arity);
-		if (map == null) {
-			map = new HashMap<>();
-			predicates.put(arity, map);
-		}
-		pred = map.get(symbol);
-		if (pred == null) {
-			pred = new HybridPredicateWrapper(new RulePredicateImpl(symbol, arity));
-			map.put(symbol, pred);
-		}
-		return pred;
+		final HybridPredicate pred = new RulePredicateImpl(symbol, arity);
+		return addPredicate(symbol, arity, pred, false);
 	}
 
 	/*
@@ -662,15 +625,16 @@ public class DefaultVocabulary implements Vocabulary {
 	 *            the concept.
 	 */
 	private void register(OWLClass concept) {
-		Predicate pred = conceptPredicates.get(concept);
+		final HybridPredicateWrapper pred = conceptPredicates.get(concept);
+		final HybridPredicate conceptPred;
 		if (pred == null) {
-			pred = new HybridPredicateWrapper(new ConceptPredicateImpl(concept));
-			conceptPredicates.put(concept, pred);
-		}
-		conceptPredicates.put(concept, pred);
-		concepts.put(pred.getSymbol(), pred);
+			conceptPred = new ConceptPredicateImpl(concept);
+			conceptPredicates.put(concept, new HybridPredicateWrapper(conceptPred));
+			addPredicate(conceptPred.getSymbol(), 1, conceptPred, true);
+		} else
+			conceptPred = pred.getWrapee();
 		for (final String symbol : symbols(concept))
-			concepts.put(symbol, pred);
+			addPredicate(symbol, 1, conceptPred, true);
 		references.add(concept);
 	}
 
@@ -680,12 +644,12 @@ public class DefaultVocabulary implements Vocabulary {
 	 * @param individual
 	 */
 	private void register(OWLIndividual individual) {
-		Constant cons = constants.get(individual);
+		Constant cons = individualConstants.get(individual);
 		if (cons == null) {
 			cons = new ConstantWrapper(new IndividualConstantImpl(individual));
-			constants.put(individual, cons);
+			individualConstants.put(individual, cons);
 		}
-		constants.put(individual, cons);
+		individualConstants.put(individual, cons);
 		individuals.put(cons.getSymbol(), cons);
 		for (final String symbol : symbols(individual))
 			individuals.put(symbol, cons);
@@ -699,16 +663,26 @@ public class DefaultVocabulary implements Vocabulary {
 	 *            a role.
 	 */
 	private void register(OWLProperty<?, ?> role) {
-		Predicate pred = rolePredicates.get(role);
+		final HybridPredicateWrapper pred = rolePredicates.get(role);
+		final HybridPredicate rolePred;
 		if (pred == null) {
-			pred = new HybridPredicateWrapper(new RolePredicateImpl(role));
-			rolePredicates.put(role, pred);
-		}
-		rolePredicates.put(role, pred);
-		roles.put(pred.getSymbol(), pred);
+			rolePred = new RolePredicateImpl(role);
+			rolePredicates.put(role, new HybridPredicateWrapper(rolePred));
+			addPredicate(rolePred.getSymbol(), 2, rolePred, true);
+		} else
+			rolePred = pred.getWrapee();
 		for (final String symbol : symbols(role))
-			roles.put(symbol, pred);
+			addPredicate(symbol, 2, rolePred, true);
 		references.add(role);
+	}
+
+	private boolean removePredicate(String symbol, int arity) {
+		final Map<String, HybridPredicateWrapper> map = predicates.get(arity);
+		if (map == null)
+			return false;
+		else
+			return map.remove(symbol) != null;
+
 	}
 
 	/**
@@ -756,9 +730,9 @@ public class DefaultVocabulary implements Vocabulary {
 		references.remove(concept);
 		if (!references.contains(concept)) {
 			final Predicate pred = conceptPredicates.remove(concept);
-			concepts.remove(pred.getSymbol());
+			removePredicate(pred.getSymbol(), 1);
 			for (final String symbol : symbols(concept))
-				concepts.remove(symbol);
+				removePredicate(symbol, 1);
 		}
 	}
 
@@ -772,9 +746,9 @@ public class DefaultVocabulary implements Vocabulary {
 		references.remove(role);
 		if (!references.contains(role)) {
 			final Predicate pred = rolePredicates.remove(role);
-			roles.remove(pred.getSymbol());
+			removePredicate(pred.getSymbol(), 2);
 			for (final String symbol : symbols(role))
-				roles.put(symbol, pred(role));
+				removePredicate(symbol, 2);
 		}
 	}
 
@@ -787,7 +761,7 @@ public class DefaultVocabulary implements Vocabulary {
 	private void unregiter(OWLIndividual individual) {
 		references.remove(individual);
 		if (!references.contains(individual)) {
-			final Constant cons = constants.remove(individual);
+			final Constant cons = individualConstants.remove(individual);
 			individuals.remove(cons);
 			for (final String symbol : symbols(individual))
 				individuals.remove(symbol);

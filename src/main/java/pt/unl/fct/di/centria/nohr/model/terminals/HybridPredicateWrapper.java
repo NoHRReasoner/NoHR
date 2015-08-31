@@ -49,6 +49,10 @@ public class HybridPredicateWrapper implements HybridPredicate {
 		return wrappee.getSymbol();
 	}
 
+	HybridPredicate getWrapee() {
+		return wrappee;
+	}
+
 	@Override
 	public boolean isConcept() {
 		return wrappee.isConcept();
@@ -61,6 +65,11 @@ public class HybridPredicateWrapper implements HybridPredicate {
 
 	void setWrapee(HybridPredicate wrappee) {
 		this.wrappee = wrappee;
+	}
+
+	@Override
+	public String toString() {
+		return getSymbol();
 	}
 
 }
