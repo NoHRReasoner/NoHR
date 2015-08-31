@@ -78,7 +78,7 @@ public class DefaultVocabulary implements Vocabulary {
 	private final Set<OWLOntology> ontologies;
 
 	/** The mapping between symbols and the individuals that they represent. */
-	private final Map<String, Constant> individuals;
+	private final Map<String, HybridConstantWrapper> constants;
 
 	private final Map<OWLClass, HybridPredicateWrapper> conceptPredicates;
 
@@ -86,7 +86,7 @@ public class DefaultVocabulary implements Vocabulary {
 
 	private final Map<Integer, Map<String, HybridPredicateWrapper>> predicates;
 
-	private final Map<OWLIndividual, Constant> individualConstants;
+	private final Map<OWLIndividual, HybridConstantWrapper> individualConstants;
 
 	public DefaultVocabulary(OWLOntology ontology) {
 		this(ontology.getImportsClosure());
@@ -102,7 +102,7 @@ public class DefaultVocabulary implements Vocabulary {
 		Objects.requireNonNull(ontologies);
 		this.ontologies = ontologies;
 		references = new HashMultiset<>();
-		individuals = new HashMap<>();
+		constants = new HashMap<>();
 		predicates = new HashMap<>();
 		conceptPredicates = new HashMap<>();
 		rolePredicates = new HashMap<>();
@@ -189,6 +189,16 @@ public class DefaultVocabulary implements Vocabulary {
 		filler = new String(fillerChars);
 	}
 
+	private HybridConstantWrapper addConstant(String symbol, HybridConstant constant, boolean change) {
+		HybridConstantWrapper cons = constants.get(symbol);
+		if (cons == null) {
+			cons = new HybridConstantWrapper(constant);
+			constants.put(symbol, cons);
+		} else if (change)
+			cons.setWrappe(constant);
+		return cons;
+	}
+
 	private HybridPredicateWrapper addPredicate(String symbol, int arity, HybridPredicate predicate, boolean change) {
 		Map<String, HybridPredicateWrapper> map = predicates.get(arity);
 		if (map == null) {
@@ -217,6 +227,12 @@ public class DefaultVocabulary implements Vocabulary {
 	/*
 	 * (non-Javadoc)
 	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.String)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(org.semanticweb.owlapi.model.OWLIndividual)
 	 */
 	@Override
@@ -226,12 +242,6 @@ public class DefaultVocabulary implements Vocabulary {
 			throw new UndefinedSymbolException();
 		return cons;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.String)
-	 */
 
 	/*
 	 * (non-Javadoc)
@@ -264,12 +274,7 @@ public class DefaultVocabulary implements Vocabulary {
 			final Double number = Double.valueOf(symbol);
 			return cons(number);
 		} catch (final NumberFormatException e) {
-			Constant individual = individuals.get(symbol);
-			if (individual == null) {
-				individual = new ConstantWrapper(new RuleConstantImpl(symbol));
-				individuals.put(symbol, individual);
-			}
-			return individual;
+			return addConstant(symbol, new RuleConstantImpl(symbol), false);
 		}
 	}
 
@@ -644,15 +649,16 @@ public class DefaultVocabulary implements Vocabulary {
 	 * @param individual
 	 */
 	private void register(OWLIndividual individual) {
-		Constant cons = individualConstants.get(individual);
+		final HybridConstantWrapper cons = individualConstants.get(individual);
+		final HybridConstant individualConstant;
 		if (cons == null) {
-			cons = new ConstantWrapper(new IndividualConstantImpl(individual));
-			individualConstants.put(individual, cons);
-		}
-		individualConstants.put(individual, cons);
-		individuals.put(cons.getSymbol(), cons);
+			individualConstant = new IndividualConstantImpl(individual);
+			individualConstants.put(individual, new HybridConstantWrapper(individualConstant));
+			addConstant(individualConstant.getSymbol(), individualConstant, true);
+		} else
+			individualConstant = cons.getWrappe();
 		for (final String symbol : symbols(individual))
-			individuals.put(symbol, cons);
+			addConstant(symbol, individualConstant, true);
 		references.add(individual);
 	}
 
@@ -728,12 +734,11 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void unregister(OWLClass concept) {
 		references.remove(concept);
-		if (!references.contains(concept)) {
-			final Predicate pred = conceptPredicates.remove(concept);
-			removePredicate(pred.getSymbol(), 1);
-			for (final String symbol : symbols(concept))
-				removePredicate(symbol, 1);
-		}
+		// if (!references.contains(concept))
+		// final Predicate pred = conceptPredicates.remove(concept);
+		// removePredicate(pred.getSymbol(), 1);
+		// for (final String symbol : symbols(concept))
+		// removePredicate(symbol, 1);
 	}
 
 	/**
@@ -744,12 +749,12 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void unregister(OWLProperty<?, ?> role) {
 		references.remove(role);
-		if (!references.contains(role)) {
-			final Predicate pred = rolePredicates.remove(role);
-			removePredicate(pred.getSymbol(), 2);
-			for (final String symbol : symbols(role))
-				removePredicate(symbol, 2);
-		}
+		// if (!references.contains(role)) {
+		// final Predicate pred = rolePredicates.remove(role);
+		// removePredicate(pred.getSymbol(), 2);
+		// for (final String symbol : symbols(role))
+		// removePredicate(symbol, 2);
+		// }
 	}
 
 	/**
@@ -760,12 +765,12 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void unregiter(OWLIndividual individual) {
 		references.remove(individual);
-		if (!references.contains(individual)) {
-			final Constant cons = individualConstants.remove(individual);
-			individuals.remove(cons);
-			for (final String symbol : symbols(individual))
-				individuals.remove(symbol);
-		}
+		// if (!references.contains(individual)) {
+		// final HybridConstant cons = individualConstants.remove(individual);
+		// constants.remove(cons);
+		// for (final String symbol : symbols(individual))
+		// constants.remove(symbol);
+		// }
 	}
 
 }

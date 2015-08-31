@@ -6,11 +6,13 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 
-public class ConstantWrapper implements HybridConstant {
+public class HybridConstantWrapper implements HybridConstant {
 
 	private HybridConstant wrappee;
 
-	ConstantWrapper(HybridConstant wrappee) {
+	HybridConstantWrapper(HybridConstant wrappee) {
+		if (wrappee instanceof HybridConstantWrapper)
+			throw new IllegalArgumentException("wrapee: can't be a HybridConstantWrapper");
 		this.wrappee = wrappee;
 	}
 
@@ -44,6 +46,10 @@ public class ConstantWrapper implements HybridConstant {
 		return wrappee.getSymbol();
 	}
 
+	HybridConstant getWrappe() {
+		return wrappee;
+	}
+
 	@Override
 	public boolean isIndividual() {
 		return wrappee.isIndividual();
@@ -60,7 +66,14 @@ public class ConstantWrapper implements HybridConstant {
 	}
 
 	void setWrappe(HybridConstant wrappee) {
+		if (wrappee instanceof HybridConstantWrapper)
+			throw new IllegalArgumentException("wrapee: can't be a HybridConstantWrapper");
 		this.wrappee = wrappee;
+	}
+
+	@Override
+	public String toString() {
+		return getSymbol();
 	}
 
 }

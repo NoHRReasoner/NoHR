@@ -11,6 +11,8 @@ public class HybridPredicateWrapper implements HybridPredicate {
 	private HybridPredicate wrappee;
 
 	HybridPredicateWrapper(HybridPredicate wrappee) {
+		if (wrappee instanceof HybridPredicateWrapper)
+			throw new IllegalArgumentException("wrappe: shouldn't be an HybridPredicateWrapper.");
 		this.wrappee = wrappee;
 	}
 
@@ -64,6 +66,8 @@ public class HybridPredicateWrapper implements HybridPredicate {
 	}
 
 	void setWrapee(HybridPredicate wrappee) {
+		if (wrappee instanceof HybridPredicateWrapper)
+			throw new IllegalArgumentException("wrappe: shouldn't be an HybridPredicateWrapper.");
 		this.wrappee = wrappee;
 	}
 
