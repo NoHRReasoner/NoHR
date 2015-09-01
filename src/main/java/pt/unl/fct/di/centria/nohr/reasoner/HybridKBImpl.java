@@ -22,7 +22,9 @@ import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Model;
+import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.ProgramChangeListener;
 import pt.unl.fct.di.centria.nohr.model.Query;
@@ -32,6 +34,7 @@ import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.terminals.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.terminals.PredicateTypeVisitor;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
+import pt.unl.fct.di.centria.nohr.model.terminals.VocabularyChangeListener;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
@@ -86,6 +89,8 @@ public class HybridKBImpl implements HybridKB {
 
 	/** The {@link ProgramChangeListener} that will track the tracks the {@link Program} changes. */
 	private final ProgramChangeListener programChangeListener;
+
+	private final VocabularyChangeListener vocabularyChangeListener;
 
 	/**
 	 * Constructs a {@link HybridKBImpl} from a given {@link OWLOntology ontology} and {@link Program program}.
@@ -215,8 +220,21 @@ public class HybridKBImpl implements HybridKB {
 				hasProgramChanges = true;
 			}
 		};
+		vocabularyChangeListener = new VocabularyChangeListener() {
+
+			@Override
+			public void constantChanged(Constant constant) {
+				hasProgramChanges = true;
+			}
+
+			@Override
+			public void predicateChanged(Predicate predicate) {
+				hasProgramChanges = true;
+			}
+		};
 		ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
 		program.addListener(programChangeListener);
+		this.vocabulary.addListener(vocabularyChangeListener);
 		preprocess();
 	}
 
@@ -246,6 +264,7 @@ public class HybridKBImpl implements HybridKB {
 		dedutiveDatabase.dipose();
 		ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
 		program.removeListener(programChangeListener);
+		vocabulary.removeListener(vocabularyChangeListener);
 	}
 
 	@Override

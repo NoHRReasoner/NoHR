@@ -23,6 +23,8 @@ import pt.unl.fct.di.centria.nohr.model.Predicate;
  */
 public interface Vocabulary {
 
+	void addListener(VocabularyChangeListener listener);
+
 	/**
 	 * Creates a constant representing a specified number.
 	 *
@@ -369,5 +371,7 @@ public interface Vocabulary {
 	 * @return <i>RP<sup>d</sup></i> if {@code doub} is true; <i>RP</i>, otherwise.
 	 */
 	Predicate ranPred(OWLPropertyExpression<?, ?> role, boolean doub);
+
+	void removeListener(VocabularyChangeListener listener);
 
 }

@@ -65,10 +65,12 @@ public class HybridConstantWrapper implements HybridConstant {
 		return wrappee.isNumber();
 	}
 
-	void setWrappe(HybridConstant wrappee) {
+	boolean changeWrappe(HybridConstant wrappee) {
 		if (wrappee instanceof HybridConstantWrapper)
 			throw new IllegalArgumentException("wrapee: can't be a HybridConstantWrapper");
+		final boolean changed = !wrappee.equals(this.wrappee);
 		this.wrappee = wrappee;
+		return changed;
 	}
 
 	@Override

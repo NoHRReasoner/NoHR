@@ -88,6 +88,8 @@ public class DefaultVocabulary implements Vocabulary {
 
 	private final Map<OWLIndividual, HybridConstantWrapper> individualConstants;
 
+	private final Set<VocabularyChangeListener> listeners;
+
 	public DefaultVocabulary(OWLOntology ontology) {
 		this(ontology.getImportsClosure());
 	}
@@ -101,6 +103,7 @@ public class DefaultVocabulary implements Vocabulary {
 	public DefaultVocabulary(final Set<OWLOntology> ontologies) {
 		Objects.requireNonNull(ontologies);
 		this.ontologies = ontologies;
+		listeners = new HashSet<>();
 		references = new HashMultiset<>();
 		constants = new HashMap<>();
 		predicates = new HashMap<>();
@@ -195,8 +198,15 @@ public class DefaultVocabulary implements Vocabulary {
 			cons = new HybridConstantWrapper(constant);
 			constants.put(symbol, cons);
 		} else if (change)
-			cons.setWrappe(constant);
+			if (cons.changeWrappe(constant))
+				for (final VocabularyChangeListener listener : listeners)
+					listener.constantChanged(cons);
 		return cons;
+	}
+
+	@Override
+	public void addListener(VocabularyChangeListener listener) {
+		listeners.add(listener);
 	}
 
 	private HybridPredicateWrapper addPredicate(String symbol, int arity, HybridPredicate predicate, boolean change) {
@@ -210,9 +220,17 @@ public class DefaultVocabulary implements Vocabulary {
 			pred = new HybridPredicateWrapper(predicate);
 			map.put(symbol, pred);
 		} else if (change)
-			pred.setWrapee(predicate);
+			if (pred.changeWrapee(predicate))
+				for (final VocabularyChangeListener listener : listeners)
+					listener.predicateChanged(pred);
 		return pred;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.String)
+	 */
 
 	/*
 	 * (non-Javadoc)
@@ -223,12 +241,6 @@ public class DefaultVocabulary implements Vocabulary {
 	public Constant cons(Number n) {
 		return new NumericConstantImpl(n);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.String)
-	 */
 
 	/*
 	 * (non-Javadoc)
@@ -635,9 +647,9 @@ public class DefaultVocabulary implements Vocabulary {
 		if (pred == null) {
 			conceptPred = new ConceptPredicateImpl(concept);
 			conceptPredicates.put(concept, new HybridPredicateWrapper(conceptPred));
-			addPredicate(conceptPred.getSymbol(), 1, conceptPred, true);
 		} else
 			conceptPred = pred.getWrapee();
+		addPredicate(conceptPred.getSymbol(), 1, conceptPred, true);
 		for (final String symbol : symbols(concept))
 			addPredicate(symbol, 1, conceptPred, true);
 		references.add(concept);
@@ -654,9 +666,9 @@ public class DefaultVocabulary implements Vocabulary {
 		if (cons == null) {
 			individualConstant = new IndividualConstantImpl(individual);
 			individualConstants.put(individual, new HybridConstantWrapper(individualConstant));
-			addConstant(individualConstant.getSymbol(), individualConstant, true);
 		} else
 			individualConstant = cons.getWrappe();
+		addConstant(individualConstant.getSymbol(), individualConstant, true);
 		for (final String symbol : symbols(individual))
 			addConstant(symbol, individualConstant, true);
 		references.add(individual);
@@ -674,12 +686,17 @@ public class DefaultVocabulary implements Vocabulary {
 		if (pred == null) {
 			rolePred = new RolePredicateImpl(role);
 			rolePredicates.put(role, new HybridPredicateWrapper(rolePred));
-			addPredicate(rolePred.getSymbol(), 2, rolePred, true);
 		} else
 			rolePred = pred.getWrapee();
+		addPredicate(rolePred.getSymbol(), 2, rolePred, true);
 		for (final String symbol : symbols(role))
 			addPredicate(symbol, 2, rolePred, true);
 		references.add(role);
+	}
+
+	@Override
+	public void removeListener(VocabularyChangeListener listener) {
+		listeners.add(listener);
 	}
 
 	private boolean removePredicate(String symbol, int arity) {

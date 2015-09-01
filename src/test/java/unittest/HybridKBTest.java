@@ -1,4 +1,5 @@
 package unittest;
+
 import java.io.IOException;
 
 import org.junit.After;
@@ -51,12 +52,16 @@ public class HybridKBTest extends KB {
 		rule("B(?X):-A(?X)");
 		subConcept("B", "C");
 		assertTrue("C(a)");
-		rule("D(?X):-C(?X)");
 		subConcept("D", "E");
+		rule("D(?X):-C(?X)");
 		assertTrue("E(a)");
-		rule("F(a)");
+		typeOf("F", "a");
 		subConcept(conj("E", "F"), conc("G"));
 		assertTrue("G(a)");
+		rule("P(c, d)");
+		rule("R(?X, ?Y) :- Q(?X, ?Y)");
+		subRole("P", "Q");
+		assertTrue("R(c, d)");
 	}
 
 	@Test
