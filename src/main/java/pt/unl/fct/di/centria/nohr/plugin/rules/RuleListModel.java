@@ -75,7 +75,16 @@ public class RuleListModel extends AbstractListModel<Object> {
 		return added;
 	}
 
+	public void clear() {
+		final int size = ruleItems.size();
+		program.clear();
+		ruleItems.clear();
+		ruleItems.add(HEADER);
+		super.fireIntervalRemoved(this, 1, size);
+	}
+
 	Rule edit(int index, Rule rule) {
+		ruleEditor.setRule(rule);
 		final Rule newRule = ruleEditor.show();
 		boolean updated = false;
 		if (newRule != null)

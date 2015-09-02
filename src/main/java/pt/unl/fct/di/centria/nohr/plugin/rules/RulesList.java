@@ -41,6 +41,7 @@ public class RulesList extends MList {
 
 	@Override
 	protected void handleAdd() {
+		ruleEditor.clear();
 		final Rule newRule = ruleEditor.show();
 		if (newRule != null)
 			model.add(newRule);

@@ -2,6 +2,7 @@ package pt.unl.fct.di.centria.nohr.reasoner;
 
 import static pt.unl.fct.di.centria.nohr.model.Model.ans;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class QueryProcessor {
 	 *         unsuccessful.
 	 */
 	protected List<Answer> allAnswers(Query query, boolean hasDoubled) {
-		return allAnswers(query, hasDoubled, true, true, hasDoubled);
+		return allAnswers(query, hasDoubled, true, true, true);
 	}
 
 	/**
@@ -71,10 +72,11 @@ public class QueryProcessor {
 	 */
 	protected List<Answer> allAnswers(Query query, boolean isDoubled, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) {
-		if (inconsistentAnswers && isDoubled == false)
-			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
 			throw new IllegalArgumentException("must have at least one truth value enabled");
+		inconsistentAnswers = isDoubled && inconsistentAnswers;
+		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
+			return Collections.<Answer> emptyList();
 		final List<Answer> result = new LinkedList<Answer>();
 		Map<List<Term>, TruthValue> origAnss;
 		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)
@@ -124,7 +126,7 @@ public class QueryProcessor {
 	 *         unsuccessful.
 	 */
 	protected boolean hasAnswer(Query query, boolean hasDoubled) {
-		return hasAnswer(query, hasDoubled, true, true, hasDoubled);
+		return hasAnswer(query, hasDoubled, true, true, true);
 	}
 
 	/**
@@ -146,10 +148,11 @@ public class QueryProcessor {
 	 */
 	protected boolean hasAnswer(Query query, boolean hasDoubled, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) {
-		if (inconsistentAnswers && hasDoubled == false)
-			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
 			throw new IllegalArgumentException("must have at least one truth value enabled");
+		inconsistentAnswers = hasDoubled && inconsistentAnswers;
+		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
+			return false;
 		final Query origQuery = query.getOriginal();
 		// true original answers
 		if (inconsistentAnswers || trueAnswers)
@@ -214,7 +217,7 @@ public class QueryProcessor {
 	 * @return one answer to {@code query}. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was unsuccessful.
 	 */
 	protected Answer oneAnswer(Query query, boolean hasDoubled) {
-		return oneAnswer(query, hasDoubled, true, true, hasDoubled);
+		return oneAnswer(query, hasDoubled, true, true, true);
 	}
 
 	/**
@@ -235,10 +238,11 @@ public class QueryProcessor {
 	 */
 	protected Answer oneAnswer(Query query, boolean isDoubled, boolean trueAnswers, boolean undefinedAnswers,
 			boolean inconsistentAnswers) {
-		if (inconsistentAnswers && isDoubled == false)
-			throw new IllegalArgumentException("can't be inconsistent if there is no doubled rules");
 		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
 			throw new IllegalArgumentException("must have at least one truth value enabled");
+		inconsistentAnswers = isDoubled && inconsistentAnswers;
+		if (!trueAnswers && !undefinedAnswers && !inconsistentAnswers)
+			return null;
 		final Query origQuery = query.getOriginal();
 		// undefined original answers
 		if (undefinedAnswers && !trueAnswers && !inconsistentAnswers)

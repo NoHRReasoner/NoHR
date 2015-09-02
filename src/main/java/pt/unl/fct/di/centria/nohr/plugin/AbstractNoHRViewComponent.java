@@ -170,6 +170,8 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 					new DisposableObject<Vocabulary>(new DefaultVocabulary(getOntology())));
 			getOWLModelManager().put(NoHRParser.class,
 					new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getVocabularyMapping())));
+			getOWLModelManager().put(ProgramPresistenceManager.class, new DisposableObject<ProgramPresistenceManager>(
+					new ProgramPresistenceManager(getVocabularyMapping())));
 			startNoHR();
 		}
 

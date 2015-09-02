@@ -251,7 +251,7 @@ public class HybridKBImpl implements HybridKB {
 		RuntimesLogger.start("query");
 		RuntimesLogger.info("querying: " + query);
 		final List<Answer> answers = queryProcessor.allAnswers(query, hadDisjunctions, trueAnswer, undefinedAnswers,
-				hadDisjunctions ? inconsistentAnswers : false);
+				inconsistentAnswers);
 		RuntimesLogger.stop("query", "queries");
 		final List<Answer> result = new LinkedList<Answer>();
 		for (final Answer ans : answers)
@@ -299,9 +299,14 @@ public class HybridKBImpl implements HybridKB {
 		RuntimesLogger.start("query");
 		RuntimesLogger.info("querying: " + query);
 		final boolean hasAnswer = queryProcessor.hasAnswer(query, hadDisjunctions, trueAnswer, undefinedAnswers,
-				hadDisjunctions ? inconsistentAnswers : false);
+				inconsistentAnswers);
 		RuntimesLogger.stop("query", "queries");
 		return hasAnswer;
+	}
+
+	@Override
+	public boolean hasDisjunctions() {
+		return ontologyTranslator.hasDisjunctions();
 	}
 
 	@Override
@@ -318,7 +323,7 @@ public class HybridKBImpl implements HybridKB {
 		RuntimesLogger.start("query");
 		RuntimesLogger.info("querying: " + query);
 		final Answer answer = queryProcessor.oneAnswer(query, hadDisjunctions, trueAnswer, undefinedAnswers,
-				hadDisjunctions ? inconsistentAnswers : false);
+				inconsistentAnswers);
 		RuntimesLogger.stop("query", "queries");
 		return answer;
 	}

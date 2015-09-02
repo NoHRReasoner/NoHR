@@ -83,8 +83,18 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 					}
 			}
 		});
+		final JButton clearButton = new JButton(new AbstractAction("Clear") {
+
+			private static final long serialVersionUID = -2176187025244957420L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				getRuleListModel().clear();
+			}
+		});
 		buttonHolder.add(openButton);
 		buttonHolder.add(saveButton);
+		buttonHolder.add(clearButton);
 		add(buttonHolder, BorderLayout.SOUTH);
 	}
 

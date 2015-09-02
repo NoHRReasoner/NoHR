@@ -33,6 +33,14 @@ public class RuleEditor {
 		editor = new ExpressionEditor<Rule>(editorKit, new RuleExpressionChecker(parser));
 	}
 
+	public void clear() {
+		editor.setText("");
+	}
+
+	public void setRule(Rule rule) {
+		editor.setText(rule.toString());
+	}
+
 	public Rule show() {
 		final UIHelper uiHelper = new UIHelper(editorKit);
 		final int ret = uiHelper.showValidatingDialog("Rule Editor", editor, null);

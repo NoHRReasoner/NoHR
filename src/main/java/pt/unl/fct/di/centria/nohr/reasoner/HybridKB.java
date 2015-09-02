@@ -96,6 +96,8 @@ public interface HybridKB {
 	boolean hasAnswer(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException;
 
+	boolean hasDisjunctions();
+
 	/**
 	 * Obtains one answers to a given query.
 	 *
