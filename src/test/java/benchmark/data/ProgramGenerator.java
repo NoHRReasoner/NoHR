@@ -7,12 +7,10 @@ import static pt.unl.fct.di.centria.nohr.model.Model.atom;
 import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
 import static pt.unl.fct.di.centria.nohr.model.Model.rule;
 import static pt.unl.fct.di.centria.nohr.model.Model.var;
-import java.io.BufferedWriter;
+
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -33,12 +31,15 @@ import com.lexicalscope.jewel.cli.Option;
 import pt.unl.fct.di.centria.nohr.model.Atom;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Literal;
+import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
+import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.Variable;
 import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
+import pt.unl.fct.di.centria.nohr.parsing.ProgramPresistenceManager;
 
 /**
  * @author Nuno Costa
@@ -167,31 +168,28 @@ public class ProgramGenerator {
 				file = new File(conf.getOutput() + i + ".p");
 			else
 				file = new File(programName + i + ".p");
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-				for (final Rule rule : programGenerator.getProgram()) {
-					writer.write(rule.toString());
-					writer.write(".");
-					writer.newLine();
-				}
+			try {
+				ProgramPresistenceManager.write(programGenerator.getProgram(), file);
 			} catch (final IOException e) {
 				System.err.println(e.getMessage());
 				System.exit(1);
 				return;
 			}
 		}
+		System.exit(0);
 	}
 
 	private final List<Predicate> predicates;
 	private final List<Constant> constants;
 	private final Random random;
-	private final Set<Rule> program;
+	private final Program program;
 
 	public ProgramGenerator(OWLOntology ontology, Long seed, Integer newPredicates, DiscreteRandomVariable arity,
 			Integer newConstants) {
 		random = new Random(seed);
 		predicates = new ArrayList<>();
 		constants = new ArrayList<>();
-		program = new HashSet<>();
+		program = Model.program();
 		final Vocabulary v = new DefaultVocabulary(ontology);
 		for (final OWLClass concept : ontology.getClassesInSignature())
 			predicates.add(v.pred(concept));
@@ -289,7 +287,7 @@ public class ProgramGenerator {
 		return rule(head, body);
 	}
 
-	public Set<Rule> getProgram() {
+	public Program getProgram() {
 		return program;
 	}
 

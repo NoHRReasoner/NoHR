@@ -339,7 +339,7 @@ public class KB {
 	}
 
 	public QLOntologyNormalization getQLNormalizedOntology() throws UnsupportedAxiomsException {
-		return new QLOntologyNormalizationImpl(ontology, hybridKB.getVocabularyMapping());
+		return new QLOntologyNormalizationImpl(ontology, hybridKB.getVocabulary());
 	}
 
 	public OWLObjectProperty[] getRoles(int n) {
@@ -480,7 +480,7 @@ public class KB {
 		try {
 			ontology = ontologyManager.createOntology(IRI.generateDocumentIRI());
 			hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profile);
-			parser = new NoHRRecursiveDescentParser(hybridKB.getVocabularyMapping());
+			parser = new NoHRRecursiveDescentParser(hybridKB.getVocabulary());
 		} catch (IPException | OWLOntologyCreationException | UnsupportedAxiomsException
 				| PrologEngineCreationException e) {
 			throw new RuntimeException(e);

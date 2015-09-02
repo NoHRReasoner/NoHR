@@ -3,7 +3,6 @@ package pt.unl.fct.di.centria.nohr.plugin;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.AbstractAction;
@@ -14,7 +13,8 @@ import javax.swing.JScrollPane;
 
 import org.protege.editor.core.ui.view.ViewComponent;
 
-import pt.unl.fct.di.centria.nohr.parsing.ParseException;
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
+
 import pt.unl.fct.di.centria.nohr.plugin.rules.RuleEditor;
 import pt.unl.fct.di.centria.nohr.plugin.rules.RuleListModel;
 import pt.unl.fct.di.centria.nohr.plugin.rules.RulesList;
@@ -35,7 +35,8 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 
 	private RuleListModel getRuleListModel() {
 		if (ruleListModel == null)
-			ruleListModel = new RuleListModel(getOWLEditorKit(), getParser(), getProgram());
+			ruleListModel = new RuleListModel(getOWLEditorKit(), getParser(), getProgramPresistenceManager(),
+					getProgram());
 		return ruleListModel;
 	}
 
@@ -59,9 +60,9 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 				if (returnVal == JFileChooser.APPROVE_OPTION)
 					try {
 						getRuleListModel().load(fc.getSelectedFile());
-					} catch (final FileNotFoundException e) {
-					} catch (final ParseException e) {
+					} catch (final PrologParserException e) {
 						Messages.invalidExpression(RulesViewComponent.this, e);
+					} catch (final IOException e) {
 					}
 			}
 		});

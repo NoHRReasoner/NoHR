@@ -287,7 +287,7 @@ public class HybridKBImpl implements HybridKB {
 	}
 
 	@Override
-	public Vocabulary getVocabularyMapping() {
+	public Vocabulary getVocabulary() {
 		return vocabulary;
 	}
 

@@ -80,7 +80,7 @@ public interface HybridKB {
 	 *
 	 * @return the {@link Vocabulary} that this {@link HybridKB} applies.
 	 */
-	Vocabulary getVocabularyMapping();
+	Vocabulary getVocabulary();
 
 	/**
 	 * Checks if there is some answer to a given query.

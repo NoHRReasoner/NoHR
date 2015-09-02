@@ -21,6 +21,7 @@ import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
+import pt.unl.fct.di.centria.nohr.parsing.ProgramPresistenceManager;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
@@ -135,6 +136,22 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 			getOWLModelManager().put(Program.class, program);
 		}
 		return program.getObject();
+	}
+
+	/**
+	 * Returns the {@link ProgramPresistenceManager}.
+	 *
+	 * @return the {@link ProgramPresistenceManager}.
+	 */
+	protected ProgramPresistenceManager getProgramPresistenceManager() {
+		DisposableObject<ProgramPresistenceManager> disposableObject = getOWLModelManager()
+				.get(ProgramPresistenceManager.class);
+		if (disposableObject == null) {
+			disposableObject = new DisposableObject<ProgramPresistenceManager>(
+					new ProgramPresistenceManager(getVocabularyMapping()));
+			getOWLModelManager().put(ProgramPresistenceManager.class, disposableObject);
+		}
+		return disposableObject.getObject();
 	}
 
 	protected Vocabulary getVocabularyMapping() {

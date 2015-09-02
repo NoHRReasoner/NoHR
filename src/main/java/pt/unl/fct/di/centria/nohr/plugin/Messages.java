@@ -9,6 +9,8 @@ import java.nio.file.Path;
 
 import javax.swing.JOptionPane;
 
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
+
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.TokenType;
@@ -26,11 +28,9 @@ public class Messages {
 	private static String CHECK_XSB_INSTALLATION = System.lineSeparator()
 			+ "Please make sure that the chosen XSB directory corresponds to an working XSB installation.";
 
-	public static void invalidExpression(Component parent, final ParseException e) {
-		String msg = String.format("Syntax error at line %d column %d. Expecting one of", e.getLine(),
-				e.getBegin() + 1);
-		for (final TokenType tokenType : e.getExpectedTokens())
-			msg += System.lineSeparator() + "\t" + tokenType;
+	public static void invalidExpression(Component parent, final PrologParserException e) {
+		final String msg = String.format("Syntax error at line %d column %d." + System.lineSeparator() + e.getMessage(),
+				e.getLineNumber(), e.getStringPosition());
 		JOptionPane.showMessageDialog(parent, msg, "Syntax error", JOptionPane.WARNING_MESSAGE);
 	}
 
@@ -59,18 +59,6 @@ public class Messages {
 	}
 
 	/**
-	 * The message shown when a IOException occurs while trying to save the rules.
-	 *
-	 * @param rulesViewComponent
-	 * @param e
-	 */
-	public static void unsucceccfulSave(RulesViewComponent rulesViewComponent, IOException e) {
-		JOptionPane.showMessageDialog(rulesViewComponent,
-				"Could not save the rules." + System.lineSeparator() + System.lineSeparator() + e.getMessage(),
-				"Unsuccessful save", JOptionPane.WARNING_MESSAGE);
-	}
-
-	/**
 	 * The message shown when the {@code XSB/config/} directory has more than one subdirectory.
 	 *
 	 * @param parent
@@ -80,6 +68,18 @@ public class Messages {
 	public static String selectPlataform(Component parent, final String[] platforms) {
 		return (String) JOptionPane.showInputDialog(parent, "Please select a platform", "Platform",
 				JOptionPane.PLAIN_MESSAGE, null, platforms, platforms[0]);
+	}
+
+	/**
+	 * The message shown when a IOException occurs while trying to save the rules.
+	 *
+	 * @param rulesViewComponent
+	 * @param e
+	 */
+	public static void unsucceccfulSave(RulesViewComponent rulesViewComponent, IOException e) {
+		JOptionPane.showMessageDialog(rulesViewComponent,
+				"Could not save the rules." + System.lineSeparator() + System.lineSeparator() + e.getMessage(),
+				"Unsuccessful save", JOptionPane.WARNING_MESSAGE);
 	}
 
 	/**

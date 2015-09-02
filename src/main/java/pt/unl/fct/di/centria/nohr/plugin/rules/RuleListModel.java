@@ -3,10 +3,7 @@
  */
 package pt.unl.fct.di.centria.nohr.plugin.rules;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +14,12 @@ import javax.swing.ListModel;
 import org.protege.editor.core.ui.list.MListSectionHeader;
 import org.protege.editor.owl.OWLEditorKit;
 
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
+
 import pt.unl.fct.di.centria.nohr.model.Program;
 import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
-import pt.unl.fct.di.centria.nohr.parsing.ParseException;
+import pt.unl.fct.di.centria.nohr.parsing.ProgramPresistenceManager;
 
 /**
  * An {@link ListModel list model} of {@link Rule rules}.
@@ -48,15 +47,16 @@ public class RuleListModel extends AbstractListModel<Object> {
 
 	private final List<Object> ruleItems;
 
-	private final NoHRParser parser;
+	private final ProgramPresistenceManager programPresistenceManager;
 
 	/**
 	 *
 	 */
 
-	public RuleListModel(OWLEditorKit editorKit, NoHRParser parser, Program program) {
+	public RuleListModel(OWLEditorKit editorKit, NoHRParser parser, ProgramPresistenceManager programPresistenceManager,
+			Program program) {
 		super();
-		this.parser = parser;
+		this.programPresistenceManager = programPresistenceManager;
 		ruleEditor = new RuleEditor(editorKit, parser);
 		this.program = program;
 		ruleItems = new ArrayList<Object>(program.size());
@@ -94,9 +94,9 @@ public class RuleListModel extends AbstractListModel<Object> {
 		return ruleItems.size();
 	}
 
-	public void load(File file) throws FileNotFoundException, ParseException {
+	public void load(File file) throws IOException, PrologParserException {
 		final int size = program.size();
-		program = parser.parseProgram(file);
+		program = programPresistenceManager.read(file);
 		ruleItems.clear();
 		ruleItems.add(HEADER);
 		for (final Rule rule : program)
@@ -114,13 +114,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 	}
 
 	public void save(File file) throws IOException {
-		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-		for (final Rule rule : program) {
-			writer.write(rule.toString());
-			writer.write(".");
-			writer.newLine();
-		}
-		writer.close();
+		ProgramPresistenceManager.write(program, file);
 	}
 
 }
