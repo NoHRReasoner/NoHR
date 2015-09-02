@@ -47,7 +47,6 @@ import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
 import pt.unl.fct.di.centria.nohr.utils.HashMultiset;
-import pt.unl.fct.di.centria.nohr.utils.WeakValuedHashMap;
 
 /**
  * An implementation of {@link Vocabulary} where the concepts and rules are represented by the fragment of their IRIs and the individuals by their
@@ -79,13 +78,13 @@ public class DefaultVocabulary implements Vocabulary {
 	private final Set<OWLOntology> ontologies;
 
 	/** The mapping between symbols and the individuals that they represent. */
-	private final WeakValuedHashMap<String, HybridConstantWrapper> constants;
+	private final Map<String, HybridConstantWrapper> constants;
 
 	private final Map<OWLClass, ConceptPredicateImpl> conceptPredicates;
 
 	private final Map<OWLProperty<?, ?>, RolePredicateImpl> rolePredicates;
 
-	private final Map<Integer, WeakValuedHashMap<String, HybridPredicateWrapper>> predicates;
+	private final Map<Integer, Map<String, HybridPredicateWrapper>> predicates;
 
 	private final Map<OWLIndividual, IndividualConstantImpl> individualConstants;
 
@@ -106,8 +105,8 @@ public class DefaultVocabulary implements Vocabulary {
 		this.ontologies = ontologies;
 		listeners = new HashSet<>();
 		references = new HashMultiset<>();
-		constants = new WeakValuedHashMap<>(1000);
-		predicates = new WeakValuedHashMap<>(1000);
+		constants = new HashMap<>();
+		predicates = new HashMap<>();
 		conceptPredicates = new HashMap<>();
 		rolePredicates = new HashMap<>();
 		individualConstants = new HashMap<>();
@@ -212,9 +211,9 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	private HybridPredicateWrapper addPredicate(String symbol, int arity, HybridPredicate predicate, boolean change) {
-		WeakValuedHashMap<String, HybridPredicateWrapper> map = predicates.get(arity);
+		Map<String, HybridPredicateWrapper> map = predicates.get(arity);
 		if (map == null) {
-			map = new WeakValuedHashMap<>(1000);
+			map = new HashMap<>();
 			predicates.put(arity, map);
 		}
 		HybridPredicateWrapper pred = map.get(symbol);
