@@ -27,8 +27,6 @@ import com.declarativa.interprolog.SolutionIterator;
 import com.declarativa.interprolog.TermModel;
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.HashMultiset;
-import pt.unl.fct.di.centria.nohr.Multiset;
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
 import pt.unl.fct.di.centria.nohr.model.Literal;
@@ -40,6 +38,8 @@ import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.Term;
 import pt.unl.fct.di.centria.nohr.model.TruthValue;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
+import pt.unl.fct.di.centria.nohr.utils.HashMultiset;
+import pt.unl.fct.di.centria.nohr.utils.Multiset;
 import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 /**

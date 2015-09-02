@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
 import pt.unl.fct.di.centria.nohr.model.terminals.PredicateType;
 import pt.unl.fct.di.centria.nohr.model.terminals.PredicateTypeVisitor;
+import pt.unl.fct.di.centria.nohr.utils.StringUtils;
 
 /**
  * Implementation of {@link Query}.

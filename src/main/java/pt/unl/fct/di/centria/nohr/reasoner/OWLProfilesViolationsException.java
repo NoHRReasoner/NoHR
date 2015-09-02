@@ -13,7 +13,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 import org.semanticweb.owlapi.profiles.OWLProfileViolation;
 
-import pt.unl.fct.di.centria.nohr.StringUtils;
+import pt.unl.fct.di.centria.nohr.utils.StringUtils;
 
 /**
  * Represents violations to the supported {@link Profile profiles}.

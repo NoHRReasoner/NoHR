@@ -43,10 +43,11 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
-import pt.unl.fct.di.centria.nohr.HashMultiset;
 import pt.unl.fct.di.centria.nohr.model.Constant;
 import pt.unl.fct.di.centria.nohr.model.Predicate;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
+import pt.unl.fct.di.centria.nohr.utils.HashMultiset;
+import pt.unl.fct.di.centria.nohr.utils.WeakValuedHashMap;
 
 /**
  * An implementation of {@link Vocabulary} where the concepts and rules are represented by the fragment of their IRIs and the individuals by their
@@ -78,15 +79,15 @@ public class DefaultVocabulary implements Vocabulary {
 	private final Set<OWLOntology> ontologies;
 
 	/** The mapping between symbols and the individuals that they represent. */
-	private final Map<String, HybridConstantWrapper> constants;
+	private final WeakValuedHashMap<String, HybridConstantWrapper> constants;
 
-	private final Map<OWLClass, HybridPredicateWrapper> conceptPredicates;
+	private final Map<OWLClass, ConceptPredicateImpl> conceptPredicates;
 
-	private final Map<OWLProperty<?, ?>, HybridPredicateWrapper> rolePredicates;
+	private final Map<OWLProperty<?, ?>, RolePredicateImpl> rolePredicates;
 
-	private final Map<Integer, Map<String, HybridPredicateWrapper>> predicates;
+	private final Map<Integer, WeakValuedHashMap<String, HybridPredicateWrapper>> predicates;
 
-	private final Map<OWLIndividual, HybridConstantWrapper> individualConstants;
+	private final Map<OWLIndividual, IndividualConstantImpl> individualConstants;
 
 	private final Set<VocabularyChangeListener> listeners;
 
@@ -105,8 +106,8 @@ public class DefaultVocabulary implements Vocabulary {
 		this.ontologies = ontologies;
 		listeners = new HashSet<>();
 		references = new HashMultiset<>();
-		constants = new HashMap<>();
-		predicates = new HashMap<>();
+		constants = new WeakValuedHashMap<>(1000);
+		predicates = new WeakValuedHashMap<>(1000);
 		conceptPredicates = new HashMap<>();
 		rolePredicates = new HashMap<>();
 		individualConstants = new HashMap<>();
@@ -211,9 +212,9 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	private HybridPredicateWrapper addPredicate(String symbol, int arity, HybridPredicate predicate, boolean change) {
-		Map<String, HybridPredicateWrapper> map = predicates.get(arity);
+		WeakValuedHashMap<String, HybridPredicateWrapper> map = predicates.get(arity);
 		if (map == null) {
-			map = new HashMap<>();
+			map = new WeakValuedHashMap<>(1000);
 			predicates.put(arity, map);
 		}
 		HybridPredicateWrapper pred = map.get(symbol);
@@ -227,27 +228,11 @@ public class DefaultVocabulary implements Vocabulary {
 		return pred;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.String)
-	 */
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(java.lang.Number)
-	 */
 	@Override
 	public Constant cons(Number n) {
 		return new NumericConstantImpl(n);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(org.semanticweb.owlapi.model.OWLIndividual)
-	 */
 	@Override
 	public Constant cons(OWLIndividual individual) {
 		final Constant cons = individualConstants.get(individual);
@@ -256,21 +241,11 @@ public class DefaultVocabulary implements Vocabulary {
 		return cons;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(org.semanticweb.owlapi.model.OWLLiteral)
-	 */
 	@Override
 	public Constant cons(OWLLiteral literal) {
 		return new LiteralConstantImpl(literal);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.terminals.Voc#cons(org.semanticweb.owlapi.model.OWLPropertyAssertionObject)
-	 */
 	@Override
 	public Constant cons(OWLPropertyAssertionObject object) {
 		if (object instanceof OWLIndividual)
@@ -643,13 +618,11 @@ public class DefaultVocabulary implements Vocabulary {
 	 *            the concept.
 	 */
 	private void register(OWLClass concept) {
-		final HybridPredicateWrapper pred = conceptPredicates.get(concept);
-		final ConceptPredicateImpl conceptPred;
-		if (pred == null) {
+		ConceptPredicateImpl conceptPred = conceptPredicates.get(concept);
+		if (conceptPred == null) {
 			conceptPred = new ConceptPredicateImpl(concept);
-			conceptPredicates.put(concept, new HybridPredicateWrapper(conceptPred));
-		} else
-			conceptPred = (ConceptPredicateImpl) pred.getWrapee();
+			conceptPredicates.put(concept, conceptPred);
+		}
 		addPredicate(conceptPred.getSymbol(), 1, conceptPred, true);
 		for (final String symbol : symbols(concept)) {
 			addPredicate(symbol, 1, conceptPred, true);
@@ -664,13 +637,11 @@ public class DefaultVocabulary implements Vocabulary {
 	 * @param individual
 	 */
 	private void register(OWLIndividual individual) {
-		final HybridConstantWrapper cons = individualConstants.get(individual);
-		final IndividualConstantImpl individualConstant;
-		if (cons == null) {
+		IndividualConstantImpl individualConstant = individualConstants.get(individual);
+		if (individualConstant == null) {
 			individualConstant = new IndividualConstantImpl(individual);
-			individualConstants.put(individual, new HybridConstantWrapper(individualConstant));
-		} else
-			individualConstant = (IndividualConstantImpl) cons.getWrappe();
+			individualConstants.put(individual, individualConstant);
+		}
 		addConstant(individualConstant.getSymbol(), individualConstant, true);
 		for (final String symbol : symbols(individual)) {
 			addConstant(symbol, individualConstant, true);
@@ -686,13 +657,11 @@ public class DefaultVocabulary implements Vocabulary {
 	 *            a role.
 	 */
 	private void register(OWLProperty<?, ?> role) {
-		final HybridPredicateWrapper pred = rolePredicates.get(role);
-		final RolePredicateImpl rolePred;
-		if (pred == null) {
+		RolePredicateImpl rolePred = rolePredicates.get(role);
+		if (rolePred == null) {
 			rolePred = new RolePredicateImpl(role);
-			rolePredicates.put(role, new HybridPredicateWrapper(rolePred));
-		} else
-			rolePred = (RolePredicateImpl) pred.getWrapee();
+			rolePredicates.put(role, rolePred);
+		}
 		addPredicate(rolePred.getSymbol(), 2, rolePred, true);
 		for (final String symbol : symbols(role)) {
 			addPredicate(symbol, 2, rolePred, true);

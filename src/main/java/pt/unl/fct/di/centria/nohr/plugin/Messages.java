@@ -9,11 +9,11 @@ import java.nio.file.Path;
 
 import javax.swing.JOptionPane;
 
-import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.TokenType;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.centria.nohr.utils.StringUtils;
 
 /**
  * The messages shown in the NoHR views.

@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import pt.unl.fct.di.centria.nohr.StringUtils;
 import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
+import pt.unl.fct.di.centria.nohr.utils.StringUtils;
 
 /**
  * Implementation of {@link Answer}.

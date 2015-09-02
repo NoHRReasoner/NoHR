@@ -1,7 +1,7 @@
 /**
  *
  */
-package pt.unl.fct.di.centria.nohr;
+package pt.unl.fct.di.centria.nohr.utils;
 
 import java.util.Collection;
 

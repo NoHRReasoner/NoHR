@@ -79,7 +79,7 @@ public class HybridKBTest extends KB {
 
 	@Test
 	public void test3() throws OWLProfilesViolationsException, IPException, IOException, UnsupportedAxiomsException,
-			PrologEngineCreationException {
+			PrologEngineCreationException, InterruptedException {
 		clear();
 		final Rule rule = rule("a(i)");
 		assertTrue("a(i)");
@@ -88,12 +88,14 @@ public class HybridKBTest extends KB {
 		removeAxiom(axiom);
 		assertTrue("a(i)");
 		remove(rule);
+		System.gc();
+		Thread.sleep(1100);
 		assertFalse("a(i)");
 	}
 
 	@Test
 	public void test4() throws OWLProfilesViolationsException, IPException, IOException, UnsupportedAxiomsException,
-			PrologEngineCreationException {
+			PrologEngineCreationException, InterruptedException {
 		clear();
 		final Rule rule = rule("p(a, b)");
 		assertTrue("p(a, b)");
@@ -102,6 +104,8 @@ public class HybridKBTest extends KB {
 		removeAxiom(axiom);
 		assertTrue("p(a, b)");
 		remove(rule);
+		System.gc();
+		Thread.sleep(1100);
 		assertFalse("p(a, b)");
 	}
 
