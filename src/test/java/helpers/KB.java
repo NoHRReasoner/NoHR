@@ -436,6 +436,10 @@ public class KB {
 		return axiom;
 	}
 
+	public boolean remove(Rule rule) {
+		return hybridKB.getProgram().remove(rule);
+	}
+
 	protected void removeAxiom(OWLAxiom axiom) {
 		ontologyManager.removeAxiom(ontology, axiom);
 	}

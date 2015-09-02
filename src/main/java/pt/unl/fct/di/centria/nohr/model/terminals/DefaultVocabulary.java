@@ -133,7 +133,7 @@ public class DefaultVocabulary implements Vocabulary {
 			public void ontologiesChanged(List<? extends OWLOntologyChange> changes) throws OWLException {
 				for (final OWLOntologyChange change : changes)
 					if (ontologies.contains(change.getOntology()))
-						if (change.isAddAxiom()) {
+						if (change.isAddAxiom() && change.getAxiom().getAxiomType() != AxiomType.DECLARATION) {
 							if (change.getAxiom().isOfType(AxiomType.ANNOTATION_ASSERTION)) {
 								final OWLAnnotationSubject subject = ((OWLAnnotationAssertionAxiom) change.getAxiom())
 										.getSubject();
@@ -153,7 +153,8 @@ public class DefaultVocabulary implements Vocabulary {
 								register(role);
 							for (final OWLIndividual individual : change.getAxiom().getIndividualsInSignature())
 								register(individual);
-						} else if (change.isRemoveAxiom()) {
+						} else
+							if (change.isRemoveAxiom() && change.getAxiom().getAxiomType() != AxiomType.DECLARATION) {
 							if (change.getAxiom().isOfType(AxiomType.ANNOTATION_ASSERTION)) {
 								final OWLAnnotationSubject subject = ((OWLAnnotationAssertionAxiom) change.getAxiom())
 										.getSubject();
@@ -700,6 +701,16 @@ public class DefaultVocabulary implements Vocabulary {
 		references.add(role);
 	}
 
+	private boolean removeIndividual(String symbol) {
+		final HybridConstantWrapper cons = constants.get(symbol);
+		if (cons.changeWrappe(new RuleConstantImpl(symbol))) {
+			for (final VocabularyChangeListener listener : listeners)
+				listener.constantChanged(cons);
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public void removeListener(VocabularyChangeListener listener) {
 		listeners.add(listener);
@@ -707,10 +718,15 @@ public class DefaultVocabulary implements Vocabulary {
 
 	private boolean removePredicate(String symbol, int arity) {
 		final Map<String, HybridPredicateWrapper> map = predicates.get(arity);
-		if (map == null)
-			return false;
-		else
-			return map.remove(symbol) != null;
+		if (map != null) {
+			final HybridPredicateWrapper pred = map.get(symbol);
+			if (pred.changeWrapee(new RulePredicateImpl(symbol, arity))) {
+				for (final VocabularyChangeListener listener : listeners)
+					listener.predicateChanged(pred);
+				return true;
+			}
+		}
+		return false;
 
 	}
 
@@ -757,11 +773,12 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void unregister(OWLClass concept) {
 		references.remove(concept);
-		// if (!references.contains(concept))
-		// final Predicate pred = conceptPredicates.remove(concept);
-		// removePredicate(pred.getSymbol(), 1);
-		// for (final String symbol : symbols(concept))
-		// removePredicate(symbol, 1);
+		if (!references.contains(concept)) {
+			final Predicate pred = conceptPredicates.remove(concept);
+			removePredicate(pred.getSymbol(), 1);
+			for (final String symbol : symbols(concept))
+				removePredicate(symbol, 1);
+		}
 	}
 
 	/**
@@ -772,12 +789,12 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void unregister(OWLProperty<?, ?> role) {
 		references.remove(role);
-		// if (!references.contains(role)) {
-		// final Predicate pred = rolePredicates.remove(role);
-		// removePredicate(pred.getSymbol(), 2);
-		// for (final String symbol : symbols(role))
-		// removePredicate(symbol, 2);
-		// }
+		if (!references.contains(role)) {
+			final Predicate pred = rolePredicates.remove(role);
+			removePredicate(pred.getSymbol(), 2);
+			for (final String symbol : symbols(role))
+				removePredicate(symbol, 2);
+		}
 	}
 
 	/**
@@ -788,12 +805,12 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void unregiter(OWLIndividual individual) {
 		references.remove(individual);
-		// if (!references.contains(individual)) {
-		// final HybridConstant cons = individualConstants.remove(individual);
-		// constants.remove(cons);
-		// for (final String symbol : symbols(individual))
-		// constants.remove(symbol);
-		// }
+		if (!references.contains(individual)) {
+			final Constant cons = individualConstants.remove(individual);
+			removeIndividual(cons.getSymbol());
+			for (final String symbol : symbols(individual))
+				removeIndividual(symbol);
+		}
 	}
 
 }
