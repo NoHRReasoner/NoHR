@@ -21,6 +21,8 @@ public class ConceptPredicateImpl implements HybridPredicate {
 	/** The concept represented by this predicate. */
 	private final OWLClass concept;
 
+	private String label;
+
 	/**
 	 * Constructs a predicate representing a specified concept.
 	 *
@@ -101,9 +103,19 @@ public class ConceptPredicateImpl implements HybridPredicate {
 		return false;
 	}
 
+	void setLabel(String label) {
+		this.label = label;
+	}
+
 	@Override
 	public String toString() {
-		return getSymbol();
+		if (label != null)
+			return label;
+		final String fragment = concept.getIRI().toURI().getFragment();
+		if (fragment != null)
+			return fragment;
+		else
+			return concept.getIRI().toString();
 	}
 
 }

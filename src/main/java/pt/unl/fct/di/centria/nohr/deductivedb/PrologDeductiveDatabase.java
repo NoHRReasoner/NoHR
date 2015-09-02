@@ -209,7 +209,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		this.vocabulary = vocabulary;
 		try {
 			file = File.createTempFile(FILE_PREFIX, PROLOG_EXTENSION);
-			// file.deleteOnExit();
+			file.deleteOnExit();
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -298,7 +298,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public Answer answer(Query query, Boolean trueAnswers) {
-		RuntimesLogger.info(query.accept(formatVisitor));
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return null;
 		commit();
@@ -316,7 +315,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public Iterable<Answer> answers(final Query query, Boolean trueAnswers) {
-		RuntimesLogger.info(query.accept(formatVisitor));
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return Collections.<Answer> emptyList();
 		commit();
@@ -372,7 +370,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public Map<List<Term>, TruthValue> answersValuations(Query query, Boolean trueAnswers) {
-		RuntimesLogger.info(query.accept(formatVisitor));
 		final Map<List<Term>, TruthValue> answers = new HashMap<List<Term>, TruthValue>();
 		if (trueAnswers != null && trueAnswers == false && !hasWFS())
 			return answers;
@@ -457,7 +454,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	@Override
 	public boolean hasAnswers(Query query, Boolean trueAnswers) {
-		RuntimesLogger.info(query.accept(formatVisitor));
 		if (trueAnswers != null && !trueAnswers && !hasWFS())
 			return false;
 		commit();

@@ -643,15 +643,17 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void register(OWLClass concept) {
 		final HybridPredicateWrapper pred = conceptPredicates.get(concept);
-		final HybridPredicate conceptPred;
+		final ConceptPredicateImpl conceptPred;
 		if (pred == null) {
 			conceptPred = new ConceptPredicateImpl(concept);
 			conceptPredicates.put(concept, new HybridPredicateWrapper(conceptPred));
 		} else
-			conceptPred = pred.getWrapee();
+			conceptPred = (ConceptPredicateImpl) pred.getWrapee();
 		addPredicate(conceptPred.getSymbol(), 1, conceptPred, true);
-		for (final String symbol : symbols(concept))
+		for (final String symbol : symbols(concept)) {
 			addPredicate(symbol, 1, conceptPred, true);
+			conceptPred.setLabel(symbol);
+		}
 		references.add(concept);
 	}
 
@@ -662,15 +664,17 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void register(OWLIndividual individual) {
 		final HybridConstantWrapper cons = individualConstants.get(individual);
-		final HybridConstant individualConstant;
+		final IndividualConstantImpl individualConstant;
 		if (cons == null) {
 			individualConstant = new IndividualConstantImpl(individual);
 			individualConstants.put(individual, new HybridConstantWrapper(individualConstant));
 		} else
-			individualConstant = cons.getWrappe();
+			individualConstant = (IndividualConstantImpl) cons.getWrappe();
 		addConstant(individualConstant.getSymbol(), individualConstant, true);
-		for (final String symbol : symbols(individual))
+		for (final String symbol : symbols(individual)) {
 			addConstant(symbol, individualConstant, true);
+			individualConstant.setLabel(symbol);
+		}
 		references.add(individual);
 	}
 
@@ -682,15 +686,17 @@ public class DefaultVocabulary implements Vocabulary {
 	 */
 	private void register(OWLProperty<?, ?> role) {
 		final HybridPredicateWrapper pred = rolePredicates.get(role);
-		final HybridPredicate rolePred;
+		final RolePredicateImpl rolePred;
 		if (pred == null) {
 			rolePred = new RolePredicateImpl(role);
 			rolePredicates.put(role, new HybridPredicateWrapper(rolePred));
 		} else
-			rolePred = pred.getWrapee();
+			rolePred = (RolePredicateImpl) pred.getWrapee();
 		addPredicate(rolePred.getSymbol(), 2, rolePred, true);
-		for (final String symbol : symbols(role))
+		for (final String symbol : symbols(role)) {
 			addPredicate(symbol, 2, rolePred, true);
+			rolePred.setLabel(symbol);
+		}
 		references.add(role);
 	}
 

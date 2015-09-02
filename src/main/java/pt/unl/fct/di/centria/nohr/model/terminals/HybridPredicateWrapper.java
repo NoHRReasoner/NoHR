@@ -36,6 +36,14 @@ public class HybridPredicateWrapper implements HybridPredicate {
 		return wrappee.asRole();
 	}
 
+	boolean changeWrapee(HybridPredicate wrappee) {
+		if (wrappee instanceof HybridPredicateWrapper)
+			throw new IllegalArgumentException("wrappe: shouldn't be an HybridPredicateWrapper.");
+		final boolean changed = !wrappee.equals(this.wrappee);
+		this.wrappee = wrappee;
+		return changed;
+	}
+
 	@Override
 	public int getArity() {
 		return wrappee.getArity();
@@ -65,17 +73,9 @@ public class HybridPredicateWrapper implements HybridPredicate {
 		return wrappee.isRole();
 	}
 
-	boolean changeWrapee(HybridPredicate wrappee) {
-		if (wrappee instanceof HybridPredicateWrapper)
-			throw new IllegalArgumentException("wrappe: shouldn't be an HybridPredicateWrapper.");
-		final boolean changed = !wrappee.equals(this.wrappee);
-		this.wrappee = wrappee;
-		return changed;
-	}
-
 	@Override
 	public String toString() {
-		return getSymbol();
+		return wrappee.toString();
 	}
 
 }

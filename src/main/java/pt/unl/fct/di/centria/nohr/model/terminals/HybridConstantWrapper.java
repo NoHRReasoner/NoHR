@@ -41,6 +41,14 @@ public class HybridConstantWrapper implements HybridConstant {
 		return wrappee.asNumber();
 	}
 
+	boolean changeWrappe(HybridConstant wrappee) {
+		if (wrappee instanceof HybridConstantWrapper)
+			throw new IllegalArgumentException("wrapee: can't be a HybridConstantWrapper");
+		final boolean changed = !wrappee.equals(this.wrappee);
+		this.wrappee = wrappee;
+		return changed;
+	}
+
 	@Override
 	public String getSymbol() {
 		return wrappee.getSymbol();
@@ -65,17 +73,9 @@ public class HybridConstantWrapper implements HybridConstant {
 		return wrappee.isNumber();
 	}
 
-	boolean changeWrappe(HybridConstant wrappee) {
-		if (wrappee instanceof HybridConstantWrapper)
-			throw new IllegalArgumentException("wrapee: can't be a HybridConstantWrapper");
-		final boolean changed = !wrappee.equals(this.wrappee);
-		this.wrappee = wrappee;
-		return changed;
-	}
-
 	@Override
 	public String toString() {
-		return getSymbol();
+		return wrappee.toString();
 	}
 
 }

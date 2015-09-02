@@ -16,12 +16,14 @@ import pt.unl.fct.di.centria.nohr.model.Term;
  * Ontology individual {@link Constant} implementation.
  *
  * @see Term
- * @author nunocosta
+ * @author Nuno Costa
  */
 public class IndividualConstantImpl implements HybridConstant {
 
 	/** The ontology individual. */
 	private final OWLIndividual individual;
+
+	String label;
 
 	/**
 	 * Constructs an ontology individual constant with a specified individual.
@@ -107,9 +109,20 @@ public class IndividualConstantImpl implements HybridConstant {
 		return false;
 	}
 
+	void setLabel(String label) {
+		this.label = label;
+	}
+
 	@Override
 	public String toString() {
-		return getSymbol();
+		if (label != null)
+			return label;
+		if (individual.isNamed()) {
+			final String fragment = individual.asOWLNamedIndividual().getIRI().toURI().getFragment();
+			if (fragment != null)
+				return fragment;
+		}
+		return individual.toStringID();
 	}
 
 }

@@ -58,7 +58,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 			showUndefinedAnswersCheckBox
 					.setEnabled(showTrueAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
 			showInconsistentAnswersCheckBox
-					.setEnabled(!showTrueAnswersCheckBox.isSelected() && !showUndefinedAnswersCheckBox.isSelected());
+					.setEnabled(showTrueAnswersCheckBox.isSelected() || showUndefinedAnswersCheckBox.isSelected());
 			doQuery();
 		}
 	}

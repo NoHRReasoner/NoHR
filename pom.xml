@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>pt.unl.fct.di.centria</groupId>
+	<groupId>pt.unl.fct.novalincs</groupId>
 	<artifactId>nohr</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>2.0.0</version>
 	<packaging>bundle</packaging>
 
 	<name>NoHR</name>
@@ -121,4 +121,9 @@
 			<url>file:${project.basedir}/repo</url>
 		</repository>
 	</repositories>
+	<organization>
+		<name>NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)</name>
+		<url>http://nova-lincs.di.fct.unl.pt/</url>
+	</organization>
+	<url>http://centria.di.fct.unl.pt/nohr</url>
 </project>

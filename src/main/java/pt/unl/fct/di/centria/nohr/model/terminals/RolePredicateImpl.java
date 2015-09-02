@@ -21,6 +21,8 @@ public class RolePredicateImpl implements HybridPredicate {
 	/** The role represented by this predicate. */
 	private final OWLProperty<?, ?> role;
 
+	private String label;
+
 	/**
 	 * Constructs a predicate representing a specified role.
 	 *
@@ -121,6 +123,10 @@ public class RolePredicateImpl implements HybridPredicate {
 		return true;
 	}
 
+	void setLabel(String label) {
+		this.label = label;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -128,7 +134,13 @@ public class RolePredicateImpl implements HybridPredicate {
 	 */
 	@Override
 	public String toString() {
-		return getSymbol();
+		if (label != null)
+			return label;
+		final String fragment = role.getIRI().toURI().getFragment();
+		if (fragment != null)
+			return fragment;
+		else
+			return role.getIRI().toString();
 	}
 
 }

@@ -10,8 +10,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.protege.editor.owl.OWLEditorKit;
-import org.protege.editor.owl.ui.table.BasicLinkedOWLObjectTable;
-
 import pt.unl.fct.di.centria.nohr.model.Answer;
 import pt.unl.fct.di.centria.nohr.model.Query;
 
@@ -20,7 +18,7 @@ import pt.unl.fct.di.centria.nohr.model.Query;
  *
  * @author Nuno Costa
  */
-public class AnswersTable extends BasicLinkedOWLObjectTable {
+public class AnswersTable extends JTable {
 
 	/**
 	 *
@@ -33,7 +31,7 @@ public class AnswersTable extends BasicLinkedOWLObjectTable {
 	private final List<ChangeListener> copyListeners = new ArrayList<>();
 
 	public AnswersTable(OWLEditorKit owlEditorKit) {
-		super(new AnswersTableModel(), owlEditorKit);
+		super(new AnswersTableModel());
 		setAutoCreateColumnsFromModel(true);
 		getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
