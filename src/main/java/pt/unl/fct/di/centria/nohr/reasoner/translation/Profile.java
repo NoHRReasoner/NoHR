@@ -12,12 +12,12 @@ import org.semanticweb.owlapi.profiles.OWL2QLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.el.ELOntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyTranslator;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * Represents the types of the supported OWL profiles. The order of enumeration corresponds to the preferred order. Each profile check if a given

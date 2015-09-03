@@ -34,13 +34,6 @@ import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
-import pt.unl.fct.di.centria.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
@@ -50,6 +43,13 @@ import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalization;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalizationImpl;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.model.Literal;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.NegativeLiteral;
+import pt.unl.fct.di.novalincs.nohr.model.Query;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
 
 public class KB {
 

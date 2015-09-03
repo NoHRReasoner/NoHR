@@ -31,11 +31,11 @@ import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.inference.ReasonerProgressUI;
 import org.semanticweb.owlapi.model.OWLException;
 
-import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.plugin.query.AnswersTable;
 import pt.unl.fct.di.centria.nohr.plugin.query.QueryExpressionChecker;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.Query;
 
 /**
  * The {@link ViewComponent} where the the queries are executed.

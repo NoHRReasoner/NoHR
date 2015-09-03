@@ -19,8 +19,8 @@ import benchmark.ubt.api.QueryConfigParser;
 import benchmark.ubt.api.QuerySpecification;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
+import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
 
 public class LubmTest {
 

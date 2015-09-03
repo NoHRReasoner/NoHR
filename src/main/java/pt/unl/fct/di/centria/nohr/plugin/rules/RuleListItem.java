@@ -5,7 +5,7 @@ package pt.unl.fct.di.centria.nohr.plugin.rules;
 
 import org.protege.editor.core.ui.list.MListItem;
 
-import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
  * A {@link final Rule rule} {@link final MListItem item} of a certain {@link RulesList}.**

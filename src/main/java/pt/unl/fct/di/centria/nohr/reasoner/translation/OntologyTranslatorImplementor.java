@@ -2,10 +2,10 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
-import pt.unl.fct.di.centria.nohr.deductivedb.DatabaseProgram;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * A <i>concrete implementor</i> of {@link OntologyTranslator} (see {@link <a href="http://www.oodesign.com/bridge-pattern.html">Bridge Pattern</a>},

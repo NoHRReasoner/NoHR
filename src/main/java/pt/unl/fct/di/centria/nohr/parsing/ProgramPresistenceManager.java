@@ -3,8 +3,8 @@
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.var;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,15 +16,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.XSBFormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.FormatVisitor;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
-import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.XSBFormatVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Literal;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.Term;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 import com.igormaznitsa.prologparser.PrologCharDataSource;
 import com.igormaznitsa.prologparser.PrologParser;

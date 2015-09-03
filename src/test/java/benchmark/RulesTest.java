@@ -26,8 +26,6 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import benchmark.ubt.api.QueryConfigParser;
 import benchmark.ubt.api.QuerySpecification;
-import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ProgramPresistenceManager;
@@ -35,9 +33,11 @@ import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
+import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 public class RulesTest {
 

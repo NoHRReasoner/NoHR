@@ -3,10 +3,11 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.ql;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.atom;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.rule;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.ruleSet;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.var;
+
 import java.util.Set;
 
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -17,11 +18,11 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
-import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
+import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * Implementing class of {@link QLAxiomsTranslator} to handle the original part (i.e. the rules with original meta-predicates) of the DL-Lite

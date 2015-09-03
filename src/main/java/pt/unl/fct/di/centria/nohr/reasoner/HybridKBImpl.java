@@ -17,28 +17,28 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DatabaseProgram;
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Constant;
-import pt.unl.fct.di.centria.nohr.model.Model;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.ProgramChangeListener;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
-import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.terminals.PredicateType;
-import pt.unl.fct.di.centria.nohr.model.terminals.PredicateTypeVisitor;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
-import pt.unl.fct.di.centria.nohr.model.terminals.VocabularyChangeListener;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
-import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.XSBDeductiveDatabase;
+import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.Constant;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
+import pt.unl.fct.di.novalincs.nohr.model.ProgramChangeListener;
+import pt.unl.fct.di.novalincs.nohr.model.Query;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateTypeVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.VocabularyChangeListener;
+import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 /**
  * Implementation of {@link HybridKB} according to {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} and
@@ -176,7 +176,7 @@ public class HybridKBImpl implements HybridKB {
 		this.ontology = ontology;
 		this.program = program;
 		if (vocabulary != null) {
-			if (!vocabulary.getOntologies().contains(ontology))
+			if (!vocabulary.getOntology().equals(ontology))
 				throw new IllegalArgumentException("vocabularyMapping: must contain the given ontology");
 			this.vocabulary = vocabulary;
 		} else

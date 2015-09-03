@@ -1,6 +1,6 @@
 package pt.unl.fct.di.centria.nohr.reasoner;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.ans;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.ans;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.TruthValue;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.Query;
+import pt.unl.fct.di.novalincs.nohr.model.Term;
+import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
 
 /**
  * Handle queries to a {@link HybridKB}. Given a certain query, executes the corresponding original and double - or original only, if the KB hasn't

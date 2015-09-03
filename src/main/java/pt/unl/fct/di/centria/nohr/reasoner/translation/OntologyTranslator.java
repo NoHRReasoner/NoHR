@@ -2,9 +2,9 @@ package pt.unl.fct.di.centria.nohr.reasoner.translation;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 
 /**
  * Represents a component that can translate a specified {@link OWLOntology} <i>O</i> to a logic program <i>T</i> and load that program in a specified

@@ -6,10 +6,10 @@ package pt.unl.fct.di.centria.nohr.plugin.rules;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 
-import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.plugin.Messages;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
  * An {@link OWLExpressionChecker} for {@link Rules}.

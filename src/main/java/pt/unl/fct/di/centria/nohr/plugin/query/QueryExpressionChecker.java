@@ -7,10 +7,10 @@ import org.protege.editor.core.Disposable;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 
-import pt.unl.fct.di.centria.nohr.model.Query;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.plugin.Messages;
+import pt.unl.fct.di.novalincs.nohr.model.Query;
 
 public class QueryExpressionChecker implements OWLExpressionChecker<Query>, Disposable {
 

@@ -3,8 +3,6 @@
  */
 package pt.unl.fct.di.centria.nohr.parsing;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.COMMA;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.ID;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.IF;
@@ -13,6 +11,8 @@ import static pt.unl.fct.di.centria.nohr.parsing.TokenType.NOT;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.QUESTION_MARK;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.R_PAREN;
 import static pt.unl.fct.di.centria.nohr.parsing.TokenType.SYMBOL;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.var;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,15 +23,15 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLProperty;
 
-import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
-import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.Literal;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
+import pt.unl.fct.di.novalincs.nohr.model.Query;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.Term;
+import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * A {@link <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser"> recursive descent parser</a>} that implements {@link NoHRParser}.

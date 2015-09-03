@@ -3,10 +3,11 @@
  */
 package pt.unl.fct.di.centria.nohr.reasoner.translation.el;
 
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.centria.nohr.model.Model.rule;
-import static pt.unl.fct.di.centria.nohr.model.Model.ruleSet;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.atom;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.negLiteral;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.rule;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.ruleSet;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,13 +21,13 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 
-import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.AssertionsTranslation;
+import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.Literal;
+import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * Implementing class of {@link ELAxiomsTranslator} to handle the double part (i.e. the rules with double meta-predicates and those whose heads have a

@@ -16,10 +16,10 @@ import org.protege.editor.owl.OWLEditorKit;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
-import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.ProgramPresistenceManager;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
  * An {@link ListModel list model} of {@link Rule rules}.

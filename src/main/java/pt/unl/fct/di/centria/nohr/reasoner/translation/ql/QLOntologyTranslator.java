@@ -27,14 +27,14 @@ import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslator;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.OntologyTranslatorImplementor;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
-import pt.unl.fct.di.centria.runtimeslogger.RuntimesLogger;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 /**
  * Implementation of {@link OntologyTranslator} for the {@link Profile#OWL2_QL QL} profile, according to

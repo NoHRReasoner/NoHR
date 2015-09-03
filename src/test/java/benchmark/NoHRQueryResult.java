@@ -3,7 +3,7 @@ package benchmark;
 import java.util.Collection;
 
 import benchmark.ubt.api.QueryResult;
-import pt.unl.fct.di.centria.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.Answer;
 
 public class NoHRQueryResult implements QueryResult {
 

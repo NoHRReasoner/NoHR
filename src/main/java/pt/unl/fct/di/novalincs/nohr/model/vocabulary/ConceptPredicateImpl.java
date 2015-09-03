@@ -1,0 +1,121 @@
+/**
+ *
+ */
+package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
+
+import java.util.Objects;
+
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLProperty;
+
+import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+
+/**
+ * Implementation of a {@link Predicate} representing a concept.
+ *
+ * @author Nuno Costa
+ */
+public class ConceptPredicateImpl implements HybridPredicate {
+
+	/** The concept represented by this predicate. */
+	private final OWLClass concept;
+
+	private String label;
+
+	/**
+	 * Constructs a predicate representing a specified concept.
+	 *
+	 * @param concept
+	 *            the concept represented by the predicate. Must have a IRI fragment.
+	 * @throws IllegalArgumentException
+	 *             if {@code concept} hasn't a IRI fragment;
+	 */
+	ConceptPredicateImpl(OWLClass concept) {
+		Objects.requireNonNull(concept);
+		this.concept = concept;
+	}
+
+	@Override
+	public String accept(FormatVisitor visitor) {
+		return visitor.visit(this);
+	}
+
+	@Override
+	public Predicate accept(ModelVisitor visitor) {
+		return visitor.visit(this);
+	}
+
+	@Override
+	public OWLClass asConcept() {
+		return concept;
+	}
+
+	@Override
+	public OWLProperty<?, ?> asRole() {
+		throw new ClassCastException();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof ConceptPredicateImpl))
+			return false;
+		final ConceptPredicateImpl other = (ConceptPredicateImpl) obj;
+		if (!concept.getIRI().equals(other.concept.getIRI()))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int getArity() {
+		return 1;
+	}
+
+	@Override
+	public String getSignature() {
+		return getSymbol() + "/" + getArity();
+	}
+
+	@Override
+	public String getSymbol() {
+		return concept.getIRI().toQuotedString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + concept.getIRI().hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean isConcept() {
+		return true;
+	}
+
+	@Override
+	public boolean isRole() {
+		return false;
+	}
+
+	void setLabel(String label) {
+		this.label = label;
+	}
+
+	@Override
+	public String toString() {
+		if (label != null)
+			return label;
+		final String fragment = concept.getIRI().toURI().getFragment();
+		if (fragment != null)
+			return fragment;
+		else
+			return concept.getIRI().toString();
+	}
+
+}

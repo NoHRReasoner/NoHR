@@ -6,15 +6,15 @@ package pt.unl.fct.di.centria.nohr.reasoner;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.unl.fct.di.centria.nohr.model.Atom;
-import pt.unl.fct.di.centria.nohr.model.Literal;
-import pt.unl.fct.di.centria.nohr.model.Model;
-import pt.unl.fct.di.centria.nohr.model.Predicate;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.terminals.HybridPredicate;
-import pt.unl.fct.di.centria.nohr.model.terminals.ModelVisitor;
-import pt.unl.fct.di.centria.nohr.model.terminals.PredicateType;
-import pt.unl.fct.di.centria.nohr.model.terminals.PredicateTypeVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.Literal;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridPredicate;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateTypeVisitor;
 
 /**
  * Provides an auxiliary method that double a given rule according to <b>Definition 3.1</b> of

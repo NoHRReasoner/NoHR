@@ -14,12 +14,6 @@ import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.ProgramImpl;
-import pt.unl.fct.di.centria.nohr.model.Rule;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ProgramPresistenceManager;
@@ -27,6 +21,12 @@ import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
 import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
+import pt.unl.fct.di.novalincs.nohr.model.ProgramImpl;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * An abstract NoHR {@link ViewComponent}. Provides methods to access the components underlying to the NoHR plugin: the considered {@link OWLOntology
@@ -197,7 +197,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 	}
 
 	protected void reset() {
-		if (getVocabulary().getOntologies().contains(getOntology()))
+		if (getVocabulary().getOntology().equals(getOntology()))
 			return;
 		log.info("Resetting...");
 		getOWLModelManager().put(Vocabulary.class, new DisposableVocabulary(getOntology()));

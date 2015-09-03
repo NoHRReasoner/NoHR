@@ -8,9 +8,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static pt.unl.fct.di.centria.nohr.model.Model.ans;
-import static pt.unl.fct.di.centria.nohr.model.Model.atom;
-import static pt.unl.fct.di.centria.nohr.model.Model.var;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.ans;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.atom;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.var;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -29,20 +29,20 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import pt.unl.fct.di.centria.nohr.deductivedb.DatabaseProgram;
-import pt.unl.fct.di.centria.nohr.deductivedb.XSBDeductiveDatabase;
-import pt.unl.fct.di.centria.nohr.model.Answer;
-import pt.unl.fct.di.centria.nohr.model.Model;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Term;
-import pt.unl.fct.di.centria.nohr.model.TruthValue;
-import pt.unl.fct.di.centria.nohr.model.Variable;
-import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
-import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.centria.nohr.reasoner.QueryProcessor;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.XSBDeductiveDatabase;
+import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.Query;
+import pt.unl.fct.di.novalincs.nohr.model.Term;
+import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
+import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * @author nunocosta
@@ -275,7 +275,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	}
 
 	/**
-	 * Test method for {@link nohr.reasoner.QueryProcessor#answersValuations(pt.unl.fct.di.centria.nohr.model.Query)} .
+	 * Test method for {@link nohr.reasoner.QueryProcessor#answersValuations(pt.unl.fct.di.novalincs.nohr.model.Query)} .
 	 *
 	 * @throws IOException
 	 * @throws ParseException

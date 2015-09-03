@@ -25,10 +25,10 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import com.declarativa.interprolog.util.IPException;
 
 import helpers.KB;
-import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.TBoxDigraphImpl;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 
 /**
  * @author nunocosta

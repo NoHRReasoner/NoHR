@@ -10,8 +10,8 @@ import org.protege.editor.owl.ui.UIHelper;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.semanticweb.owlapi.model.OWLException;
 
-import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
  * An editor, showed in an dialog, that can be used to edit text containing rule expressions. The editor is backed by a parser that checks that the

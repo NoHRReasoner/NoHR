@@ -6,7 +6,7 @@ import java.awt.event.MouseListener;
 
 import org.protege.editor.core.ui.list.MList;
 
-import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
  * An {@link MList list} of {@link Rule rules}.

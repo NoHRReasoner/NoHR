@@ -6,9 +6,9 @@ package pt.unl.fct.di.centria.nohr.parsing;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import pt.unl.fct.di.centria.nohr.model.Program;
-import pt.unl.fct.di.centria.nohr.model.Query;
-import pt.unl.fct.di.centria.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
+import pt.unl.fct.di.novalincs.nohr.model.Query;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
  * A parser that constructs {@link Rule rules} and {@link Query queries} from expressions in the following language (in
