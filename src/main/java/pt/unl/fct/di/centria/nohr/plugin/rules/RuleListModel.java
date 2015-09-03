@@ -41,7 +41,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 
 	private static final long serialVersionUID = -5766699966244129502L;
 
-	private Program program;
+	private final Program program;
 
 	private final RuleEditor ruleEditor;
 
@@ -105,7 +105,8 @@ public class RuleListModel extends AbstractListModel<Object> {
 
 	public void load(File file) throws IOException, PrologParserException {
 		final int size = program.size();
-		program = programPresistenceManager.read(file);
+		program.clear();
+		programPresistenceManager.load(file, program);
 		ruleItems.clear();
 		ruleItems.add(HEADER);
 		for (final Rule rule : program)

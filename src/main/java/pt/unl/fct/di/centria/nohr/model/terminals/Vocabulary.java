@@ -72,6 +72,8 @@ public interface Vocabulary {
 
 	Constant cons(String symbol);
 
+	void dipose();
+
 	/**
 	 * Create a domain meta-predicate from a specified role.
 	 *

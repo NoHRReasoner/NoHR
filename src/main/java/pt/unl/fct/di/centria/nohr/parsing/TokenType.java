@@ -27,7 +27,7 @@ public enum TokenType {
 							 * Any string that doesn't contain any unescaped (i.e. not preceded by a slash) slash, comma, parenthesis, bracket,
 							 * question mark, nor any of the strings "{@literal :-}" or "{@literal not}".
 							 */
-	SYMBOL("([^\\.,\\[(?\\])\\\\]|(?!-):|(\\\\\\\\)*\\\\.|\\.(?!\\n|\\r))++", "Symbol");
+	SYMBOL("([^'\\s\\.,\\[(?\\])\\\\]|(?!-):|(\\\\\\\\)*\\\\.|\\.(?!\\n|\\r))++|'[^']+?'", "Symbol");
 
 	/** The regular expression that matches the tokens of this {@link TokenType}. */
 	private final Pattern pattern;

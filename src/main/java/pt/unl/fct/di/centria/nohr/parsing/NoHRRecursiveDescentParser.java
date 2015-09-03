@@ -80,7 +80,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	private Atom atom() throws ParseException {
 		if (!scanner.next(SYMBOL))
 			throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL);
-		final String predicateSymbol = scanner.token();
+		final String predicateSymbol = scanner.value();
 		if (!scanner.next(L_PAREN))
 			return Model.atom(v, predicateSymbol);
 		else {
@@ -226,7 +226,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 		if (variable != null)
 			return variable;
 		if (scanner.next(SYMBOL))
-			return v.cons(scanner.token());
+			return v.cons(scanner.value());
 		throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL, QUESTION_MARK);
 	}
 
@@ -245,7 +245,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 			return null;
 		if (!scanner.next(ID))
 			throw new ParseException(scanner.line(), scanner.position(), scanner.length(), ID);
-		return var(scanner.token());
+		return var(scanner.value());
 	}
 
 }

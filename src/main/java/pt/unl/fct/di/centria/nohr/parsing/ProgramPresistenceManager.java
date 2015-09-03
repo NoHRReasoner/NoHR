@@ -120,13 +120,17 @@ public class ProgramPresistenceManager {
 
 	public Program read(File file) throws IOException, PrologParserException {
 		final Program program = Model.program();
+		load(file, program);
+		return program;
+	}
+
+	public void load(File file, Program program) throws IOException, PrologParserException {
 		final PrologCharDataSource src = new PrologCharDataSource(new BufferedReader(new FileReader(file)));
 		Rule currentRule = nextRule(src);
 		while (currentRule != null) {
 			program.add(currentRule);
 			currentRule = nextRule(src);
 		}
-		return program;
 	}
 
 	private Rule rule(AbstractPrologTerm term) throws IOException, PrologParserException {

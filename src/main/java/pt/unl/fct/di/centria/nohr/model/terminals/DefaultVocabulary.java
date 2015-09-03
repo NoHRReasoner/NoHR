@@ -265,6 +265,19 @@ public class DefaultVocabulary implements Vocabulary {
 		}
 	}
 
+	@Override
+	public void dipose() {
+		predicates.clear();
+		constants.clear();
+		conceptPredicates.clear();
+		rolePredicates.clear();
+		individualConstants.clear();
+		references.clear();
+		listeners.clear();
+		for (final OWLOntology ontology : ontologies)
+			ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

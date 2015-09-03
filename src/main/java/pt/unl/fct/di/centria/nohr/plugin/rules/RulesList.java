@@ -48,7 +48,7 @@ public class RulesList extends MList {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void setModel(RuleListModel model) {
+	public void setModel(RuleListModel model) {
 		super.setModel(model);
 	}
 }

@@ -19,7 +19,7 @@ public class ProgramImpl implements Program {
 
 	private final Set<Rule> rules;
 
-	ProgramImpl(Set<Rule> rules) {
+	protected ProgramImpl(Set<Rule> rules) {
 		if (rules != null)
 			this.rules = new HashSet<>(rules);
 		else

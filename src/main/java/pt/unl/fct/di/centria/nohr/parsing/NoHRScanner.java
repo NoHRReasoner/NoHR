@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  * A basic {@link <a href="https://en.wikipedia.org/wiki/Lexical_analysis#Scanner">Scanner</a>} implemented on top of {@link Scanner}. The recognized
@@ -15,6 +16,10 @@ import java.util.Scanner;
  * @author Nuno Costa
  */
 public class NoHRScanner {
+
+	private static final Pattern DOUBLE_SLASH = Pattern.compile("\\\\\\\\");
+
+	private static final Pattern SLASH = Pattern.compile("(?<!\\\\)\\\\");
 
 	/** The position of the scanner in the current line. */
 	private int position;
@@ -27,6 +32,8 @@ public class NoHRScanner {
 
 	/** The length of the scanned {@link String}. */
 	private final int length;
+
+	private TokenType currentTokenType;
 
 	/**
 	 * Constructs a {@link NoHRScanner} for a given {@link File file}.
@@ -92,7 +99,7 @@ public class NoHRScanner {
 
 	/**
 	 * Try to consume a token of a given {@link TokenType type}. If no token of the given type is found, maintains the current position. The value of
-	 * the consumed token is obtained calling {@link #token()}.
+	 * the consumed token is obtained calling {@link #value()}.
 	 *
 	 * @param type
 	 *            the type of the token to consume.
@@ -102,6 +109,7 @@ public class NoHRScanner {
 		try {
 			scanner.skip(type.pattern());
 			position = scanner.match().end();
+			currentTokenType = type;
 		} catch (final NoSuchElementException | IllegalStateException e) {
 			return false;
 		}
@@ -126,12 +134,20 @@ public class NoHRScanner {
 	}
 
 	/**
-	 * Returns the last consumed token.
+	 * Returns the value of the last consumed token.
 	 *
-	 * @return the last consumed token.
+	 * @return the value of the last consumed token.
 	 */
-	public String token() {
-		return scanner.match().group();
+	public String value() {
+		String val = scanner.match().group();
+		if (currentTokenType == TokenType.SYMBOL)
+			if (val.startsWith("'") && val.endsWith("'"))
+				val = val.substring(1, val.length() - 1);
+			else {
+				val = SLASH.matcher(val).replaceAll("");
+				val = DOUBLE_SLASH.matcher(val).replaceAll("\\\\");
+			}
+		return val;
 	}
 
 }

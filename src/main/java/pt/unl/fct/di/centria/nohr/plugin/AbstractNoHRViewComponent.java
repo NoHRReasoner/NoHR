@@ -4,19 +4,20 @@
 package pt.unl.fct.di.centria.nohr.plugin;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.core.Disposable;
 import org.protege.editor.core.ui.view.ViewComponent;
-import org.protege.editor.owl.model.event.EventType;
-import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.centria.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.centria.nohr.model.Model;
 import pt.unl.fct.di.centria.nohr.model.Program;
+import pt.unl.fct.di.centria.nohr.model.ProgramImpl;
+import pt.unl.fct.di.centria.nohr.model.Rule;
 import pt.unl.fct.di.centria.nohr.model.terminals.DefaultVocabulary;
 import pt.unl.fct.di.centria.nohr.model.terminals.Vocabulary;
 import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
@@ -37,20 +38,15 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 
 	protected class DisposableHybridKB extends HybridKBImpl implements Disposable {
 
-		private final OWLModelManagerListener modelManagerListener;
-
 		public DisposableHybridKB(File xsbBinDirectory, OWLOntology ontology, Program program,
-				Vocabulary vocabularyMapping, OWLModelManagerListener modelListener)
-						throws OWLProfilesViolationsException, UnsupportedAxiomsException,
+				Vocabulary vocabularyMapping) throws OWLProfilesViolationsException, UnsupportedAxiomsException,
 						PrologEngineCreationException {
 			super(xsbBinDirectory, ontology, program, vocabularyMapping, null);
-			modelManagerListener = modelListener;
 		}
 
 		@Override
 		public void dispose() {
 			super.dispose();
-			getOWLModelManager().removeListener(modelManagerListener);
 		}
 
 	}
@@ -74,17 +70,42 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 
 	}
 
+	class DisposableProgram extends ProgramImpl implements Disposable {
+
+		public DisposableProgram() {
+			this(Collections.<Rule> emptySet());
+		}
+
+		DisposableProgram(Set<Rule> rules) {
+			super(rules);
+		}
+
+		@Override
+		public void dispose() throws Exception {
+			super.clear();
+		}
+
+	}
+
+	class DisposableVocabulary extends DefaultVocabulary implements Disposable {
+
+		public DisposableVocabulary(OWLOntology ontology) {
+			super(ontology);
+		}
+
+		@Override
+		public void dispose() throws Exception {
+			super.dipose();
+		}
+
+	}
+
 	private static final Logger log = Logger.getLogger(AbstractNoHRViewComponent.class);
 
 	private static final long serialVersionUID = -2850791395194206722L;
 
 	public AbstractNoHRViewComponent() {
 		super();
-	}
-
-	@Override
-	protected void disposeOWLView() {
-
 	}
 
 	/**
@@ -118,7 +139,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 	protected NoHRParser getParser() {
 		DisposableObject<NoHRParser> disposableObject = getOWLModelManager().get(NoHRParser.class);
 		if (disposableObject == null) {
-			disposableObject = new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getVocabularyMapping()));
+			disposableObject = new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getVocabulary()));
 			getOWLModelManager().put(NoHRParser.class, disposableObject);
 		}
 		return disposableObject.getObject();
@@ -130,12 +151,12 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 	 * @return the considered program.
 	 */
 	protected Program getProgram() {
-		DisposableObject<Program> program = getOWLModelManager().get(Program.class);
+		DisposableProgram program = getOWLModelManager().get(Program.class);
 		if (program == null) {
-			program = new DisposableObject<Program>(Model.program());
+			program = new DisposableProgram();
 			getOWLModelManager().put(Program.class, program);
 		}
-		return program.getObject();
+		return program;
 	}
 
 	/**
@@ -148,32 +169,23 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 				.get(ProgramPresistenceManager.class);
 		if (disposableObject == null) {
 			disposableObject = new DisposableObject<ProgramPresistenceManager>(
-					new ProgramPresistenceManager(getVocabularyMapping()));
+					new ProgramPresistenceManager(getVocabulary()));
 			getOWLModelManager().put(ProgramPresistenceManager.class, disposableObject);
 		}
 		return disposableObject.getObject();
 	}
 
-	protected Vocabulary getVocabularyMapping() {
-		DisposableObject<Vocabulary> disposableObject = getOWLModelManager().get(Vocabulary.class);
-		if (disposableObject == null) {
-			disposableObject = new DisposableObject<Vocabulary>(new DefaultVocabulary(getOntology()));
-			getOWLModelManager().put(Vocabulary.class, disposableObject);
+	protected Vocabulary getVocabulary() {
+		DisposableVocabulary vocabulary = getOWLModelManager().get(Vocabulary.class);
+		if (vocabulary == null) {
+			vocabulary = new DisposableVocabulary(getOntology());
+			getOWLModelManager().put(Vocabulary.class, vocabulary);
 		}
-		return disposableObject.getObject();
+		return vocabulary;
 	}
 
 	@Override
-	public void handleChange(OWLModelManagerChangeEvent event) {
-		if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-			getOWLModelManager().put(Vocabulary.class,
-					new DisposableObject<Vocabulary>(new DefaultVocabulary(getOntology())));
-			getOWLModelManager().put(NoHRParser.class,
-					new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getVocabularyMapping())));
-			getOWLModelManager().put(ProgramPresistenceManager.class, new DisposableObject<ProgramPresistenceManager>(
-					new ProgramPresistenceManager(getVocabularyMapping())));
-			startNoHR();
-		}
+	protected void initialiseOWLView() throws Exception {
 
 	}
 
@@ -184,17 +196,29 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 		return getOWLModelManager().get(HybridKB.class) != null;
 	}
 
+	protected void reset() {
+		if (getVocabulary().getOntologies().contains(getOntology()))
+			return;
+		log.info("Resetting...");
+		getOWLModelManager().put(Vocabulary.class, new DisposableVocabulary(getOntology()));
+		getOWLModelManager().put(Program.class, new DisposableProgram());
+		getOWLModelManager().put(NoHRParser.class,
+				new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getVocabulary())));
+		getOWLModelManager().put(ProgramPresistenceManager.class,
+				new DisposableObject<ProgramPresistenceManager>(new ProgramPresistenceManager(getVocabulary())));
+	}
+
 	/**
 	 * Starts the NoHR, creating a {@link HybridKBImpl}.
 	 */
-	protected void startNoHR() {
+	protected void startHybridKB() {
+		log.info("starting NoHR");
 		final File xsbBinDirectory = NoHRPreferences.getInstance().getXSBBinDirectory();
 		if (xsbBinDirectory == null)
 			Messages.xsbBinDirectoryNotSet(this);
 		DisposableHybridKB disposableHybridKB = null;
 		try {
-			disposableHybridKB = new DisposableHybridKB(xsbBinDirectory, getOntology(), getProgram(),
-					getVocabularyMapping(), this);
+			disposableHybridKB = new DisposableHybridKB(xsbBinDirectory, getOntology(), getProgram(), getVocabulary());
 		} catch (final UnsupportedAxiomsException e) {
 			Messages.violations(this, e);
 		} catch (final PrologEngineCreationException e) {

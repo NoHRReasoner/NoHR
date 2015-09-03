@@ -19,12 +19,16 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.SwingWorker;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
 import org.protege.editor.core.ui.view.ViewComponent;
+import org.protege.editor.owl.model.event.EventType;
+import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
+import org.protege.editor.owl.ui.inference.ReasonerProgressUI;
 import org.semanticweb.owlapi.model.OWLException;
 
 import pt.unl.fct.di.centria.nohr.model.Answer;
@@ -39,6 +43,23 @@ import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
  * @author Nuno Costa
  */
 public class QueryViewComponent extends AbstractNoHRViewComponent {
+
+	class PreprocessTask extends SwingWorker<Void, Void> {
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			progress.reasonerTaskStarted("Preprocessing");
+			progress.reasonerTaskBusy();
+			startHybridKB();
+			return null;
+		}
+
+		@Override
+		protected void done() {
+			super.done();
+			progress.reasonerTaskStopped();
+		}
+	}
 
 	private class QueryAction extends AbstractAction {
 
@@ -59,7 +80,25 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 					.setEnabled(showTrueAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
 			showInconsistentAnswersCheckBox
 					.setEnabled(showTrueAnswersCheckBox.isSelected() || showUndefinedAnswersCheckBox.isSelected());
+			final QueryTask queryTask = new QueryTask();
+			queryTask.execute();
+		}
+	}
+
+	class QueryTask extends SwingWorker<Void, Void> {
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			progress.reasonerTaskStarted("Reasoning");
+			progress.reasonerTaskBusy();
 			doQuery();
+			return null;
+		}
+
+		@Override
+		protected void done() {
+			super.done();
+			progress.reasonerTaskStopped();
 		}
 	}
 
@@ -82,7 +121,9 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 
 	private JButton executeButton;
 
-	private boolean requiresRefresh = false;
+	private ReasonerProgressUI progress;
+
+	private boolean requiresRefresh = false;;
 
 	private JComponent createAnswersPanel() {
 		final JComponent answersPanel = new JPanel(new BorderLayout(10, 10));
@@ -93,10 +134,9 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 		answersTable.setAutoCreateColumnsFromModel(true);
 		final JScrollPane answersScrollPane = new JScrollPane(answersTable);
 		answersTable.setFillsViewportHeight(true);
-		// answersPanel.add(ComponentFactory.createScrollPane(answersTable));
 		answersPanel.add(answersScrollPane);
 		return answersPanel;
-	};
+	}
 
 	private JComponent createOptionsBox() {
 		final Box optionsBox = new Box(BoxLayout.Y_AXIS);
@@ -132,22 +172,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 
 		editorPanel.add(ComponentFactory.createScrollPane(queryEditor), BorderLayout.CENTER);
 		final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		executeButton = new JButton(new AbstractAction("Execute") {
-			/**
-			 *
-			 */
-			private static final long serialVersionUID = 4175244406428203190L;
-
-			/**
-			 *
-			 */
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doQuery();
-			}
-		});
-
+		executeButton = new JButton(new QueryAction("Execute"));
 		buttonHolder.add(executeButton);
 
 		editorPanel.add(buttonHolder, BorderLayout.SOUTH);
@@ -155,6 +180,11 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 				BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Query"),
 				BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 		return editorPanel;
+	}
+
+	@Override
+	public void disposeOWLView() {
+		getOWLModelManager().removeListener(this);
 	}
 
 	private void doQuery() {
@@ -178,9 +208,16 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 	}
 
 	@Override
+	public void handleChange(OWLModelManagerChangeEvent event) {
+		if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
+			reset();
+			preprocess();
+		}
+	}
+
+	@Override
 	protected void initialiseOWLView() throws Exception {
 		setLayout(new BorderLayout(10, 10));
-
 		final JComponent editorPanel = createQueryPanel();
 		final JComponent answersPanel = createAnswersPanel();
 		final JComponent optionsBox = createOptionsBox();
@@ -191,17 +228,29 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 
 		add(splitter, BorderLayout.CENTER);
 
-		startNoHR();
+		progress = new ReasonerProgressUI(getOWLEditorKit());
+
+		reset();
+		preprocess();
+
+		getOWLModelManager().addListener(this);
 
 		addHierarchyListener(new HierarchyListener() {
 			@Override
 			public void hierarchyChanged(HierarchyEvent event) {
 				if (!isNoHRStarted())
-					startNoHR();
-				if (requiresRefresh && isShowing())
-					doQuery();
+					preprocess();
+				if (requiresRefresh && isShowing()) {
+					final QueryTask queryTask = new QueryTask();
+					queryTask.execute();
+				}
 			}
 		});
+	}
+
+	protected void preprocess() {
+		final PreprocessTask preprocessTask = new PreprocessTask();
+		preprocessTask.execute();
 	}
 
 }
