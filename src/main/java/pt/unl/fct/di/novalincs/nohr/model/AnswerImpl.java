@@ -16,7 +16,7 @@ import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
  *
  * @author Nuno Costa
  */
-public class AnswerImpl implements Answer {
+class AnswerImpl implements Answer {
 
 	/**
 	 * The query to which the answer applies.
@@ -90,15 +90,9 @@ public class AnswerImpl implements Answer {
 		final AnswerImpl other = (AnswerImpl) obj;
 		if (truthValue != other.truthValue)
 			return false;
-		if (values == null) {
-			if (other.values != null)
-				return false;
-		} else if (!values.equals(other.values))
+		if (!values.equals(other.values))
 			return false;
-		if (query.getIndex() == null) {
-			if (other.query.getIndex() != null)
-				return false;
-		} else if (!query.getIndex().equals(other.query.getIndex()))
+		if (!query.getIndex().equals(other.query.getIndex()))
 			return false;
 		return true;
 	}
@@ -127,8 +121,9 @@ public class AnswerImpl implements Answer {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (truthValue == null ? 0 : truthValue.hashCode());
-		result = prime * result + (values == null ? 0 : values.hashCode());
+		result = prime * result + truthValue.hashCode();
+		result = prime * result + values.hashCode();
+		result = prime * result + query.getIndex().hashCode();
 		return result;
 	}
 

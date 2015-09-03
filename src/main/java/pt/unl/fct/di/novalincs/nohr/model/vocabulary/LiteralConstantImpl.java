@@ -3,6 +3,8 @@
  */
 package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
 
+import java.util.Objects;
+
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
@@ -14,7 +16,7 @@ import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
  *
  * @author Nuno Costa
  */
-public class LiteralConstantImpl implements HybridConstant {
+class LiteralConstantImpl implements HybridConstant {
 
 	/**
 	 * The OWL literal.
@@ -27,7 +29,8 @@ public class LiteralConstantImpl implements HybridConstant {
 	 * @param literal
 	 *            the OWL literal
 	 */
-	public LiteralConstantImpl(OWLLiteral literal) {
+	LiteralConstantImpl(OWLLiteral literal) {
+		Objects.requireNonNull(literal);
 		this.literal = literal;
 	}
 
@@ -57,6 +60,14 @@ public class LiteralConstantImpl implements HybridConstant {
 	}
 
 	@Override
+	public String asString() {
+		String result = literal.getLiteral();
+		if (literal.getLang() != null && !literal.getLang().isEmpty())
+			result += "@" + literal.getLang();
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -65,24 +76,19 @@ public class LiteralConstantImpl implements HybridConstant {
 		if (getClass() != obj.getClass())
 			return false;
 		final LiteralConstantImpl other = (LiteralConstantImpl) obj;
-		if (literal == null) {
-			if (other.literal != null)
-				return false;
-		} else if (!toString().equals(other.toString()))
+		if (!literal.getLang().equals(other.literal.getLang()))
+			return false;
+		if (!literal.getLiteral().equals(other.literal.getLiteral()))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String getSymbol() {
-		return literal.getLiteral();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (literal == null ? 0 : toString().hashCode());
+		result = prime * result + (literal.getLang() == null ? 0 : literal.getLang().hashCode());
+		result = prime * result + literal.getLiteral().hashCode();
 		return result;
 	}
 
@@ -103,7 +109,7 @@ public class LiteralConstantImpl implements HybridConstant {
 
 	@Override
 	public String toString() {
-		return getSymbol();
+		return asString();
 	}
 
 }

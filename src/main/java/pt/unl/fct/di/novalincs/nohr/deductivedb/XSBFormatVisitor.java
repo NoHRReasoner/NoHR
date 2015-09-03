@@ -63,12 +63,12 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
 	@Override
 	public String visit(Symbol symbolic) {
-		return quoted(symbolic.getSymbol());
+		return quoted(symbolic.asString());
 	}
 
 	@Override
 	public String visit(Variable variable) {
-		return variable.getSymbol();
+		return variable.asString();
 	}
 
 }

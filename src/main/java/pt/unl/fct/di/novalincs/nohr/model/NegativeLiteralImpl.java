@@ -10,9 +10,8 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
  *
  * @author Nuno Costa
  */
-public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral {
+class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral {
 
-	// TODO check the need of this
 	private final boolean existentially;
 
 	/**
@@ -60,10 +59,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 		if (!(obj instanceof NegativeLiteralImpl))
 			return false;
 		final NegativeLiteralImpl other = (NegativeLiteralImpl) obj;
-		if (atom == null) {
-			if (other.atom != null)
-				return false;
-		} else if (!atom.equals(other.atom))
+		if (!atom.equals(other.atom))
 			return false;
 		return true;
 	}
@@ -87,7 +83,7 @@ public class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral 
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (atom == null ? 0 : atom.hashCode());
+		result = prime * result + atom.hashCode();
 		return result;
 	}
 

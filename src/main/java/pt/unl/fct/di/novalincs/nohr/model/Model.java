@@ -229,7 +229,7 @@ public class Model {
 	 * @return the program containing the given rules.
 	 */
 	public static Program program(Rule... rules) {
-		return new ProgramImpl(new HashSet<>(Arrays.asList(rules)));
+		return new HashSetProgram(new HashSet<>(Arrays.asList(rules)));
 	}
 
 	/**
@@ -240,7 +240,7 @@ public class Model {
 	 * @return the program containing the given rules.
 	 */
 	public static Program program(Set<Rule> rules) {
-		return new ProgramImpl(rules);
+		return new HashSetProgram(rules);
 	}
 
 	/**

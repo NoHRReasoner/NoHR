@@ -86,7 +86,7 @@ public interface Vocabulary {
 
 	Constant cons(String symbol);
 
-	void dipose();
+	void dispose();
 
 	/**
 	 * Obtains a domain meta-predicate from a specified role.

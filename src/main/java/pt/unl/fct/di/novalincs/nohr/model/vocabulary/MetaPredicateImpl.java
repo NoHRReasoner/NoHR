@@ -13,13 +13,13 @@ import pt.unl.fct.di.novalincs.nohr.model.Predicate;
  *
  * @author Nuno Costa
  */
-public class MetaPredicateImpl implements MetaPredicate {
+class MetaPredicateImpl implements MetaPredicate {
 
 	/** The predicate that this meta-predicate refers. */
-	protected final Predicate predicate;
+	final Predicate predicate;
 
 	/** The type of this meta-predicate. */
-	protected final PredicateType type;
+	final PredicateType type;
 
 	/**
 	 * Constructs a meta-predicate referring a specified predicate with a specified type.
@@ -54,6 +54,11 @@ public class MetaPredicateImpl implements MetaPredicate {
 	}
 
 	@Override
+	public String asString() {
+		return type.marker() + predicate.asString();
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -83,12 +88,7 @@ public class MetaPredicateImpl implements MetaPredicate {
 
 	@Override
 	public String getSignature() {
-		return getSymbol() + "/" + getArity();
-	}
-
-	@Override
-	public String getSymbol() {
-		return type.marker() + predicate.getSymbol();
+		return asString() + "/" + getArity();
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class MetaPredicateImpl implements MetaPredicate {
 
 	@Override
 	public String toString() {
-		return getSymbol();
+		return asString();
 	}
 
 }

@@ -14,7 +14,7 @@ import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
  *
  * @author Nuno Costa
  */
-public class RuleImpl implements Rule {
+class RuleImpl implements Rule {
 
 	/** The literals at the body of the rule. */
 	private final List<? extends Literal> body;

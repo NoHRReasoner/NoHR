@@ -6,10 +6,12 @@ package pt.unl.fct.di.novalincs.nohr.model;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
 
 /**
- * An element that can accept an {@link FormatVisitor} (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>}).
+ * A model element, i.e a symbol (terminal or non terminal) of the abstract syntax of the Hybrid Knowledge Bases. Can accept an {@link FormatVisitor}
+ * or a {@link ModelVisitor} (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>}).
  *
  * @see FormatVisitor
- * @author nunocosta
+ * @see ModelVisitor
+ * @author Nuno Costa
  */
 public interface ModelElement<T extends ModelElement<T>> {
 

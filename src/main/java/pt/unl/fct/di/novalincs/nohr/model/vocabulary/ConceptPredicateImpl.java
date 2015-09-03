@@ -12,15 +12,16 @@ import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 
 /**
- * Implementation of a {@link Predicate} representing a concept.
+ * Implementation of a {@link HybridPredicate} representing a concept.
  *
  * @author Nuno Costa
  */
-public class ConceptPredicateImpl implements HybridPredicate {
+class ConceptPredicateImpl implements HybridPredicate {
 
 	/** The concept represented by this predicate. */
 	private final OWLClass concept;
 
+	/** The preferred (user-friendly) concrete representation of the concept represented by this predicate. Can change over the time. */
 	private String label;
 
 	/**
@@ -57,6 +58,11 @@ public class ConceptPredicateImpl implements HybridPredicate {
 	}
 
 	@Override
+	public String asString() {
+		return concept.getIRI().toQuotedString();
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -77,12 +83,7 @@ public class ConceptPredicateImpl implements HybridPredicate {
 
 	@Override
 	public String getSignature() {
-		return getSymbol() + "/" + getArity();
-	}
-
-	@Override
-	public String getSymbol() {
-		return concept.getIRI().toQuotedString();
+		return asString() + "/" + getArity();
 	}
 
 	@Override
@@ -103,6 +104,7 @@ public class ConceptPredicateImpl implements HybridPredicate {
 		return false;
 	}
 
+	/** Set the preferred (user-friendly) concrete representation of the concept represented by this predicate. */
 	void setLabel(String label) {
 		this.label = label;
 	}

@@ -1,5 +1,7 @@
 package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
 
+import java.util.Objects;
+
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
@@ -11,7 +13,7 @@ import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
  *
  * @author Nuno Costa
  */
-public class RuleConstantImpl implements HybridConstant {
+class RuleConstantImpl implements HybridConstant {
 
 	/**
 	 * The symbol that represents this constant.
@@ -25,6 +27,7 @@ public class RuleConstantImpl implements HybridConstant {
 	 *            the symbol.
 	 */
 	RuleConstantImpl(String symbol) {
+		Objects.requireNonNull(symbol);
 		this.symbol = symbol;
 	}
 
@@ -54,6 +57,11 @@ public class RuleConstantImpl implements HybridConstant {
 	}
 
 	@Override
+	public String asString() {
+		return symbol;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -62,24 +70,11 @@ public class RuleConstantImpl implements HybridConstant {
 		if (!(obj instanceof RuleConstantImpl))
 			return false;
 		final RuleConstantImpl other = (RuleConstantImpl) obj;
-		if (symbol == null) {
-			if (other.symbol != null)
-				return false;
-		} else if (!symbol.equals(other.symbol))
+		if (!symbol.equals(other.symbol))
 			return false;
 		return true;
 	}
 
-	@Override
-	public String getSymbol() {
-		return symbol;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return symbol.hashCode();

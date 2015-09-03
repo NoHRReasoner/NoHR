@@ -13,7 +13,7 @@ import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
  *
  * @author Nuno Costa
  */
-public class NumericConstantImpl implements HybridConstant {
+class NumericConstantImpl implements HybridConstant {
 
 	/** The number that this constant represents */
 	private final Number number;
@@ -66,6 +66,11 @@ public class NumericConstantImpl implements HybridConstant {
 	}
 
 	@Override
+	public String asString() {
+		return String.valueOf(number);
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -77,11 +82,6 @@ public class NumericConstantImpl implements HybridConstant {
 		if (number.doubleValue() != other.number.doubleValue())
 			return false;
 		return true;
-	}
-
-	@Override
-	public String getSymbol() {
-		return String.valueOf(number);
 	}
 
 	@Override
@@ -106,6 +106,6 @@ public class NumericConstantImpl implements HybridConstant {
 
 	@Override
 	public String toString() {
-		return getSymbol();
+		return asString();
 	}
 }

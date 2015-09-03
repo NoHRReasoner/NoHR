@@ -13,13 +13,13 @@ import pt.unl.fct.di.novalincs.nohr.model.Predicate;
  *
  * @author Nuno Costa
  */
-public class RulePredicateImpl implements HybridPredicate {
+class RulePredicateImpl implements HybridPredicate {
 
 	/** The arity of this predicate */
-	protected final int arity;
+	private final int arity;
 
 	/** The symbol that represents this predicate */
-	protected final String symbol;
+	private final String symbol;
 
 	/**
 	 * Constructs a predicate represented by a specified symbol with a specified arity.
@@ -63,6 +63,11 @@ public class RulePredicateImpl implements HybridPredicate {
 	}
 
 	@Override
+	public String asString() {
+		return symbol;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -86,11 +91,6 @@ public class RulePredicateImpl implements HybridPredicate {
 	@Override
 	public String getSignature() {
 		return symbol + "/" + arity;
-	}
-
-	@Override
-	public String getSymbol() {
-		return symbol;
 	}
 
 	@Override

@@ -23,7 +23,7 @@ import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
-import pt.unl.fct.di.novalincs.nohr.model.ProgramImpl;
+import pt.unl.fct.di.novalincs.nohr.model.HashSetProgram;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
@@ -70,7 +70,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 
 	}
 
-	class DisposableProgram extends ProgramImpl implements Disposable {
+	class DisposableProgram extends HashSetProgram implements Disposable {
 
 		public DisposableProgram() {
 			this(Collections.<Rule> emptySet());
@@ -91,11 +91,6 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 
 		public DisposableVocabulary(OWLOntology ontology) {
 			super(ontology);
-		}
-
-		@Override
-		public void dispose() throws Exception {
-			super.dipose();
 		}
 
 	}

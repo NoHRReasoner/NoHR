@@ -14,7 +14,7 @@ import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
  *
  * @author Nuno Costa
  */
-public class AtomImpl implements Atom {
+class AtomImpl implements Atom {
 
 	/**
 	 * The list of arguments.
@@ -100,15 +100,12 @@ public class AtomImpl implements Atom {
 		if (!(obj instanceof AtomImpl))
 			return false;
 		final AtomImpl other = (AtomImpl) obj;
+		if (!predicate.equals(other.predicate))
+			return false;
 		if (arguments == null) {
 			if (other.arguments != null)
 				return false;
 		} else if (!arguments.equals(other.arguments))
-			return false;
-		if (predicate == null) {
-			if (other.predicate != null)
-				return false;
-		} else if (!predicate.equals(other.predicate))
 			return false;
 		return true;
 	}
@@ -146,8 +143,8 @@ public class AtomImpl implements Atom {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + predicate.hashCode();
 		result = prime * result + (arguments == null ? 0 : arguments.hashCode());
-		result = prime * result + (predicate == null ? 0 : predicate.hashCode());
 		return result;
 	}
 

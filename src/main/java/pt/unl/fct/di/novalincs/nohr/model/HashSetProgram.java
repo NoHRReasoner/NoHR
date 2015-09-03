@@ -13,13 +13,13 @@ import java.util.Set;
  *
  * @author Nuno Costa
  */
-public class ProgramImpl implements Program {
+public class HashSetProgram implements Program {
 
 	private final Set<ProgramChangeListener> listeners;
 
 	private final Set<Rule> rules;
 
-	protected ProgramImpl(Set<Rule> rules) {
+	protected HashSetProgram(Set<Rule> rules) {
 		if (rules != null)
 			this.rules = new HashSet<>(rules);
 		else
@@ -54,7 +54,7 @@ public class ProgramImpl implements Program {
 	public void clear() {
 		if (!rules.isEmpty())
 			for (final ProgramChangeListener listner : listeners)
-				listner.cleaned();
+				listner.cleared();
 		rules.clear();
 	}
 
@@ -76,7 +76,7 @@ public class ProgramImpl implements Program {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final ProgramImpl other = (ProgramImpl) obj;
+		final HashSetProgram other = (HashSetProgram) obj;
 		if (!rules.equals(other.rules))
 			return false;
 		return true;

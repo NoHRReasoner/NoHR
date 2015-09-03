@@ -206,7 +206,7 @@ public class HybridKBImpl implements HybridKB {
 			}
 
 			@Override
-			public void cleaned() {
+			public void cleared() {
 				hasProgramChanges = true;
 			}
 

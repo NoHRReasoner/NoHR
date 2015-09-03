@@ -18,12 +18,13 @@ import pt.unl.fct.di.novalincs.nohr.model.Term;
  * @see Term
  * @author Nuno Costa
  */
-public class IndividualConstantImpl implements HybridConstant {
+class IndividualConstantImpl implements HybridConstant {
 
 	/** The ontology individual. */
 	private final OWLIndividual individual;
 
-	String label;
+	/** The preferred (user-friendly) concrete representation of the concept represented by this predicate. Can change over the time. */
+	private String label;
 
 	/**
 	 * Constructs an ontology individual constant with a specified individual.
@@ -62,6 +63,14 @@ public class IndividualConstantImpl implements HybridConstant {
 	}
 
 	@Override
+	public String asString() {
+		if (individual.isNamed())
+			return individual.asOWLNamedIndividual().getIRI().toQuotedString();
+		else
+			return individual.toStringID();
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -73,24 +82,16 @@ public class IndividualConstantImpl implements HybridConstant {
 		if (individual == null) {
 			if (other.individual != null)
 				return false;
-		} else if (!toString().equals(other.toString()))
+		} else if (!individual.toStringID().equals(other.individual.toStringID()))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String getSymbol() {
-		if (individual.isNamed())
-			return individual.asOWLNamedIndividual().getIRI().toQuotedString();
-		else
-			return individual.toStringID();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (individual == null ? 0 : toString().hashCode());
+		result = prime * result + individual.toStringID().hashCode();
 		return result;
 	}
 
@@ -109,6 +110,7 @@ public class IndividualConstantImpl implements HybridConstant {
 		return false;
 	}
 
+	/** Set the preferred (user-friendly) concrete representation of the concept represented by this predicate. Can change over the time. */
 	void setLabel(String label) {
 		this.label = label;
 	}

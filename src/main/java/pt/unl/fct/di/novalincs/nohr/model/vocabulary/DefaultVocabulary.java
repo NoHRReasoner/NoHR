@@ -179,7 +179,7 @@ public class DefaultVocabulary implements Vocabulary {
 							for (final OWLDataProperty role : change.getAxiom().getDataPropertiesInSignature())
 								unregister(role);
 							for (final OWLIndividual individual : change.getAxiom().getIndividualsInSignature())
-								unregiter(individual);
+								unregister(individual);
 						}
 			}
 		};
@@ -202,6 +202,41 @@ public class DefaultVocabulary implements Vocabulary {
 	@Override
 	public void addListener(VocabularyChangeListener listener) {
 		listeners.add(listener);
+	}
+
+	/**
+	 * Returns the concrete representations of a given entity.
+	 *
+	 * @param entity
+	 *            the entity.
+	 * @return the set of concrete representations of {@code entity}
+	 */
+	protected Set<String> concreteRepresentations(OWLEntity entity) {
+		final Set<String> result = new HashSet<>();
+		final String fragment = entity.getIRI().toURI().getFragment();
+		if (fragment != null)
+			result.add(fragment);
+		for (final OWLOntology ontology : ontologies)
+			for (final OWLAnnotation annotation : entity.getAnnotations(ontology,
+					OWLManager.getOWLDataFactory().getRDFSLabel())) {
+				final OWLAnnotationValue value = annotation.getValue();
+				if (value instanceof OWLLiteral)
+					result.add(((OWLLiteral) value).getLiteral());
+			}
+		return result;
+	}
+
+	/**
+	 * Returns the concrete representations of a given individual.
+	 *
+	 * @param individual
+	 *            the individual.
+	 * @return the set of concrete representations of {@code individual}
+	 */
+	protected Set<String> concreteRepresentations(OWLIndividual individual) {
+		if (individual.isNamed())
+			return concreteRepresentations((OWLEntity) individual.asOWLNamedIndividual());
+		return Collections.<String> emptySet();
 	}
 
 	@Override
@@ -243,7 +278,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public void dipose() {
+	public void dispose() {
 		predicates.clear();
 		constants.clear();
 		conceptPredicates.clear();
@@ -470,8 +505,8 @@ public class DefaultVocabulary implements Vocabulary {
 			conceptPred = new ConceptPredicateImpl(concept);
 			conceptPredicates.put(concept, conceptPred);
 		}
-		setPredicate(conceptPred.getSymbol(), 1, conceptPred, true);
-		for (final String symbol : symbols(concept)) {
+		setPredicate(conceptPred.asString(), 1, conceptPred, true);
+		for (final String symbol : concreteRepresentations(concept)) {
 			setPredicate(symbol, 1, conceptPred, true);
 			conceptPred.setLabel(symbol);
 		}
@@ -489,8 +524,8 @@ public class DefaultVocabulary implements Vocabulary {
 			individualConstant = new IndividualConstantImpl(individual);
 			individualConstants.put(individual, individualConstant);
 		}
-		setConstant(individualConstant.getSymbol(), individualConstant, true);
-		for (final String symbol : symbols(individual)) {
+		setConstant(individualConstant.asString(), individualConstant, true);
+		for (final String symbol : concreteRepresentations(individual)) {
 			setConstant(symbol, individualConstant, true);
 			individualConstant.setLabel(symbol);
 		}
@@ -509,8 +544,8 @@ public class DefaultVocabulary implements Vocabulary {
 			rolePred = new RolePredicateImpl(role);
 			rolePredicates.put(role, rolePred);
 		}
-		setPredicate(rolePred.getSymbol(), 2, rolePred, true);
-		for (final String symbol : symbols(role)) {
+		setPredicate(rolePred.asString(), 2, rolePred, true);
+		for (final String symbol : concreteRepresentations(role)) {
 			setPredicate(symbol, 2, rolePred, true);
 			rolePred.setLabel(symbol);
 		}
@@ -520,20 +555,6 @@ public class DefaultVocabulary implements Vocabulary {
 	@Override
 	public void removeListener(VocabularyChangeListener listener) {
 		listeners.add(listener);
-	}
-
-	private boolean removePredicate(String symbol, int arity) {
-		final Map<String, HybridPredicateWrapper> map = predicates.get(arity);
-		if (map != null) {
-			final HybridPredicateWrapper pred = map.get(symbol);
-			if (pred.changeWrapee(new RulePredicateImpl(symbol, arity))) {
-				for (final VocabularyChangeListener listener : listeners)
-					listener.predicateChanged(pred);
-				return true;
-			}
-		}
-		return false;
-
 	}
 
 	/**
@@ -588,41 +609,6 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	/**
-	 * Returns the symbols that represent a given entity.
-	 *
-	 * @param entity
-	 *            the entity.
-	 * @return the set of symbols that represent {@code entity}
-	 */
-	protected Set<String> symbols(OWLEntity entity) {
-		final Set<String> result = new HashSet<>();
-		final String fragment = entity.getIRI().toURI().getFragment();
-		if (fragment != null)
-			result.add(fragment);
-		for (final OWLOntology ontology : ontologies)
-			for (final OWLAnnotation annotation : entity.getAnnotations(ontology,
-					OWLManager.getOWLDataFactory().getRDFSLabel())) {
-				final OWLAnnotationValue value = annotation.getValue();
-				if (value instanceof OWLLiteral)
-					result.add(((OWLLiteral) value).getLiteral());
-			}
-		return result;
-	}
-
-	/**
-	 * Returns the symbols that represent a given individual.
-	 *
-	 * @param individual
-	 *            the individual.
-	 * @return the set of symbols that represent {@code individual}
-	 */
-	protected Set<String> symbols(OWLIndividual individual) {
-		if (individual.isNamed())
-			return symbols((OWLEntity) individual.asOWLNamedIndividual());
-		return Collections.<String> emptySet();
-	}
-
-	/**
 	 * Unregisters an occurrence of a given concept.
 	 *
 	 * @param concept
@@ -632,9 +618,25 @@ public class DefaultVocabulary implements Vocabulary {
 		references.remove(concept);
 		if (!references.contains(concept)) {
 			final Predicate pred = conceptPredicates.remove(concept);
-			removePredicate(pred.getSymbol(), 1);
-			for (final String symbol : symbols(concept))
-				removePredicate(symbol, 1);
+			setPredicate(pred.asString(), 1, new RulePredicateImpl(pred.asString(), 1), true);
+			for (final String symbol : concreteRepresentations(concept))
+				setPredicate(symbol, 1, new RulePredicateImpl(symbol, 1), true);
+		}
+	}
+
+	/**
+	 * Unregisters an occurrence of a given individual
+	 *
+	 * @param individual
+	 *            an individual.
+	 */
+	private void unregister(OWLIndividual individual) {
+		references.remove(individual);
+		if (!references.contains(individual)) {
+			final Constant cons = individualConstants.remove(individual);
+			setConstant(cons.asString(), new RuleConstantImpl(cons.asString()), true);
+			for (final String symbol : concreteRepresentations(individual))
+				setConstant(symbol, new RuleConstantImpl(symbol), true);
 		}
 	}
 
@@ -648,42 +650,10 @@ public class DefaultVocabulary implements Vocabulary {
 		references.remove(role);
 		if (!references.contains(role)) {
 			final Predicate pred = rolePredicates.remove(role);
-			removePredicate(pred.getSymbol(), 2);
-			for (final String symbol : symbols(role))
-				removePredicate(symbol, 2);
+			setPredicate(pred.asString(), 2, new RulePredicateImpl(pred.asString(), 2), true);
+			for (final String symbol : concreteRepresentations(role))
+				setPredicate(symbol, 2, new RulePredicateImpl(symbol, 2), true);
 		}
-	}
-
-	/**
-	 * Unregisters an occurrence of a given individual
-	 *
-	 * @param individual
-	 *            an individual.
-	 */
-	private void unregiter(OWLIndividual individual) {
-		references.remove(individual);
-		if (!references.contains(individual)) {
-			final Constant cons = individualConstants.remove(individual);
-			unsetIndividual(cons.getSymbol());
-			for (final String symbol : symbols(individual))
-				unsetIndividual(symbol);
-		}
-	}
-
-	/**
-	 * Change the
-	 *
-	 * @param repr
-	 * @return
-	 */
-	private boolean unsetIndividual(String repr) {
-		final HybridConstantWrapper cons = constants.get(repr);
-		if (cons.changeWrappe(new RuleConstantImpl(repr))) {
-			for (final VocabularyChangeListener listener : listeners)
-				listener.constantChanged(cons);
-			return true;
-		}
-		return false;
 	}
 
 }

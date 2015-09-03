@@ -16,11 +16,12 @@ import pt.unl.fct.di.novalincs.nohr.model.Predicate;
  *
  * @author Nuno Costa
  */
-public class RolePredicateImpl implements HybridPredicate {
+class RolePredicateImpl implements HybridPredicate {
 
 	/** The role represented by this predicate. */
 	private final OWLProperty<?, ?> role;
 
+	/** The preferred (user-friendly) concrete representation of the concept represented by this predicate. Can change over the time. */
 	private String label;
 
 	/**
@@ -36,11 +37,6 @@ public class RolePredicateImpl implements HybridPredicate {
 		this.role = role;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see pt.unl.fct.di.centria.nohr.model.predicates.Predicate#acept(pt.unl.fct .di.centria.nohr.model.FormatVisitor)
-	 */
 	@Override
 	public String accept(FormatVisitor visitor) {
 		return visitor.visit(this);
@@ -61,11 +57,11 @@ public class RolePredicateImpl implements HybridPredicate {
 		return role;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
+	public String asString() {
+		return role.getIRI().toQuotedString();
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -92,19 +88,9 @@ public class RolePredicateImpl implements HybridPredicate {
 
 	@Override
 	public String getSignature() {
-		return getSymbol() + "/" + getArity();
+		return asString() + "/" + getArity();
 	}
 
-	@Override
-	public String getSymbol() {
-		return role.getIRI().toQuotedString();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -123,15 +109,11 @@ public class RolePredicateImpl implements HybridPredicate {
 		return true;
 	}
 
+	/** Set the preferred (user-friendly) concrete representation of the concept represented by this predicate. Can change over the time. */
 	void setLabel(String label) {
 		this.label = label;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		if (label != null)

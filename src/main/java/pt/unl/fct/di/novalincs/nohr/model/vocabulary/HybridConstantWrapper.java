@@ -6,7 +6,15 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 
-public class HybridConstantWrapper implements HybridConstant {
+/**
+ * An wrapper to {@link HybridConstant} that allow the concrete type of a {@link HybridConstant constant} ({@link IndividualConstantImpl},
+ * {@link LiteralConstantImpl} or {@link RuleConstantImpl}) vary according to what it (extrinsically) associated concrete representation represents at
+ * each moment.
+ *
+ * @see Vocabulary
+ * @author Nuno Costa
+ */
+class HybridConstantWrapper implements HybridConstant {
 
 	private HybridConstant wrappee;
 
@@ -50,8 +58,8 @@ public class HybridConstantWrapper implements HybridConstant {
 	}
 
 	@Override
-	public String getSymbol() {
-		return wrappee.getSymbol();
+	public String asString() {
+		return wrappee.asString();
 	}
 
 	HybridConstant getWrappe() {

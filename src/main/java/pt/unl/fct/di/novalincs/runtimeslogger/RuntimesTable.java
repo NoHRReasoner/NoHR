@@ -24,7 +24,7 @@ class RuntimesTable {
 	// phase, run, data set, time
 	private final Map<String, Map<Integer, Map<String, Long>>> table;
 
-	public RuntimesTable(String name) {
+	RuntimesTable(String name) {
 		this.name = name;
 		datasets = new LinkedList<String>();
 		phases = new LinkedList<String>();
@@ -46,7 +46,7 @@ class RuntimesTable {
 		return ac / runs;
 	}
 
-	public long get(String phase, int run, String dataset) {
+	long get(String phase, int run, String dataset) {
 		final Map<Integer, Map<String, Long>> phaseMap = table.get(phase);
 		if (phaseMap == null)
 			return -1;
@@ -59,7 +59,7 @@ class RuntimesTable {
 		return time;
 	}
 
-	public void put(String phase, int run, String dataset, Long time) {
+	void put(String phase, int run, String dataset, Long time) {
 		Map<Integer, Map<String, Long>> phaseMap = table.get(phase);
 		if (phaseMap == null) {
 			phaseMap = new HashMap<Integer, Map<String, Long>>();
@@ -78,7 +78,7 @@ class RuntimesTable {
 		runMap.put(dataset, time);
 	}
 
-	public void save() {
+	void save() {
 		final Charset charset = Charset.forName("US-ASCII");
 		final Path file = FileSystems.getDefault().getPath(name + ".csv");
 		try (BufferedWriter writer = Files.newBufferedWriter(file, charset)) {

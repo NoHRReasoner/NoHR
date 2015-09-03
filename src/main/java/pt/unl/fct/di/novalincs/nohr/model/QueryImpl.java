@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
@@ -18,7 +19,7 @@ import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
  *
  * @author Nuno Costa
  */
-public class QueryImpl implements Query {
+class QueryImpl implements Query {
 
 	/** The query's literals */
 	private final List<Literal> literals;
@@ -39,6 +40,8 @@ public class QueryImpl implements Query {
 	 *             if {@code variables} contains some variable that doesn't appear in {@code literals}.
 	 */
 	QueryImpl(List<Literal> literals, List<Variable> variables) {
+		Objects.requireNonNull(literals);
+		Objects.requireNonNull(variables);
 		final Set<Variable> vars = new HashSet<>();
 		for (final Literal literal : literals)
 			vars.addAll(literal.getVariables());
@@ -99,15 +102,9 @@ public class QueryImpl implements Query {
 		if (!(obj instanceof QueryImpl))
 			return false;
 		final QueryImpl other = (QueryImpl) obj;
-		if (literals == null) {
-			if (other.literals != null)
-				return false;
-		} else if (!literals.equals(other.literals))
+		if (!variables.equals(other.variables))
 			return false;
-		if (variables == null) {
-			if (other.variables != null)
-				return false;
-		} else if (!variables.equals(other.variables))
+		if (!literals.equals(other.literals))
 			return false;
 		return true;
 	}
@@ -141,8 +138,8 @@ public class QueryImpl implements Query {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (literals == null ? 0 : literals.hashCode());
-		result = prime * result + (variables == null ? 0 : variables.hashCode());
+		result = prime * result + variables.hashCode();
+		result = prime * result + literals.hashCode();
 		return result;
 	}
 

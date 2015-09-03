@@ -37,7 +37,7 @@ public interface MetaPredicate extends Predicate {
 	 * @return the symbol that represents this meta-predicate.
 	 */
 	@Override
-	public String getSymbol();
+	public String asString();
 
 	/**
 	 * Returns the type of this meta-predicate.

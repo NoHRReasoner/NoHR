@@ -6,7 +6,15 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 
-public class HybridPredicateWrapper implements HybridPredicate {
+/**
+ * An wrapper to {@link HybridPredicate} that allow the concrete type of a {@link HybridPredicate predicate} ({@link ConceptPredicateImpl},
+ * {@link RolePredicateImpl} or {@link RulePredicateImpl}) vary according to what it (extrinsically) associated concrete representation represents at
+ * each moment.
+ *
+ * @see Vocabulary
+ * @author Nuno Costa
+ */
+class HybridPredicateWrapper implements HybridPredicate {
 
 	private HybridPredicate wrappee;
 
@@ -55,8 +63,8 @@ public class HybridPredicateWrapper implements HybridPredicate {
 	}
 
 	@Override
-	public String getSymbol() {
-		return wrappee.getSymbol();
+	public String asString() {
+		return wrappee.asString();
 	}
 
 	HybridPredicate getWrapee() {

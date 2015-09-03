@@ -1,5 +1,7 @@
 package pt.unl.fct.di.novalincs.nohr.model;
 
+import java.util.Objects;
+
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
 
 /**
@@ -7,7 +9,7 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
  *
  * @author Nuno Costa
  */
-public class VariableImpl implements Variable {
+class VariableImpl implements Variable {
 
 	/**
 	 * The symbol that represents this variable.
@@ -20,6 +22,7 @@ public class VariableImpl implements Variable {
 	 * @param symbol
 	 */
 	VariableImpl(String symbol) {
+		Objects.requireNonNull(symbol);
 		this.symbol = symbol;
 	}
 
@@ -34,8 +37,13 @@ public class VariableImpl implements Variable {
 	}
 
 	@Override
+	public String asString() {
+		return symbol;
+	}
+
+	@Override
 	public int compareTo(Variable o) {
-		return symbol.compareTo(o.getSymbol());
+		return symbol.compareTo(o.asString());
 	}
 
 	@Override
@@ -47,24 +55,16 @@ public class VariableImpl implements Variable {
 		if (!(obj instanceof VariableImpl))
 			return false;
 		final VariableImpl other = (VariableImpl) obj;
-		if (symbol == null) {
-			if (other.symbol != null)
-				return false;
-		} else if (!symbol.equals(other.symbol))
+		if (!symbol.equals(other.symbol))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String getSymbol() {
-		return symbol;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (symbol == null ? 0 : symbol.hashCode());
+		result = prime * result + symbol.hashCode();
 		return result;
 	}
 
