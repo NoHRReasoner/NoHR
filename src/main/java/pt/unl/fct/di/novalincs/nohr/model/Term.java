@@ -7,7 +7,6 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
  *
  * @see Variable
  * @see Constant
- * @see ListTerm
  * @author Nuno Costa
  */
 public interface Term extends Symbol {

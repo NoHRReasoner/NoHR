@@ -74,9 +74,9 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 	}
 
 	/**
-	 * Translate the negative axioms of the ontology that this ontology refers with a given {@link QLLAxiomsTranslator}.
+	 * Translate the negative axioms of the ontology that this ontology refers with a given {@link QLAxiomsTranslator}.
 	 *
-	 * @retrun the translation of the negative axioms.
+	 * @return the translation of the negative axioms.
 	 */
 	private Set<Rule> disjunctionsTranslation() {
 		final Set<Rule> result = new HashSet<Rule>();
@@ -86,12 +86,14 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(concepts.get(0), concepts.get(1)));
 		}
 		for (final OWLDisjointObjectPropertiesAxiom disjunction : ontologyNormalization.roleDisjunctions()) {
-			final List<OWLObjectPropertyExpression> roles = new LinkedList<OWLObjectPropertyExpression>(disjunction.getProperties());
+			final List<OWLObjectPropertyExpression> roles = new LinkedList<OWLObjectPropertyExpression>(
+					disjunction.getProperties());
 			assert roles.size() <= 2;
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(roles.get(0), roles.get(1)));
 		}
 		for (final OWLDisjointDataPropertiesAxiom disjunction : ontologyNormalization.dataDisjunctions()) {
-			final List<OWLDataPropertyExpression> roles = new LinkedList<OWLDataPropertyExpression>(disjunction.getProperties());
+			final List<OWLDataPropertyExpression> roles = new LinkedList<OWLDataPropertyExpression>(
+					disjunction.getProperties());
 			assert roles.size() <= 2;
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(roles.get(0), roles.get(1)));
 		}
@@ -122,11 +124,11 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 	}
 
 	/**
-	 * Translate the positive axioms (including assertions) of the ontology that this ontology refers with a given {@link QLLAxiomsTranslator}.
+	 * Translate the positive axioms (including assertions) of the ontology that this ontology refers with a given {@link QLAxiomsTranslator}.
 	 *
-	 * @param axiomTranslator
+	 * @param axiomsTranslator
 	 *            the {@link QLAxiomsTranslator} that will be used.
-	 * @retrun the translation.
+	 * @return the translation.
 	 */
 	// TODO optimize translatin: (e) can be discarded for roles for which there
 	// aren't assertions

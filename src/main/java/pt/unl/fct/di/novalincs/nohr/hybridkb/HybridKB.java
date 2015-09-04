@@ -12,6 +12,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
+import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
@@ -41,7 +42,7 @@ public interface HybridKB {
 	 * @param query
 	 *            the query.
 	 * @param trueAnswers
-	 *            specifies whether to obtain {@link TruthValue#TRUE true} answers.
+	 *            specifies whether to obtain {@link TruthValue#TRUE TRUE true} answers.
 	 * @param undefinedAnswers
 	 *            specifies whether to obtain {@link TruthValue#UNDEFINED undefined} answers.
 	 * @param inconsistentAnswers
@@ -53,7 +54,7 @@ public interface HybridKB {
 	 * @return the list of all answers {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
 	 *         {@code inconsistentAnswers} flags.
 	 */
-	List<Answer> allAnswers(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
+	List<Answer> allAnswers(Query query, boolean trueAnswers, boolean undefinedAnswers, boolean inconsistentAnswers)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException;
 
 	/**
@@ -130,7 +131,7 @@ public interface HybridKB {
 	 * @throws UnsupportedAxiomsException
 	 *             if the <i>ontology</i> has some axiom of an unsupported type.
 	 */
-	Answer oneAnswer(Query query, boolean trueAnswer, boolean undefinedAnswers, boolean inconsistentAnswers)
+	Answer oneAnswer(Query query, boolean trueAnswers, boolean undefinedAnswers, boolean inconsistentAnswers)
 			throws OWLProfilesViolationsException, UnsupportedAxiomsException;
 
 }

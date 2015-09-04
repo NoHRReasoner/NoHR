@@ -2,6 +2,7 @@ package pt.unl.fct.di.novalincs.nohr.translation;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
@@ -53,8 +54,8 @@ public interface OntologyTranslator {
 	public boolean hasDisjunctions();
 
 	/**
-	 * Updates the translation {@link DatabaseProgram program}(s) in the {@link OntologyTranslator translator}'s {@link DeductiveDatabase deductive database}
-	 * with the translation of the current version of the {@link OntologyTranslator translator}'s ontology.
+	 * Updates the translation {@link DatabaseProgram program}(s) in the {@link OntologyTranslator translator}'s {@link DeductiveDatabase deductive
+	 * database} with the translation of the current version of the {@link OntologyTranslator translator}'s ontology.
 	 *
 	 * @throws UnsupportedAxiomsException
 	 *             if the {@link OntologyTranslator translator}'s ontology has some axioms of an unsupported type.

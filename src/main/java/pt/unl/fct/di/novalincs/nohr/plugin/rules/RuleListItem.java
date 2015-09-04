@@ -8,7 +8,7 @@ import org.protege.editor.core.ui.list.MListItem;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
- * A {@link final Rule rule} {@link final MListItem item} of a certain {@link RulesList}.**
+ * A {@link Rule rule} {@link MListItem item} of a certain {@link RulesList}.**
  *
  * @author Nuno Costa
  */
@@ -25,8 +25,8 @@ class RuleListItem implements MListItem {
 	/**
 	 * @param model
 	 *            the {@link RuleListModel} to which the item belongs.
-	 * @param the
-	 *            index of the item in the {@link RuleListModel} that it belongs .
+	 * @param index
+	 *            the index of the item in the {@link RuleListModel} that it belongs .
 	 */
 	RuleListItem(int index, RuleListModel model, Rule rule) {
 		this.index = index;

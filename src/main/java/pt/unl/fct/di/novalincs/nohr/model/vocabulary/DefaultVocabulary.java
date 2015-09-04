@@ -102,8 +102,8 @@ public class DefaultVocabulary implements Vocabulary {
 	/**
 	 * Constructs a {@link DefaultVocabulary} for a given set of ontologies;
 	 *
-	 * @param ontologies
-	 *            the set of ontologies.
+	 * @param ontology
+	 *            the ontology.
 	 */
 	public DefaultVocabulary(OWLOntology ontology) {
 		Objects.requireNonNull(ontology);
@@ -341,9 +341,9 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	/**
-	 * Generate a new concept that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 * Generate a new concept that doesn't occur in the ontology refered by this {@link Vocabulary}.
 	 *
-	 * @return a new concept that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 * @return a new concept that doesn't occur in the ontology refered by this {@link Vocabulary}.
 	 */
 	@Override
 	public OWLClass generateNewConcept() {
@@ -354,9 +354,9 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	/**
-	 * Generate a new role that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 * Generate a new role that doesn't occur in the ontology refered by this {@link Vocabulary}.
 	 *
-	 * @return a new role that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 * @return a new role that doesn't occur in the ontology refered by this {@link Vocabulary}.
 	 */
 	@Override
 	public OWLObjectProperty generateNewRole() {
@@ -591,16 +591,16 @@ public class DefaultVocabulary implements Vocabulary {
 	 *            specifies whether the constant associated with {@code repr} will change if a predicate is already associated with {@code repr}.
 	 * @return the new {@link HybridPredicateWrapper predicate wrapper}.
 	 */
-	private HybridPredicateWrapper setPredicate(String symbol, int arity, HybridPredicate predicate, boolean change) {
+	private HybridPredicateWrapper setPredicate(String repr, int arity, HybridPredicate predicate, boolean change) {
 		Map<String, HybridPredicateWrapper> map = predicates.get(arity);
 		if (map == null) {
 			map = new HashMap<String, HybridPredicateWrapper>();
 			predicates.put(arity, map);
 		}
-		HybridPredicateWrapper pred = map.get(symbol);
+		HybridPredicateWrapper pred = map.get(repr);
 		if (pred == null) {
 			pred = new HybridPredicateWrapper(predicate);
-			map.put(symbol, pred);
+			map.put(repr, pred);
 		} else if (change)
 			if (pred.changeWrapee(predicate))
 				for (final VocabularyChangeListener listener : listeners)

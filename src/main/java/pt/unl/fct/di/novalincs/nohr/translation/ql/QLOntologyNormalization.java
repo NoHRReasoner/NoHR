@@ -92,8 +92,8 @@ public interface QLOntologyNormalization {
 	 * Returns the set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
 	 * <i>&top;&sqsube;&not;B</i> or </i> B&sqsube;&not;B</i> {@link QLOntologyNormalization}.
 	 *
-	 * @returns returns the set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
-	 *          <i>&top;&sqsube;&not;B</i> or </i> B&sqsube;&not;B</i> {@link QLOntologyNormalization}.
+	 * @return the set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
+	 *         <i>&top;&sqsube;&not;B</i> or </i> B&sqsube;&not;B</i> {@link QLOntologyNormalization}.
 	 */
 	public Set<OWLClassExpression> getUnsatisfiableConcepts();
 
@@ -101,8 +101,8 @@ public interface QLOntologyNormalization {
 	 * Returns the set of DL-Lite<sub>R</sub> roles <i>Q</i> that occur in some axiom <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
 	 * <i>&top;&sqsube;&not;Q</i> or </i>Q&sqsube;&not;Q</i> {@link QLOntologyNormalization}.
 	 *
-	 * @returns returns the set of DL-Lite<sub>R</sub> concepts <i>Q</i> that occur in some axiom <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
-	 *          <i>&top;&sqsube;&not;Q</i> or </i> Q&sqsube;&not;Q</i> {@link QLOntologyNormalization}.
+	 * @return the set of DL-Lite<sub>R</sub> concepts <i>Q</i> that occur in some axiom <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
+	 *         <i>&top;&sqsube;&not;Q</i> or </i> Q&sqsube;&not;Q</i> {@link QLOntologyNormalization}.
 	 */
 	public Set<OWLPropertyExpression<?, ?>> getUnsatisfiableRoles();
 
@@ -143,8 +143,8 @@ public interface QLOntologyNormalization {
 	/**
 	 * Checks whether a given concept occur as subsuming role in some subsumption of this {@link QLOntologyNormalization}.
 	 *
-	 * @param c
-	 *            a concept.
+	 * @param r
+	 *            a role.
 	 * @return true iff {@code r} occur as subsuming role in some subumption of this {@link QLOntologyNormalization}.
 	 */
 	public boolean isSuper(OWLPropertyExpression<?, ?> r);

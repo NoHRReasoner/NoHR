@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import pt.unl.fct.di.novalincs.nohr.model.Query;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+
 /**
  * An exception thrown when a {@link NoHRParser} failed to recognize a {@link Query} or {@link Rule}.
  *
@@ -38,7 +41,7 @@ public class ParseException extends Exception {
 	 *            the begin of the next token.
 	 * @param end
 	 *            the expected end of the expected token, if it was a fixed length, or the end of the parsed string, otherwise
-	 * @param expectedToken
+	 * @param expectedTokens
 	 *            the expected tokens.
 	 */
 	public ParseException(int line, int begin, int end, TokenType... expectedTokens) {
@@ -74,7 +77,7 @@ public class ParseException extends Exception {
 	 *            the begin of the next token.
 	 * @param end
 	 *            the expected end of the expected token, if it was a fixed length, or the end of the parsed string, otherwise
-	 * @param expectedToken
+	 * @param expectedTokens
 	 *            the expected tokens.
 	 */
 	public ParseException(int begin, int end, TokenType... expectedTokens) {

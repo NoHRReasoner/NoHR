@@ -12,7 +12,7 @@ import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.plugin.Messages;
 
 /**
- * An {@link OWLExpressionChecker} for {@link Rules}.
+ * An {@link OWLExpressionChecker} for {@link Rule rules}.
  *
  * @author Nuno Costa
  */
@@ -34,8 +34,8 @@ public class RuleExpressionChecker implements OWLExpressionChecker<Rule> {
 		try {
 			return parser.parseRule(str);
 		} catch (final ParseException e) {
-			throw new OWLExpressionParserException(Messages.invalidExpressionMessage(str, e), e.getBegin(),
-					e.getEnd(), false, false, false, false, false, false, null);
+			throw new OWLExpressionParserException(Messages.invalidExpressionMessage(str, e), e.getBegin(), e.getEnd(),
+					false, false, false, false, false, false, null);
 		}
 	}
 }

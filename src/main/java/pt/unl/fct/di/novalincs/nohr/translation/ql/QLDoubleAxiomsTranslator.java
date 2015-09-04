@@ -64,8 +64,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
 	 * @return <i>P<sup>d</sup>(a,b)&larr;<b>not</b> NP(a,b)</i>
 	 */
 	@Override
-	Set<Rule> assertionTranslation(OWLPropertyAssertionAxiom<?, ?> alpha) {
-		return AssertionsTranslation.translateDouble(v, alpha);
+	Set<Rule> assertionTranslation(OWLPropertyAssertionAxiom<?, ?> assertion) {
+		return AssertionsTranslation.translateDouble(v, assertion);
 	}
 
 	/**

@@ -6,7 +6,7 @@ package pt.unl.fct.di.novalincs.nohr.model;
 import java.util.Set;
 
 /**
- * Represents a <i>nonmonotonic logic program</i>. Is is a {@link Set set} of {@link Rules non-monotonic rules}.
+ * Represents a <i>nonmonotonic logic program</i>. Is is a {@link Set set} of {@link Rule non-monotonic rules}.
  *
  * @author Nuno Costa
  */
@@ -23,7 +23,7 @@ public interface Program extends Set<Rule> {
 	/**
 	 * Removes a previously added {@link ProgramChangeListener}.
 	 *
-	 * @param listner
+	 * @param listener
 	 *            a {@link ProgramChangeListener}.
 	 */
 	void removeListener(ProgramChangeListener listener);

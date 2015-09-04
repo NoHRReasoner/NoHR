@@ -63,7 +63,7 @@ public class Messages {
 	 *
 	 * @param parent
 	 * @param platforms
-	 * @return
+	 * @return the chosen platform.
 	 */
 	public static String selectPlataform(Component parent, final String[] platforms) {
 		return (String) JOptionPane.showInputDialog(parent, "Please select a platform", "Platform",
@@ -87,7 +87,6 @@ public class Messages {
 	 *
 	 * @param parent
 	 * @param exception
-	 * @return
 	 */
 	public static void violations(Component parent, UnsupportedAxiomsException exception) {
 		final String unsupportedList = StringUtils.concat(", ", exception.getUnsupportedAxioms().toArray());

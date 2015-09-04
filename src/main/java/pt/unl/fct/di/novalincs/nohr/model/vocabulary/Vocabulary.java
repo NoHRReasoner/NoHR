@@ -28,7 +28,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Predicate;
  * contain a label annotation (see {@link <a href="http://www.w3.org/TR/owl2-syntax/#Annotation_Properties">Annotation Properties</a>}) for a given
  * concept, so that all {@link HybridPredicate predicates} associated with the value of the annotation represent that concept. If the annotation is
  * removed from the ontology, those {@link HybridPredicate predicates} will represent a new rule predicate with the value as symbol. Those kind of
- * changes are appropriately reflected in {@link HybridPredicate predicates} and {@link ConstantPredicate constants} (the return of, e.g.,
+ * changes are appropriately reflected in {@link HybridPredicate predicates} and {@link HybridConstant constants} (the return of, e.g.,
  * {@link HybridPredicate#isConcept()}, {@link HybridPredicate#isRole()} and {@link HybridConstant#isIndividual()} will change appropriately). A
  * {@link VocabularyChangeListener} can listen that changes.
  *
@@ -147,16 +147,16 @@ public interface Vocabulary {
 	Predicate doubRanPred(OWLPropertyExpression<?, ?> role);
 
 	/**
-	 * Generate a new concept that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 * Generate a new concept that doesn't occur in the ontology refered by this {@link Vocabulary}.
 	 *
-	 * @return a new concept that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 * @return a new concept that doesn't occur in the ontology refered by this {@link Vocabulary}.
 	 */
 	public OWLClass generateNewConcept();
 
 	/**
-	 * Generate a new role that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 * Generate a new role that doesn't occur in the ontology refered by this {@link Vocabulary}.
 	 *
-	 * @return a new role that doesn't occur in the ontology refered by this {@link OWLEntityGenerator}.
+	 * @return a new role that doesn't occur in the ontology refered by this {@link Vocabulary}.
 	 */
 	public OWLObjectProperty generateNewRole();
 
@@ -373,7 +373,8 @@ public interface Vocabulary {
 	 * @return <i>S/n</i> if {@code type} is {@link PredicateType#ORIGINAL original}; <br>
 	 *         <i>S<sup>d</sup>/n</i>, if {@code type} is {@link PredicateType#DOUBLE double}; <br>
 	 *         <i>NS/n</i>, if {@code type} is {@link PredicateType#NEGATIVE negative}.
-	 * @throw IllegalArgumentException if {@code type.} {@link PredicateType#isQuantification() isQuantification()} is true.
+	 * @throws IllegalArgumentException
+	 *             if {@code type.} {@link PredicateType#isQuantification() isQuantification()} is true.
 	 */
 	Predicate pred(String symbol, int arity, PredicateType type);
 

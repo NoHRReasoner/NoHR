@@ -42,9 +42,6 @@ class AnswerImpl implements Answer {
 	 *            the truth value of the answer.
 	 * @param values
 	 *            the list of terms to which each query's variable is mapped.
-	 * @param query.getIndex()
-	 *            the mapping between the query's variables and the position in {@code values} where the terms to which those variables are mapped
-	 *            appear.
 	 */
 	AnswerImpl(Query query, TruthValue truthValue, List<Term> values) {
 		Objects.requireNonNull(query);

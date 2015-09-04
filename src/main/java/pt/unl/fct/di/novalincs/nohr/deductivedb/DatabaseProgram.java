@@ -5,7 +5,7 @@ import java.util.Collection;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
- * Represents a logic program (i.e. set of {@link Rules rules}) loaded in a certain {@link DeductiveDatabase}. All changes to a program are reflected
+ * Represents a logic program (i.e. set of {@link Rule rules}) loaded in a certain {@link DeductiveDatabase}. All changes to a program are reflected
  * in the later queries to the {@link DeductiveDatabase} where the program is loaded.
  *
  * @author Nuno Costa
@@ -36,7 +36,7 @@ public interface DatabaseProgram {
 	/**
 	 * Returns the {@link DeductiveDatabase} where this {@link DatabaseProgram program} is loaded.
 	 *
-	 * @return
+	 * @return the {@link DeductiveDatabase} where this {@link DatabaseProgram program} is loaded.
 	 */
 	DeductiveDatabase getDeductiveDatabase();
 

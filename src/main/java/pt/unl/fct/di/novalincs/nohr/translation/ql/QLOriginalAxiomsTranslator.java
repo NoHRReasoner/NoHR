@@ -61,8 +61,8 @@ class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 * @return <i>P(a,b)&larr;<b>not</b> NP(a,b)</i>
 	 */
 	@Override
-	Set<Rule> assertionTranslation(OWLPropertyAssertionAxiom<?, ?> alpha) {
-		return AssertionsTranslation.translateOriginal(v, alpha);
+	Set<Rule> assertionTranslation(OWLPropertyAssertionAxiom<?, ?> assertion) {
+		return AssertionsTranslation.translateOriginal(v, assertion);
 	}
 
 	/**

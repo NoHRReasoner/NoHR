@@ -15,8 +15,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Symbol;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
 
 /**
- * An {@link FormatVisitor} to format the {@link Rules rules} and {@link TableDirective table directives} that are sent to a XSB Prolog engine,
- * according to the XSB syntax.
+ * An {@link FormatVisitor} to format the {@link Rule rules} that are sent to a XSB Prolog engine, according to the XSB syntax.
  *
  * @author Nuno Costa
  */

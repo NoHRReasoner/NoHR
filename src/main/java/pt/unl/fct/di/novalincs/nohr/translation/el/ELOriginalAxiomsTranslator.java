@@ -150,8 +150,8 @@ class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
 	 *            a variable <i>x<sub>1</sub>.
 	 * @return <i>R(x, x<sub>1</sub>)</i>.
 	 */
-	Atom tr(OWLProperty<?, ?> p, Variable x, Variable y) {
-		return tr(p, x, y, false);
+	Atom tr(OWLProperty<?, ?> p, Variable x, Variable x1) {
+		return tr(p, x, x1, false);
 	}
 
 	/**

@@ -360,9 +360,6 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
 	 *
 	 * @param ontology
 	 *            an ontology <i>O</i>.
-	 * @return the closure, <b>Closure</b>, of {@code ontology} under the ELK inference rules. <b>Closure</b> has the following properties:<br>
-	 *         1. <i>O &vDash; C&sqsube;&bot;</i> iff <i>C&sqsube;&bot; &in; </i><b>Closure</b>; <br>
-	 *         2. <i>O &vDash; C&sqsube;A</i> iff <i>C&sqsube;&bot; &in;</i><b>Closure</b> or <i>C&sqsube;A &in; </i><b>Closure</b>;<br>
 	 */
 	private void classify(OWLOntology ontology) {
 		RuntimesLogger.start("ontology classification");

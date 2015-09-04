@@ -19,7 +19,6 @@ class NegativeLiteralImpl extends LiteralImpl implements NegativeLiteral {
 	 *
 	 * @param atom
 	 *            an atom <i>P(t<sub>1</sub>,...,t<sub>n</sub>)</i>.
-	 * @return the literal <i><b>not</b> P(t<sub>1</sub>,..., t<sub>n</sub>)</i> .
 	 */
 	NegativeLiteralImpl(Atom atom) {
 		this(atom, false);

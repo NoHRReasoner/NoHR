@@ -12,7 +12,7 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * Model factory. For more conciseness statically import (see
- * {@link <a href= https://docs.oracle.com/javase/1.5.0/docs/guide/language/static-import.html>Static Import</a> }) this class if you want to use
+ * {@link <a href= https://docs.oracle.com/javase/1.5.0/docs/guide/language/static-import.html">Static Import</a> }) this class if you want to use
  * their factory methods.
  *
  * @author Nuno Costa
@@ -84,7 +84,7 @@ public class Model {
 	 * Create an atom with the predicate corresponding to a specified symbol, given a {@code VocabularyMapping}, as functor and anonymous variables as
 	 * arguments.
 	 *
-	 * @param functor
+	 * @param functorSymbol
 	 *            the functor predicate, <i>P</i>.
 	 * @return an atom <i>P(_,..., _)</i> where {@code _} represents an anonymous variable.
 	 */
@@ -114,7 +114,7 @@ public class Model {
 	 *
 	 * @param arguments
 	 *            an array of terms arguments.
-	 * @param functorSymbol
+	 * @param predicate
 	 *            the functor predicate's symbol
 	 * @return an atom with a predicate with symbol {@code functorSymbol} as functor and arguments {@code arguments}.
 	 */
@@ -182,7 +182,7 @@ public class Model {
 	 *
 	 * @param atom
 	 *            the atom, <i>P(t<sub>1</sub>, ..., t<sub>n</sub>)</i>
-	 * @param exitentially
+	 * @param existentially
 	 * @return the negative literal <i><b>not</b> P(t<sub>1</sub>, ..., t <sub>n</sub>)</i>
 	 */
 	public static NegativeLiteral negLiteral(Atom atom, boolean existentially) {

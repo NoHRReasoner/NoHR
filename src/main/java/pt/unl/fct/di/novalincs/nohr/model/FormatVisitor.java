@@ -16,7 +16,7 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.MetaPredicate;
 public interface FormatVisitor {
 
 	/**
-	 * @param constant
+	 * @param answer
 	 * @return the string representation of the answer {@code answer}.
 	 */
 	public String visit(Answer answer);

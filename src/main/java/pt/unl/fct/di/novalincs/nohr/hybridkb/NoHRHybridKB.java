@@ -167,7 +167,7 @@ public class NoHRHybridKB implements HybridKB {
 	 * @throws PrologEngineCreationException
 	 *             if there was some problem during the creation of the underlying Prolog engine.
 	 * @throws IllegalArgumentException
-	 *             if {@code vocabularyMapping doesn't contains {@code ontology}.
+	 *             if {@code vocabularyMapping} doesn't contains {@code ontology}.
 	 */
 	public NoHRHybridKB(final File binDirectory, final OWLOntology ontology, final Program program,
 			Vocabulary vocabulary, Profile profile)

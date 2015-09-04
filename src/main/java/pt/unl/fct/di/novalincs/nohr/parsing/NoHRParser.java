@@ -62,6 +62,6 @@ public interface NoHRParser {
 	 * @throws ParseException
 	 *             if {@code str} violates the role syntax.
 	 */
-	public Rule parseRule(String srt) throws ParseException;
+	public Rule parseRule(String str) throws ParseException;
 
 }

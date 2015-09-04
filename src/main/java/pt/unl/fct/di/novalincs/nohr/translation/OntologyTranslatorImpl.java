@@ -34,7 +34,7 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
 	private OntologyTranslator implementor;
 
 	/**
-	 * Constructs an {@link OntologyTranslator} for a given {@link OWLOntolgy ontology}.
+	 * Constructs an {@link OntologyTranslator} for a given {@link OWLOntology ontology}.
 	 *
 	 * @param ontology
 	 *            the ontology that will be translated.

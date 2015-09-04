@@ -61,7 +61,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	 * {@link OWLIndividual individual} symbols mapped in a given {@link Vocabulary}.
 	 *
 	 * @param vocabularyMapping
-	 *            the {@link Vocabulary} used to recognize {@link OWLClass concepts}, {@link OWLProperty roles} and {@link individuals}.
+	 *            the {@link Vocabulary} used to recognize {@link OWLClass concepts}, {@link OWLProperty roles} and {@link OWLIndividual individuals}.
 	 */
 	public NoHRRecursiveDescentParser(Vocabulary vocabularyMapping) {
 		v = vocabularyMapping;
@@ -219,7 +219,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	 *
 	 * @throws ParseException
 	 *             the parser can't recognize any {@link Term} at the current position.
-	 * @retrun the recognized term.
+	 * @return the recognized term.
 	 */
 	private Term term() throws ParseException {
 		final Variable variable = variable();
@@ -234,7 +234,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	 * Tries to apply: <br>
 	 * <code> variable = "?" id.</code><br>
 	 * <br>
-	 * In case of success constructs the recognized {@link Varible} and returns it.
+	 * In case of success constructs the recognized {@link Variable} and returns it.
 	 *
 	 * @return the recognized variable, or {@code null} if none is recognized.
 	 * @throws ParseException

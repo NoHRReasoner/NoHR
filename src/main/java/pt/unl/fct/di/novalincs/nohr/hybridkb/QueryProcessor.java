@@ -49,8 +49,8 @@ public class QueryProcessor {
 	 * @return the list of all answers {@code query}. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was
 	 *         unsuccessful.
 	 */
-	protected List<Answer> allAnswers(Query query, boolean hasDoubled) {
-		return allAnswers(query, hasDoubled, true, true, true);
+	protected List<Answer> allAnswers(Query query, boolean isDoubled) {
+		return allAnswers(query, isDoubled, true, true, true);
 	}
 
 	/**
@@ -115,12 +115,6 @@ public class QueryProcessor {
 	 *            the query.
 	 * @param isDoubled
 	 *            specifies whether the KB is doubled.
-	 * @param trueAnswers
-	 *            specifies whether to consider {@link TruthValue#TRUE true} answers.
-	 * @param undefinedAnswers
-	 *            specifies whether to consider {@link TruthValue#UNDEFINED undefined} answers.
-	 * @param inconsistentAnswers
-	 *            specifies whether to consider :w {@link TruthValue#INCONSISTENT inconsistent} answers.
 	 * @return true iff there is at least one answer to {@code query} valued according to the {@code trueAnswers}, {@code undefinedAnswers} and
 	 *         {@code inconsistentAnswers} flags. @ if the underlying {@link DeductiveDatabase} needed to read or write some file and was
 	 *         unsuccessful.
@@ -134,7 +128,7 @@ public class QueryProcessor {
 	 *
 	 * @param query
 	 *            the query.
-	 * @param isDoubled
+	 * @param hasDoubled
 	 *            specifies whether the KB is doubled.
 	 * @param trueAnswers
 	 *            specifies whether to consider {@link TruthValue#TRUE true} answers.

@@ -10,7 +10,7 @@ import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
- * Convert {@link TermModel term models} obtained from a {@link PrologEngine Prolog engine} to {@link Terms terms}.
+ * Convert {@link TermModel term models} obtained from a {@link PrologEngine Prolog engine} to {@link Term terms}.
  *
  * @author Nuno Costa
  */

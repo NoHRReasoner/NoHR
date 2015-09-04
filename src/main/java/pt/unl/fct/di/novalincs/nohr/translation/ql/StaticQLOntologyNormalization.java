@@ -316,9 +316,9 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	 * @param axiom
 	 *            a OWL 2 QL concept subsumption.
 	 */
-	private void normalize(OWLSubClassOfAxiom alpha) {
-		final OWLClassExpression b = alpha.getSubClass();
-		final OWLClassExpression c = alpha.getSuperClass();
+	private void normalize(OWLSubClassOfAxiom axiom) {
+		final OWLClassExpression b = axiom.getSubClass();
+		final OWLClassExpression c = axiom.getSuperClass();
 		if (b.isOWLNothing() || c.isOWLThing())
 			return;
 		if (b instanceof OWLDataSomeValuesFrom || c instanceof OWLDataSomeValuesFrom)
@@ -328,7 +328,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 		else if (c instanceof OWLClass) { // BASE CASE
 			subConcepts.add(b);
 			superConcepts.add(c);
-			conceptSubsumptions.add(alpha);
+			conceptSubsumptions.add(axiom);
 		} else if (c instanceof OWLObjectIntersectionOf) {
 			final OWLObjectIntersectionOf c0 = (OWLObjectIntersectionOf) c;
 			final Set<OWLClassExpression> ops = c0.getOperands();

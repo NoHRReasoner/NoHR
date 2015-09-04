@@ -174,14 +174,14 @@ public class StaticTBoxDigraph implements TBoxDigraph {
 
 	/**
 	 * Returns the set of atomic concept and roles obtained by applying {@link StaticTBoxDigraph#atomic(OWLClassExpression)} and
-	 * {@link #atom(OWLPropertyExpression)} to two given sets of basic concepts and basic roles.
+	 * {@link DLUtils#atomic(OWLPropertyExpression)} to two given sets of basic concepts and basic roles.
 	 *
 	 * @param concepts
 	 *            a set of atomic roles.
 	 * @param roles
 	 *            a set of basic roles.
 	 * @return the set of atomic concept and roles obtained by applying {@link StaticTBoxDigraph#atomic(OWLClassExpression)} and
-	 *         {@link #atom(OWLPropertyExpression)} to {@code concepts} and {@code roles}.
+	 *         {@link DLUtils#atomic(OWLPropertyExpression))} to {@code concepts} and {@code roles}.
 	 * @throw IllegalArgumentException if some concept of {@code concepts} isn't basic.
 	 */
 	private Set<OWLEntity> atoms(Set<OWLClassExpression> concepts, Set<OWLPropertyExpression<?, ?>> roles) {

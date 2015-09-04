@@ -130,8 +130,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	protected final File file;
 
 	/**
-	 * The {@link FormatVisitor} that formats the {@link Rule rules} and {@link TableDirective table directives} when they are sent to the Prolog
-	 * engine.
+	 * The {@link FormatVisitor} that formats the {@link Rule rules} when they are sent to the Prolog engine.
 	 */
 	protected final FormatVisitor formatVisitor;
 
@@ -180,7 +179,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 	/**
 	 * The multiset of predicates that are functor of atoms that occur in negative bodies (see {@link Rule#getNegativeBody()} , where the multiplicity
-	 * represents the number of {@link Rule rules} of the loaded {@link Programs programs} where that predicates occur in such position.
+	 * represents the number of {@link Rule rules} of the loaded {@link DatabaseProgram programs} where that predicates occur in such position.
 	 */
 	private final Multiset<Predicate> negativeBodyFunctors;
 

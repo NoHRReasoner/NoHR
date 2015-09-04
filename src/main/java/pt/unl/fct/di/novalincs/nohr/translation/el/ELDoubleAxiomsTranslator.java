@@ -92,9 +92,9 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 *
 	 * @param chain
 	 *            a role chain <i>R<sub>1</sub>&#x26AA; ... &#x26AA;R<sub>k</i>.
-	 * @param superRole
+	 * @param s
 	 *            the subsuming role <i>S</i>
-	 * @retrun see lines 2,3 and 4 of <b>(r2)</b>.
+	 * @return see lines 2,3 and 4 of <b>(r2)</b>.
 	 */
 	// (r2)
 	@Override
@@ -188,8 +188,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 *            a variable <i>x<sub>k</sub>.
 	 * @return <i>[R<sub>1</sub><sup>d</sup>(x, x<sub>1</sub>), ..., R<sub>k</sub><sup>d</sup>(x<sub>k-1</sub>, x<sub>k</sub>)]</i>.
 	 */
-	List<Atom> tr(List<OWLObjectPropertyExpression> chain, Variable x, Variable y) {
-		return tr(chain, x, y, true);
+	List<Atom> tr(List<OWLObjectPropertyExpression> chain, Variable x, Variable xk) {
+		return tr(chain, x, xk, true);
 	}
 
 	/**
@@ -237,8 +237,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 *            a variable <i>x<sub>1</sub>.
 	 * @return <i>R<sup>d</sup>(x, x<sub>1</sub>)</i>.
 	 */
-	Atom tr(OWLProperty<?, ?> p, Variable x, Variable y) {
-		return tr(p, x, y, true);
+	Atom tr(OWLProperty<?, ?> r, Variable x, Variable y) {
+		return tr(r, x, y, true);
 	}
 
 	/**
