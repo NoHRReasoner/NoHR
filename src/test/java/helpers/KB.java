@@ -34,22 +34,22 @@ import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
 import com.declarativa.interprolog.util.IPException;
 
-import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
-import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
-import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
-import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalization;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.QLOntologyNormalizationImpl;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
+import pt.unl.fct.di.novalincs.nohr.translation.Profile;
+import pt.unl.fct.di.novalincs.nohr.translation.ql.QLOntologyNormalization;
+import pt.unl.fct.di.novalincs.nohr.translation.ql.StaticQLOntologyNormalization;
 
 public class KB {
 
@@ -339,7 +339,7 @@ public class KB {
 	}
 
 	public QLOntologyNormalization getQLNormalizedOntology() throws UnsupportedAxiomsException {
-		return new QLOntologyNormalizationImpl(ontology, hybridKB.getVocabulary());
+		return new StaticQLOntologyNormalization(ontology, hybridKB.getVocabulary());
 	}
 
 	public OWLObjectProperty[] getRoles(int n) {
@@ -479,7 +479,7 @@ public class KB {
 	private void setup() {
 		try {
 			ontology = ontologyManager.createOntology(IRI.generateDocumentIRI());
-			hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profile);
+			hybridKB = new NoHRHybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profile);
 			parser = new NoHRRecursiveDescentParser(hybridKB.getVocabulary());
 		} catch (IPException | OWLOntologyCreationException | UnsupportedAxiomsException
 				| PrologEngineCreationException e) {

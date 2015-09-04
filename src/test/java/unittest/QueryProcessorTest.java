@@ -29,12 +29,9 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
-import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
-import pt.unl.fct.di.centria.nohr.reasoner.QueryProcessor;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.XSBDeductiveDatabase;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.QueryProcessor;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
@@ -43,6 +40,9 @@ import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 
 /**
  * @author nunocosta

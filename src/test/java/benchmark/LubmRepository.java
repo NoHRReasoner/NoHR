@@ -22,16 +22,16 @@ import com.declarativa.interprolog.util.IPException;
 
 import benchmark.ubt.api.QueryResult;
 import benchmark.ubt.api.QuerySpecification;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
-import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
-import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
+import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 public class LubmRepository {
@@ -40,7 +40,7 @@ public class LubmRepository {
 
 	private String lastQuery;
 
-	private pt.unl.fct.di.centria.nohr.reasoner.HybridKB hybridKB;
+	private pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB hybridKB;
 
 	private final File resultsDirectory;
 
@@ -96,7 +96,7 @@ public class LubmRepository {
 		}
 		RuntimesLogger.stop("ontology loading", "loading");
 		ontologyManager = null;
-		hybridKB = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profiles);
+		hybridKB = new NoHRHybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profiles);
 		parser = new NoHRRecursiveDescentParser(new DefaultVocabulary(ontology));
 		System.gc();
 		return true;

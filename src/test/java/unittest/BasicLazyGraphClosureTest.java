@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.BasicLazyGraphClosure;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.ql.GraphClosure;
+import pt.unl.fct.di.novalincs.nohr.utils.BasicLazyGraphClosure;
+import pt.unl.fct.di.novalincs.nohr.utils.GraphClosure;
 
 public class BasicLazyGraphClosureTest {
 

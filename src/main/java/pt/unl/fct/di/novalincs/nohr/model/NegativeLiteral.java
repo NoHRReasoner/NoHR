@@ -14,10 +14,9 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
 
 public interface NegativeLiteral extends Literal {
 
+	@Override
 	public NegativeLiteral accept(ModelVisitor visitor);
 
-	// TODO revise the need of this method (maybe the FormatVistor must be
-	// responsible for handle these format details).
 	public boolean isExistentiallyNegative();
 
 }

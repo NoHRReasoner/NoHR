@@ -28,7 +28,6 @@ import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.Option;
 
-import pt.unl.fct.di.centria.nohr.parsing.ProgramPresistenceManager;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -40,6 +39,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.parsing.ProgramPresistenceManager;
 
 /**
  * @author Nuno Costa

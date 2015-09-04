@@ -40,7 +40,6 @@ public interface Query extends ModelElement<Query> {
 	 */
 	public List<Literal> getLiterals();
 
-	// TODO remove
 	public Query getOriginal();
 
 	/**

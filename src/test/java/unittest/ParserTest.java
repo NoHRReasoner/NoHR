@@ -12,13 +12,13 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
-import pt.unl.fct.di.centria.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 
 /**
  *

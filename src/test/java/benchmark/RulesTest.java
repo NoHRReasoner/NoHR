@@ -26,17 +26,17 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import benchmark.ubt.api.QueryConfigParser;
 import benchmark.ubt.api.QuerySpecification;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRParser;
-import pt.unl.fct.di.centria.nohr.parsing.NoHRRecursiveDescentParser;
-import pt.unl.fct.di.centria.nohr.parsing.ProgramPresistenceManager;
-import pt.unl.fct.di.centria.nohr.reasoner.HybridKB;
-import pt.unl.fct.di.centria.nohr.reasoner.HybridKBImpl;
-import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.ProgramPresistenceManager;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 public class RulesTest {
@@ -75,7 +75,7 @@ public class RulesTest {
 				e.printStackTrace();
 			}
 			RuntimesLogger.stop("ontology loading", "loading");
-			final HybridKB nohr = new HybridKBImpl(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology,
+			final HybridKB nohr = new NoHRHybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology,
 					Model.program());
 			final NoHRParser parser = new NoHRRecursiveDescentParser(nohr.getVocabulary());
 			final ProgramPresistenceManager programPresistenceManager = new ProgramPresistenceManager(

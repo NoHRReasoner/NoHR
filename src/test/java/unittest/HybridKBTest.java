@@ -14,11 +14,11 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import com.declarativa.interprolog.util.IPException;
 
 import helpers.KB;
-import pt.unl.fct.di.centria.nohr.parsing.ParseException;
-import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 
 public class HybridKBTest extends KB {
 
@@ -34,7 +34,6 @@ public class HybridKBTest extends KB {
 			OWLProfilesViolationsException, IPException, IOException, CloneNotSupportedException,
 			UnsupportedAxiomsException, PrologEngineCreationException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Before

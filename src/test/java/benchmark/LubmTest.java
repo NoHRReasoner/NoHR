@@ -17,10 +17,10 @@ import com.lexicalscope.jewel.cli.Option;
 
 import benchmark.ubt.api.QueryConfigParser;
 import benchmark.ubt.api.QuerySpecification;
-import pt.unl.fct.di.centria.nohr.reasoner.UnsupportedAxiomsException;
-import pt.unl.fct.di.centria.nohr.reasoner.translation.Profile;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
-import pt.unl.fct.di.centria.nohr.reasoner.OWLProfilesViolationsException;
 
 public class LubmTest {
 

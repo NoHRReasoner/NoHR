@@ -43,9 +43,9 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
-import pt.unl.fct.di.centria.nohr.reasoner.translation.DLUtils;
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+import pt.unl.fct.di.novalincs.nohr.translation.DLUtils;
 import pt.unl.fct.di.novalincs.nohr.utils.HashMultiset;
 
 /**
