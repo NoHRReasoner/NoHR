@@ -229,7 +229,7 @@ public class Model {
 	 * @return the program containing the given rules.
 	 */
 	public static Program program(Rule... rules) {
-		return new HashSetProgram(new HashSet<>(Arrays.asList(rules)));
+		return new HashSetProgram(new HashSet<Rule>(Arrays.asList(rules)));
 	}
 
 	/**

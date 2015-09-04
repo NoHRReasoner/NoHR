@@ -105,16 +105,18 @@ public class LubmRepository {
 
 	private void loadDirectory(int universities, OWLOntologyManager ontologyManager)
 			throws OWLOntologyCreationException, IOException {
-		for (int u = 0; u < universities; u++)
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(data, "University" + u + "_*.owl")) {
-				for (final Path entry : stream) {
-					RuntimesLogger.info("loading " + entry.getFileName().toString());
-					if (entry.getFileName().toString().endsWith(".owl")) {
-						final File file = entry.toFile();
-						ontologyManager.loadOntologyFromOntologyDocument(file);
-					}
+		for (int u = 0; u < universities; u++) {
+			final DirectoryStream<Path> stream = Files.newDirectoryStream(data, "University" + u + "_*.owl");
+			for (final Path entry : stream) {
+				RuntimesLogger.info("loading " + entry.getFileName().toString());
+				if (entry.getFileName().toString().endsWith(".owl")) {
+					final File file = entry.toFile();
+					ontologyManager.loadOntologyFromOntologyDocument(file);
 				}
 			}
+			stream.close();
+		}
+
 	}
 
 	private void logResults(QuerySpecification querySpecification, Collection<Answer> result2) {
@@ -123,7 +125,8 @@ public class LubmRepository {
 		final Charset charset = Charset.defaultCharset();
 		final String fileName = universities + "." + querySpecification.id_ + ".txt";
 		final Path path = FileSystems.getDefault().getPath(resultsDirectory.getAbsolutePath(), fileName);
-		try (BufferedWriter writer = Files.newBufferedWriter(path, charset)) {
+		try {
+			final BufferedWriter writer = Files.newBufferedWriter(path, charset);
 			if (result2.size() >= 1)
 				for (final Answer result : result2) {
 					for (final Term val : result.getValues()) {
@@ -133,6 +136,7 @@ public class LubmRepository {
 					}
 					writer.newLine();
 				}
+			writer.close();
 		} catch (final IOException x) {
 			System.err.format("IOException: %s%n", x);
 		}

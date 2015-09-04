@@ -21,9 +21,9 @@ public class HashSetProgram implements Program {
 
 	protected HashSetProgram(Set<Rule> rules) {
 		if (rules != null)
-			this.rules = new HashSet<>(rules);
+			this.rules = new HashSet<Rule>(rules);
 		else
-			this.rules = new HashSet<>();
+			this.rules = new HashSet<Rule>();
 		listeners = new HashSet<ProgramChangeListener>();
 	}
 

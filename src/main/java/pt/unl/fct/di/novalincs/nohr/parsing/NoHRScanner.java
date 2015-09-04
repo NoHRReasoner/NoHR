@@ -5,6 +5,7 @@ package pt.unl.fct.di.novalincs.nohr.parsing;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.channels.IllegalSelectorException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -110,7 +111,9 @@ class NoHRScanner {
 			scanner.skip(type.pattern());
 			position = scanner.match().end();
 			currentTokenType = type;
-		} catch (final NoSuchElementException | IllegalStateException e) {
+		} catch (final NoSuchElementException e) {
+			return false;
+		} catch (final IllegalSelectorException e) {
 			return false;
 		}
 		return true;

@@ -216,7 +216,7 @@ public class KB {
 	}
 
 	private Set<OWLDataProperty> dataRoles(String... roleNames) {
-		final Set<OWLDataProperty> result = new HashSet<>();
+		final Set<OWLDataProperty> result = new HashSet<OWLDataProperty>();
 		for (final String name : roleNames)
 			result.add(data(name));
 		return result;
@@ -460,7 +460,7 @@ public class KB {
 	}
 
 	private Set<OWLObjectProperty> roles(String... roleNames) {
-		final Set<OWLObjectProperty> result = new HashSet<>();
+		final Set<OWLObjectProperty> result = new HashSet<OWLObjectProperty>();
 		for (final String name : roleNames)
 			result.add(role(name));
 		return result;
@@ -481,8 +481,16 @@ public class KB {
 			ontology = ontologyManager.createOntology(IRI.generateDocumentIRI());
 			hybridKB = new NoHRHybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profile);
 			parser = new NoHRRecursiveDescentParser(hybridKB.getVocabulary());
-		} catch (IPException | OWLOntologyCreationException | UnsupportedAxiomsException
-				| PrologEngineCreationException e) {
+		} catch (final IPException e) {
+
+			throw new RuntimeException(e);
+		} catch (final OWLOntologyCreationException e) {
+
+			throw new RuntimeException(e);
+		} catch (final UnsupportedAxiomsException e) {
+
+			throw new RuntimeException(e);
+		} catch (final PrologEngineCreationException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -552,7 +560,8 @@ public class KB {
 	}
 
 	public OWLAxiom subRolesChain(String... roleNames) {
-		final List<OWLObjectPropertyExpression> chain = new ArrayList<>(roleNames.length - 1);
+		final List<OWLObjectPropertyExpression> chain = new ArrayList<OWLObjectPropertyExpression>(
+				roleNames.length - 1);
 		for (int i = 0; i < roleNames.length - 1; i++)
 			chain.add(role(roleNames[i]));
 		final OWLAxiom axiom = dataFactory.getOWLSubPropertyChainOfAxiom(chain, role(roleNames[roleNames.length - 1]));

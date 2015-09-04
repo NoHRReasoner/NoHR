@@ -84,7 +84,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 		if (!scanner.next(L_PAREN))
 			return Model.atom(v, predicateSymbol);
 		else {
-			final List<Term> args = new LinkedList<>();
+			final List<Term> args = new LinkedList<Term>();
 			do
 				args.add(term());
 			while (scanner.next(COMMA));
@@ -123,7 +123,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	 *             if no {@link Literal} was recognized or there was trailing chars.
 	 */
 	private List<Literal> literals() throws ParseException {
-		final List<Literal> result = new LinkedList<>();
+		final List<Literal> result = new LinkedList<Literal>();
 		do
 			result.add(literal());
 		while (scanner.next(COMMA));

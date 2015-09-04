@@ -57,7 +57,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		private final Set<Rule> rules;
 
 		private ProgramImpl() {
-			rules = new HashSet<>();
+			rules = new HashSet<Rule>();
 		}
 
 		@Override
@@ -213,12 +213,12 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
-		programs = new HashSet<>();
-		arities = new HashMultiset<>();
-		factFunctors = new HashMultiset<>();
-		headFunctors = new HashMultiset<>();
-		positiveBodyFunctors = new HashMultiset<>();
-		negativeBodyFunctors = new HashMultiset<>();
+		programs = new HashSet<ProgramImpl>();
+		arities = new HashMultiset<Integer>();
+		factFunctors = new HashMultiset<Predicate>();
+		headFunctors = new HashMultiset<Predicate>();
+		positiveBodyFunctors = new HashMultiset<Predicate>();
+		negativeBodyFunctors = new HashMultiset<Predicate>();
 		termModelConverter = new TermModelConverter(vocabulary);
 		try {
 			startPrologEngine();

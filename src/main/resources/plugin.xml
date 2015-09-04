@@ -3,18 +3,18 @@
 <plugin> 	
    <extension id="NoHRPreferences" point="org.protege.editor.core.application.preferencespanel">
       <label value="NoHR Preferences"></label>
-      <class value="pt.unl.fct.di.centria.nohr.plugin.NoHRPreferencesPanel"></class>
+      <class value="pt.unl.fct.di.novalincs.nohr.plugin.NoHRPreferencesPanel"></class>
    </extension>
   <extension id="QueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
       <label value="NoHR Query"></label>
       <headerColor value="@org.protege.classcolor"/>
-      <class value="pt.unl.fct.di.centria.nohr.plugin.QueryViewComponent"></class>
+      <class value="pt.unl.fct.di.novalincs.nohr.plugin.QueryViewComponent"></class>
       <category value="@org.protege.querycategory"></category>
    </extension>
    <extension id="RulesViewComponent" point="org.protege.editor.core.application.ViewComponent">
       <label value="NoHR Rules"></label>
       <headerColor value="@org.protege.classcolor"/>
-      <class value="pt.unl.fct.di.centria.nohr.plugin.RulesViewComponent"></class>
+      <class value="pt.unl.fct.di.novalincs.nohr.plugin.RulesViewComponent"></class>
       <category value="@org.protege.querycategory"></category>
    </extension> 
    <extension id="QueryTab" point="org.protege.editor.core.application.WorkspaceTab">

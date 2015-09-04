@@ -20,7 +20,7 @@ public class HashMultiset<E> implements Set<E>, Multiset<E> {
 	private final Map<E, Integer> multiplicities;
 
 	public HashMultiset() {
-		multiplicities = new HashMap<>();
+		multiplicities = new HashMap<E, Integer>();
 	}
 
 	@Override

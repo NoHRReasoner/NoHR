@@ -81,7 +81,9 @@ class RuntimesTable {
 	void save() {
 		final Charset charset = Charset.forName("US-ASCII");
 		final Path file = FileSystems.getDefault().getPath(name + ".csv");
-		try (BufferedWriter writer = Files.newBufferedWriter(file, charset)) {
+		BufferedWriter writer = null;
+		try {
+			writer = Files.newBufferedWriter(file, charset);
 			if (runs > 1)
 				writer.write(",");
 			for (final String dataset : datasets) {
@@ -115,6 +117,13 @@ class RuntimesTable {
 			}
 		} catch (final IOException x) {
 			System.err.format("IOException: %s%n", x);
+		} finally {
+			try {
+				if (writer != null)
+					writer.close();
+			} catch (final IOException e) {
+				System.err.format("IOException: %s%n", e);
+			}
 		}
 	}
 }

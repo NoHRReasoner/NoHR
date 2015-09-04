@@ -130,17 +130,17 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 		}
 		this.ontology = ontology;
 		this.vocabulary = vocabulary;
-		conceptSubsumptions = new HashSet<>();
-		roleSubsumptions = new HashSet<>();
-		conceptDisjunctions = new HashSet<>();
-		roleDisjunctions = new HashSet<>();
-		dataDisjunctions = new HashSet<>();
-		unsatisfiableConcepts = new HashSet<>();
-		unsatisfiableRoles = new HashSet<>();
-		subConcepts = new HashSet<>();
-		superConcepts = new HashSet<>();
-		subRoles = new HashSet<>();
-		superRoles = new HashSet<>();
+		conceptSubsumptions = new HashSet<OWLSubClassOfAxiom>();
+		roleSubsumptions = new HashSet<OWLSubPropertyAxiom<?>>();
+		conceptDisjunctions = new HashSet<OWLDisjointClassesAxiom>();
+		roleDisjunctions = new HashSet<OWLDisjointObjectPropertiesAxiom>();
+		dataDisjunctions = new HashSet<OWLDisjointDataPropertiesAxiom>();
+		unsatisfiableConcepts = new HashSet<OWLClassExpression>();
+		unsatisfiableRoles = new HashSet<OWLPropertyExpression<?, ?>>();
+		subConcepts = new HashSet<OWLClassExpression>();
+		superConcepts = new HashSet<OWLClassExpression>();
+		subRoles = new HashSet<OWLProperty<?, ?>>();
+		superRoles = new HashSet<OWLProperty<?, ?>>();
 		normalize(ontology);
 	}
 

@@ -54,12 +54,12 @@ public class ProgramPresistenceManager {
 	 */
 	public static void write(Program program, File file) throws IOException {
 		final FormatVisitor format = new XSBFormatVisitor();
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-			for (final Rule rule : program) {
-				writer.write(rule.accept(format));
-				writer.newLine();
-			}
+		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		for (final Rule rule : program) {
+			writer.write(rule.accept(format));
+			writer.newLine();
 		}
+		writer.close();
 	}
 
 	/**

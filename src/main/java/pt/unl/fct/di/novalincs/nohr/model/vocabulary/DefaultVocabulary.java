@@ -109,13 +109,13 @@ public class DefaultVocabulary implements Vocabulary {
 		Objects.requireNonNull(ontology);
 		this.ontology = ontology;
 		ontologies = ontology.getImportsClosure();
-		listeners = new HashSet<>();
-		references = new HashMultiset<>();
-		constants = new HashMap<>();
-		predicates = new HashMap<>();
-		conceptPredicates = new HashMap<>();
-		rolePredicates = new HashMap<>();
-		individualConstants = new HashMap<>();
+		listeners = new HashSet<VocabularyChangeListener>();
+		references = new HashMultiset<OWLObject>();
+		constants = new HashMap<String, HybridConstantWrapper>();
+		predicates = new HashMap<Integer, Map<String, HybridPredicateWrapper>>();
+		conceptPredicates = new HashMap<OWLClass, ConceptPredicateImpl>();
+		rolePredicates = new HashMap<OWLProperty<?, ?>, RolePredicateImpl>();
+		individualConstants = new HashMap<OWLIndividual, IndividualConstantImpl>();
 		final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
 		register(dataFactory.getOWLThing());
 		register(dataFactory.getOWLNothing());
@@ -212,7 +212,7 @@ public class DefaultVocabulary implements Vocabulary {
 	 * @return the set of concrete representations of {@code entity}
 	 */
 	protected Set<String> concreteRepresentations(OWLEntity entity) {
-		final Set<String> result = new HashSet<>();
+		final Set<String> result = new HashSet<String>();
 		final String fragment = entity.getIRI().toURI().getFragment();
 		if (fragment != null)
 			result.add(fragment);
@@ -594,7 +594,7 @@ public class DefaultVocabulary implements Vocabulary {
 	private HybridPredicateWrapper setPredicate(String symbol, int arity, HybridPredicate predicate, boolean change) {
 		Map<String, HybridPredicateWrapper> map = predicates.get(arity);
 		if (map == null) {
-			map = new HashMap<>();
+			map = new HashMap<String, HybridPredicateWrapper>();
 			predicates.put(arity, map);
 		}
 		HybridPredicateWrapper pred = map.get(symbol);

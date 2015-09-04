@@ -12,13 +12,13 @@
             </CNode>
             <CNode>
                 <Component label="NoHR Rules">
-                    <Property id="pluginId" value="pt.unl.fct.di.centria.nohr.plugin.RulesViewComponent"/>
+                    <Property id="pluginId" value="pt.unl.fct.di.novalincs.nohr.plugin.RulesViewComponent"/>
                 </Component>
             </CNode>
         </HSNode>
         <CNode>
             <Component label="NoHR Query">
-                <Property id="pluginId" value="pt.unl.fct.di.centria.nohr.plugin.QueryViewComponent"/>
+                <Property id="pluginId" value="pt.unl.fct.di.novalincs.nohr.plugin.QueryViewComponent"/>
             </Component>
         </CNode>
     </VSNode>

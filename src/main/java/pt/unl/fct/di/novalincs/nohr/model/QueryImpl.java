@@ -42,7 +42,7 @@ class QueryImpl implements Query {
 	QueryImpl(List<Literal> literals, List<Variable> variables) {
 		Objects.requireNonNull(literals);
 		Objects.requireNonNull(variables);
-		final Set<Variable> vars = new HashSet<>();
+		final Set<Variable> vars = new HashSet<Variable>();
 		for (final Literal literal : literals)
 			vars.addAll(literal.getVariables());
 		for (final Variable var : variables)
@@ -50,7 +50,7 @@ class QueryImpl implements Query {
 				throw new IllegalArgumentException("variables " + var + "doesn't appear in" + literals);
 		this.literals = literals;
 		this.variables = variables;
-		index = new HashMap<>();
+		index = new HashMap<Variable, Integer>();
 		int i = 0;
 		for (final Variable var : variables)
 			index.put(var, i++);

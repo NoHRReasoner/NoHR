@@ -86,12 +86,12 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(concepts.get(0), concepts.get(1)));
 		}
 		for (final OWLDisjointObjectPropertiesAxiom disjunction : ontologyNormalization.roleDisjunctions()) {
-			final List<OWLObjectPropertyExpression> roles = new LinkedList<>(disjunction.getProperties());
+			final List<OWLObjectPropertyExpression> roles = new LinkedList<OWLObjectPropertyExpression>(disjunction.getProperties());
 			assert roles.size() <= 2;
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(roles.get(0), roles.get(1)));
 		}
 		for (final OWLDisjointDataPropertiesAxiom disjunction : ontologyNormalization.dataDisjunctions()) {
-			final List<OWLDataPropertyExpression> roles = new LinkedList<>(disjunction.getProperties());
+			final List<OWLDataPropertyExpression> roles = new LinkedList<OWLDataPropertyExpression>(disjunction.getProperties());
 			assert roles.size() <= 2;
 			result.addAll(doubleAxiomsTranslator.disjunctionTranslation(roles.get(0), roles.get(1)));
 		}

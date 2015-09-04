@@ -34,7 +34,7 @@ class ProgramDoubling {
 	 */
 
 	static List<Rule> doubleRule(Rule rule) {
-		final List<Rule> result = new ArrayList<>(2);
+		final List<Rule> result = new ArrayList<Rule>(2);
 		final ModelVisitor originalEncoder = new PredicateTypeVisitor(PredicateType.ORIGINAL);
 		final ModelVisitor doubleEncoder = new PredicateTypeVisitor(PredicateType.DOUBLE);
 		final Atom head = rule.getHead();

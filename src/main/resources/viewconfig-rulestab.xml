@@ -21,7 +21,7 @@
         </HSNode>
         <CNode>
             <Component label="NoHR rules">
-                <Property id="pluginId" value="pt.unl.fct.di.centria.nohr.plugin.RulesViewComponent"/>
+                <Property id="pluginId" value="pt.unl.fct.di.novalincs.nohr.plugin.RulesViewComponent"/>
             </Component>
         </CNode>
     </VSNode>

@@ -35,7 +35,7 @@ public class OWLProfilesViolationsException extends UnsupportedAxiomsException {
 	 * @return Returns the set of axioms that are violations in a given {@code reports}.
 	 */
 	private static Set<OWLAxiom> violations(List<OWLProfileReport> reports) {
-		final Set<OWLAxiom> result = new HashSet<>();
+		final Set<OWLAxiom> result = new HashSet<OWLAxiom>();
 		int minViolations = Integer.MAX_VALUE;
 		OWLProfileReport minReport = null;
 		for (final OWLProfileReport report : reports)

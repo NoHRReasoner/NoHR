@@ -29,7 +29,7 @@ public class AnswersTable extends JTable {
 	 *
 	 */
 
-	private final List<ChangeListener> copyListeners = new ArrayList<>();
+	private final List<ChangeListener> copyListeners = new ArrayList<ChangeListener>();
 
 	public AnswersTable(OWLEditorKit owlEditorKit) {
 		super(new AnswersTableModel());
@@ -39,7 +39,7 @@ public class AnswersTable extends JTable {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()) {
 					final ChangeEvent ev = new ChangeEvent(AnswersTable.this);
-					for (final ChangeListener l : new ArrayList<>(copyListeners))
+					for (final ChangeListener l : new ArrayList<ChangeListener>(copyListeners))
 						l.stateChanged(ev);
 				}
 			}

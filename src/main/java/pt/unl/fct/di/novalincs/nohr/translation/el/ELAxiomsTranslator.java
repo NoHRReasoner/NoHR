@@ -66,7 +66,7 @@ abstract class ELAxiomsTranslator {
 	 * @return {@code literals} as a {@link List}.
 	 */
 	List<Literal> literalsList(Literal... literals) {
-		return new ArrayList<>(Arrays.asList(literals));
+		return new ArrayList<Literal>(Arrays.asList(literals));
 	}
 
 	/**

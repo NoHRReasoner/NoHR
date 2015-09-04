@@ -42,7 +42,7 @@ public enum Profile {
 	 *             if {@code ontology} isn't in any of the supported profiles.
 	 */
 	public static Profile getProfile(OWLOntology ontology) throws OWLProfilesViolationsException {
-		final List<OWLProfileReport> reports = new LinkedList<>();
+		final List<OWLProfileReport> reports = new LinkedList<OWLProfileReport>();
 		int minViolations = Integer.MAX_VALUE;
 		Profile minViolationsProfile = Profile.values()[0];
 		for (final Profile profile : Profile.values()) {

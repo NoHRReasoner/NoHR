@@ -74,14 +74,14 @@
 					<instructions>
 						<Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>
 						<Bundle-ClassPath>.</Bundle-ClassPath>
-						<Bundle-SymbolicName>pt.unl.fct.di.centria.nohr.plugin;singleton:=true</Bundle-SymbolicName>
+						<Bundle-SymbolicName>pt.unl.fct.di.novalincs.nohr.plugin;singleton:=true</Bundle-SymbolicName>
 						<Bundle-Vendor>Nuno Costa</Bundle-Vendor>
 						<Export-Package>
-							pt.unl.fct.di.centria.nohr.plugin
+							pt.unl.fct.di.novalincs.nohr.plugin
 						</Export-Package>
 						<Private-Package>
 							layout,
-							pt.unl.fct.di.centria.*
+							pt.unl.fct.di.novalincs.*
 						</Private-Package>
 						<Import-Package>
 							org.apache.log4j.*;version="[1.2,2)",

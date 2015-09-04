@@ -187,8 +187,8 @@ public class ProgramGenerator {
 	public ProgramGenerator(OWLOntology ontology, Long seed, Integer newPredicates, DiscreteRandomVariable arity,
 			Integer newConstants) {
 		random = new Random(seed);
-		predicates = new ArrayList<>();
-		constants = new ArrayList<>();
+		predicates = new ArrayList<Predicate>();
+		constants = new ArrayList<Constant>();
 		program = Model.program();
 		final Vocabulary v = new DefaultVocabulary(ontology);
 		for (final OWLClass concept : ontology.getClassesInSignature())
@@ -220,7 +220,7 @@ public class ProgramGenerator {
 
 	private Rule generateFact() {
 		final Predicate functor = nextPredicate();
-		final List<Term> args = new ArrayList<>(functor.getArity());
+		final List<Term> args = new ArrayList<Term>(functor.getArity());
 		for (int i = 0; i < functor.getArity(); i++)
 			args.add(nextConstant());
 		return rule(atom(functor, args));
@@ -236,7 +236,7 @@ public class ProgramGenerator {
 		final int posLen = Math.max(1, positiveBodyLength.next());
 		final int negLen = Math.max(0, negativeBodyLength.next());
 		// positive body functors:
-		final List<Predicate> posFunctors = new ArrayList<>(posLen);
+		final List<Predicate> posFunctors = new ArrayList<Predicate>(posLen);
 		int posArgs = 0;
 		for (int i = 0; i < posLen; i++) {
 			final Predicate pred = nextPredicate();
@@ -245,13 +245,13 @@ public class ProgramGenerator {
 		}
 		// variables:
 		final int n = (int) Math.floor(posArgs * variablesRatio * (1 - variablesRepetitionRatio));
-		final List<Variable> vars = new ArrayList<>(n);
+		final List<Variable> vars = new ArrayList<Variable>(n);
 		for (int i = 1; i <= n; i++)
 			vars.add(var(VAR_PREFIX + i));
 		// body:
-		final List<Literal> body = new ArrayList<>(posLen + negLen);
+		final List<Literal> body = new ArrayList<Literal>(posLen + negLen);
 		// positive body:
-		final List<Variable> safeVars = new ArrayList<>(n);
+		final List<Variable> safeVars = new ArrayList<Variable>(n);
 		for (final Predicate pred : posFunctors) {
 			final List<Term> args = new ArrayList<Term>(pred.getArity());
 			for (int i = 0; i < pred.getArity(); i++)
