@@ -16,10 +16,14 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
+			<groupId>com.lexicalscope.jewelcli</groupId>
+			<artifactId>jewelcli</artifactId>
+			<version>0.8.9</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.igormaznitsa</groupId>
+			<artifactId>prologparser</artifactId>
+			<version>1.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>pt.unl.fct.novalincs</groupId>
