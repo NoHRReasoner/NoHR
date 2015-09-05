@@ -47,7 +47,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	/**
 	 * The {@link Vocabulary} used to recognize {@link OWLClass concepts}, {@link OWLProperty role} and {@link OWLIndividual individual} symbols.
 	 */
-	private final Vocabulary v;
+	private Vocabulary v;
 
 	/**
 	 * Constructs a {@link NoHRRecursiveDescentParser}.
@@ -92,6 +92,11 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 				throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
 			return Model.atom(v, predicateSymbol, args);
 		}
+	}
+
+	@Override
+	public Vocabulary getVocabulary() {
+		return v;
 	}
 
 	/**
@@ -209,6 +214,11 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 			final List<Literal> body = literals();
 			return Model.rule(head, body);
 		}
+	}
+
+	@Override
+	public void setVocabulary(Vocabulary vocabulary) {
+		v = vocabulary;
 	}
 
 	/**

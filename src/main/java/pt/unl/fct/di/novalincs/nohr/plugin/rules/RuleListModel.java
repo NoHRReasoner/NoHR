@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.ListModel;
 
+import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.list.MListSectionHeader;
 import org.protege.editor.owl.OWLEditorKit;
 
@@ -18,13 +19,14 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
-import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.novalincs.nohr.parsing.ProgramPresistenceManager;
 
 /**
  * An {@link ListModel list model} of {@link Rule rules}.
  */
 public class RuleListModel extends AbstractListModel<Object> {
+
+	protected static final Logger log = Logger.getLogger(RuleListModel.class);
 
 	private static final MListSectionHeader HEADER = new MListSectionHeader() {
 
@@ -53,11 +55,11 @@ public class RuleListModel extends AbstractListModel<Object> {
 	 *
 	 */
 
-	public RuleListModel(OWLEditorKit editorKit, NoHRParser parser, ProgramPresistenceManager programPresistenceManager,
-			Program program) {
+	public RuleListModel(OWLEditorKit editorKit, RuleEditor ruleEditor,
+			ProgramPresistenceManager programPresistenceManager, Program program) {
 		super();
 		this.programPresistenceManager = programPresistenceManager;
-		ruleEditor = new RuleEditor(editorKit, parser);
+		this.ruleEditor = ruleEditor;
 		this.program = program;
 		ruleItems = new ArrayList<Object>(program.size());
 		ruleItems.add(HEADER);

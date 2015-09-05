@@ -71,6 +71,7 @@ public class ParserTest {
 					OWLManager.createOWLOntologyManager().createOntology(IRI.generateDocumentIRI()));
 			final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(v);
 			final Variable X = var("X");
+			Assert.assertEquals(query(atom(v, "p")), parser.parseQuery("p"));
 			Assert.assertEquals(query(atom(v, "p", X)), parser.parseQuery("p(?X)"));
 			Assert.assertEquals(query(atom(v, "p", v.cons("a"))), parser.parseQuery("p(a)"));
 			Assert.assertEquals(query(atom(v, "p", X), atom(v, "q", X), atom(v, "r", X)),
@@ -89,6 +90,7 @@ public class ParserTest {
 		final Vocabulary v = new DefaultVocabulary(
 				OWLManager.createOWLOntologyManager().createOntology(IRI.generateDocumentIRI()));
 		final NoHRRecursiveDescentParser parser = new NoHRRecursiveDescentParser(v);
+		Assert.assertEquals(rule(atom(v, "p")), parser.parseRule("p"));
 		final Rule expectedRule = rule(atom(v, "p", var("X"), var("Y"), var("Z")), atom(v, "q", var("X"), var("Y")),
 				atom(v, "r", v.cons("a")), atom(v, " a b \\:-() c "), atom(v, " a b \\:-() c "),
 				negLiteral(atom(v, "z", var("X"))), negLiteral(v.pred("w", 1), var("Y")));

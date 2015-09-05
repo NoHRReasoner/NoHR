@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.protege.editor.core.Disposable;
 import org.protege.editor.core.ui.view.ViewComponent;
-import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -19,10 +18,9 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
-import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.HashSetProgram;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
@@ -34,7 +32,7 @@ import pt.unl.fct.di.novalincs.nohr.parsing.ProgramPresistenceManager;
  *
  * @author Nuno Costa
  */
-public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent implements OWLModelManagerListener {
+public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent {
 
 	protected class DisposableHybridKB extends NoHRHybridKB implements Disposable {
 
@@ -47,25 +45,6 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 		@Override
 		public void dispose() {
 			super.dispose();
-		}
-
-	}
-
-	protected class DisposableObject<T> implements Disposable {
-
-		private T object;
-
-		public DisposableObject(T object) {
-			this.object = object;
-		}
-
-		@Override
-		public void dispose() throws Exception {
-			object = null;
-		}
-
-		public T getObject() {
-			return object;
 		}
 
 	}
@@ -87,15 +66,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 
 	}
 
-	class DisposableVocabulary extends DefaultVocabulary implements Disposable {
-
-		public DisposableVocabulary(OWLOntology ontology) {
-			super(ontology);
-		}
-
-	}
-
-	private static final Logger log = Logger.getLogger(AbstractNoHRViewComponent.class);
+	protected static final Logger log = Logger.getLogger(AbstractNoHRViewComponent.class);
 
 	private static final long serialVersionUID = -2850791395194206722L;
 
@@ -192,35 +163,36 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 	}
 
 	protected void reset() {
-		if (getVocabulary().getOntology().equals(getOntology()))
-			return;
 		log.info("Resetting...");
 		getOWLModelManager().put(Vocabulary.class, new DisposableVocabulary(getOntology()));
-		getOWLModelManager().put(Program.class, new DisposableProgram());
-		getOWLModelManager().put(NoHRParser.class,
-				new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getVocabulary())));
-		getOWLModelManager().put(ProgramPresistenceManager.class,
-				new DisposableObject<ProgramPresistenceManager>(new ProgramPresistenceManager(getVocabulary())));
+		getParser().setVocabulary(getVocabulary());
+		getProgramPresistenceManager().setVocabulary(getVocabulary());
 	}
 
 	/**
 	 * Starts the NoHR, creating a {@link NoHRHybridKB}.
 	 */
-	protected void startHybridKB() {
+	protected void startNoHR() {
 		log.info("starting NoHR");
 		final File xsbBinDirectory = NoHRPreferences.getInstance().getXSBBinDirectory();
-		if (xsbBinDirectory == null)
+		if (xsbBinDirectory == null) {
 			Messages.xsbBinDirectoryNotSet(this);
+			return;
+		}
 		DisposableHybridKB disposableHybridKB = null;
 		try {
 			disposableHybridKB = new DisposableHybridKB(xsbBinDirectory, getOntology(), getProgram(), getVocabulary());
+		} catch (final OWLProfilesViolationsException e) {
+			log.warn("Violations to " + e.getReports());
+			Messages.violations(this, e);
 		} catch (final UnsupportedAxiomsException e) {
+			log.warn("unsupported axioms: " + e.getUnsupportedAxioms());
 			Messages.violations(this, e);
 		} catch (final PrologEngineCreationException e) {
+			log.error("can't create a xsb instance");
 			Messages.xsbDatabaseCreationProblems(this, e);
 		} catch (final RuntimeException e) {
-			if (log.isDebugEnabled())
-				log.debug("Exception caught when trying to create the Hybrid KB", e);
+			log.debug("Exception caught when trying to create the Hybrid KB", e);
 		}
 		if (disposableHybridKB != null)
 			getOWLModelManager().put(HybridKB.class, disposableHybridKB);

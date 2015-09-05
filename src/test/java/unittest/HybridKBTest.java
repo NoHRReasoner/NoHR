@@ -87,8 +87,6 @@ public class HybridKBTest extends KB {
 		removeAxiom(axiom);
 		assertTrue("a(i)");
 		remove(rule);
-		System.gc();
-		Thread.sleep(1100);
 		assertFalse("a(i)");
 	}
 
@@ -103,9 +101,14 @@ public class HybridKBTest extends KB {
 		removeAxiom(axiom);
 		assertTrue("p(a, b)");
 		remove(rule);
-		System.gc();
-		Thread.sleep(1100);
 		assertFalse("p(a, b)");
+	}
+
+	@Test
+	public void test5() {
+		clear();
+		rule("p");
+		assertTrue("p");
 	}
 
 }

@@ -189,7 +189,12 @@ public class QueryProcessorTest extends QueryProcessor {
 	public final void testQuery() throws IOException, ParseException, OWLOntologyCreationException {
 		final Variable var = var("X");
 		// true true
-		Query q = Model.query(atom(v, "p", var));
+		Query q = Model.query(atom(v, "prep"));
+		add("aprep");
+
+		assertEquals(ans(q, TruthValue.TRUE, Collections.<Term> emptyList()), oneAnswer(q, false));
+
+		q = Model.query(atom(v, "p", var));
 		add("ap(a)");
 		add("dp(a)");
 		Answer ans = ans(q, TruthValue.TRUE, l(v.cons("a")));

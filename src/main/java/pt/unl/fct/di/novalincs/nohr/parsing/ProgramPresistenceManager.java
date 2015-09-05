@@ -68,7 +68,7 @@ public class ProgramPresistenceManager {
 	private final PrologParser parser;
 
 	/** The vocabulary used to recognize the predicates and constants of the readed program. */
-	private final Vocabulary v;
+	private Vocabulary v;
 
 	/**
 	 * Constructs a new {@link ProgramPresistenceManager} with a given {@link Vocabulary vocabulary}.
@@ -110,6 +110,10 @@ public class ProgramPresistenceManager {
 			return Model.atom(v, unquote(atom.getText()));
 		} else
 			throw new IllegalArgumentException("isn't an atom");
+	}
+
+	public Vocabulary getVoculary() {
+		return v;
 	}
 
 	private Literal literal(AbstractPrologTerm term) {
@@ -190,6 +194,10 @@ public class ProgramPresistenceManager {
 			return Model.rule(atom(term));
 		else
 			throw new IllegalArgumentException("isn't a rule");
+	}
+
+	public void setVocabulary(Vocabulary vocabulary) {
+		v = vocabulary;
 	}
 
 	private String unquote(String symbol) {

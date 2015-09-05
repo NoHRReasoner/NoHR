@@ -25,8 +25,10 @@ import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
 import org.protege.editor.core.ui.view.ViewComponent;
+import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
+import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.inference.ReasonerProgressUI;
 import org.semanticweb.owlapi.model.OWLException;
@@ -42,15 +44,36 @@ import pt.unl.fct.di.novalincs.nohr.plugin.query.QueryExpressionChecker;
  *
  * @author Nuno Costa
  */
-public class QueryViewComponent extends AbstractNoHRViewComponent {
+public class QueryViewComponent extends AbstractNoHRViewComponent implements OWLModelManagerListener {
+
+	class NoHRProgressUI extends ReasonerProgressUI {
+
+		private final SwingWorker<?, ?> task;
+
+		public NoHRProgressUI(OWLEditorKit owlEditorKit, SwingWorker<?, ?> task) {
+			super(owlEditorKit);
+			this.task = task;
+		}
+
+		@Override
+		public void setCancelled() {
+			log.info("cancelling");
+			task.cancel(true);
+			super.reasonerTaskStopped();
+		}
+
+	}
 
 	class PreprocessTask extends SwingWorker<Void, Void> {
 
+		private NoHRProgressUI progress;
+
 		@Override
 		protected Void doInBackground() throws Exception {
+			progress = new NoHRProgressUI(getOWLEditorKit(), this);
 			progress.reasonerTaskStarted("Preprocessing");
 			progress.reasonerTaskBusy();
-			startHybridKB();
+			startNoHR();
 			return null;
 		}
 
@@ -80,6 +103,8 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 					.setEnabled(showTrueAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
 			showInconsistentAnswersCheckBox
 					.setEnabled(showTrueAnswersCheckBox.isSelected() || showUndefinedAnswersCheckBox.isSelected());
+			if (!isNoHRStarted())
+				preprocess();
 			final QueryTask queryTask = new QueryTask();
 			queryTask.execute();
 		}
@@ -87,8 +112,11 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 
 	class QueryTask extends SwingWorker<Void, Void> {
 
+		private NoHRProgressUI progress;
+
 		@Override
 		protected Void doInBackground() throws Exception {
+			progress = new NoHRProgressUI(getOWLEditorKit(), this);
 			progress.reasonerTaskStarted("Reasoning");
 			progress.reasonerTaskBusy();
 			doQuery();
@@ -121,9 +149,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 
 	private JButton executeButton;
 
-	private ReasonerProgressUI progress;
-
-	private boolean requiresRefresh = false;;
+	private boolean requiresRefresh = false;
 
 	private JComponent createAnswersPanel() {
 		final JComponent answersPanel = new JPanel(new BorderLayout(10, 10));
@@ -165,7 +191,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 		queryEditor.addStatusChangedListener(new InputVerificationStatusChangedListener() {
 			@Override
 			public void verifiedStatusChanged(boolean newState) {
-				executeButton.setEnabled(newState && isNoHRStarted());
+				executeButton.setEnabled(newState);
 			}
 		});
 		queryEditor.setPreferredSize(new Dimension(100, 50));
@@ -227,8 +253,6 @@ public class QueryViewComponent extends AbstractNoHRViewComponent {
 		splitter.setDividerLocation(0.3);
 
 		add(splitter, BorderLayout.CENTER);
-
-		progress = new ReasonerProgressUI(getOWLEditorKit());
 
 		reset();
 		preprocess();

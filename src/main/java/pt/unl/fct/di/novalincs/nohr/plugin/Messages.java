@@ -89,9 +89,13 @@ public class Messages {
 	 * @param exception
 	 */
 	public static void violations(Component parent, UnsupportedAxiomsException exception) {
-		final String unsupportedList = StringUtils.concat(", ", exception.getUnsupportedAxioms().toArray());
+		final String unsupportedList;
+		if (exception.getUnsupportedAxioms().size() < 10)
+			unsupportedList = StringUtils.concat(System.lineSeparator(), exception.getUnsupportedAxioms().toArray());
+		else
+			unsupportedList = "";
 		JOptionPane.showMessageDialog(parent,
-				"The following axioms aren't supported:" + System.lineSeparator() + unsupportedList,
+				"The active ontology contains some unsupported axioms." + System.lineSeparator() + unsupportedList,
 				"Unsupported Axioms", JOptionPane.WARNING_MESSAGE);
 	}
 

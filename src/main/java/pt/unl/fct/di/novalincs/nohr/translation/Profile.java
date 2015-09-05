@@ -41,7 +41,7 @@ public enum Profile {
 	 * @throws OWLProfilesViolationsException
 	 *             if {@code ontology} isn't in any of the supported profiles.
 	 */
-	public static Profile getProfile(OWLOntology ontology) throws OWLProfilesViolationsException {
+	public static Profile getProfile(OWLOntology ontology) {
 		final List<OWLProfileReport> reports = new LinkedList<OWLProfileReport>();
 		int minViolations = Integer.MAX_VALUE;
 		Profile minViolationsProfile = Profile.values()[0];
@@ -55,11 +55,11 @@ public enum Profile {
 			}
 			reports.add(report);
 		}
-		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
-		if (ignoreUnsupported != null && ignoreUnsupported.equals("true"))
-			return minViolationsProfile;
-		else
-			throw new OWLProfilesViolationsException(reports);
+		// final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
+		// if (ignoreUnsupported != null && ignoreUnsupported.equals("true"))
+		return minViolationsProfile;
+		// else
+		// throw new OWLProfilesViolationsException(reports);
 	}
 
 	/**
@@ -77,10 +77,10 @@ public enum Profile {
 	 */
 	public OntologyTranslator createOntologyTranslator(OWLOntology ontology, Vocabulary v,
 			DeductiveDatabase dedutiveDatabase) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-		final OWLProfileReport report = owlProfile().checkOntology(ontology);
-		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
-		if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
-			throw new OWLProfilesViolationsException(report);
+		// final OWLProfileReport report = owlProfile().checkOntology(ontology);
+		// final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
+		// if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
+		// throw new OWLProfilesViolationsException(report);
 		switch (this) {
 		case OWL2_QL:
 			return new QLOntologyTranslator(ontology, v, dedutiveDatabase);

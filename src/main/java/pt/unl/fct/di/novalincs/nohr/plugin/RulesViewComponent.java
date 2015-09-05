@@ -14,8 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.protege.editor.core.ui.view.ViewComponent;
-import org.protege.editor.owl.model.event.EventType;
-import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
@@ -35,30 +33,30 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 	 */
 	private static final long serialVersionUID = 6087261708132206489L;
 
-	private RuleListModel ruleListModel;
-
 	private RulesList ruleList;
+
+	private RuleEditor ruleEditor;
 
 	@Override
 	protected void disposeOWLView() {
-		getOWLModelManager().removeListener(this);
 	}
 
-	@Override
-	public void handleChange(OWLModelManagerChangeEvent event) {
-		if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-			reset();
-			ruleListModel = new RuleListModel(getOWLEditorKit(), getParser(), getProgramPresistenceManager(),
-					getProgram());
-			ruleList.setModel(ruleListModel);
+	public RuleListModel getRuleListModel() {
+		DisposableObject<RuleListModel> ruleListModel = getOWLModelManager().get(RuleListModel.class);
+		if (ruleListModel == null) {
+			ruleListModel = new DisposableObject<RuleListModel>(
+					new RuleListModel(getOWLEditorKit(), ruleEditor, getProgramPresistenceManager(), getProgram()));
+			getOWLModelManager().put(RuleListModel.class, ruleListModel);
 		}
+		return ruleListModel.getObject();
 	}
 
 	@Override
 	public void initialiseOWLView() throws Exception {
 		setLayout(new BorderLayout());
-		final RuleEditor ruleEditor = new RuleEditor(getOWLEditorKit(), getParser());
-		ruleListModel = new RuleListModel(getOWLEditorKit(), getParser(), getProgramPresistenceManager(), getProgram());
+		ruleEditor = new RuleEditor(getOWLEditorKit(), getParser());
+		final RuleListModel ruleListModel = getRuleListModel();
+		reset();
 		ruleList = new RulesList(ruleEditor, ruleListModel);
 		final JScrollPane jScrollPane = new JScrollPane(ruleList);
 		add(jScrollPane, BorderLayout.CENTER);
@@ -94,7 +92,7 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 			public void actionPerformed(ActionEvent arg0) {
 				final JFileChooser fc = new JFileChooser();
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				final int returnVal = fc.showOpenDialog(RulesViewComponent.this);
+				final int returnVal = fc.showSaveDialog(RulesViewComponent.this);
 				if (returnVal == JFileChooser.APPROVE_OPTION)
 					try {
 						final File file = fc.getSelectedFile();
@@ -122,7 +120,6 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 		buttonHolder.add(clearButton);
 		add(buttonHolder, BorderLayout.SOUTH);
 
-		getOWLModelManager().addListener(this);
 	}
 
 }

@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * A parser that constructs {@link Rule rules} and {@link Query queries} from expressions in the following language (in
@@ -29,6 +30,8 @@ import pt.unl.fct.di.novalincs.nohr.model.Rule;
  * @author Nuno Costa
  */
 public interface NoHRParser {
+
+	public Vocabulary getVocabulary();
 
 	/**
 	 * Parses a given {@link File file} and returns the corresponding {@link Program program}, if the file represents a program.
@@ -63,5 +66,7 @@ public interface NoHRParser {
 	 *             if {@code str} violates the role syntax.
 	 */
 	public Rule parseRule(String str) throws ParseException;
+
+	public void setVocabulary(Vocabulary vocabulary);
 
 }

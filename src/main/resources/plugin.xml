@@ -1,8 +1,12 @@
 <?xml version="1.0" ?>
 
 <plugin> 	
-   <extension id="NoHRPreferences" point="org.protege.editor.core.application.preferencespanel">
-      <label value="NoHR Preferences"></label>
+	<extension id="NoHREditorKitHook" point="org.protege.editor.core.application.EditorKitHook">
+      <class value="pt.unl.fct.di.novalincs.nohr.plugin.NoHREditorKitHook"></class>
+ 	  <editorKitId value="OWLEditorKit"></editorKitId>
+   </extension>
+   <extension id="nohrpreferences" point="org.protege.editor.core.application.preferencespanel">
+      <label value="NoHR"></label>
       <class value="pt.unl.fct.di.novalincs.nohr.plugin.NoHRPreferencesPanel"></class>
    </extension>
   <extension id="QueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
