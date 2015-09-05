@@ -1,9 +1,0 @@
-#!/bin/sh
-
-source `dirname $0`/env
-
-export MAVEN_OPTS="-Xmx${XMX} -DentityExpansionLimit=100000000"
-
-export IGNORE_UNSUPPORTED="true"
-
-mvn -e exec:java -f `dirname $0`/../pom.xml  -Dexec.classpathScope="test" -Dexec.mainClass="$1" -Dexec.args="$2"
