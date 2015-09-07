@@ -27,15 +27,14 @@
 						</Export-Package>
 						<Import-Package>
 							org.apache.log4j.*;version="[1.2,2)",
-							org.protege.editor.owl.*;version="4.3", <!-- equivalent to [4.3,infinity) -->
+							org.protege.editor.owl.*;version="5.0.0-beta-17", <!-- equivalent to [5.0.0-beta-17,infinity) -->
 							!junit.*,
 							!org.junit.*,
-							!org.semanticweb.elk.*,
 							*
 						</Import-Package>
 						<Embed-Dependency>
+							groupId=org.semanticweb.elk;scope=compile|runtime,
 							groupId=com.interprolog;artifactId=interprolog,
-							groupId=org.semanticweb.elk;artifactId=elk-owlapi,
 							groupId=com.igormaznitsa;artifactId=prologparser,
 							groupId=pt.unl.fct.novalincs;artifactId=nohr-reasoner
 						</Embed-Dependency>
@@ -56,7 +55,6 @@
 	</build>
 	<packaging>bundle</packaging>
 	<name>nohr-plugin</name>
-	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

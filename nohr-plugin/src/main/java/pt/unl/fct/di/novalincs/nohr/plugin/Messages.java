@@ -26,7 +26,7 @@ public class Messages {
 
 	/** The message shown when the user must check the XSB installation */
 	private static String CHECK_XSB_INSTALLATION = System.lineSeparator()
-			+ "Please make sure that the chosen XSB directory corresponds to an working XSB installation.";
+			+ "Please make sure that the chosen XSB directory corresponds to a working XSB installation.";
 
 	public static void invalidExpression(Component parent, final PrologParserException e) {
 		final String msg = String.format("Syntax error at line %d column %d." + System.lineSeparator() + e.getMessage(),

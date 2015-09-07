@@ -1,11 +1,11 @@
 package pt.unl.fct.di.novalincs.nohr.translation.ql;
 
 import java.util.HashSet;
-
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -53,6 +53,8 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
  * @author Nuno Costa
  */
 public class StaticQLOntologyNormalization implements QLOntologyNormalization {
+
+	private static final Logger log = Logger.getLogger(StaticQLOntologyNormalization.class);
 
 	/** The set of supported OWL 2 QL axiom types */
 	static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[] { AxiomType.ASYMMETRIC_OBJECT_PROPERTY,
@@ -125,8 +127,10 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 			@SuppressWarnings("unchecked")
 			final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(
 					(Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), SUPPORTED_AXIOM_TYPES);
-			if (unsupportedAxioms.size() > 0)
+			if (unsupportedAxioms.size() > 0) {
+				log.error("unsupported axioms: " + unsupportedAxioms);
 				throw new UnsupportedAxiomsException(unsupportedAxioms);
+			}
 		}
 		this.ontology = ontology;
 		this.vocabulary = vocabulary;

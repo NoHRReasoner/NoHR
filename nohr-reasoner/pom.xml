@@ -11,7 +11,6 @@
 	<artifactId>nohr-reasoner</artifactId>
 	<name>nohr-reasoner</name>
 	<packaging>jar</packaging>
-	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -27,5 +26,5 @@
 			<artifactId>owlapi-distribution</artifactId>
 			<version>3.5.0</version>
 		</dependency>
-	</dependencies>
+	</dependencies>	
 </project>

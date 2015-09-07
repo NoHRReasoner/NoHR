@@ -123,7 +123,8 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 		} else if (platformDirs.length == 1)
 			xsbBinDirectory = platformDirs[0];
 		final Path expectedPath = xsbBinDirectory.toPath().resolve("bin").resolve("xsb");
-		if (!expectedPath.toFile().exists()) {
+		final Path winExpectedPath = xsbBinDirectory.toPath().resolve("bin").resolve("xsb.exe");
+		if (!expectedPath.toFile().exists() && !winExpectedPath.toFile().exists()) {
 			Messages.invalidXSBDirectory(this, expectedPath);
 			return;
 		}

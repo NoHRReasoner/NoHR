@@ -7,7 +7,7 @@
 	<version>2.0.0</version>
 	<packaging>pom</packaging>
 
-	<name>NoHR</name>
+	<name>Nova Hybrid Reasoner (NoHR)</name>
 	<description>Nova Hybrid Reasoner</description>
 
 	<properties>
@@ -19,7 +19,7 @@
 			<groupId>org.semanticweb.elk</groupId>
 			<artifactId>elk-owlapi</artifactId>
 			<version>0.4.2</version>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>com.interprolog</groupId>
 			<artifactId>interprolog</artifactId>
@@ -75,6 +75,14 @@
 			<url>file:${project.basedir}/repo</url>
 		</repository>
 	</repositories>
+	<developers>
+    	<developer>
+      		<name>Nuno Costa</name> 
+      		<email>91nunocosta@gmail.com</email>
+      		<organization>NOVA LINCS</organization>
+    		<organizationUrl>https://github.com/91nunocosta</organizationUrl>
+   		</developer>
+  	</developers>
 	<organization>
 		<name>NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)</name>
 		<url>http://nova-lincs.di.fct.unl.pt/</url>

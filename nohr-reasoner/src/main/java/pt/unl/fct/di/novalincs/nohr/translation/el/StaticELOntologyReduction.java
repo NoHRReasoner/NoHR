@@ -14,6 +14,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.elk.reasoner.taxonomy.InvalidTaxonomyException;
+//import org.semanticweb.elk.reasoner.taxonomy.InvalidTaxonomyException;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -237,6 +238,8 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
 		}
 	}
 
+	private static final Logger log = Logger.getLogger(StaticELOntologyReduction.class);
+
 	/**
 	 * The axiom types that can be reduced by this {@link ELOntologyReduction} implementation, i.e. those that can be expressed in <i>EL
 	 * <sub>&bot;</sub> <sup>+</sup></i> and handled by the ELK reasoner.
@@ -290,11 +293,14 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
 		Objects.requireNonNull(vocabulary);
 		final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
 		if (ignoreUnsupported == null || !ignoreUnsupported.equals("true")) {
+			log.info("checking axioms support");
 			@SuppressWarnings("unchecked")
 			final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(
 					(Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), SUPPORTED_AXIOM_TYPES);
-			if (unsupportedAxioms.size() > 0)
+			if (unsupportedAxioms.size() > 0) {
+				log.error("unsupported axioms " + unsupportedAxioms);
 				throw new UnsupportedAxiomsException(unsupportedAxioms);
+			}
 		}
 		this.ontology = ontology;
 		this.vocabulary = vocabulary;
