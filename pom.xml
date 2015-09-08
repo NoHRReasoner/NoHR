@@ -39,6 +39,16 @@
 
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.8</version>
+				<configuration>
+					<licenseName>mpl_v2</licenseName>
+					<licenseResolver>${project.baseUri}/src/license</licenseResolver>
+					<inceptionYear>2014</inceptionYear>	
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -88,6 +98,12 @@
 		<url>http://nova-lincs.di.fct.unl.pt/</url>
 	</organization>
 	<url>http://centria.di.fct.unl.pt/nohr</url>
+	<licenses>
+  		<license>
+    		<name>Mozilla Public License Version 2.0</name>
+    		<url>https://www.mozilla.org/en-US/MPL/2.0/</url>
+  		</license>
+	</licenses>
 	<modules>
 		<module>nohr-reasoner</module>
 		<module>nohr-plugin</module>

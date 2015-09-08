@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>nohr-plugin</artifactId>
 	<build>
-		<plugins>
+		<plugins>	
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -18,22 +18,23 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<Bundle-Name>pt.unl.fct.di.novalincs.nohr</Bundle-Name>
 						<Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>
-						<Bundle-ClassPath>.</Bundle-ClassPath>
+						<Bundle-ClassPath>.,../org.semanticweb.elk.jar</Bundle-ClassPath>
 						<Bundle-SymbolicName>pt.unl.fct.di.novalincs.nohr.plugin;singleton:=true</Bundle-SymbolicName>
-						<Bundle-Vendor>Nuno Costa</Bundle-Vendor>
 						<Export-Package>
 							pt.unl.fct.di.novalincs.nohr.plugin
 						</Export-Package>
 						<Import-Package>
 							org.apache.log4j.*;version="[1.2,2)",
-							org.protege.editor.owl.*;version="5.0.0-beta-17", <!-- equivalent to [5.0.0-beta-17,infinity) -->
+							org.protege.editor.owl.*;version="5.0.0-beta-17", <!-- equivalent to 
+								[5.0.0-beta-17,infinity) -->
+							org.semanticweb.elk.*;version="0.4.2",
 							!junit.*,
 							!org.junit.*,
 							*
 						</Import-Package>
-						<Embed-Dependency>
-							groupId=org.semanticweb.elk;scope=compile|runtime,
+						<Embed-Dependency>	
 							groupId=com.interprolog;artifactId=interprolog,
 							groupId=com.igormaznitsa;artifactId=prologparser,
 							groupId=pt.unl.fct.novalincs;artifactId=nohr-reasoner

@@ -1,5 +1,15 @@
 package pt.unl.fct.di.novalincs.nohr.translation.ql;
 
+/*
+ * #%L
+ * nohr-reasoner
+ * %%
+ * Copyright (C) 2014 - 2015 NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)
+ * %%
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ * #L%
+ */
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -96,7 +106,7 @@ public class StaticTBoxDigraph implements TBoxDigraph {
 	private final Set<OWLEntity> unsatisfiableEntities;
 
 	/**
-	 * Constructs a {@link TBoxDigraph} of the TBox <i>T</i> of a given DL-Lite<sub>R</sub> ontology. Note that the construction only initialize the
+	 * Constructs a {@link TBoxDigraph} of the TBox <i>T</i> of a given DL-Lite<sub>R</sub> ontology. Note that the construction only initialise the
 	 * needed data structures, and that the computation of <i>&Psi;(T)</i> and <i>&Omega;(T)</i> occur only when the corresponding method are called
 	 * for the first time.
 	 *

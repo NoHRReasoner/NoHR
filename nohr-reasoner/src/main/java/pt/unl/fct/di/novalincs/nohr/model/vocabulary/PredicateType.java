@@ -1,5 +1,15 @@
 package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
 
+/*
+ * #%L
+ * nohr-reasoner
+ * %%
+ * Copyright (C) 2014 - 2015 NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)
+ * %%
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ * #L%
+ */
+
 /**
  * The possible types of a {@link MetaPredicate}: original, of <i>P</i>; double, of <i>P<sup>d</sup></i>; classical negation, of <i>NP</i>; original
  * domain, of <i>DP</i>; original range, of <i>RP</i>; double domain, of <i>DP <sup>d</sup></i>; and double range, of <i>RP<sup>d</sup></i> (see
