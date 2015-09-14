@@ -198,7 +198,8 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 			log.warn("unsupported axioms: " + e.getUnsupportedAxioms());
 			Messages.violations(this, e);
 		} catch (final PrologEngineCreationException e) {
-			log.error("can't create a xsb instance");
+			log.error("can't create a xsb instance" + System.lineSeparator() + e.getCause() + System.lineSeparator()
+					+ e.getCause().getStackTrace());
 			Messages.xsbDatabaseCreationProblems(this, e);
 		} catch (final RuntimeException e) {
 			log.debug("Exception caught when trying to create the Hybrid KB", e);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>pt.unl.fct.novalincs</groupId>
@@ -14,17 +15,17 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<dependencies>	
+	<dependencies>
 		<dependency>
 			<groupId>org.semanticweb.elk</groupId>
 			<artifactId>elk-owlapi</artifactId>
 			<version>0.4.2</version>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.interprolog</groupId>
 			<artifactId>interprolog</artifactId>
 			<version>95ff1c9</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
 	<build>
 
@@ -39,13 +40,27 @@
 
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<version>1.8</version>
 				<configuration>
 					<licenseName>mpl_v2</licenseName>
 					<licenseResolver>${project.baseUri}/src/license</licenseResolver>
-					<inceptionYear>2014</inceptionYear>	
+					<inceptionYear>2014</inceptionYear>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -58,7 +73,7 @@
 				</configuration>
 			</plugin>
 
-			
+
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>2.9</version>
@@ -86,27 +101,27 @@
 		</repository>
 	</repositories>
 	<developers>
-    	<developer>
-      		<name>Nuno Costa</name> 
-      		<email>91nunocosta@gmail.com</email>
-      		<organization>NOVA LINCS</organization>
-    		<organizationUrl>https://github.com/91nunocosta</organizationUrl>
-   		</developer>
-  	</developers>
+		<developer>
+			<name>Nuno Costa</name>
+			<email>91nunocosta@gmail.com</email>
+			<organization>NOVA LINCS</organization>
+			<organizationUrl>https://github.com/91nunocosta</organizationUrl>
+		</developer>
+	</developers>
 	<organization>
 		<name>NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)</name>
 		<url>http://nova-lincs.di.fct.unl.pt/</url>
 	</organization>
 	<url>http://centria.di.fct.unl.pt/nohr</url>
 	<licenses>
-  		<license>
-    		<name>Mozilla Public License Version 2.0</name>
-    		<url>https://www.mozilla.org/en-US/MPL/2.0/</url>
-  		</license>
+		<license>
+			<name>Mozilla Public License Version 2.0</name>
+			<url>https://www.mozilla.org/en-US/MPL/2.0/</url>
+		</license>
 	</licenses>
 	<modules>
 		<module>nohr-reasoner</module>
 		<module>nohr-plugin</module>
-    	<module>nohr-benchmark</module>
-  </modules>
+		<module>nohr-benchmark</module>
+	</modules>
 </project>

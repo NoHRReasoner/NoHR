@@ -21,6 +21,7 @@ import javax.swing.table.TableModel;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
+import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
 
 /**
  * A {@link TableModel} for {@link Answer answers}.
@@ -33,6 +34,7 @@ public class AnswersTableModel extends AbstractTableModel {
 	 *
 	 */
 	private static final long serialVersionUID = -6876572230591220016L;
+	private static final String NO_ANSWERS = "no answers found";
 	private List<Answer> answers;
 	private Query query;
 
@@ -59,6 +61,8 @@ public class AnswersTableModel extends AbstractTableModel {
 	public int getColumnCount() {
 		if (query == null)
 			return 0;
+		if (answers.size() == 0)
+			return 1;
 		return query.getVariables().size() + 1;
 	}
 
@@ -73,15 +77,22 @@ public class AnswersTableModel extends AbstractTableModel {
 	public int getRowCount() {
 		if (answers == null)
 			return 0;
+		if (answers.isEmpty())
+			return 1;
 		return answers.size();
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		String result;
-		if (columnIndex == 0)
+		if (columnIndex == 0) {
+			if (answers.isEmpty())
+				if (query.getVariables().isEmpty())
+					return TruthValue.FALSE.name().toLowerCase();
+				else
+					return NO_ANSWERS;
 			result = answers.get(rowIndex).getValuation().name().toLowerCase();
-		else
+		} else
 			result = answers.get(rowIndex).getValues().get(columnIndex - 1).toString();
 		return result;
 	}

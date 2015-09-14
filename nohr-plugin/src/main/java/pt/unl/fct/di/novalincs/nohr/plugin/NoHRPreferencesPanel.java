@@ -18,8 +18,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileFilter;
-import java.nio.file.Path;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -67,7 +65,9 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final JFileChooser fc = new JFileChooser();
-				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				if (preferences.getXSBBinDirectory() != null)
+					fc.setSelectedFile(preferences.getXSBBinDirectory());
 				final int returnVal = fc.showOpenDialog(NoHRPreferencesPanel.this);
 				if (returnVal == JFileChooser.APPROVE_OPTION)
 					setXsbDir(fc.getSelectedFile());
@@ -107,38 +107,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 	}
 
 	private void setXsbDir(File xsbDir) {
-		File xsbBinDirectory = null;
-		final File xsbConfigDir = xsbDir.toPath().resolve("config").toFile();
-		if (!xsbConfigDir.exists()) {
-			Messages.invalidXSBDirectory(this, xsbConfigDir.toPath());
-			return;
-		}
-		final File[] platformDirs = xsbConfigDir.listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File file) {
-				return file.isDirectory();
-			}
-		});
-		if (platformDirs.length < 1) {
-			Messages.invalidXSBDirectory(this, xsbConfigDir.toPath().resolve("<platform>"));
-			return;
-		}
-		if (platformDirs.length > 1) {
-			final String[] platforms = new String[platformDirs.length];
-			for (int i = 0; i < platformDirs.length; i++)
-				platforms[i] = platformDirs[i].toPath().getFileName().toString();
-			final String platform = Messages.selectPlataform(this, platforms);
-			xsbBinDirectory = xsbConfigDir.toPath().resolve(platform).toFile();
-		} else if (platformDirs.length == 1)
-			xsbBinDirectory = platformDirs[0];
-		final Path expectedPath = xsbBinDirectory.toPath().resolve("bin").resolve("xsb");
-		final Path winExpectedPath = xsbBinDirectory.toPath().resolve("bin").resolve("xsb.exe");
-		if (!expectedPath.toFile().exists() && !winExpectedPath.toFile().exists()) {
-			Messages.invalidXSBDirectory(this, expectedPath);
-			return;
-		}
-		this.xsbBinDirectory = xsbBinDirectory;
+		xsbBinDirectory = xsbDir;
 		txtXSBBinDirectory.setText(xsbBinDirectory.getPath());
 	}
 }
