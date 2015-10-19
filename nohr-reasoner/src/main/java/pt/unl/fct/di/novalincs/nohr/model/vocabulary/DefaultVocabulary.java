@@ -149,7 +149,7 @@ public class DefaultVocabulary implements Vocabulary {
 			public void ontologiesChanged(List<? extends OWLOntologyChange> changes) throws OWLException {
 				for (final OWLOntologyChange change : changes)
 					if (ontologies.contains(change.getOntology()))
-						if (change.isAddAxiom() && change.getAxiom().getAxiomType() != AxiomType.DECLARATION) {
+						if (change.isAddAxiom()) {
 							if (change.getAxiom().isOfType(AxiomType.ANNOTATION_ASSERTION)) {
 								final OWLAnnotationSubject subject = ((OWLAnnotationAssertionAxiom) change.getAxiom())
 										.getSubject();
@@ -170,7 +170,7 @@ public class DefaultVocabulary implements Vocabulary {
 							for (final OWLIndividual individual : change.getAxiom().getIndividualsInSignature())
 								register(individual);
 						} else
-							if (change.isRemoveAxiom() && change.getAxiom().getAxiomType() != AxiomType.DECLARATION) {
+							if (change.isRemoveAxiom()) {
 							if (change.getAxiom().isOfType(AxiomType.ANNOTATION_ASSERTION)) {
 								final OWLAnnotationSubject subject = ((OWLAnnotationAssertionAxiom) change.getAxiom())
 										.getSubject();
@@ -200,9 +200,11 @@ public class DefaultVocabulary implements Vocabulary {
 		int maxNameLength = 0;
 		for (final OWLOntology ont : ontologies)
 			for (final OWLEntity entity : ont.getSignature()) {
-				final int len = entity.getIRI().toURI().getFragment().length();
-				if (len > maxNameLength)
-					maxNameLength = len;
+				if (entity.getIRI().toURI().getFragment() != null) {
+					final int len = entity.getIRI().toURI().getFragment().length();
+					if (len > maxNameLength)
+						maxNameLength = len;
+				}
 			}
 		final char[] fillerChars = new char[maxNameLength];
 		Arrays.fill(fillerChars, FILLER_CHAR);
