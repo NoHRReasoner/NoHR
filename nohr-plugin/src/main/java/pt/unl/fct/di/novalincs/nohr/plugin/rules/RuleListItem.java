@@ -25,7 +25,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Rule;
 class RuleListItem implements MListItem {
 
 	/** The index of the item in the {@link RuleListModel} that it belongs. */
-	private final int index;
+	private int index;
 
 	/** The {@link RuleListModel} to which the item belongs. */
 	private final RuleListModel model;
@@ -47,6 +47,8 @@ class RuleListItem implements MListItem {
 	public Rule getRule() {
 		return rule;
 	}
+
+	public void setIndex(int index) { this.index = index; }
 
 	@Override
 	public String getTooltip() {

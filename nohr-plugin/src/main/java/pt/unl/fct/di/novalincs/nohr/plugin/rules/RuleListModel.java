@@ -129,6 +129,11 @@ public class RuleListModel extends AbstractListModel<Object> {
 	boolean remove(int index, Rule rule) {
 		final boolean removed = program.remove(rule);
 		if (removed) {
+			
+			// We also need to alter the indices of elements following the one to be deleted
+			if (index <ruleItems.size()-1) {
+				for (int i=index+1;i<=ruleItems.size()-1;i++) ((RuleListItem)getElementAt(i)).setIndex(i-1);
+			}
 			ruleItems.remove(index);
 			super.fireIntervalRemoved(this, index, index);
 		}
