@@ -4,3 +4,4 @@ build/
 /target/
 **/*.prefs
 *.iml
+run.sh

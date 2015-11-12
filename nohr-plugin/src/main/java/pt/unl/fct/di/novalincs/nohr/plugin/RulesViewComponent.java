@@ -13,6 +13,7 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.protege.editor.core.ui.view.ViewComponent;
+
+import org.protege.editor.core.ui.util.UIUtil;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
@@ -68,6 +71,7 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 		final RuleListModel ruleListModel = getRuleListModel();
 		reset();
 		ruleList = new RulesList(ruleEditor, ruleListModel);
+		ruleList.setFont(new Font(this.getFont().getFontName(), Font.BOLD,14));
 		final JScrollPane jScrollPane = new JScrollPane(ruleList);
 		add(jScrollPane, BorderLayout.CENTER);
 		final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -77,7 +81,7 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				final JFileChooser fc = new JFileChooser();
+				final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				final int returnVal = fc.showOpenDialog(RulesViewComponent.this);
 				if (returnVal == JFileChooser.APPROVE_OPTION)
@@ -100,7 +104,7 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				final JFileChooser fc = new JFileChooser();
+				final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
 				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				final int returnVal = fc.showSaveDialog(RulesViewComponent.this);
 				if (returnVal == JFileChooser.APPROVE_OPTION)

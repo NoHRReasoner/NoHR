@@ -14,6 +14,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -167,6 +168,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
 				BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Query answers"),
 				BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 		answersTable = new AnswersTable(getOWLEditorKit());
+		answersTable.setFont(new Font(this.getFont().getFontName(),this.getFont().getStyle(),14));
 		answersTable.setAutoCreateColumnsFromModel(true);
 		final JScrollPane answersScrollPane = new JScrollPane(answersTable);
 		answersTable.setFillsViewportHeight(true);

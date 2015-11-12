@@ -52,7 +52,7 @@ class RuleListItem implements MListItem {
 
 	@Override
 	public String getTooltip() {
-		return "A nonmonotonic rule.";
+		return rule.toString(); //"A nonmonotonic rule.";
 	}
 
 	@Override
