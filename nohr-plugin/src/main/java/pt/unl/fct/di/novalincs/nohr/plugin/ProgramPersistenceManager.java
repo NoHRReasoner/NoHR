@@ -1,11 +1,11 @@
 /**
  *
  */
-package benchmark;
+package pt.unl.fct.di.novalincs.nohr.plugin;
 
 /*
  * #%L
- * nohr-benchmark
+ * nohr-plugin
  * %%
  * Copyright (C) 2014 - 2015 NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)
  * %%
@@ -52,7 +52,7 @@ import com.igormaznitsa.prologparser.terms.PrologTermType;
  *
  * @author Nuno Costa
  */
-public class ProgramPresistenceManager {
+public class ProgramPersistenceManager {
 
 	/**
 	 * Writes a given program to a given file.
@@ -81,12 +81,12 @@ public class ProgramPresistenceManager {
 	private Vocabulary v;
 
 	/**
-	 * Constructs a new {@link ProgramPresistenceManager} with a given {@link Vocabulary vocabulary}.
+	 * Constructs a new {@link ProgramPersistenceManager} with a given {@link Vocabulary vocabulary}.
 	 *
 	 * @param vocabulary
 	 *            the vocabulary used to recognize the predicates and constants of the readed program.
 	 */
-	public ProgramPresistenceManager(Vocabulary vocabulary) {
+	public ProgramPersistenceManager(Vocabulary vocabulary) {
 		v = vocabulary;
 		parser = new PrologParser(null);
 	}

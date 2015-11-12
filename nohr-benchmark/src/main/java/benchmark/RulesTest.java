@@ -88,7 +88,7 @@ public class RulesTest {
 			final HybridKB nohr = new NoHRHybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology,
 					Model.program());
 			final NoHRParser parser = new NoHRRecursiveDescentParser(nohr.getVocabulary());
-			final ProgramPresistenceManager programPresistenceManager = new ProgramPresistenceManager(
+			final ProgramPersistenceManager programPersistenceManager = new ProgramPersistenceManager(
 					nohr.getVocabulary());
 			final Iterator<?> queriesIt1 = queries.iterator();
 			while (queriesIt1.hasNext()) {
@@ -123,7 +123,7 @@ public class RulesTest {
 				RuntimesLogger.setDataset(name + "+" + progFile.getFileName().toString().replaceFirst(".p", ""));
 				try {
 					RuntimesLogger.start("rules parsing");
-					final Program program = programPresistenceManager.read(progFile.toFile());
+					final Program program = programPersistenceManager.read(progFile.toFile());
 					RuntimesLogger.stop("rules parsing", "loading");
 					nohr.getProgram().addAll(program);
 				} catch (final PrologParserException e) {

@@ -55,7 +55,7 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 		DisposableObject<RuleListModel> ruleListModel = getOWLModelManager().get(RuleListModel.class);
 		if (ruleListModel == null) {
 			ruleListModel = new DisposableObject<RuleListModel>(
-					new RuleListModel(getOWLEditorKit(), ruleEditor, getProgramPresistenceManager(), getProgram()));
+					new RuleListModel(getOWLEditorKit(), ruleEditor, getProgramPersistenceManager(), getProgram()));
 			getOWLModelManager().put(RuleListModel.class, ruleListModel);
 		}
 		return ruleListModel.getObject();

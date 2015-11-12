@@ -135,17 +135,17 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 	}
 
 	/**
-	 * Returns the {@link ProgramPresistenceManager}.
+	 * Returns the {@link ProgramPersistenceManager}.
 	 *
-	 * @return the {@link ProgramPresistenceManager}.
+	 * @return the {@link ProgramPersistenceManager}.
 	 */
-	protected ProgramPresistenceManager getProgramPresistenceManager() {
-		DisposableObject<ProgramPresistenceManager> disposableObject = getOWLModelManager()
-				.get(ProgramPresistenceManager.class);
+	protected ProgramPersistenceManager getProgramPersistenceManager() {
+		DisposableObject<ProgramPersistenceManager> disposableObject = getOWLModelManager()
+				.get(ProgramPersistenceManager.class);
 		if (disposableObject == null) {
-			disposableObject = new DisposableObject<ProgramPresistenceManager>(
-					new ProgramPresistenceManager(getVocabulary()));
-			getOWLModelManager().put(ProgramPresistenceManager.class, disposableObject);
+			disposableObject = new DisposableObject<ProgramPersistenceManager>(
+					new ProgramPersistenceManager(getVocabulary()));
+			getOWLModelManager().put(ProgramPersistenceManager.class, disposableObject);
 		}
 		return disposableObject.getObject();
 	}
@@ -175,7 +175,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 		log.info("Resetting...");
 		getOWLModelManager().put(Vocabulary.class, new DisposableVocabulary(getOntology()));
 		getParser().setVocabulary(getVocabulary());
-		getProgramPresistenceManager().setVocabulary(getVocabulary());
+		getProgramPersistenceManager().setVocabulary(getVocabulary());
 	}
 
 	/**

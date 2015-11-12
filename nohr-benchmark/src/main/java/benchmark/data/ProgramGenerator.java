@@ -38,7 +38,7 @@ import com.lexicalscope.jewel.cli.ArgumentValidationException;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.Option;
 
-import benchmark.ProgramPresistenceManager;
+import benchmark.ProgramPersistenceManager;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -179,7 +179,7 @@ public class ProgramGenerator {
 			else
 				file = new File(programName + i + ".p");
 			try {
-				ProgramPresistenceManager.write(programGenerator.getProgram(), file);
+				ProgramPersistenceManager.write(programGenerator.getProgram(), file);
 			} catch (final IOException e) {
 				System.err.println(e.getMessage());
 				System.exit(1);

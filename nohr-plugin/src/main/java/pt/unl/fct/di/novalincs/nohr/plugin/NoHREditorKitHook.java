@@ -65,10 +65,10 @@ public class NoHREditorKitHook extends OWLEditorKitHook implements OWLModelManag
 		final DisposableVocabulary vocabulary = new DisposableVocabulary(modelManager.getActiveOntology());
 		modelManager.put(Vocabulary.class, vocabulary);
 		final DisposableObject<NoHRParser> disposableParser = modelManager.get(NoHRParser.class);
-		final DisposableObject<ProgramPresistenceManager> disposablePresistenceManager = modelManager
-				.get(ProgramPresistenceManager.class);
+		final DisposableObject<ProgramPersistenceManager> disposablePersistenceManager = modelManager
+				.get(ProgramPersistenceManager.class);
 		disposableParser.getObject().setVocabulary(vocabulary);
-		disposablePresistenceManager.getObject().setVocabulary(vocabulary);
+		disposablePersistenceManager.getObject().setVocabulary(vocabulary);
 	}
 
 }

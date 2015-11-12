@@ -29,7 +29,7 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
-import pt.unl.fct.di.novalincs.nohr.plugin.ProgramPresistenceManager;
+import pt.unl.fct.di.novalincs.nohr.plugin.ProgramPersistenceManager;
 
 /**
  * An {@link ListModel list model} of {@link Rule rules}.
@@ -59,16 +59,16 @@ public class RuleListModel extends AbstractListModel<Object> {
 
 	private final List<Object> ruleItems;
 
-	private final ProgramPresistenceManager programPresistenceManager;
+	private final ProgramPersistenceManager programPersistenceManager;
 
 	/**
 	 *
 	 */
 
 	public RuleListModel(OWLEditorKit editorKit, RuleEditor ruleEditor,
-			ProgramPresistenceManager programPresistenceManager, Program program) {
+						 ProgramPersistenceManager programPersistenceManager, Program program) {
 		super();
-		this.programPresistenceManager = programPresistenceManager;
+		this.programPersistenceManager = programPersistenceManager;
 		this.ruleEditor = ruleEditor;
 		this.program = program;
 		ruleItems = new ArrayList<Object>(program.size());
@@ -118,7 +118,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 	public void load(File file) throws IOException, PrologParserException {
 		final int size = program.size();
 		program.clear();
-		programPresistenceManager.load(file, program);
+		programPersistenceManager.load(file, program);
 		ruleItems.clear();
 		ruleItems.add(HEADER);
 		for (final Rule rule : program)
@@ -129,7 +129,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 	boolean remove(int index, Rule rule) {
 		final boolean removed = program.remove(rule);
 		if (removed) {
-			
+
 			// We also need to alter the indices of elements following the one to be deleted
 			if (index <ruleItems.size()-1) {
 				for (int i=index+1;i<=ruleItems.size()-1;i++) ((RuleListItem)getElementAt(i)).setIndex(i-1);
@@ -141,7 +141,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 	}
 
 	public void save(File file) throws IOException {
-		ProgramPresistenceManager.write(program, file);
+		ProgramPersistenceManager.write(program, file);
 	}
 
 }
