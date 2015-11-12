@@ -154,8 +154,8 @@ class NoHRScanner {
 	String value() {
 		String val = scanner.match().group();
 		if (currentTokenType == TokenType.SYMBOL)
-			if (val.startsWith("'") && val.endsWith("'"))
-				val = val.substring(1, val.length() - 1);
+			if (val.startsWith("'") && val.endsWith("'")) {}
+			//	val = val.substring(1, val.length() - 1);
 			else {
 				val = SLASH.matcher(val).replaceAll("");
 				val = DOUBLE_SLASH.matcher(val).replaceAll("\\\\");
