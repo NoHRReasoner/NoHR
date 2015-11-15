@@ -138,11 +138,21 @@ public class ProgramPersistenceManager {
 	private void literalsList(PrologStructure struct, List<Literal> literals)
 			throws IOException, PrologParserException {
 		final String functor = struct.getFunctor().getText();
+		// If the functor is not a "," then struct is an atom of arity >0 or appears under tnot
 		if (!functor.equals(","))
 			literals.add(literal(struct));
+			//Otherwise, there are at least two body elements
 		else {
+			// Handle the first element in literal()
 			literals.add(literal(struct.getElement(0)));
-			literalsList((PrologStructure) struct.getElement(1), literals);
+			// Handle the remaining atoms recursively
+			if (struct.getElement(1).getType() == PrologTermType.STRUCT)
+				literalsList((PrologStructure) struct.getElement(1), literals);
+				// Unless it is a single atom of arity 0, taken care of next
+			else if (struct.getElement(1).getType() == PrologTermType.ATOM)
+				literals.add(atom(struct.getElement(1)));
+			else
+				throw new IllegalArgumentException("This is not a body element in the correct format.");
 		}
 	}
 
@@ -190,20 +200,32 @@ public class ProgramPersistenceManager {
 	}
 
 	private Rule rule(AbstractPrologTerm term) throws IOException, PrologParserException {
+		// Main case for any rule but a fact of arity 0
 		if (term.getType() == PrologTermType.STRUCT) {
 			final PrologStructure structure = (PrologStructure) term;
+			// Case for a fact of arity > 0
 			if (!structure.getFunctor().getText().equals(":-"))
 				return Model.rule((Atom) literal(structure));
+			// Otherwise there exist distinct head and body elements
 			final Atom head = (Atom) literal(structure.getElement(0));
 			final List<Literal> body = new LinkedList<Literal>();
 			final AbstractPrologTerm bodyTerm = structure.getElement(1);
 			if (bodyTerm != null)
-				literalsList((PrologStructure) bodyTerm, body);
+				// Main case for any body but a single atom of arity 0
+				if (bodyTerm.getType() == PrologTermType.STRUCT)
+					literalsList((PrologStructure) bodyTerm, body);
+					// Alternative case for a body containing only a single atom of arity 0
+				else if (bodyTerm.getType() == PrologTermType.ATOM)
+					body.add(atom(bodyTerm));
+				else
+					throw new IllegalArgumentException("This is not a rule body in the correct format.");
+
 			return Model.rule(head, body);
+			// Alternative case for a fact of arity 0
 		} else if (term.getType() == PrologTermType.ATOM)
 			return Model.rule(atom(term));
 		else
-			throw new IllegalArgumentException("isn't a rule");
+			throw new IllegalArgumentException("This is not a rule in the correct format.");
 	}
 
 	public void setVocabulary(Vocabulary vocabulary) {
