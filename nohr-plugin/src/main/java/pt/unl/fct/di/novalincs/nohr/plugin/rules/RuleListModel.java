@@ -122,7 +122,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 		ruleItems.clear();
 		ruleItems.add(HEADER);
 		for (final Rule rule : program)
-			ruleItems.add(new RuleListItem(ruleItems.size() - 1, this, rule));
+			ruleItems.add(new RuleListItem(ruleItems.size(), this, rule));
 		super.fireContentsChanged(this, 0, Math.max(program.size() - 1, size - 1));
 	}
 
