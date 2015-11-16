@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import pt.unl.fct.di.novalincs.nohr.deductivedb.XSBFormatVisitor;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -63,7 +63,7 @@ public class ProgramPersistenceManager {
 	 *            the file to where the program will be written.
 	 */
 	public static void write(Program program, File file) throws IOException {
-		final FormatVisitor format = new XSBFormatVisitor();
+		final FormatVisitor format = new PrologFormatVisitor();
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		for (final Rule rule : program) {
 			writer.write(rule.accept(format));
@@ -99,19 +99,19 @@ public class ProgramPersistenceManager {
 			for (int i = 0; i < struct.getArity(); i++) {
 				final AbstractPrologTerm prologArg = struct.getElement(i);
 				switch (prologArg.getType()) {
-				case ATOM:
-					if (prologArg instanceof PrologIntegerNumber)
-						args.add(v.cons(((PrologIntegerNumber) prologArg).getValue()));
-					else if (prologArg instanceof PrologFloatNumber)
-						args.add(v.cons(((PrologFloatNumber) prologArg).getValue()));
-					else
-						args.add(v.cons(unquote(prologArg.getText())));
-					break;
-				case VAR:
-					args.add(var(prologArg.getText()));
-					break;
-				default:
-					break;
+					case ATOM:
+						if (prologArg instanceof PrologIntegerNumber)
+							args.add(v.cons(((PrologIntegerNumber) prologArg).getValue()));
+						else if (prologArg instanceof PrologFloatNumber)
+							args.add(v.cons(((PrologFloatNumber) prologArg).getValue()));
+						else
+							args.add(v.cons(unquote(prologArg.getText())));
+						break;
+					case VAR:
+						args.add(var(prologArg.getText()));
+						break;
+					default:
+						break;
 				}
 			}
 			return Model.atom(v, pred, args);
@@ -233,10 +233,12 @@ public class ProgramPersistenceManager {
 	}
 
 	private String unquote(String symbol) {
-		if (symbol.startsWith("'") && symbol.endsWith("'"))
+		// As the parser removes any outer "'", either also remove the " introduced when writing the file or
+		// add the outer "'" again as they were originally part of the symbol name
+		if (symbol.startsWith("\"") && symbol.endsWith("\""))
 			return symbol.substring(1, symbol.length() - 1);
 		else
-			return symbol;
+			return "'" + symbol + "'";
 	}
 
-};
+}
