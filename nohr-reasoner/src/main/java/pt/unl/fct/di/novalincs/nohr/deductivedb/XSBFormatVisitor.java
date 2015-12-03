@@ -32,7 +32,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Variable;
 public class XSBFormatVisitor extends DefaultFormatVisitor {
 
 	private String quoted(String str) {
-		return "'" + str.replaceAll("'", "''") + "'";
+		return "'" + str.replaceAll("'", "") + "'";
 	}
 
 	@Override
