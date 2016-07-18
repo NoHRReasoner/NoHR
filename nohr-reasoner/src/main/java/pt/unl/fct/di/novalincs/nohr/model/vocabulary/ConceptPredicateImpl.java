@@ -121,8 +121,8 @@ class ConceptPredicateImpl implements HybridPredicate {
 
 	@Override
 	public String toString() {
-		if (label != null)
-			return label;
+		//if (label != null)
+		//	return label;
 		final String fragment = concept.getIRI().toURI().getFragment();
 		if (fragment != null)
 			return fragment;

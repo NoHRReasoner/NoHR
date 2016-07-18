@@ -126,8 +126,8 @@ class RolePredicateImpl implements HybridPredicate {
 
 	@Override
 	public String toString() {
-		if (label != null)
-			return label;
+		//if (label != null)
+		//	return label;
 		final String fragment = role.getIRI().toURI().getFragment();
 		if (fragment != null)
 			return fragment;

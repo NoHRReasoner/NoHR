@@ -489,7 +489,12 @@ public class DefaultVocabulary implements Vocabulary {
 	@Override
 	public Predicate pred(String symbol, int arity) {
 		final HybridPredicate pred = new RulePredicateImpl(symbol, arity);
-		return setPredicate(symbol, arity, pred, false);
+
+		String helpSymbol;
+		if (symbol.startsWith("'")) helpSymbol=symbol.substring(1,symbol.length()-1);
+		else helpSymbol = symbol;
+
+		return setPredicate(helpSymbol, arity, pred, false);
 	}
 
 	@Override
