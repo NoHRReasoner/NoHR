@@ -29,7 +29,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 class RolePredicateImpl implements HybridPredicate {
 
 	/** The role represented by this predicate. */
-	private final OWLProperty<?, ?> role;
+	private final OWLProperty role;
 
 	/** The preferred (user-friendly) concrete representation of the concept represented by this predicate. Can change over the time. */
 	private String label;
@@ -42,7 +42,7 @@ class RolePredicateImpl implements HybridPredicate {
 	 * @throws IllegalArgumentException
 	 *             if {@code role} hasn't a IRI fragment.
 	 */
-	RolePredicateImpl(OWLProperty<?, ?> role) {
+	RolePredicateImpl(OWLProperty role) {
 		Objects.requireNonNull(role);
 		this.role = role;
 	}
@@ -63,7 +63,7 @@ class RolePredicateImpl implements HybridPredicate {
 	}
 
 	@Override
-	public OWLProperty<?, ?> asRole() {
+	public OWLProperty asRole() {
 		return role;
 	}
 

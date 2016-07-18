@@ -97,7 +97,7 @@ class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
 	 * @return <i> { S(x, y)&larr;R(x, y) } </i>.
 	 */
 	@Override
-	Set<Rule> subsumptionTranslation(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
+	Set<Rule> subsumptionTranslation(OWLProperty r, OWLProperty s) {
 		return ruleSet(rule(tr(s, X, Y), tr(r, X, Y)));
 	}
 
@@ -160,7 +160,7 @@ class ELOriginalAxiomsTranslator extends ELAxiomsTranslator {
 	 *            a variable <i>x<sub>1</sub>.
 	 * @return <i>R(x, x<sub>1</sub>)</i>.
 	 */
-	Atom tr(OWLProperty<?, ?> p, Variable x, Variable x1) {
+	Atom tr(OWLProperty p, Variable x, Variable x1) {
 		return tr(p, x, x1, false);
 	}
 

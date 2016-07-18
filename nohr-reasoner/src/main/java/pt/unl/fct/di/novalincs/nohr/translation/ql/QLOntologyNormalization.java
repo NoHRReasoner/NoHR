@@ -96,7 +96,7 @@ public interface QLOntologyNormalization {
 	 *
 	 * @return the set of DL-Lite<sub>R</sub> role occurring as subsumed roles in some subsumption in this {@link QLOntologyNormalization}.
 	 */
-	public Set<OWLProperty<?, ?>> getSubRoles();
+	public Set<OWLProperty> getSubRoles();
 
 	/**
 	 * Returns the set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
@@ -114,7 +114,7 @@ public interface QLOntologyNormalization {
 	 * @return the set of DL-Lite<sub>R</sub> concepts <i>Q</i> that occur in some axiom <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
 	 *         <i>&top;&sqsube;&not;Q</i> or </i> Q&sqsube;&not;Q</i> {@link QLOntologyNormalization}.
 	 */
-	public Set<OWLPropertyExpression<?, ?>> getUnsatisfiableRoles();
+	public Set<OWLPropertyExpression> getUnsatisfiableRoles();
 
 	/**
 	 * Returns true iff this {@link QLOntologyNormalization} has disjunctions.
@@ -139,7 +139,7 @@ public interface QLOntologyNormalization {
 	 *            a concept.
 	 * @return true iff {@code q} occur as subsumed role in some subumption of this {@link QLOntologyNormalization}.
 	 */
-	public boolean isSub(OWLPropertyExpression<?, ?> q);
+	public boolean isSub(OWLPropertyExpression q);
 
 	/**
 	 * Checks whether a given concept occur as subsuming concept in some subsumption of this {@link QLOntologyNormalization}.
@@ -157,7 +157,7 @@ public interface QLOntologyNormalization {
 	 *            a role.
 	 * @return true iff {@code r} occur as subsuming role in some subumption of this {@link QLOntologyNormalization}.
 	 */
-	public boolean isSuper(OWLPropertyExpression<?, ?> r);
+	public boolean isSuper(OWLPropertyExpression r);
 
 	/**
 	 * Returns the DL-Lite<sub>R</sub> role assertions in this {@link QLOntologyNormalization}.

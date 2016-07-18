@@ -114,13 +114,13 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
 	 * @throws IllegalArgumentException
 	 *             if <i>Q<sub>1</sub></i> or <i>Q<sub>2</sub></i> aren't DL-Lite<sub>R</sub> basic roles.
 	 */
-	Set<Rule> disjunctionTranslation(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
+	Set<Rule> disjunctionTranslation(OWLPropertyExpression q1, OWLPropertyExpression q2) {
 		if (q1.isBottomEntity() || q2.isBottomEntity())
 			return ruleSet();
 		if (q1.isTopEntity())
-			return unsatisfiabilityTranslation((OWLProperty<?, ?>) q2);
+			return unsatisfiabilityTranslation((OWLProperty) q2);
 		if (q2.isTopEntity())
-			return unsatisfiabilityTranslation((OWLProperty<?, ?>) q1);
+			return unsatisfiabilityTranslation((OWLProperty) q1);
 		return ruleSet(rule(negTr(q1, X, Y), tr(q2, X, Y, false)), rule(negTr(q2, X, Y), tr(q1, X, Y, false)));
 	}
 
@@ -235,7 +235,7 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
 	 *             <i>Q<sub>1</sub></i> or <i>Q<sub>2</sub></i> aren't a basic DL-Lite<sub>R</sub> roles.
 	 */
 	@Override
-	Set<Rule> subsumptionTranslation(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
+	Set<Rule> subsumptionTranslation(OWLPropertyExpression q1, OWLPropertyExpression q2) {
 		if (q1.isBottomEntity() || q2.isTopEntity())
 			return ruleSet();
 		if (q1.isTopEntity())
@@ -277,7 +277,7 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
 	 * @return <i>P<sup>d</sup>(x, y)</i> if <i>R</i> is an atomic role <i>P</i>; <br>
 	 *         <i>P<sup>d</sup>(y, x)</i> if <i>R</i> is an inverse role <i>P<sup>-</sup></i>.
 	 */
-	Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y) {
+	Atom tr(OWLPropertyExpression r, Variable x, Variable y) {
 		return tr(r, x, y, true);
 	}
 
@@ -313,7 +313,7 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
 	 *            the unsatisfiable role <i>P</i>.
 	 * @return <i>NP(x, y)</i>.
 	 */
-	Set<Rule> unsatisfiabilityTranslation(OWLProperty<?, ?> p) {
+	Set<Rule> unsatisfiabilityTranslation(OWLProperty p) {
 		return ruleSet(rule(negTr(p, X, Y)));
 	}
 

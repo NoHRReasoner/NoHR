@@ -42,7 +42,7 @@ public interface TBoxDigraph {
 	 *            a role vertex.
 	 * @return the ancestors of {@code v}.
 	 */
-	public Set<OWLPropertyExpression<?, ?>> getAncestors(OWLPropertyExpression<?, ?> v);
+	public Set<OWLPropertyExpression> getAncestors(OWLPropertyExpression v);
 
 	/**
 	 * Computes a the set of irreflexive roles <i>&Psi;(T)</i> of the the TBox, <i>T</i>, of which this {@link TBoxDigraph} is <i>digraph</i> (see
@@ -69,7 +69,7 @@ public interface TBoxDigraph {
 	 *            a role vertex.
 	 * @return the predecessor of {@code v}.
 	 */
-	public Set<OWLPropertyExpression<?, ?>> getPredecessors(OWLObjectPropertyExpression v);
+	public Set<OWLPropertyExpression> getPredecessors(OWLObjectPropertyExpression v);
 
 	/**
 	 * Computes a the set of irreflexive roles <i>&Omega;(T)</i> of the the TBox, <i>T</i>, of which this {@link TBoxDigraph} is <i>digraph</i> (see

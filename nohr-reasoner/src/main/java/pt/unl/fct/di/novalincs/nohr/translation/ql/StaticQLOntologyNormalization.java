@@ -97,13 +97,13 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	private final Set<OWLClassExpression> subConcepts;
 
 	/** The set of DL-Lite<sub>R</sub> roles occurring as subsumed roles in some subsumption in this {@link QLOntologyNormalization}. */
-	private final Set<OWLProperty<?, ?>> subRoles;
+	private final Set<OWLProperty> subRoles;
 
 	/** The set of DL-Lite<sub>R</sub> concepts occurring as subsuming concept in some subsumption in this {@link QLOntologyNormalization}. */
 	private final Set<OWLClassExpression> superConcepts;
 
 	/** The set of DL-Lite<sub>R</sub> roles occurring as subsuming role in some subsumption in this {@link QLOntologyNormalization}. */
-	private final Set<OWLProperty<?, ?>> superRoles;
+	private final Set<OWLProperty> superRoles;
 
 	/**
 	 * The set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
@@ -115,7 +115,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	 * The set of DL-Lite<sub>R</sub> roles <i>Q</i> that occur in some axiom <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
 	 * <i>&top;&sqsube;&not;Q</i> or </i>Q&sqsube;&not;Q</i> {@link QLOntologyNormalization}.
 	 */
-	private final Set<OWLPropertyExpression<?, ?>> unsatisfiableRoles;
+	private final Set<OWLPropertyExpression> unsatisfiableRoles;
 
 	private final Vocabulary vocabulary;
 
@@ -150,11 +150,11 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 		roleDisjunctions = new HashSet<OWLDisjointObjectPropertiesAxiom>();
 		dataDisjunctions = new HashSet<OWLDisjointDataPropertiesAxiom>();
 		unsatisfiableConcepts = new HashSet<OWLClassExpression>();
-		unsatisfiableRoles = new HashSet<OWLPropertyExpression<?, ?>>();
+		unsatisfiableRoles = new HashSet<OWLPropertyExpression>();
 		subConcepts = new HashSet<OWLClassExpression>();
 		superConcepts = new HashSet<OWLClassExpression>();
-		subRoles = new HashSet<OWLProperty<?, ?>>();
-		superRoles = new HashSet<OWLProperty<?, ?>>();
+		subRoles = new HashSet<OWLProperty>();
+		superRoles = new HashSet<OWLProperty>();
 		normalize(ontology);
 	}
 
@@ -208,7 +208,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	}
 
 	@Override
-	public Set<OWLProperty<?, ?>> getSubRoles() {
+	public Set<OWLProperty> getSubRoles() {
 		return subRoles;
 	}
 
@@ -218,7 +218,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	}
 
 	@Override
-	public Set<OWLPropertyExpression<?, ?>> getUnsatisfiableRoles() {
+	public Set<OWLPropertyExpression> getUnsatisfiableRoles() {
 		return unsatisfiableRoles;
 	}
 
@@ -234,7 +234,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	}
 
 	@Override
-	public boolean isSub(OWLPropertyExpression<?, ?> pe) {
+	public boolean isSub(OWLPropertyExpression pe) {
 		return subRoles.contains(pe);
 	}
 
@@ -244,7 +244,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	}
 
 	@Override
-	public boolean isSuper(OWLPropertyExpression<?, ?> pe) {
+	public boolean isSuper(OWLPropertyExpression pe) {
 		return superRoles.contains(pe);
 	}
 
@@ -387,8 +387,8 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	 *            a OWL 2 QL role subsumption.
 	 */
 	private void normalize(OWLSubPropertyAxiom<?> alpha) {
-		final OWLPropertyExpression<?, ?> q1 = alpha.getSubProperty();
-		final OWLPropertyExpression<?, ?> q2 = alpha.getSuperProperty();
+		final OWLPropertyExpression q1 = alpha.getSubProperty();
+		final OWLPropertyExpression q2 = alpha.getSuperProperty();
 		subRoles.add(DLUtils.atomic(q1));
 		superRoles.add(DLUtils.atomic(q2));
 		if (q1.isBottomEntity() || q2.isTopEntity())
@@ -411,18 +411,18 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 	 * @param axiom
 	 *            a OWL 2 QL role disjunction.
 	 */
-	private <P extends OWLPropertyExpression<?, ?>> void normalizeDisjunction(OWLNaryPropertyAxiom<P> alpha) {
+	private <P extends OWLPropertyExpression> void normalizeDisjunction(OWLNaryPropertyAxiom<P> alpha) {
 		final Set<P> props = alpha.getProperties();
 		final Iterator<P> propsIt1 = props.iterator();
 		while (propsIt1.hasNext()) {
-			final OWLPropertyExpression<?, ?> q1 = propsIt1.next();
-			final OWLProperty<?, ?> p = DLUtils.atomic(q1);
+			final OWLPropertyExpression q1 = propsIt1.next();
+			final OWLProperty p = DLUtils.atomic(q1);
 			subRoles.add(p);
 			if (q1.isBottomEntity())
 				continue;
 			final Iterator<P> propsIt2 = props.iterator();
 			while (propsIt2.hasNext()) {
-				final OWLPropertyExpression<?, ?> q2 = propsIt2.next();
+				final OWLPropertyExpression q2 = propsIt2.next();
 				if (q2.isBottomEntity())
 					continue;
 				if (!q1.equals(q2))

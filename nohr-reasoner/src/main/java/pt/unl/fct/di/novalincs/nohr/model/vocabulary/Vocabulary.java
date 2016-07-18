@@ -107,7 +107,7 @@ public interface Vocabulary {
 	 *            specifies whether the meta-predicate is of a double type.
 	 * @return the domain meta-predicate <i>DP</i>, if {@code doub} is true; the double domain meta-predicate, <i>DP<sup>d</sup></i>, otherwise.
 	 */
-	Predicate domPred(OWLPropertyExpression<?, ?> role, boolean doub);
+	Predicate domPred(OWLPropertyExpression role, boolean doub);
 
 	/**
 	 * Obtains a double domain meta-predicate from a specified role.
@@ -116,7 +116,7 @@ public interface Vocabulary {
 	 *            the role <i>P</i>.
 	 * @return the meta-predicate <i>DP<sup>d</sup></i>.
 	 */
-	Predicate doubDomPred(OWLPropertyExpression<?, ?> role);
+	Predicate doubDomPred(OWLPropertyExpression role);
 
 	/**
 	 * Obtains a double meta-predicate from a specified concept.
@@ -134,7 +134,7 @@ public interface Vocabulary {
 	 *            a role <i>P</i>.
 	 * @return the meta-predicate <i>P<sup>d</sup></i>.
 	 */
-	Predicate doubPred(OWLPropertyExpression<?, ?> role);
+	Predicate doubPred(OWLPropertyExpression role);
 
 	/**
 	 * Obtains a double meta-predicate from a specified predicate symbol and predicate arity.
@@ -154,7 +154,7 @@ public interface Vocabulary {
 	 *            a role, <i>P</i>.
 	 * @return the double range meta-predicate <i>DP<sup>d</sup></i>.
 	 */
-	Predicate doubRanPred(OWLPropertyExpression<?, ?> role);
+	Predicate doubRanPred(OWLPropertyExpression role);
 
 	/**
 	 * Generate a new concept that doesn't occur in the ontology refered by this {@link Vocabulary}.
@@ -193,7 +193,7 @@ public interface Vocabulary {
 	 *            a role <i>P</i>.
 	 * @return the negative meta-predicate <i>NP</i>.
 	 */
-	Predicate negPred(OWLPropertyExpression<?, ?> role);
+	Predicate negPred(OWLPropertyExpression role);
 
 	/**
 	 * Obtains a negative meta-predicate from a specified predicate.
@@ -222,7 +222,7 @@ public interface Vocabulary {
 	 *            a role <i>P</i>.
 	 * @return the original domain meta-predicate <i>DP</i>.
 	 */
-	Predicate origDomPred(OWLPropertyExpression<?, ?> role);
+	Predicate origDomPred(OWLPropertyExpression role);
 
 	/**
 	 * Obtains an original meta-predicate from a specified concept.
@@ -240,7 +240,7 @@ public interface Vocabulary {
 	 *            a role <i>P</i>.
 	 * @return the original meta-predicate <i>P</i>.
 	 */
-	Predicate origPred(OWLPropertyExpression<?, ?> role);
+	Predicate origPred(OWLPropertyExpression role);
 
 	/**
 	 * Obtains an original meta-predicate from a specified predicate symbol and predicate arity.
@@ -260,7 +260,7 @@ public interface Vocabulary {
 	 *            a role <i>P</i>.
 	 * @return the range original meta-predicate <i>RP</i>.
 	 */
-	Predicate origRanPred(OWLPropertyExpression<?, ?> role);
+	Predicate origRanPred(OWLPropertyExpression role);
 
 	/**
 	 * Obtains a predicate representing a specified concept.
@@ -305,7 +305,7 @@ public interface Vocabulary {
 	 *            a role.
 	 * @return the predicate representing {@code role}.
 	 */
-	Predicate pred(OWLPropertyExpression<?, ?> role);
+	Predicate pred(OWLPropertyExpression role);
 
 	/**
 	 * Obtains a meta-predicate from a specified role.
@@ -316,7 +316,7 @@ public interface Vocabulary {
 	 *            specified whether the meta-predicate if of a double type.
 	 * @return <i>P<sup>d</sup></i> if {@code doub} is true; <i>P</i>, otherwise.
 	 */
-	Predicate pred(OWLPropertyExpression<?, ?> role, boolean doub);
+	Predicate pred(OWLPropertyExpression role, boolean doub);
 
 	/**
 	 * Obtains a meta-predicate from a specified role of a specified type.
@@ -333,7 +333,7 @@ public interface Vocabulary {
 	 *         <i>DP<sup>d</sup></i> if {@code type} is {@link PredicateType#DOUBLE_DOMAIN double domain}; <br>
 	 *         <i>RP<sup>d</sup></i> if {@code type} is {@link PredicateType#DOUBLED_RANGE double range}.
 	 */
-	Predicate pred(OWLPropertyExpression<?, ?> role, PredicateType type);
+	Predicate pred(OWLPropertyExpression role, PredicateType type);
 
 	/**
 	 * Obtains a meta-predicate form a specified predicate with a specified type.
@@ -397,7 +397,7 @@ public interface Vocabulary {
 	 *            specifies whether this role is of a double type.
 	 * @return <i>RP<sup>d</sup></i> if {@code doub} is true; <i>RP</i>, otherwise.
 	 */
-	Predicate ranPred(OWLPropertyExpression<?, ?> role, boolean doub);
+	Predicate ranPred(OWLPropertyExpression role, boolean doub);
 
 	/** Removes a {@link VocabularyChangeListener} */
 	void removeListener(VocabularyChangeListener listener);

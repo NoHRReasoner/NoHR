@@ -144,7 +144,7 @@ abstract class QLAxiomsTranslator {
 	 * @return <i>NP(x,y)</i> if <i>Q</i> is an atomic role <i>P</i>; <br>
 	 *         <i>NP(y,x)</i> if <i>Q</i> is an inverse role <i>P<sup>-</sup></i>.
 	 */
-	Atom negTr(OWLPropertyExpression<?, ?> q, Variable x, Variable y) {
+	Atom negTr(OWLPropertyExpression q, Variable x, Variable y) {
 		if (q instanceof OWLObjectProperty)
 			return atom(v.negPred(q), x, y);
 		else if (q instanceof OWLDataProperty)
@@ -225,7 +225,7 @@ abstract class QLAxiomsTranslator {
 	 * @throws IllegalArgumentException
 	 *             <i>Q<sub>1</sub></i> or <i>Q<sub>2</sub></i> aren't a basic DL-Lite<sub>R</sub> roles.
 	 */
-	abstract Set<Rule> subsumptionTranslation(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2);
+	abstract Set<Rule> subsumptionTranslation(OWLPropertyExpression q1, OWLPropertyExpression q2);
 
 	/**
 	 * Translate a given DL-Lite<sub>R</sub> concept to an atom (see <b>Definition 5.</b> of
@@ -273,7 +273,7 @@ abstract class QLAxiomsTranslator {
 	 *         <i>P(y, x)</i> if <i>R</i> is an inverse role <i>P<sup>-</sup></i>; <br>
 	 *         and the respective double atoms if {@code doub} is true.
 	 */
-	Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y, boolean doub) {
+	Atom tr(OWLPropertyExpression r, Variable x, Variable y, boolean doub) {
 		if (r instanceof OWLObjectProperty)
 			return atom(v.pred(r, doub), x, y);
 		else if (r instanceof OWLDataProperty)

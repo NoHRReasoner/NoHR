@@ -44,7 +44,7 @@ public interface HybridPredicate extends Predicate {
 	 *             if this constant doesn't represent a role.
 	 * @return the role that this predicate represents.
 	 */
-	OWLProperty<?, ?> asRole();
+	OWLProperty asRole();
 
 	/**
 	 * Returns true iff this predicate represents a concept.

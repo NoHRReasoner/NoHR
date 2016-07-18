@@ -70,7 +70,7 @@ public class AssertionsTranslation {
 	 *         <b>Definition 9.</b>, <b>(a1)</b>).
 	 */
 	public static Set<Rule> translateDouble(Vocabulary v, OWLPropertyAssertionAxiom<?, ?> assertion) {
-		final OWLPropertyExpression<?, ?> role = assertion.getProperty();
+		final OWLPropertyExpression role = assertion.getProperty();
 		final Predicate p = v.doubPred(role);
 		final Predicate np = v.negPred(role);
 		final Constant i1 = v.cons(assertion.getSubject());
@@ -112,7 +112,7 @@ public class AssertionsTranslation {
 	 *         <b>Definition 9.</b>, <b>(a2)</b>).
 	 */
 	public static Set<Rule> translateOriginal(Vocabulary v, OWLPropertyAssertionAxiom<?, ?> assertion) {
-		final OWLPropertyExpression<?, ?> ope = assertion.getProperty();
+		final OWLPropertyExpression ope = assertion.getProperty();
 		if (ope.isTopEntity() || ope.isBottomEntity())
 			return ruleSet();
 		final Predicate p = v.origPred(assertion.getProperty());

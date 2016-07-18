@@ -91,7 +91,7 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 *            a variable <i>y</i>
 	 * @return <i>NR(x, y)</i>
 	 */
-	Atom negTr(OWLProperty<?, ?> r, Variable x, Variable y) {
+	Atom negTr(OWLProperty r, Variable x, Variable y) {
 		final Predicate pred = v.negPred(r);
 		return atom(pred, x, y);
 	}
@@ -181,7 +181,7 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 */
 	// (r1)
 	@Override
-	Set<Rule> subsumptionTranslation(OWLProperty<?, ?> r, OWLProperty<?, ?> s) {
+	Set<Rule> subsumptionTranslation(OWLProperty r, OWLProperty s) {
 		return ruleSet(rule(tr(r, X, Y), tr(s, X, Y), negLiteral(negTr(r, X, Y))),
 				rule(negTr(r, X, Y), negTr(s, X, Y)));
 	}
@@ -247,7 +247,7 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	 *            a variable <i>x<sub>1</sub>.
 	 * @return <i>R<sup>d</sup>(x, x<sub>1</sub>)</i>.
 	 */
-	Atom tr(OWLProperty<?, ?> r, Variable x, Variable y) {
+	Atom tr(OWLProperty r, Variable x, Variable y) {
 		return tr(r, x, y, true);
 	}
 
