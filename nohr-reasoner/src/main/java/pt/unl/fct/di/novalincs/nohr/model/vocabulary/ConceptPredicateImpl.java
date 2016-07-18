@@ -63,7 +63,7 @@ class ConceptPredicateImpl implements HybridPredicate {
 	}
 
 	@Override
-	public OWLProperty<?, ?> asRole() {
+	public OWLProperty asRole() {
 		throw new ClassCastException();
 	}
 

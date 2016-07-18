@@ -344,7 +344,7 @@ public class KB {
 	}
 
 	private IRI getEntityIRI(String name) {
-		final IRI ontIRI = ontology.getOntologyID().getOntologyIRI();
+		final IRI ontIRI = ontology.getOntologyID().getOntologyIRI().get(); // optional ignored
 		return IRI.create(ontIRI + "#" + name);
 	}
 

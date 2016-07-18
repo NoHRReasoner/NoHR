@@ -389,7 +389,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
 		generators.add(new InferredSubClassAxiomGenerator());
 		generators.add(new InferredClassAssertionAxiomGenerator());
 		final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, generators);
-		inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager(), ontology);
+		inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager().getOWLDataFactory(), ontology);
 		RuntimesLogger.stop("ontology classification", "loading");
 	}
 

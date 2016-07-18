@@ -266,7 +266,7 @@ public class TBoxGraphTest {
 		final Set<OWLObjectPropertyExpression> expectedAncestors = set(p[1], p[2], p[3]);
 		// Test
 		final StaticTBoxDigraph graph = new StaticTBoxDigraph(kb.getQLNormalizedOntology());
-		final Set<OWLPropertyExpression<?, ?>> ancestors = graph.getAncestors(p[0]);
+		final Set<OWLPropertyExpression> ancestors = graph.getAncestors(p[0]);
 		Assert.assertEquals(expectedAncestors, ancestors);
 	}
 
@@ -297,7 +297,7 @@ public class TBoxGraphTest {
 		final Set<OWLObjectPropertyExpression> expectedAncestors = set(p);
 		// TestInit
 		final StaticTBoxDigraph graph = new StaticTBoxDigraph(kb.getQLNormalizedOntology());
-		Set<OWLPropertyExpression<?, ?>> ancestors;
+		Set<OWLPropertyExpression> ancestors;
 		// Tests
 		for (int i = 0; i < 4; i++) {
 			ancestors = graph.getAncestors(p[i]);
@@ -335,7 +335,7 @@ public class TBoxGraphTest {
 		// TestInit
 		final StaticTBoxDigraph graph = new StaticTBoxDigraph(kb.getQLNormalizedOntology());
 		// Test1
-		Set<OWLPropertyExpression<?, ?>> predecessors = graph.getPredecessors(p[2]);
+		Set<OWLPropertyExpression> predecessors = graph.getPredecessors(p[2]);
 		Assert.assertEquals(set(p[0], p[1]), predecessors);
 		// Test2
 		predecessors = graph.getPredecessors(p[4]);

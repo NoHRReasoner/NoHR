@@ -111,7 +111,7 @@ abstract class ELAxiomsTranslator {
 	 * @param r2
 	 *            the subsuming role.
 	 */
-	abstract Set<Rule> subsumptionTranslation(OWLProperty<?, ?> r1, OWLProperty<?, ?> r2);
+	abstract Set<Rule> subsumptionTranslation(OWLProperty r1, OWLProperty r2);
 
 	/**
 	 * Translate an role composition to a list of atoms according to <b> Definition 12.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
@@ -135,7 +135,7 @@ abstract class ELAxiomsTranslator {
 		Variable xi = x;
 		Variable xj = x;
 		for (int i = 0; i < n; i++) {
-			final OWLProperty<?, ?> pe = (OWLProperty<?, ?>) chain.get(i);
+			final OWLProperty pe = (OWLProperty) chain.get(i);
 			xi = xj;
 			xj = i == n - 1 ? xk : var("X" + i);
 			result.add(tr(pe, xi, xj, doub));
@@ -191,7 +191,7 @@ abstract class ELAxiomsTranslator {
 				result.addAll(tr(op, x, doub));
 		} else if (ce instanceof OWLObjectSomeValuesFrom) {
 			final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) ce;
-			final OWLProperty<?, ?> p = some.getProperty().asOWLObjectProperty();
+			final OWLProperty p = some.getProperty().asOWLObjectProperty();
 			final OWLClassExpression filler = some.getFiller();
 			result.add(tr(p, X, Y, doub));
 			result.addAll(tr(filler, Y, doub));
@@ -217,7 +217,7 @@ abstract class ELAxiomsTranslator {
 	 * @return <i>R<sup>d</sup>(x, x<sub>1</sub>)</i>, if {@code doub} is true; <br>
 	 *         <i>R(x, x<sub>1</sub></i>), otherwise.
 	 */
-	Atom tr(OWLProperty<?, ?> r, Variable x, Variable x1, boolean doub) {
+	Atom tr(OWLProperty r, Variable x, Variable x1, boolean doub) {
 		final Predicate pred = v.pred(r, doub);
 		if (r instanceof OWLProperty)
 			return atom(pred, x, x1);
@@ -273,8 +273,8 @@ abstract class ELAxiomsTranslator {
 	 *            an axiom
 	 */
 	Set<Rule> translation(OWLSubPropertyAxiom<?> axiom) {
-		final OWLProperty<?, ?> pe1 = (OWLProperty<?, ?>) axiom.getSubProperty();
-		final OWLProperty<?, ?> pe2 = (OWLProperty<?, ?>) axiom.getSuperProperty();
+		final OWLProperty pe1 = (OWLProperty) axiom.getSubProperty();
+		final OWLProperty pe2 = (OWLProperty) axiom.getSuperProperty();
 		return subsumptionTranslation(pe1, pe2);
 	}
 

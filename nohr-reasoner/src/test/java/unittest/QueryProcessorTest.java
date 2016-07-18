@@ -14,6 +14,7 @@ package unittest;
  *
  */
 
+import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -85,8 +86,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	 * @throws Exception
 	 */
 	public QueryProcessorTest() throws Exception {
-		super(new XSBDeductiveDatabase(
-				FileSystems.getDefault().getPath(System.getenv("XSB_BIN_DIRECTORY"), "xsb").toFile(), v));
+		super(new XSBDeductiveDatabase(new File(System.getenv("XSB_BIN_DIRECTORY")), v));
 		parser = new NoHRRecursiveDescentParser(v);
 		program = deductiveDatabase.createProgram();
 	}

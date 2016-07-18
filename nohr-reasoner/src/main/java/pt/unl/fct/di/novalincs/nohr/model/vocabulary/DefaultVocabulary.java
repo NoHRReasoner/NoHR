@@ -52,6 +52,7 @@ import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
@@ -95,7 +96,7 @@ public class DefaultVocabulary implements Vocabulary {
 	private final Map<OWLClass, ConceptPredicateImpl> conceptPredicates;
 
 	/** A mapping between roles and {@link HybridPredicate predicates} representing that roles */
-	private final Map<OWLProperty<?, ?>, RolePredicateImpl> rolePredicates;
+	private final Map<OWLProperty, RolePredicateImpl> rolePredicates;
 
 	/** A mapping between arities/symbols and {@link HybridPredicate predicates} that they represent. */
 	private final Map<Integer, Map<String, HybridPredicateWrapper>> predicates;
@@ -124,7 +125,7 @@ public class DefaultVocabulary implements Vocabulary {
 		constants = new HashMap<String, HybridConstantWrapper>();
 		predicates = new HashMap<Integer, Map<String, HybridPredicateWrapper>>();
 		conceptPredicates = new HashMap<OWLClass, ConceptPredicateImpl>();
-		rolePredicates = new HashMap<OWLProperty<?, ?>, RolePredicateImpl>();
+		rolePredicates = new HashMap<OWLProperty, RolePredicateImpl>();
 		individualConstants = new HashMap<OWLIndividual, IndividualConstantImpl>();
 		final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
 		register(dataFactory.getOWLThing());
@@ -136,9 +137,9 @@ public class DefaultVocabulary implements Vocabulary {
 		for (final OWLOntology ont : ontologies) {
 			for (final OWLClass c : ont.getClassesInSignature())
 				register(c);
-			for (final OWLProperty<?, ?> r : ont.getObjectPropertiesInSignature())
+			for (final OWLProperty r : ont.getObjectPropertiesInSignature())
 				register(r);
-			for (final OWLProperty<?, ?> d : ont.getDataPropertiesInSignature())
+			for (final OWLProperty d : ont.getDataPropertiesInSignature())
 				register(d);
 			for (final OWLIndividual i : ont.getIndividualsInSignature())
 				register(i);
@@ -159,7 +160,7 @@ public class DefaultVocabulary implements Vocabulary {
 										if (entity instanceof OWLClass)
 											register((OWLClass) entity);
 										else if (entity instanceof OWLProperty)
-											register((OWLProperty<?, ?>) entity);
+											register((OWLProperty) entity);
 							}
 							for (final OWLClass concept : change.getAxiom().getClassesInSignature())
 								register(concept);
@@ -180,7 +181,7 @@ public class DefaultVocabulary implements Vocabulary {
 										if (entity instanceof OWLClass)
 											unregister((OWLClass) entity);
 										else if (entity instanceof OWLProperty)
-											unregister((OWLProperty<?, ?>) entity);
+											unregister((OWLProperty) entity);
 							}
 							for (final OWLClass concept : change.getAxiom().getClassesInSignature())
 								unregister(concept);
@@ -229,8 +230,8 @@ public class DefaultVocabulary implements Vocabulary {
 		if (fragment != null)
 			result.add(fragment);
 		for (final OWLOntology ontology : ontologies)
-			for (final OWLAnnotation annotation : entity.getAnnotations(ontology,
-					OWLManager.getOWLDataFactory().getRDFSLabel())) {
+                    for (final OWLAnnotation annotation : EntitySearcher.getAnnotations(entity, ontology,
+                        OWLManager.getOWLDataFactory().getRDFSLabel())) {
 				final OWLAnnotationValue value = annotation.getValue();
 				if (value instanceof OWLLiteral)
 					result.add(((OWLLiteral) value).getLiteral());
@@ -303,7 +304,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate domPred(OWLPropertyExpression<?, ?> role, boolean doub) {
+	public Predicate domPred(OWLPropertyExpression role, boolean doub) {
 		if (doub)
 			return pred(role, DOUBLE_DOMAIN);
 		else
@@ -311,7 +312,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate doubDomPred(OWLPropertyExpression<?, ?> role) {
+	public Predicate doubDomPred(OWLPropertyExpression role) {
 		return pred(role, DOUBLE_DOMAIN);
 	}
 
@@ -321,7 +322,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate doubPred(OWLPropertyExpression<?, ?> role) {
+	public Predicate doubPred(OWLPropertyExpression role) {
 		return pred(role, DOUBLE);
 	}
 
@@ -331,7 +332,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate doubRanPred(OWLPropertyExpression<?, ?> role) {
+	public Predicate doubRanPred(OWLPropertyExpression role) {
 		return pred(role, DOUBLED_RANGE);
 	}
 
@@ -389,7 +390,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate negPred(OWLPropertyExpression<?, ?> role) {
+	public Predicate negPred(OWLPropertyExpression role) {
 		return pred(role, NEGATIVE);
 	}
 
@@ -407,7 +408,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate origDomPred(OWLPropertyExpression<?, ?> role) {
+	public Predicate origDomPred(OWLPropertyExpression role) {
 		return pred(role, ORIGINAL_DOMAIN);
 	}
 
@@ -417,7 +418,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate origPred(OWLPropertyExpression<?, ?> role) {
+	public Predicate origPred(OWLPropertyExpression role) {
 		return pred(role, ORIGINAL);
 	}
 
@@ -427,7 +428,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate origRanPred(OWLPropertyExpression<?, ?> role) {
+	public Predicate origRanPred(OWLPropertyExpression role) {
 		return pred(role, ORIGINAL_RANGE);
 	}
 
@@ -453,7 +454,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate pred(OWLPropertyExpression<?, ?> role) {
+	public Predicate pred(OWLPropertyExpression role) {
 		final Predicate pred = rolePredicates.get(role);
 		if (pred == null)
 			throw new UndefinedSymbolException();
@@ -461,7 +462,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate pred(OWLPropertyExpression<?, ?> role, boolean doub) {
+	public Predicate pred(OWLPropertyExpression role, boolean doub) {
 		if (doub)
 			return pred(role, DOUBLE);
 		else
@@ -469,7 +470,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate pred(OWLPropertyExpression<?, ?> role, PredicateType type) {
+	public Predicate pred(OWLPropertyExpression role, PredicateType type) {
 		return new MetaPredicateImpl(pred(DLUtils.atomic(role)), type);
 	}
 
@@ -498,7 +499,7 @@ public class DefaultVocabulary implements Vocabulary {
 	}
 
 	@Override
-	public Predicate ranPred(OWLPropertyExpression<?, ?> role, boolean doub) {
+	public Predicate ranPred(OWLPropertyExpression role, boolean doub) {
 		if (doub)
 			return pred(role, DOUBLED_RANGE);
 		else
@@ -550,7 +551,7 @@ public class DefaultVocabulary implements Vocabulary {
 	 * @param role
 	 *            a role.
 	 */
-	private void register(OWLProperty<?, ?> role) {
+	private void register(OWLProperty role) {
 		RolePredicateImpl rolePred = rolePredicates.get(role);
 		if (rolePred == null) {
 			rolePred = new RolePredicateImpl(role);
@@ -658,7 +659,7 @@ public class DefaultVocabulary implements Vocabulary {
 	 * @param role
 	 *            a role.
 	 */
-	private void unregister(OWLProperty<?, ?> role) {
+	private void unregister(OWLProperty role) {
 		references.remove(role);
 		if (!references.contains(role)) {
 			final Predicate pred = rolePredicates.remove(role);

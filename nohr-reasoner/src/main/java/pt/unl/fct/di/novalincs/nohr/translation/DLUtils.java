@@ -29,7 +29,7 @@ public class DLUtils {
 	 *            a role expression <i>P</i> or <i>P<sup>-</i>.
 	 * @return <i>P</i>.
 	 */
-	public static OWLProperty<?, ?> atomic(OWLPropertyExpression<?, ?> role) {
+	public static OWLProperty atomic(OWLPropertyExpression role) {
 		if (role.isObjectPropertyExpression()) {
 			final OWLObjectPropertyExpression ope = (OWLObjectPropertyExpression) role;
 			return ope.getNamedProperty();

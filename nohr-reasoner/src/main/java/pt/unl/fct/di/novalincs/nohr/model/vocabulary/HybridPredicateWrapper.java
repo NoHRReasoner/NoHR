@@ -50,7 +50,7 @@ class HybridPredicateWrapper implements HybridPredicate {
 	}
 
 	@Override
-	public OWLProperty<?, ?> asRole() {
+	public OWLProperty asRole() {
 		return wrappee.asRole();
 	}
 

@@ -186,7 +186,7 @@ class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 *             <i>Q<sub>1</sub></i> or <i>Q<sub>2</sub></i> aren't a basic DL-Lite<sub>R</sub> roles.
 	 */
 	@Override
-	Set<Rule> subsumptionTranslation(OWLPropertyExpression<?, ?> q1, OWLPropertyExpression<?, ?> q2) {
+	Set<Rule> subsumptionTranslation(OWLPropertyExpression q1, OWLPropertyExpression q2) {
 		if (q1.isBottomEntity() || q2.isTopEntity())
 			return ruleSet();
 		if (q1.isTopEntity())
@@ -227,7 +227,7 @@ class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 * @return <i>P(x, y)</i> if <i>R</i> is an atomic role <i>P</i>; <br>
 	 *         <i>P(y, x)</i> if <i>R</i> is an inverse role <i>P<sup>-</sup></i>.
 	 */
-	Atom tr(OWLPropertyExpression<?, ?> r, Variable x, Variable y) {
+	Atom tr(OWLPropertyExpression r, Variable x, Variable y) {
 		return tr(r, x, y, false);
 	}
 }

@@ -172,7 +172,7 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 			} else if (subsumption instanceof OWLSubDataPropertyOfAxiom)
 				result.addAll(axiomsTranslator.subsumptionTranslation(subsumption.getSubProperty(),
 						subsumption.getSuperProperty()));
-		for (final OWLPropertyExpression<?, ?> ope : ontologyNormalization.getRoles())
+		for (final OWLPropertyExpression ope : ontologyNormalization.getRoles())
 			if (ope instanceof OWLObjectPropertyExpression) {
 				final OWLObjectProperty p = ((OWLObjectPropertyExpression) ope).getNamedProperty();
 				final OWLObjectPropertyExpression invP = p.getInverseProperty();
@@ -200,7 +200,7 @@ public class QLOntologyTranslator extends OntologyTranslatorImplementor {
 				if (e instanceof OWLClass)
 					translation.addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLClass) e));
 				else if (e instanceof OWLProperty)
-					translation.addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLProperty<?, ?>) e));
+					translation.addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLProperty) e));
 			for (final OWLObjectProperty p : graph.getIrreflexiveRoles())
 				translation.add(doubleAxiomsTranslator.unreflexivityTranslation(p));
 			RuntimesLogger.stop("ontology classification", "loading");

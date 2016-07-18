@@ -203,9 +203,9 @@ public class ProgramGenerator {
 		final Vocabulary v = new DefaultVocabulary(ontology);
 		for (final OWLClass concept : ontology.getClassesInSignature())
 			predicates.add(v.pred(concept));
-		for (final OWLProperty<?, ?> role : ontology.getObjectPropertiesInSignature())
+		for (final OWLProperty role : ontology.getObjectPropertiesInSignature())
 			predicates.add(v.pred(role));
-		for (final OWLProperty<?, ?> data : ontology.getDataPropertiesInSignature())
+		for (final OWLProperty data : ontology.getDataPropertiesInSignature())
 			predicates.add(v.pred(data));
 		for (final OWLIndividual individual : ontology.getIndividualsInSignature())
 			constants.add(v.cons(individual));
