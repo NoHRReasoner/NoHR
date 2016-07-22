@@ -35,6 +35,7 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -110,6 +111,9 @@ public class DefaultVocabulary implements Vocabulary {
 	/** The ontology component of the Hybrid KB of wich this {@link Vocabulary} is vocabulary */
 	private final OWLOntology ontology;
 
+        /** The RDFS Label annotation property representation */
+        private final OWLAnnotationProperty rdfsLabel;
+        
 	/**
 	 * Constructs a {@link DefaultVocabulary} for a given set of ontologies;
 	 *
@@ -128,12 +132,15 @@ public class DefaultVocabulary implements Vocabulary {
 		rolePredicates = new HashMap<OWLProperty, RolePredicateImpl>();
 		individualConstants = new HashMap<OWLIndividual, IndividualConstantImpl>();
 		final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
+                rdfsLabel  = dataFactory.getRDFSLabel();
+                
 		register(dataFactory.getOWLThing());
 		register(dataFactory.getOWLNothing());
 		register(dataFactory.getOWLTopObjectProperty());
 		register(dataFactory.getOWLBottomObjectProperty());
 		register(dataFactory.getOWLTopDataProperty());
 		register(dataFactory.getOWLBottomDataProperty());
+                
 		for (final OWLOntology ont : ontologies) {
 			for (final OWLClass c : ont.getClassesInSignature())
 				register(c);
@@ -231,7 +238,7 @@ public class DefaultVocabulary implements Vocabulary {
 			result.add(fragment);
 		for (final OWLOntology ontology : ontologies)
                     for (final OWLAnnotation annotation : EntitySearcher.getAnnotations(entity, ontology,
-                        OWLManager.getOWLDataFactory().getRDFSLabel())) {
+                        rdfsLabel)) {
 				final OWLAnnotationValue value = annotation.getValue();
 				if (value instanceof OWLLiteral)
 					result.add(((OWLLiteral) value).getLiteral());
