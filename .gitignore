@@ -5,3 +5,5 @@ build/
 **/*.prefs
 *.iml
 run.sh
+nb-configuration.xml
+nbactions.xml

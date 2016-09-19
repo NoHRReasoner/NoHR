@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.deductivedb;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.DefaultFormatVisitor;
@@ -25,7 +24,8 @@ import pt.unl.fct.di.novalincs.nohr.model.Symbol;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
 
 /**
- * An {@link FormatVisitor} to format the {@link Rule rules} that are written to a file.
+ * An {@link FormatVisitor} to format the {@link Rule rules} that are written to
+ * a file.
  *
  * @author Nuno Costa
  */
@@ -34,8 +34,11 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
     private String quoted(String str) {
         // Whenever outer "'" already exist do nothing, otherwise add outer '\" to distinguish the two cases
         // when loading a file
-        if (str.startsWith("'") && str.endsWith("'")) return str ;
-        else return "'\"" + str + "\"'";
+        if (str.startsWith("'") && str.endsWith("'")) {
+            return str;
+        } else {
+            return "'\"" + str + "\"'";
+        }
     }
 
     @Override
@@ -47,8 +50,9 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
     public String visit(Atom atom) {
         final String pred = atom.getFunctor().accept(this);
         final String args = Model.concat(atom.getArguments(), this, ",");
-        if (atom.getArity() == 0)
+        if (atom.getArity() == 0) {
             return quoted(pred);
+        }
         return quoted(pred) + "(" + args + ")";
     }
 
@@ -67,10 +71,12 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
     public String visit(Rule rule) {
         final String head = rule.getHead().accept(this);
         final String body = Model.concat(rule.getBody(), this, ",");
-        if (rule.isFact())
+
+        if (rule.isFact()) {
             return head + ".";
-        else
+        } else {
             return head + ":-" + body + ".";
+        }
     }
 
     @Override
