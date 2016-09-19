@@ -76,11 +76,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Symbol symbolic) {
-        if (symbolic.asString().startsWith("#")) {
-            return symbolic.asString().substring(1);
-        } else {
-            return quoted(symbolic.asString());
-        }
+        return quoted(symbolic.asString());
     }
 
     @Override
