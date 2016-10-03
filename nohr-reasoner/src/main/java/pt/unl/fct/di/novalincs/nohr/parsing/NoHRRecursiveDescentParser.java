@@ -91,6 +91,10 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
      * current position.
      */
     private Atom atom() throws ParseException {
+        if (scanner.next(TokenType.PROLOG_PREFIX)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.PROLOG_PREFIX);
+        }
+
         if (!scanner.next(SYMBOL)) {
             throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL);
         }
@@ -100,7 +104,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
         if (!scanner.next(L_PAREN)) {
             return Model.atom(v, predicateSymbol);
         } else {
-            final List<Term> args = new LinkedList<Term>();
+            final List<Term> args = new LinkedList<>();
 
             do {
                 args.add(term());
@@ -111,6 +115,14 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
             }
 
             return Model.atom(v, predicateSymbol, args);
+        }
+    }
+
+    private Atom atomExtended() throws ParseException {
+        if (scanner.next(TokenType.PROLOG_PREFIX)) {
+            return prologAtom();
+        } else {
+            return atom();
         }
     }
 
@@ -135,7 +147,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
             final Atom atom = atom();
             return negLiteral(atom);
         } else {
-            return atom();
+            return atomExtended();
         }
     }
 
@@ -208,6 +220,30 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
         return program;
     }
 
+    private Atom prologAtom() throws ParseException {
+        if (!scanner.next(TokenType.PROLOG_PREDICATE_SYMBOL)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
+        }
+
+        final String predicateSymbol = scanner.value();
+
+        if (!scanner.next(L_PAREN)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.L_PAREN);
+        }
+
+        final List<Term> args = new LinkedList<>();
+
+        do {
+            args.add(termExtended());
+        } while (scanner.next(COMMA));
+
+        if (!scanner.next(R_PAREN)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
+        }
+
+        return Model.prologAtom(v, predicateSymbol, args);
+    }
+
     /**
      * Tries to apply: <br>
      * <code>query = literals.}</code> <br>
@@ -234,10 +270,12 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
      */
     private Rule rule() throws ParseException {
         final Atom head = atom();
+
         if (!scanner.next(IF)) {
             return Model.rule(head);
         } else {
             final List<Literal> body = literals();
+
             return Model.rule(head, body);
         }
     }
@@ -260,13 +298,50 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
      */
     private Term term() throws ParseException {
         final Variable variable = variable();
+
         if (variable != null) {
             return variable;
         }
+
         if (scanner.next(SYMBOL)) {
             return v.cons(scanner.value());
         }
+
         throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL, QUESTION_MARK);
+    }
+
+    private Term termExtended() throws ParseException {
+        if (scanner.next(TokenType.PROLOG_PREFIX)) {
+            return Model.atomTerm(prologAtom());
+        }
+
+        final Variable var = variable();
+
+        if (var != null) {
+            return var;
+        }
+
+        if (scanner.next(TokenType.SYMBOL)) {
+            final String predicateSymbol = scanner.value();
+
+            if (!scanner.next(L_PAREN)) {
+                return v.cons(predicateSymbol);
+            } else {
+                final List<Term> args = new LinkedList<>();
+
+                do {
+                    args.add(termExtended());
+                } while (scanner.next(COMMA));
+
+                if (!scanner.next(R_PAREN)) {
+                    throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
+                }
+
+                return Model.atomTerm(Model.atom(v, predicateSymbol, args));
+            }
+        }
+
+        return term();
     }
 
     /**

@@ -18,6 +18,7 @@ import pt.unl.fct.di.novalincs.nohr.model.DefaultFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.NegativeLiteral;
+import pt.unl.fct.di.novalincs.nohr.model.PrologPredicateImpl;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Symbol;
@@ -49,6 +50,7 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
     @Override
     public String visit(Atom atom) {
         final String pred = atom.getFunctor().accept(this);
+
         final String args = Model.concat(atom.getArguments(), this, ",");
         if (atom.getArity() == 0) {
             return quoted(pred);
@@ -81,6 +83,10 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Symbol symbolic) {
+        if (symbolic instanceof PrologPredicateImpl) {
+            return quoted("#" + symbolic.asString());
+        }
+
         return quoted(symbolic.asString());
     }
 

@@ -135,6 +135,10 @@ public class Model {
         return atom(v.pred(predicate, arguments.length), argumentsList);
     }
 
+    public static Term atomTerm(Atom atom) {
+        return new AtomTermImpl(atom);
+    }
+
     /**
      * Concatenates the string representations, given a specified
      * {@link FormatVisitor} , of model elements from a specified array.
@@ -252,6 +256,10 @@ public class Model {
      */
     public static Program program(Set<Rule> rules) {
         return new HashSetProgram(rules);
+    }
+
+    public static Atom prologAtom(Vocabulary v, String predicate, List<Term> arguments) {
+        return atom(v.prologPred(predicate, arguments.size()), arguments);
     }
 
     /**

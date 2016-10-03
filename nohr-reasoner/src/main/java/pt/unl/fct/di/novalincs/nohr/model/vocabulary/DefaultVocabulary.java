@@ -46,6 +46,7 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+import pt.unl.fct.di.novalincs.nohr.model.PrologPredicateImpl;
 import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.DOUBLE;
 import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.DOUBLED_RANGE;
 import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.DOUBLE_DOMAIN;
@@ -563,7 +564,7 @@ public class DefaultVocabulary implements Vocabulary {
     }
 
     @Override
-    public Predicate pred(String symbol, int arity) {       
+    public Predicate pred(String symbol, int arity) {
         final HybridPredicate pred = new RulePredicateImpl(symbol, arity);
 
         String helpSymbol;
@@ -588,6 +589,11 @@ public class DefaultVocabulary implements Vocabulary {
     @Override
     public Predicate pred(String symbol, int arity, PredicateType type) {
         return new MetaPredicateImpl(pred(symbol, arity), type);
+    }
+
+    @Override
+    public Predicate prologPred(String symbol, int arity) {
+        return new PrologPredicateImpl(symbol, arity);
     }
 
     @Override

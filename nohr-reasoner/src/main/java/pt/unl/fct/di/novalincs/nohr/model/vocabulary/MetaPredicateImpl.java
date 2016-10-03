@@ -71,10 +71,6 @@ class MetaPredicateImpl implements MetaPredicate {
 
     @Override
     public String asString() {
-        if (predicate.asString().startsWith("#")) {
-            return predicate.asString().substring(1);
-        }
-        
         return type.marker() + predicate.asString();
     }
 
