@@ -13,6 +13,7 @@ package pt.unl.fct.di.novalincs.nohr.parsing;
  * #L%
  */
 import java.util.regex.Pattern;
+import pt.unl.fct.di.novalincs.nohr.utils.PrologSyntax;
 
 /**
  * The types of the {@link
@@ -62,8 +63,8 @@ public enum TokenType {
      */
     SYMBOL("([^'\\s\\.,\\[(?\\])\\\\]|(?!-):|(\\\\\\\\)*\\\\.|\\.(?!\\n|\\r))++|'[^']+?'", "Symbol"),
     PROLOG_PREFIX("#"),
-    PROLOG_PREDICATE_SYMBOL("compare|==|=|\\.|\\+"),
-    PROLOG_BINARY_OPERATOR("==", true);
+    PROLOG_PREDICATE_SYMBOL(PrologSyntax.PREDICATES_REGEX),
+    PROLOG_BINARY_OPERATOR(PrologSyntax.OPERATORS_REGEX, true);
 
     /**
      * The regular expression that matches the tokens of this {@link TokenType}.

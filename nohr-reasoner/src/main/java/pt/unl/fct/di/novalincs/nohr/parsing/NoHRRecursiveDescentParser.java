@@ -38,6 +38,7 @@ import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.NOT;
 import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.QUESTION_MARK;
 import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.R_PAREN;
 import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.SYMBOL;
+import pt.unl.fct.di.novalincs.nohr.utils.PrologSyntax;
 
 /**
  * A {@link <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser">
@@ -226,6 +227,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
         }
 
         final String predicateSymbol = scanner.value();
+        final int startPos = scanner.position();
 
         if (!scanner.next(L_PAREN)) {
             throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.L_PAREN);
@@ -239,6 +241,10 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 
         if (!scanner.next(R_PAREN)) {
             throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
+        }
+
+        if (!PrologSyntax.validPredicate(predicateSymbol, args.size())) {
+            throw new ParseException(scanner.line(), startPos, scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
         }
 
         return Model.prologAtom(v, predicateSymbol, args);
@@ -341,7 +347,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
             }
         }
 
-        return term();
+        throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL, QUESTION_MARK);
     }
 
     /**
@@ -359,9 +365,11 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
         if (!scanner.next(QUESTION_MARK)) {
             return null;
         }
+
         if (!scanner.next(ID)) {
             throw new ParseException(scanner.line(), scanner.position(), scanner.length(), ID);
         }
+
         return var(scanner.value());
     }
 
