@@ -20,6 +20,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLProperty;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.AtomTerm;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import static pt.unl.fct.di.novalincs.nohr.model.Model.negLiteral;
@@ -146,9 +147,24 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
     private Literal literal() throws ParseException {
         if (scanner.next(NOT)) {
             final Atom atom = atom();
+
             return negLiteral(atom);
         } else {
-            return atomExtended();
+            final Term left = termExtended();
+
+            if (scanner.next(TokenType.PROLOG_BINARY_OPERATOR)) {
+                final String op = scanner.value();
+
+                final Term right = termExtended();
+
+                return Model.atomOperator(v.prologOpPred(op, 2), left, right);
+            }
+
+            if (!(left instanceof AtomTerm)) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.length());
+            }
+
+            return ((AtomTerm) left).getAtom();
         }
     }
 
@@ -164,10 +180,12 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
      * trailing chars.
      */
     private List<Literal> literals() throws ParseException {
-        final List<Literal> result = new LinkedList<Literal>();
+        final List<Literal> result = new LinkedList<>();
+
         do {
             result.add(literal());
         } while (scanner.next(COMMA));
+
         return result;
     }
 
@@ -233,15 +251,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
             throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.L_PAREN);
         }
 
-        final List<Term> args = new LinkedList<>();
-
-        do {
-            args.add(termExtended());
-        } while (scanner.next(COMMA));
-
-        if (!scanner.next(R_PAREN)) {
-            throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
-        }
+        final List<Term> args = termExtendedArguments();
 
         if (!PrologSyntax.validPredicate(predicateSymbol, args.size())) {
             throw new ParseException(scanner.line(), startPos, scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
@@ -303,17 +313,19 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
      * @return the recognized term.
      */
     private Term term() throws ParseException {
-        final Variable variable = variable();
+        if (scanner.next(TokenType.L_BRACK)) {
+            return listExpression();
+        }
 
-        if (variable != null) {
-            return variable;
+        if (scanner.next(TokenType.QUESTION_MARK)) {
+            return variableExpression();
         }
 
         if (scanner.next(SYMBOL)) {
             return v.cons(scanner.value());
         }
 
-        throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL, QUESTION_MARK);
+        throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.L_BRACK, QUESTION_MARK, TokenType.SYMBOL);
     }
 
     private Term termExtended() throws ParseException {
@@ -321,33 +333,57 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
             return Model.atomTerm(prologAtom());
         }
 
-        final Variable var = variable();
-
-        if (var != null) {
-            return var;
+        if (scanner.next(TokenType.L_BRACK)) {
+            return listExpression();
         }
 
-        if (scanner.next(TokenType.SYMBOL)) {
+        if (scanner.next(TokenType.QUESTION_MARK)) {
+            return variableExpression();
+        }
+
+        if (scanner.next(SYMBOL)) {
             final String predicateSymbol = scanner.value();
 
             if (!scanner.next(L_PAREN)) {
                 return v.cons(predicateSymbol);
             } else {
-                final List<Term> args = new LinkedList<>();
-
-                do {
-                    args.add(termExtended());
-                } while (scanner.next(COMMA));
-
-                if (!scanner.next(R_PAREN)) {
-                    throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
-                }
-
-                return Model.atomTerm(Model.atom(v, predicateSymbol, args));
+                return Model.atomTerm(Model.atom(v, predicateSymbol, termExtendedArguments()));
             }
         }
 
         throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL, QUESTION_MARK);
+    }
+
+    private Term listExpression() throws ParseException {
+        if (scanner.next(TokenType.R_BRACK)) {
+            return null; // TODO: create list term
+        }
+
+        Term head = termExtended();
+
+        if (scanner.next(TokenType.PIPE)) {
+            Term tail = termExtended();
+        }
+
+        if (!scanner.next(TokenType.R_BRACK)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_BRACK);
+        }
+
+        return null; // TODO: create list term
+    }
+
+    private List<Term> termExtendedArguments() throws ParseException {
+        final List<Term> args = new LinkedList<>();
+
+        do {
+            args.add(termExtended());
+        } while (scanner.next(COMMA));
+
+        if (!scanner.next(R_PAREN)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
+        }
+
+        return args;
     }
 
     /**
@@ -361,16 +397,12 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
      * @throws ParseException if the parser can recognize an
      * {@link TokenType#QUESTION_MARK} but not an {@link TokenType#ID}.
      */
-    private Variable variable() throws ParseException {
-        if (!scanner.next(QUESTION_MARK)) {
-            return null;
+    private Variable variableExpression() throws ParseException {
+        if (scanner.next(ID)) {
+            return var(scanner.value());
         }
 
-        if (!scanner.next(ID)) {
-            throw new ParseException(scanner.line(), scanner.position(), scanner.length(), ID);
-        }
-
-        return var(scanner.value());
+        throw new ParseException(scanner.line(), scanner.position(), scanner.length(), ID);
     }
 
 }

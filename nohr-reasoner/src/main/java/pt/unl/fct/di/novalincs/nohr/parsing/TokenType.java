@@ -63,6 +63,7 @@ public enum TokenType {
      */
     SYMBOL("([^'\\s\\.,\\[(?\\])\\\\]|(?!-):|(\\\\\\\\)*\\\\.|\\.(?!\\n|\\r))++|'[^']+?'", "Symbol"),
     PROLOG_PREFIX("#"),
+    PIPE("\\|", "|", true),
     PROLOG_PREDICATE_SYMBOL(PrologSyntax.PREDICATES_REGEX),
     PROLOG_BINARY_OPERATOR(PrologSyntax.OPERATORS_REGEX, true);
 

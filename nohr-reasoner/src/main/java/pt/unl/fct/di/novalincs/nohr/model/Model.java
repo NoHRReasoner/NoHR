@@ -135,6 +135,10 @@ public class Model {
         return atom(v.pred(predicate, arguments.length), argumentsList);
     }
 
+    public static Atom atomOperator(Predicate predicate, Term left, Term right) {
+        return new AtomOperatorImpl(predicate, left, right);
+    }
+
     public static Term atomTerm(Atom atom) {
         return new AtomTermImpl(atom);
     }

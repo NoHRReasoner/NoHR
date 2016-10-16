@@ -46,7 +46,6 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
-import pt.unl.fct.di.novalincs.nohr.model.PrologPredicateImpl;
 import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.DOUBLE;
 import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.DOUBLED_RANGE;
 import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.DOUBLE_DOMAIN;
@@ -161,7 +160,7 @@ public class DefaultVocabulary implements Vocabulary {
         Objects.requireNonNull(ontology);
         this.ontology = ontology;
         ontologies = ontology.getImportsClosure();
-        listeners = new HashSet<VocabularyChangeListener>();
+        listeners = new HashSet<>();
         references = new HashMultiset<OWLObject>();
         constants = new HashMap<String, HybridConstantWrapper>();
         predicates = new HashMap<Integer, Map<String, HybridPredicateWrapper>>();
@@ -595,6 +594,12 @@ public class DefaultVocabulary implements Vocabulary {
     public Predicate prologPred(String symbol, int arity) {
         return new PrologPredicateImpl(symbol, arity);
     }
+    
+    @Override
+    public Predicate prologOpPred(String symbol, int arity) {
+        return new PrologOperatorPredicateImpl(symbol, arity);
+    }
+
 
     @Override
     public Predicate ranPred(OWLPropertyExpression role, boolean doub) {

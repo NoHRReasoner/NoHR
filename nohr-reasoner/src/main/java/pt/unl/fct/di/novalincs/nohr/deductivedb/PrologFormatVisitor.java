@@ -18,7 +18,7 @@ import pt.unl.fct.di.novalincs.nohr.model.DefaultFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.NegativeLiteral;
-import pt.unl.fct.di.novalincs.nohr.model.PrologPredicateImpl;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicateImpl;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Symbol;

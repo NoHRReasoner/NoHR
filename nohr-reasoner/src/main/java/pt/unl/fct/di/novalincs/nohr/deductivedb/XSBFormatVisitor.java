@@ -14,6 +14,7 @@ package pt.unl.fct.di.novalincs.nohr.deductivedb;
  */
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.AtomOperator;
 import pt.unl.fct.di.novalincs.nohr.model.DefaultFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
@@ -50,6 +51,16 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
         }
 
         return pred + "(" + args + ")";
+    }
+
+    public String visit(AtomOperator atomOp) {
+        final Atom atom = atomOp.getAtom();
+        final String pred = atom.getFunctor().accept(this);
+        final String arg1 = atom.getArguments().get(0).accept(this);
+        final String arg2 = atom.getArguments().get(1).accept(this);
+
+        return arg1 + pred + arg2;
+
     }
 
     @Override

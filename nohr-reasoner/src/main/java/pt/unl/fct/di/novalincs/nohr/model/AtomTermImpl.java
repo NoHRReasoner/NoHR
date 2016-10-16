@@ -29,7 +29,12 @@ public class AtomTermImpl implements AtomTerm {
     public String accept(FormatVisitor visitor) {
         return visitor.visit(atom);
     }
-
+    
+    @Override
+    public Atom getAtom() {
+        return this.atom;
+    }
+ 
     @Override
     public String toString() {
         return asString();

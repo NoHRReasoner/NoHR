@@ -398,6 +398,8 @@ public interface Vocabulary {
 
     Predicate prologPred(String symbol, int arity);
 
+    Predicate prologOpPred(String symbol, int arity); // TODO: Remove arity
+    
     /**
      * Obtains a range meta-predicate from a specified {@code role}.
      *

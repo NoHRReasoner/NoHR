@@ -1,6 +1,7 @@
-package pt.unl.fct.di.novalincs.nohr.model;
+package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
 
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 
 public class PrologPredicateImpl implements Predicate {
 
@@ -29,7 +30,7 @@ public class PrologPredicateImpl implements Predicate {
 
     @Override
     public String asString() {
-        return symbol;
+        return symbol.trim();
     }
 
     @Override

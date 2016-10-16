@@ -6,4 +6,6 @@ public interface AtomTerm extends Term {
 
     @Override
     AtomTerm accept(ModelVisitor visitor);
+    
+    Atom getAtom();
 }
