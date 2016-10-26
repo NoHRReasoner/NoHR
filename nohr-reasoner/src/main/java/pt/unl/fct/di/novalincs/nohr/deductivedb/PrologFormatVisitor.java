@@ -12,17 +12,21 @@ package pt.unl.fct.di.novalincs.nohr.deductivedb;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
+import java.util.List;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.DefaultFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.ListTerm;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.NegativeLiteral;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicateImpl;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Symbol;
+import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperator;
 
 /**
  * An {@link FormatVisitor} to format the {@link Rule rules} that are written to
@@ -56,6 +60,36 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
             return quoted(pred);
         }
         return quoted(pred) + "(" + args + ")";
+    }
+
+    @Override
+    public String visit(AtomOperator atomOp) {
+        final String pred = atomOp.getFunctor().accept(this);
+        final String arg1 = atomOp.getLeft().accept(this);
+        final String arg2 = atomOp.getRight().accept(this);
+
+        return arg1 + pred + arg2;
+    }
+
+    @Override
+    public String visit(ListTerm list) {
+        List<Term> head = list.getHead();
+
+        if (head == null) {
+            return "[]";
+        }
+
+        final String h = Model.concat(list.getHead(), this, ",");
+
+        final Term tail = list.getTail();
+
+        if (tail == null) {
+            return "[" + h + "]";
+        }
+
+        final String t = tail.accept(this);
+
+        return "[" + h + "|" + t + "]";
     }
 
     @Override
@@ -94,5 +128,4 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
     public String visit(Variable variable) {
         return variable.asString();
     }
-
 }

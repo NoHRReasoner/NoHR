@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pt.unl.fct.di.novalincs.nohr.model;
+package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
 
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 
 public class AtomTermImpl implements AtomTerm {
 
@@ -29,12 +30,12 @@ public class AtomTermImpl implements AtomTerm {
     public String accept(FormatVisitor visitor) {
         return visitor.visit(atom);
     }
-    
+
     @Override
     public Atom getAtom() {
         return this.atom;
     }
- 
+
     @Override
     public String toString() {
         return asString();

@@ -35,7 +35,6 @@ public class PrologSyntax {
         addPredicate("compare", 3, builder);
 
         PREDICATES_REGEX = builder.substring(1);
-        System.out.println(PREDICATES_REGEX);
     }
 
     private static void addOperator(String symbol, StringBuilder builder) {

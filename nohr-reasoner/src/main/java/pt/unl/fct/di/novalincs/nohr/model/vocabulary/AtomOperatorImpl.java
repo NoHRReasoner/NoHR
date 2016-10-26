@@ -1,21 +1,27 @@
-package pt.unl.fct.di.novalincs.nohr.model;
+package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Literal;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+import pt.unl.fct.di.novalincs.nohr.model.Term;
+import pt.unl.fct.di.novalincs.nohr.model.Variable;
 
 public class AtomOperatorImpl implements AtomOperator {
 
     private final Atom atom;
 
     public AtomOperatorImpl(Predicate predicate, Term left, Term right) {
-        final List<Term> args = new LinkedList<>();
+        final List<Term> args = new ArrayList<>(2);
 
         args.add(left);
         args.add(right);
 
-        atom = new AtomImpl(predicate, args);
+        atom = Model.atom(predicate, args);
     }
 
     private AtomOperatorImpl(Atom atom) {

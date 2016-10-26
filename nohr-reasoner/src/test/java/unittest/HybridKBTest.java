@@ -118,7 +118,7 @@ public class HybridKBTest extends KB {
 	public void test5() {
 		clear();
 		rule("p");
-		assertTrue("p");
+		assertTrue("p()");
 	}
 
 }

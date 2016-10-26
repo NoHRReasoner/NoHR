@@ -9,6 +9,8 @@ package pt.unl.fct.di.novalincs.nohr.model;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperatorImpl;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomTermImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -185,6 +187,10 @@ public class Model {
             sepToken = separator;
         }
         return new String(sb);
+    }
+
+    public static Term list(List<Term> head, Term tail) {
+        return new ListTermImpl(head, tail);
     }
 
     /**
