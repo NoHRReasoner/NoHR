@@ -13,6 +13,7 @@ package pt.unl.fct.di.novalincs.nohr.model;
  * #L%
  */
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperator;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.MetaPredicate;
 
 /**
@@ -43,6 +44,8 @@ public interface FormatVisitor {
     public String visit(AtomOperator atomOp);
 
     public String visit(ListTerm list);
+
+    public String visit(HybridConstant constant);
 
     /**
      * @param metaPredicate

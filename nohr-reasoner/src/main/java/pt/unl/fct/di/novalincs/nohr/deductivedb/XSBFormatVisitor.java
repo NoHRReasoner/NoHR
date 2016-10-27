@@ -26,6 +26,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Symbol;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
 
 /**
  * An {@link FormatVisitor} to format the {@link Rule rules} that are sent to a
@@ -46,6 +47,10 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Atom atom) {
+        if (atom instanceof AtomOperator) {
+            return this.visit((AtomOperator) atom);
+        }
+        
         final String pred = atom.getFunctor().accept(this);
         final String args = Model.concat(atom.getArguments(), this, ",");
 
@@ -58,12 +63,21 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(AtomOperator atomOp) {
-        final String pred = atomOp.getFunctor().accept(this);
+        final String pred = atomOp.getFunctor().asString();
         final String arg1 = atomOp.getLeft().accept(this);
         final String arg2 = atomOp.getRight().accept(this);
 
-        return arg1 + pred + arg2;
+        return arg1 + " " + pred + " " + arg2;
 
+    }
+
+    @Override
+    public String visit(HybridConstant constant) {
+        if (constant.isNumber()) {
+            return constant.toString();
+        }
+
+        return quoted(constant.asString());
     }
 
     @Override

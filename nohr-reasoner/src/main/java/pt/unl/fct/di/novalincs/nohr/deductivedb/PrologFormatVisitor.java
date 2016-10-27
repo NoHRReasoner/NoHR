@@ -27,6 +27,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Symbol;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperator;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
 
 /**
  * An {@link FormatVisitor} to format the {@link Rule rules} that are written to
@@ -69,6 +70,15 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
         final String arg2 = atomOp.getRight().accept(this);
 
         return arg1 + pred + arg2;
+    }
+
+    @Override
+    public String visit(HybridConstant constant) {
+        if (constant.isNumber()) {
+            return constant.toString();
+        }
+
+        return quoted(constant.asString());
     }
 
     @Override

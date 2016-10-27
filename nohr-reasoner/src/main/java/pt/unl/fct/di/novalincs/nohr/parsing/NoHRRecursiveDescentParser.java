@@ -40,14 +40,18 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
             return atom;
         }
 
-        final Term left = pTerm();
+        Term left = pTerm();
 
-        if (scanner.next(TokenType.PROLOG_BINARY_OPERATOR)) {
+        while (scanner.next(TokenType.PROLOG_BINARY_OPERATOR)) {
             final String op = scanner.value();
+
+            if (!PrologSyntax.validOperator(op)) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
+            }
 
             final Term right = pTerm();
 
-            return Model.atomOperator(vocabulary.prologOpPred(op, 2), left, right);
+            left = Model.atomTerm(Model.atomOperator(vocabulary.prologOpPred(op, 2), left, right));
         }
 
         if (!(left instanceof AtomTerm)) {
@@ -122,7 +126,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
             if (scanner.next(TokenType.R_BRACK)) {
                 return Model.list(null, null);
             }
-            
+
             final Term list = listExpression();
 
             if (!scanner.next(TokenType.R_BRACK)) {
@@ -195,6 +199,10 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 
         if (!PrologSyntax.validPredicate(predicateSymbol, args.size())) {
             throw new ParseException(scanner.line(), startPos, scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
+        }
+
+        if (!scanner.next(TokenType.R_PAREN)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.L_PAREN);
         }
 
         return Model.prologAtom(vocabulary, predicateSymbol, args);
