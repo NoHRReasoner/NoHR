@@ -63,7 +63,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(AtomOperator atomOp) {
-        final String pred = atomOp.getFunctor().asString();
+        final String pred = atomOp.getFunctor().accept(this);
         final String arg1 = atomOp.getLeft().accept(this);
         final String arg2 = atomOp.getRight().accept(this);
 

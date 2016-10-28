@@ -54,12 +54,18 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Atom atom) {
+        if (atom instanceof AtomOperator) {
+            return this.visit((AtomOperator) atom);
+        }
+
         final String pred = atom.getFunctor().accept(this);
 
         final String args = Model.concat(atom.getArguments(), this, ",");
-        if (atom.getArity() == 0) {
+        
+	if (atom.getArity() == 0) {
             return quoted(pred);
         }
+
         return quoted(pred) + "(" + args + ")";
     }
 
@@ -69,7 +75,7 @@ public class PrologFormatVisitor extends DefaultFormatVisitor {
         final String arg1 = atomOp.getLeft().accept(this);
         final String arg2 = atomOp.getRight().accept(this);
 
-        return arg1 + pred + arg2;
+        return arg1 + " " + pred + " " + arg2;
     }
 
     @Override
