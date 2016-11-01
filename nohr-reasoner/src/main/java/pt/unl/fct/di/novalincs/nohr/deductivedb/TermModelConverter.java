@@ -58,9 +58,7 @@ public class TermModelConverter {
             final List<Term> head = new LinkedList<>();
 
             for (TermModel i : child) {
-                if (!i.isListEnd()) {
-                    head.add(term(i));
-                }
+                head.add(term(i));
             }
 
             return Model.list(head, null);

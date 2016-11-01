@@ -28,7 +28,7 @@ public class AtomTermImpl implements AtomTerm {
 
     @Override
     public String accept(FormatVisitor visitor) {
-        return visitor.visit(atom);
+        return visitor.visit(this);
     }
 
     @Override

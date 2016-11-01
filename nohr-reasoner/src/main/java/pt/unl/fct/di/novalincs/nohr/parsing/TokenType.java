@@ -31,7 +31,7 @@ public enum TokenType {
      * Any string started by a capital letter followed by letters, numbers or
      * underscores.
      */
-    DOT("\\.(\\n|\\r)", "."), /**
+    DOT("\\.(\\n|\\r)*", "."), /**
      * The dot (at the end of the line)
      */
     // ^note that the java Scanner doesn't consume the end of line.
@@ -65,7 +65,10 @@ public enum TokenType {
     PROLOG_PREFIX("#"),
     PIPE("\\|", "|", true),
     PROLOG_PREDICATE_SYMBOL(PrologSyntax.PREDICATES_REGEX),
-    PROLOG_BINARY_OPERATOR(PrologSyntax.OPERATORS_REGEX, true);
+    PROLOG_BINARY_OPERATOR(PrologSyntax.OPERATORS_REGEX, true),
+    CONSTANT("([A-Za-z][A-Za-z0-9_]*|(\\-)?\\d+(\\.\\d+)?|'([^']|'')+')", "Constant"),
+    FUNCTOR("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')(?=\\()", "Predicate"),
+    VARIABLE("[A-Z][A-Za-z0-9_]*", "Id");
 
     /**
      * The regular expression that matches the tokens of this {@link TokenType}.
@@ -117,7 +120,7 @@ public enum TokenType {
      */
     TokenType(String regex, String representation, boolean separator) {
         regex = separator ? "\\s*" + regex + "\\s*" : regex;
-        pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.MULTILINE);
         this.representation = representation;
     }
 

@@ -121,9 +121,7 @@ class NoHRScanner {
 			scanner.skip(type.pattern());
 			position = scanner.match().end();
 			currentTokenType = type;
-		} catch (final NoSuchElementException e) {
-			return false;
-		} catch (final IllegalSelectorException e) {
+		} catch (final NoSuchElementException | IllegalSelectorException e) {
 			return false;
 		}
 		return true;

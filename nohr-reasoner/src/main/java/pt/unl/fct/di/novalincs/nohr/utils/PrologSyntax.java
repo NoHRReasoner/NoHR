@@ -112,6 +112,10 @@ public class PrologSyntax {
         addOperator("@=<");
         addOperator("@>=");
         addOperator("@=");
+        addOperator("<");
+        addOperator(">");
+        addOperator("=<");
+        addOperator(">=");
     }
 
     private static void addUnificationAndComparisonPredicates() {
@@ -127,6 +131,10 @@ public class PrologSyntax {
         addPredicate("@=<", 2);
         addPredicate("@>=", 2);
         addPredicate("@=", 2);
+        addPredicate("<", 2);
+        addPredicate(">", 2);
+        addPredicate("=<", 2);
+        addPredicate(">=", 2);
         addPredicate("compare", 3);
         addPredicate("ground", 1);
         addPredicate("ground_and_acyclic", 1);

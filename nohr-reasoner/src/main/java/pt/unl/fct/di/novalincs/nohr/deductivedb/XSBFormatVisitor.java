@@ -21,12 +21,16 @@ import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.ListTerm;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.NegativeLiteral;
+import pt.unl.fct.di.novalincs.nohr.model.ParenthesisTerm;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Symbol;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomTerm;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicate;
+import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
 
 /**
  * An {@link FormatVisitor} to format the {@link Rule rules} that are sent to a
@@ -35,10 +39,6 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
  * @author Nuno Costa
  */
 public class XSBFormatVisitor extends DefaultFormatVisitor {
-
-    private String quoted(String str) {
-        return "'" + str.replaceAll("'", "") + "'";
-    }
 
     @Override
     public String visit(Answer answer) {
@@ -50,7 +50,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
         if (atom instanceof AtomOperator) {
             return this.visit((AtomOperator) atom);
         }
-        
+
         final String pred = atom.getFunctor().accept(this);
         final String args = Model.concat(atom.getArguments(), this, ",");
 
@@ -77,7 +77,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
             return constant.toString();
         }
 
-        return quoted(constant.asString());
+        return StringUtils.escapeSymbol(constant.asString());
     }
 
     @Override
@@ -104,7 +104,13 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
     @Override
     public String visit(NegativeLiteral literal) {
         final String format = literal.isExistentiallyNegative() ? "not_exists(%s)" : "tnot(%s)";
+
         return String.format(format, literal.getAtom().accept(this));
+    }
+
+    @Override
+    public String visit(ParenthesisTerm paren) {
+        return "(" + paren.getTerm().accept(this) + ")";
     }
 
     @Override
@@ -116,6 +122,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
     public String visit(Rule rule) {
         final String head = rule.getHead().accept(this);
         final String body = Model.concat(rule.getBody(), this, ",");
+
         if (rule.isFact()) {
             return head + ".";
         } else {
@@ -125,12 +132,22 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Symbol symbolic) {
-        return quoted(symbolic.asString());
+        return StringUtils.escapeSymbol(symbolic.asString());
     }
 
     @Override
     public String visit(Variable variable) {
         return variable.asString();
+    }
+
+    @Override
+    public String visit(AtomTerm atomTerm) {
+        return atomTerm.getAtom().accept(this);
+    }
+
+    @Override
+    public String visit(PrologPredicate predicate) {
+        return StringUtils.escapeSymbol(predicate.asString());
     }
 
 }

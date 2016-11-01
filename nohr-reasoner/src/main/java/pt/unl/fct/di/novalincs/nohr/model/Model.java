@@ -189,6 +189,14 @@ public class Model {
         return new String(sb);
     }
 
+    public static Term list() {
+        return list(null, null);
+    }
+
+    public static Term list(List<Term> head) {
+        return list(head, null);
+    }
+
     public static Term list(List<Term> head, Term tail) {
         return new ListTermImpl(head, tail);
     }
@@ -246,6 +254,10 @@ public class Model {
         final List<Term> argsList = new LinkedList<Term>();
         Collections.addAll(argsList, args);
         return negLiteral(atom(functor, argsList));
+    }
+
+    public static Term parenthesis(Term term) {
+        return new ParenthesisTermImpl(term);
     }
 
     /**

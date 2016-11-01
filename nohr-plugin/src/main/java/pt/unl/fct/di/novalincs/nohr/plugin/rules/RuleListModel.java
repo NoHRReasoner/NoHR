@@ -29,6 +29,7 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.plugin.ProgramPersistenceManager;
 
 /**
@@ -115,7 +116,7 @@ public class RuleListModel extends AbstractListModel<Object> {
 		return ruleItems.size();
 	}
 
-	public void load(File file) throws IOException, PrologParserException {
+	public void load(File file) throws IOException, PrologParserException, ParseException {
 		final int size = program.size();
 		program.clear();
 		programPersistenceManager.load(file, program);

@@ -55,6 +55,7 @@ import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.ORIGIN
 import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.ORIGINAL_RANGE;
 import pt.unl.fct.di.novalincs.nohr.translation.DLUtils;
 import pt.unl.fct.di.novalincs.nohr.utils.HashMultiset;
+import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
 
 /**
  * An implementation of {@link Vocabulary} where the concrete representations of
@@ -289,20 +290,25 @@ public class DefaultVocabulary implements Vocabulary {
      * @return the set of concrete representations of {@code entity}
      */
     protected Set<String> concreteRepresentations(OWLEntity entity) {
-        final Set<String> result = new HashSet<String>();
+        final Set<String> result = new HashSet<>();
         final String fragment = entity.getIRI().toURI().getFragment();
+
         if (fragment != null) {
             result.add(fragment);
         }
-        for (final OWLOntology ontology : ontologies) {
-            for (final OWLAnnotation annotation : EntitySearcher.getAnnotations(entity, ontology,
-                    rdfsLabel)) {
+
+        for (final OWLOntology ont : ontologies) {
+            for (final OWLAnnotation annotation
+                    : EntitySearcher.getAnnotations(entity, ont, rdfsLabel)) {
+
                 final OWLAnnotationValue value = annotation.getValue();
+
                 if (value instanceof OWLLiteral) {
                     result.add(((OWLLiteral) value).getLiteral());
                 }
             }
         }
+
         return result;
     }
 
@@ -316,6 +322,7 @@ public class DefaultVocabulary implements Vocabulary {
         if (individual.isNamed()) {
             return concreteRepresentations((OWLEntity) individual.asOWLNamedIndividual());
         }
+
         return Collections.<String>emptySet();
     }
 
@@ -327,9 +334,11 @@ public class DefaultVocabulary implements Vocabulary {
     @Override
     public Constant cons(OWLIndividual individual) {
         final Constant cons = individualConstants.get(individual);
+
         if (cons == null) {
             throw new UndefinedSymbolException();
         }
+
         return cons;
     }
 
@@ -353,9 +362,12 @@ public class DefaultVocabulary implements Vocabulary {
     public Constant cons(String symbol) {
         try {
             final Double number = Double.valueOf(symbol);
+
             return cons(number);
         } catch (final NumberFormatException e) {
-            return setConstant(symbol, new RuleConstantImpl(symbol), false);
+            final String sym = StringUtils.simplifySymbol(symbol);
+
+            return setConstant(sym, new RuleConstantImpl(sym), false);
         }
     }
 
@@ -368,8 +380,9 @@ public class DefaultVocabulary implements Vocabulary {
         individualConstants.clear();
         references.clear();
         listeners.clear();
-        for (final OWLOntology ontology : ontologies) {
-            ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
+
+        for (final OWLOntology ont : ontologies) {
+            ont.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
         }
     }
 
@@ -410,8 +423,9 @@ public class DefaultVocabulary implements Vocabulary {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        for (final OWLOntology ontology : ontologies) {
-            ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
+
+        for (final OWLOntology ont : ontologies) {
+            ont.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
         }
     }
 
@@ -514,9 +528,11 @@ public class DefaultVocabulary implements Vocabulary {
     @Override
     public Predicate pred(OWLClass concept) {
         final Predicate pred = conceptPredicates.get(concept);
+
         if (pred == null) {
             throw new UndefinedSymbolException();
         }
+
         return pred;
     }
 
@@ -537,9 +553,11 @@ public class DefaultVocabulary implements Vocabulary {
     @Override
     public Predicate pred(OWLPropertyExpression role) {
         final Predicate pred = rolePredicates.get(role);
+
         if (pred == null) {
             throw new UndefinedSymbolException();
         }
+
         return pred;
     }
 
@@ -564,16 +582,11 @@ public class DefaultVocabulary implements Vocabulary {
 
     @Override
     public Predicate pred(String symbol, int arity) {
-        final HybridPredicate pred = new RulePredicateImpl(symbol, arity);
+        final String sym = StringUtils.simplifySymbol(symbol);
 
-        String helpSymbol;
-        if (symbol.startsWith("'")) {
-            helpSymbol = symbol.substring(1, symbol.length() - 1);
-        } else {
-            helpSymbol = symbol;
-        }
+        final HybridPredicate pred = new RulePredicateImpl(sym, arity);
 
-        return setPredicate(helpSymbol, arity, pred, false);
+        return setPredicate(sym, arity, pred, false);
     }
 
     @Override
@@ -594,12 +607,11 @@ public class DefaultVocabulary implements Vocabulary {
     public Predicate prologPred(String symbol, int arity) {
         return new PrologPredicateImpl(symbol, arity);
     }
-    
+
     @Override
     public Predicate prologOpPred(String symbol, int arity) {
         return new PrologOperatorPredicateImpl(symbol, arity);
     }
-
 
     @Override
     public Predicate ranPred(OWLPropertyExpression role, boolean doub) {
@@ -617,15 +629,18 @@ public class DefaultVocabulary implements Vocabulary {
      */
     private void register(OWLClass concept) {
         ConceptPredicateImpl conceptPred = conceptPredicates.get(concept);
+
         if (conceptPred == null) {
             conceptPred = new ConceptPredicateImpl(concept);
             conceptPredicates.put(concept, conceptPred);
         }
+
         setPredicate(conceptPred.asString(), 1, conceptPred, true);
+
         for (final String symbol : concreteRepresentations(concept)) {
             setPredicate(symbol, 1, conceptPred, true);
-            conceptPred.setLabel(symbol);
         }
+
         references.add(concept);
     }
 
@@ -636,15 +651,18 @@ public class DefaultVocabulary implements Vocabulary {
      */
     private void register(OWLIndividual individual) {
         IndividualConstantImpl individualConstant = individualConstants.get(individual);
+
         if (individualConstant == null) {
             individualConstant = new IndividualConstantImpl(individual);
             individualConstants.put(individual, individualConstant);
         }
+
         setConstant(individualConstant.asString(), individualConstant, true);
+
         for (final String symbol : concreteRepresentations(individual)) {
             setConstant(symbol, individualConstant, true);
-            individualConstant.setLabel(symbol);
         }
+
         references.add(individual);
     }
 
@@ -655,15 +673,18 @@ public class DefaultVocabulary implements Vocabulary {
      */
     private void register(OWLProperty role) {
         RolePredicateImpl rolePred = rolePredicates.get(role);
+
         if (rolePred == null) {
             rolePred = new RolePredicateImpl(role);
             rolePredicates.put(role, rolePred);
         }
+
         setPredicate(rolePred.asString(), 2, rolePred, true);
+
         for (final String symbol : concreteRepresentations(role)) {
             setPredicate(symbol, 2, rolePred, true);
-            rolePred.setLabel(symbol);
         }
+
         references.add(role);
     }
 
@@ -711,7 +732,7 @@ public class DefaultVocabulary implements Vocabulary {
         Map<String, HybridPredicateWrapper> map = predicates.get(arity);
 
         if (map == null) {
-            map = new HashMap<String, HybridPredicateWrapper>();
+            map = new HashMap<>();
             predicates.put(arity, map);
         }
 

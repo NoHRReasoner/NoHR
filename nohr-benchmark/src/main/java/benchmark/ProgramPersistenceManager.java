@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -45,6 +44,7 @@ import com.igormaznitsa.prologparser.terms.PrologFloatNumber;
 import com.igormaznitsa.prologparser.terms.PrologIntegerNumber;
 import com.igormaznitsa.prologparser.terms.PrologStructure;
 import com.igormaznitsa.prologparser.terms.PrologTermType;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.NoHRFormatVisitor;
 
 /**
  * Reads and writes {@link Program programs} with the Prolog syntax. Uses
@@ -63,7 +63,7 @@ public class ProgramPersistenceManager {
 	 *            the file to where the program will be written.
 	 */
 	public static void write(Program program, File file) throws IOException {
-		final FormatVisitor format = new PrologFormatVisitor();
+		final FormatVisitor format = new NoHRFormatVisitor();
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		for (final Rule rule : program) {
 			writer.write(rule.accept(format));

@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLClass;
@@ -28,106 +27,107 @@ import pt.unl.fct.di.novalincs.nohr.model.Predicate;
  */
 class ConceptPredicateImpl implements HybridPredicate {
 
-	/** The concept represented by this predicate. */
-	private final OWLClass concept;
+    /**
+     * The concept represented by this predicate.
+     */
+    private final OWLClass concept;
 
-	/** The preferred (user-friendly) concrete representation of the concept represented by this predicate. Can change over the time. */
-	private String label;
+    /**
+     * Constructs a predicate representing a specified concept.
+     *
+     * @param concept the concept represented by the predicate. Must have a IRI
+     * fragment.
+     * @throws IllegalArgumentException if {@code concept} hasn't a IRI
+     * fragment;
+     */
+    ConceptPredicateImpl(OWLClass concept) {
+        Objects.requireNonNull(concept);
 
-	/**
-	 * Constructs a predicate representing a specified concept.
-	 *
-	 * @param concept
-	 *            the concept represented by the predicate. Must have a IRI fragment.
-	 * @throws IllegalArgumentException
-	 *             if {@code concept} hasn't a IRI fragment;
-	 */
-	ConceptPredicateImpl(OWLClass concept) {
-		Objects.requireNonNull(concept);
-		this.concept = concept;
-	}
+        this.concept = concept;
+    }
 
-	@Override
-	public String accept(FormatVisitor visitor) {
-		return visitor.visit(this);
-	}
+    @Override
+    public String accept(FormatVisitor visitor) {
+        return visitor.visit(this);
+    }
 
-	@Override
-	public Predicate accept(ModelVisitor visitor) {
-		return visitor.visit(this);
-	}
+    @Override
+    public Predicate accept(ModelVisitor visitor) {
+        return visitor.visit(this);
+    }
 
-	@Override
-	public OWLClass asConcept() {
-		return concept;
-	}
+    @Override
+    public OWLClass asConcept() {
+        return concept;
+    }
 
-	@Override
-	public OWLProperty asRole() {
-		throw new ClassCastException();
-	}
+    @Override
+    public OWLProperty asRole() {
+        throw new ClassCastException();
+    }
 
-	@Override
-	public String asString() {
-		return concept.getIRI().toQuotedString();
-	}
+    @Override
+    public String asString() {
+        return concept.getIRI().toQuotedString();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof ConceptPredicateImpl))
-			return false;
-		final ConceptPredicateImpl other = (ConceptPredicateImpl) obj;
-		if (!concept.getIRI().equals(other.concept.getIRI()))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
 
-	@Override
-	public int getArity() {
-		return 1;
-	}
+        if (obj == null) {
+            return false;
+        }
 
-	@Override
-	public String getSignature() {
-		return asString() + "/" + getArity();
-	}
+        if (!(obj instanceof ConceptPredicateImpl)) {
+            return false;
+        }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + concept.getIRI().hashCode();
-		return result;
-	}
+        final ConceptPredicateImpl other = (ConceptPredicateImpl) obj;
 
-	@Override
-	public boolean isConcept() {
-		return true;
-	}
+        return concept.getIRI().equals(other.concept.getIRI());
+    }
 
-	@Override
-	public boolean isRole() {
-		return false;
-	}
+    @Override
+    public int getArity() {
+        return 1;
+    }
 
-	/** Set the preferred (user-friendly) concrete representation of the concept represented by this predicate. */
-	void setLabel(String label) {
-		this.label = label;
-	}
+    @Override
+    public String getSignature() {
+        return asString() + "/" + getArity();
+    }
 
-	@Override
-	public String toString() {
-		//if (label != null)
-		//	return label;
-		final String fragment = concept.getIRI().toURI().getFragment();
-		if (fragment != null)
-			return fragment;
-		else
-			return concept.getIRI().toString();
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
 
+        result = prime * result + concept.getIRI().hashCode();
+
+        return result;
+    }
+
+    @Override
+    public boolean isConcept() {
+        return true;
+    }
+
+    @Override
+    public boolean isRole() {
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        final String fragment = concept.getIRI().toURI().getFragment();
+
+        if (fragment != null) {
+            return fragment;
+        } else {
+            return concept.getIRI().toQuotedString();
+        }
+    }
 }

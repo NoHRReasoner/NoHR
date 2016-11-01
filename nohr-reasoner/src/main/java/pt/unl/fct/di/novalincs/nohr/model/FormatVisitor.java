@@ -13,8 +13,10 @@ package pt.unl.fct.di.novalincs.nohr.model;
  * #L%
  */
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperator;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomTerm;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.MetaPredicate;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicate;
 
 /**
  * A model visitor (see {@link
@@ -43,6 +45,8 @@ public interface FormatVisitor {
 
     public String visit(AtomOperator atomOp);
 
+    public String visit(AtomTerm atomTerm);
+
     public String visit(ListTerm list);
 
     public String visit(HybridConstant constant);
@@ -60,6 +64,10 @@ public interface FormatVisitor {
      * {@code negativeLiteral}.
      */
     public String visit(NegativeLiteral negativeLiteral);
+
+    public String visit(ParenthesisTerm paren);
+
+    public String visit(PrologPredicate predicate);
 
     /**
      * @param query

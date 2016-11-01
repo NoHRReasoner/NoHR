@@ -29,6 +29,9 @@ import org.protege.editor.core.ui.view.ViewComponent;
 import org.protege.editor.core.ui.util.UIUtil;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 
 import pt.unl.fct.di.novalincs.nohr.plugin.rules.RuleEditor;
 import pt.unl.fct.di.novalincs.nohr.plugin.rules.RuleListModel;
@@ -92,7 +95,9 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 					} catch (final PrologParserException e) {
 						Messages.invalidExpression(RulesViewComponent.this, e);
 					} catch (final IOException e) {
-					} finally {
+					} catch (ParseException ex) {
+                                    Logger.getLogger(RulesViewComponent.class.getName()).log(Level.SEVERE, null, ex);
+                                } finally {
 						RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 					}
 			}
