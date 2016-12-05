@@ -1,21 +1,15 @@
-package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
+package pt.unl.fct.di.novalincs.nohr.model;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import pt.unl.fct.di.novalincs.nohr.model.Atom;
-import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
-import pt.unl.fct.di.novalincs.nohr.model.Literal;
-import pt.unl.fct.di.novalincs.nohr.model.Model;
-import pt.unl.fct.di.novalincs.nohr.model.Predicate;
-import pt.unl.fct.di.novalincs.nohr.model.Term;
-import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
 
 public class AtomOperatorImpl implements AtomOperator {
 
     private final Atom atom;
 
-    public AtomOperatorImpl(Predicate predicate, Term left, Term right) {
+    AtomOperatorImpl(Predicate predicate, Term left, Term right) {
         final List<Term> args = new ArrayList<>(2);
 
         args.add(left);
@@ -60,7 +54,7 @@ public class AtomOperatorImpl implements AtomOperator {
 
     @Override
     public Atom getAtom() {
-        return this;
+        return atom;
     }
 
     @Override

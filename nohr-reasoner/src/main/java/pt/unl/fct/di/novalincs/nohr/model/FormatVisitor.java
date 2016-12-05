@@ -12,8 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.model;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperator;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomTerm;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.MetaPredicate;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicate;
@@ -45,6 +43,8 @@ public interface FormatVisitor {
 
     public String visit(AtomOperator atomOp);
 
+    public String visit(AtomOperatorTerm term);
+    
     public String visit(AtomTerm atomTerm);
 
     public String visit(ListTerm list);

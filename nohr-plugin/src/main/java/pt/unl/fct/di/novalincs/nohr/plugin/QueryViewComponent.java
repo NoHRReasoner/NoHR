@@ -9,7 +9,7 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
+import com.declarativa.interprolog.util.IPPrologError;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -57,236 +57,245 @@ import pt.unl.fct.di.novalincs.nohr.plugin.query.QueryExpressionChecker;
  */
 public class QueryViewComponent extends AbstractNoHRViewComponent implements OWLModelManagerListener {
 
-	class NoHRProgressUI extends ReasonerProgressUI {
+    class NoHRProgressUI extends ReasonerProgressUI {
 
-		private final SwingWorker<?, ?> task;
+        private final SwingWorker<?, ?> task;
 
-		public NoHRProgressUI(OWLEditorKit owlEditorKit, SwingWorker<?, ?> task) {
-			super(owlEditorKit);
-			this.task = task;
-		}
+        public NoHRProgressUI(OWLEditorKit owlEditorKit, SwingWorker<?, ?> task) {
+            super(owlEditorKit);
+            this.task = task;
+        }
 
-		@Override
-		public void setCancelled() {
-			log.info("cancelling");
-			task.cancel(true);
-			super.reasonerTaskStopped();
-		}
+        @Override
+        public void setCancelled() {
+            log.info("cancelling");
+            task.cancel(true);
+            super.reasonerTaskStopped();
+        }
 
-	}
+    }
 
-	class PreprocessTask extends SwingWorker<Void, Void> {
+    class PreprocessTask extends SwingWorker<Void, Void> {
 
-		private NoHRProgressUI progress;
+        private NoHRProgressUI progress;
 
-		@Override
-		protected Void doInBackground() throws Exception {
-			progress = new NoHRProgressUI(getOWLEditorKit(), this);
-			progress.reasonerTaskStarted("Preprocessing");
-			progress.reasonerTaskBusy();
-			startNoHR();
-			return null;
-		}
+        @Override
+        protected Void doInBackground() throws Exception {
+            progress = new NoHRProgressUI(getOWLEditorKit(), this);
+            progress.reasonerTaskStarted("Preprocessing");
+            progress.reasonerTaskBusy();
+            startNoHR();
+            return null;
+        }
 
-		@Override
-		protected void done() {
-			super.done();
-			progress.reasonerTaskStopped();
-		}
-	}
+        @Override
+        protected void done() {
+            super.done();
+            progress.reasonerTaskStopped();
+        }
+    }
 
-	private class QueryAction extends AbstractAction {
+    private class QueryAction extends AbstractAction {
 
-		/**
-		 *
-		 */
-		private static final long serialVersionUID = 1454077166930078074L;
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1454077166930078074L;
 
-		public QueryAction(String name) {
-			super(name);
-		}
+        public QueryAction(String name) {
+            super(name);
+        }
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			showTrueAnswersCheckBox.setEnabled(
-					showUndefinedAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
-			showUndefinedAnswersCheckBox
-					.setEnabled(showTrueAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
-			showInconsistentAnswersCheckBox
-					.setEnabled(showTrueAnswersCheckBox.isSelected() || showUndefinedAnswersCheckBox.isSelected());
-			if (!isNoHRStarted())
-				preprocess();
-			final QueryTask queryTask = new QueryTask();
-			queryTask.execute();
-		}
-	}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            showTrueAnswersCheckBox.setEnabled(
+                    showUndefinedAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
+            showUndefinedAnswersCheckBox
+                    .setEnabled(showTrueAnswersCheckBox.isSelected() || showInconsistentAnswersCheckBox.isSelected());
+            showInconsistentAnswersCheckBox
+                    .setEnabled(showTrueAnswersCheckBox.isSelected() || showUndefinedAnswersCheckBox.isSelected());
+            if (!isNoHRStarted()) {
+                preprocess();
+            }
+            final QueryTask queryTask = new QueryTask();
+            queryTask.execute();
+        }
+    }
 
-	class QueryTask extends SwingWorker<Void, Void> {
+    class QueryTask extends SwingWorker<Void, Void> {
 
-		private NoHRProgressUI progress;
+        private NoHRProgressUI progress;
 
-		@Override
-		protected Void doInBackground() throws Exception {
-			progress = new NoHRProgressUI(getOWLEditorKit(), this);
-			progress.reasonerTaskStarted("Reasoning");
-			progress.reasonerTaskBusy();
-			doQuery();
-			return null;
-		}
+        @Override
+        protected Void doInBackground() throws Exception {
+            progress = new NoHRProgressUI(getOWLEditorKit(), this);
+            progress.reasonerTaskStarted("Reasoning");
+            progress.reasonerTaskBusy();
+            doQuery();
+            return null;
+        }
 
-		@Override
-		protected void done() {
-			super.done();
-			progress.reasonerTaskStopped();
-		}
-	}
+        @Override
+        protected void done() {
+            super.done();
+            progress.reasonerTaskStopped();
+        }
+    }
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -1056667873605254959L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -1056667873605254959L;
 
-	Logger log = Logger.getLogger(QueryViewComponent.class);
+    Logger log = Logger.getLogger(QueryViewComponent.class);
 
-	private ExpressionEditor<Query> queryEditor;
+    private ExpressionEditor<Query> queryEditor;
 
-	private AnswersTable answersTable;
+    private AnswersTable answersTable;
 
-	private JCheckBox showTrueAnswersCheckBox;
+    private JCheckBox showTrueAnswersCheckBox;
 
-	private JCheckBox showUndefinedAnswersCheckBox;
+    private JCheckBox showUndefinedAnswersCheckBox;
 
-	private JCheckBox showInconsistentAnswersCheckBox;
+    private JCheckBox showInconsistentAnswersCheckBox;
 
-	private JButton executeButton;
+    private JButton executeButton;
 
-	private boolean requiresRefresh = false;
+    private boolean requiresRefresh = false;
 
-	private JComponent createAnswersPanel() {
-		final JComponent answersPanel = new JPanel(new BorderLayout(10, 10));
-		answersPanel.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Query answers"),
-				BorderFactory.createEmptyBorder(3, 3, 3, 3)));
-		answersTable = new AnswersTable(getOWLEditorKit());
-		answersTable.setFont(new Font(this.getFont().getFontName(),this.getFont().getStyle(),14));
-		answersTable.setAutoCreateColumnsFromModel(true);
-		final JScrollPane answersScrollPane = new JScrollPane(answersTable);
-		answersTable.setFillsViewportHeight(true);
-		answersPanel.add(answersScrollPane);
-		return answersPanel;
-	}
+    private JComponent createAnswersPanel() {
+        final JComponent answersPanel = new JPanel(new BorderLayout(10, 10));
+        answersPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Query answers"),
+                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+        answersTable = new AnswersTable(getOWLEditorKit());
+        answersTable.setFont(new Font(this.getFont().getFontName(), this.getFont().getStyle(), 14));
+        answersTable.setAutoCreateColumnsFromModel(true);
+        final JScrollPane answersScrollPane = new JScrollPane(answersTable);
+        answersTable.setFillsViewportHeight(true);
+        answersPanel.add(answersScrollPane);
+        return answersPanel;
+    }
 
-	private JComponent createOptionsBox() {
-		final Box optionsBox = new Box(BoxLayout.Y_AXIS);
-		showTrueAnswersCheckBox = new JCheckBox(new QueryAction("true"));
-		showTrueAnswersCheckBox.setSelected(true);
-		optionsBox.add(showTrueAnswersCheckBox);
-		optionsBox.add(Box.createVerticalStrut(3));
+    private JComponent createOptionsBox() {
+        final Box optionsBox = new Box(BoxLayout.Y_AXIS);
+        showTrueAnswersCheckBox = new JCheckBox(new QueryAction("true"));
+        showTrueAnswersCheckBox.setSelected(true);
+        optionsBox.add(showTrueAnswersCheckBox);
+        optionsBox.add(Box.createVerticalStrut(3));
 
-		showUndefinedAnswersCheckBox = new JCheckBox(new QueryAction("undefined"));
-		showUndefinedAnswersCheckBox.setSelected(true);
-		optionsBox.add(showUndefinedAnswersCheckBox);
-		optionsBox.add(Box.createVerticalStrut(3));
+        showUndefinedAnswersCheckBox = new JCheckBox(new QueryAction("undefined"));
+        showUndefinedAnswersCheckBox.setSelected(true);
+        optionsBox.add(showUndefinedAnswersCheckBox);
+        optionsBox.add(Box.createVerticalStrut(3));
 
-		showInconsistentAnswersCheckBox = new JCheckBox(new QueryAction("inconsistent"));
-		showInconsistentAnswersCheckBox.setSelected(true);
-		optionsBox.add(showInconsistentAnswersCheckBox);
-		optionsBox.add(Box.createVerticalStrut(3));
-		return optionsBox;
-	}
+        showInconsistentAnswersCheckBox = new JCheckBox(new QueryAction("inconsistent"));
+        showInconsistentAnswersCheckBox.setSelected(true);
+        optionsBox.add(showInconsistentAnswersCheckBox);
+        optionsBox.add(Box.createVerticalStrut(3));
+        return optionsBox;
+    }
 
-	private JComponent createQueryPanel() {
-		final JPanel editorPanel = new JPanel(new BorderLayout());
+    private JComponent createQueryPanel() {
+        final JPanel editorPanel = new JPanel(new BorderLayout());
 
-		final QueryExpressionChecker checker = new QueryExpressionChecker(getParser());
-		queryEditor = new ExpressionEditor<Query>(getOWLEditorKit(), checker);
-		queryEditor.addStatusChangedListener(new InputVerificationStatusChangedListener() {
-			@Override
-			public void verifiedStatusChanged(boolean newState) {
-				executeButton.setEnabled(newState);
-			}
-		});
-		queryEditor.setPreferredSize(new Dimension(100, 50));
+        final QueryExpressionChecker checker = new QueryExpressionChecker(getParser());
+        queryEditor = new ExpressionEditor<Query>(getOWLEditorKit(), checker);
+        queryEditor.addStatusChangedListener(new InputVerificationStatusChangedListener() {
+            @Override
+            public void verifiedStatusChanged(boolean newState) {
+                executeButton.setEnabled(newState);
+            }
+        });
+        queryEditor.setPreferredSize(new Dimension(100, 50));
 
-		editorPanel.add(ComponentFactory.createScrollPane(queryEditor), BorderLayout.CENTER);
-		final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		executeButton = new JButton(new QueryAction("Execute"));
-		buttonHolder.add(executeButton);
+        editorPanel.add(ComponentFactory.createScrollPane(queryEditor), BorderLayout.CENTER);
+        final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        executeButton = new JButton(new QueryAction("Execute"));
+        buttonHolder.add(executeButton);
 
-		editorPanel.add(buttonHolder, BorderLayout.SOUTH);
-		editorPanel.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Query"),
-				BorderFactory.createEmptyBorder(3, 3, 3, 3)));
-		return editorPanel;
-	}
+        editorPanel.add(buttonHolder, BorderLayout.SOUTH);
+        editorPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Query"),
+                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+        return editorPanel;
+    }
 
-	@Override
-	public void disposeOWLView() {
-		getOWLModelManager().removeListener(this);
-	}
+    @Override
+    public void disposeOWLView() {
+        getOWLModelManager().removeListener(this);
+    }
 
-	private void doQuery() {
-		if (isShowing()) {
-			try {
-				final Query query = queryEditor.createObject();
-				if (query != null && isNoHRStarted()) {
-					final List<Answer> answers = getHybridKB().allAnswers(query, showTrueAnswersCheckBox.isSelected(),
-							showUndefinedAnswersCheckBox.isSelected(), showInconsistentAnswersCheckBox.isSelected());
-					answersTable.setAnswers(query, answers);
-				}
-			} catch (final OWLException e) {
-				if (log.isDebugEnabled())
-					log.debug("Exception caught trying to do the query", e);
-			} catch (final UnsupportedAxiomsException e) {
-				Messages.violations(this, e);
-			}
-			requiresRefresh = false;
-		} else
-			requiresRefresh = true;
-	}
+    private void doQuery() {
+        if (isShowing()) {
+            try {
+                final Query query = queryEditor.createObject();
 
-	@Override
-	public void handleChange(OWLModelManagerChangeEvent event) {
-		if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-			reset();
-			preprocess();
-		}
-	}
+                if (query != null && isNoHRStarted()) {
+                    final List<Answer> answers = getHybridKB().allAnswers(query, showTrueAnswersCheckBox.isSelected(), showUndefinedAnswersCheckBox.isSelected(), showInconsistentAnswersCheckBox.isSelected());
 
-	@Override
-	protected void initialiseOWLView() throws Exception {
-		setLayout(new BorderLayout(10, 10));
-		final JComponent editorPanel = createQueryPanel();
-		final JComponent answersPanel = createAnswersPanel();
-		final JComponent optionsBox = createOptionsBox();
-		answersPanel.add(optionsBox, BorderLayout.EAST);
+                    answersTable.setAnswers(query, answers);
+                }
+            } catch (final OWLException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception caught trying to do the query", e);
+                }
+            } catch (final UnsupportedAxiomsException e) {
+                Messages.violations(this, e);
+            } catch (IPPrologError e) {
+                log.error(e.getMessage());
+                answersTable.setError("prolog runtime error (see log for details)");
+            }
 
-		final JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editorPanel, answersPanel);
-		splitter.setDividerLocation(0.3);
+            requiresRefresh = false;
+        } else {
+            requiresRefresh = true;
+        }
+    }
 
-		add(splitter, BorderLayout.CENTER);
+    @Override
+    public void handleChange(OWLModelManagerChangeEvent event) {
+        if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
+            reset();
+            preprocess();
+        }
+    }
 
-		reset();
-		preprocess();
+    @Override
+    protected void initialiseOWLView() throws Exception {
+        setLayout(new BorderLayout(10, 10));
+        final JComponent editorPanel = createQueryPanel();
+        final JComponent answersPanel = createAnswersPanel();
+        final JComponent optionsBox = createOptionsBox();
+        answersPanel.add(optionsBox, BorderLayout.EAST);
 
-		getOWLModelManager().addListener(this);
+        final JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editorPanel, answersPanel);
+        splitter.setDividerLocation(0.3);
 
-		addHierarchyListener(new HierarchyListener() {
-			@Override
-			public void hierarchyChanged(HierarchyEvent event) {
-				if (!isNoHRStarted())
-					preprocess();
-				if (requiresRefresh && isShowing()) {
-					final QueryTask queryTask = new QueryTask();
-					queryTask.execute();
-				}
-			}
-		});
-	}
+        add(splitter, BorderLayout.CENTER);
 
-	protected void preprocess() {
-		final PreprocessTask preprocessTask = new PreprocessTask();
-		preprocessTask.execute();
-	}
+        reset();
+        preprocess();
+
+        getOWLModelManager().addListener(this);
+
+        addHierarchyListener(new HierarchyListener() {
+            @Override
+            public void hierarchyChanged(HierarchyEvent event) {
+                if (!isNoHRStarted()) {
+                    preprocess();
+                }
+                if (requiresRefresh && isShowing()) {
+                    final QueryTask queryTask = new QueryTask();
+                    queryTask.execute();
+                }
+            }
+        });
+    }
+
+    protected void preprocess() {
+        final PreprocessTask preprocessTask = new PreprocessTask();
+        preprocessTask.execute();
+    }
 
 }

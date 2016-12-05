@@ -297,7 +297,7 @@ public class QueryProcessorTest extends QueryProcessor {
 	 * @throws OWLOntologyCreationException
 	 */
 	@Test
-	public final void testQueryAll() throws IOException, ParseException, OWLOntologyCreationException {
+	public final void testQueryAll() throws IOException, ParseException, OWLOntologyCreationException, Exception {
 		add("ap(a)");
 		add("dp(a)");
 

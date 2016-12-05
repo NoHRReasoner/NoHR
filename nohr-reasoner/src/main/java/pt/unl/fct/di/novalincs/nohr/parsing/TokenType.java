@@ -61,12 +61,14 @@ public enum TokenType {
      * slash) slash, comma, parenthesis, bracket, question mark, nor any of the
      * strings "{@literal :-}" or "{@literal not}".
      */
-    SYMBOL("([^'\\s\\.,\\[(?\\])\\\\]|(?!-):|(\\\\\\\\)*\\\\.|\\.(?!\\n|\\r))++|'[^']+?'", "Symbol"),
+    //SYMBOL("([^'\\s\\.,\\[(?\\])\\\\]|(?!-):|(\\\\\\\\)*\\\\.|\\.(?!\\n|\\r))++|'[^']+?'", "Symbol"),
     PROLOG_PREFIX("#"),
     PIPE("\\|", "|", true),
-    PROLOG_PREDICATE_SYMBOL(PrologSyntax.PREDICATES_REGEX),
-    PROLOG_BINARY_OPERATOR(PrologSyntax.OPERATORS_REGEX, true),
+    PROLOG_PREDICATE_SYMBOL(PrologSyntax.PREDICATES_REGEX, "Prolog Predicate"),
+    PROLOG_BINARY_OPERATOR(PrologSyntax.OPERATORS_REGEX, "Prolog Operator", true),
     CONSTANT("([A-Za-z][A-Za-z0-9_]*|(\\-)?\\d+(\\.\\d+)?|'([^']|'')+')", "Constant"),
+    NUMERIC_CONSTANT("(\\-)?\\d+(\\.\\d+)?", "Numeric Constant"),
+    NON_NUMERIC_CONSTANT("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')", "Non-Numeric Constant"),
     FUNCTOR("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')(?=\\()", "Predicate"),
     VARIABLE("[A-Z][A-Za-z0-9_]*", "Id");
 

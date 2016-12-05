@@ -30,23 +30,23 @@ class ListTermImpl implements ListTerm {
 
     @Override
     public Term accept(ModelVisitor visitor) {
-        final List<Term> head = new LinkedList<>();
+        final List<Term> h = new LinkedList<>();
 
         if (this.head == null) {
             return new ListTermImpl(null, null);
         }
 
         for (final Term term : this.head) {
-            head.add(term.accept(visitor));
+            h.add(term.accept(visitor));
         }
 
         if (this.tail == null) {
-            return new ListTermImpl(head, null);
+            return new ListTermImpl(h, null);
         }
+    
+        final Term t = this.tail.accept(visitor);
 
-        final Term tail = this.tail.accept(visitor);
-
-        return new ListTermImpl(head, tail);
+        return new ListTermImpl(h, t);
     }
 
     @Override

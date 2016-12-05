@@ -8,7 +8,7 @@ public class PrologOperatorPredicateImpl implements Predicate {
     private final int arity;
     private final String symbol;
 
-    public PrologOperatorPredicateImpl(String symbol, int arity) {
+    PrologOperatorPredicateImpl(String symbol, int arity) {
         this.symbol = symbol;
         this.arity = arity;
     }

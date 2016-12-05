@@ -49,8 +49,7 @@ public class TermModelConverter {
         if (termModel.isAtom()) {
             return v.cons(unquote(termModel.toString()));
         } else if (termModel.isNumber()) {
-            final Number number = termModel.intValue();
-            return v.cons(number);
+            return v.cons(Double.parseDouble(termModel.toString()));
         } else if (termModel.isVar()) {
             return var(termModel.toString());
         } else if (termModel.isList()) {

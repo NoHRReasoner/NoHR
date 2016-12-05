@@ -12,7 +12,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomTerm;
+import pt.unl.fct.di.novalincs.nohr.model.LiteralTerm;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.utils.PrologSyntax;
 
@@ -34,7 +34,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
         return vocabulary;
     }
 
-    private Atom atom() throws ParseException {
+    private Literal atom() throws ParseException {
         if (scanner.next(TokenType.PROLOG_PREFIX)) {
             final Atom atom = prologAtom();
 
@@ -43,11 +43,11 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 
         Term term = operatorTerm(true);
 
-        if (!(term instanceof AtomTerm)) {
+        if (!(term instanceof LiteralTerm)) {
             throw new ParseException(scanner.line(), scanner.position(), scanner.length());
         }
 
-        return ((AtomTerm) term).getAtom();
+        return ((LiteralTerm) term).getLiteral();
 
     }
 
@@ -126,13 +126,13 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
         final List<Term> head = new LinkedList<>();
 
         do {
-            final Term pTerm = prologTerm(false);
+            final Term pTerm = kbTerm();
 
             head.add(pTerm);
         } while (scanner.next(TokenType.COMMA));
 
         if (scanner.next(TokenType.PIPE)) {
-            final Term tail = prologTerm(false);
+            final Term tail = kbTerm();
 
             return Model.list(head, tail);
         }
@@ -146,9 +146,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 
             return Model.negLiteral(kbAtom);
         } else {
-            final Atom atom = atom();
-
-            return atom;
+            return atom();
         }
     }
 
@@ -163,16 +161,6 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
     }
 
     private Term operatorTerm(boolean literal) throws ParseException {
-        if (scanner.next(TokenType.L_PAREN)) {
-            final Term term = operatorTerm(false);
-
-            if (!scanner.next(TokenType.R_PAREN)) {
-                throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_PAREN);
-            }
-
-            return Model.parenthesis(term);
-        }
-
         Term left = prologTerm(literal);
 
         while (scanner.next(TokenType.PROLOG_BINARY_OPERATOR)) {
@@ -184,7 +172,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 
             final Term right = operatorTerm(false);
 
-            left = Model.atomTerm(Model.atomOperator(vocabulary.prologOpPred(op, 2), left, right));
+            left = Model.atomOperatorTerm(Model.atomOperator(vocabulary.prologOpPred(op), left, right));
         }
 
         return left;
@@ -228,6 +216,16 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
     }
 
     private Term prologTerm(boolean literal) throws ParseException {
+        if (scanner.next(TokenType.L_PAREN)) {
+            final Term term = operatorTerm(false);
+
+            if (!scanner.next(TokenType.R_PAREN)) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_PAREN);
+            }
+
+            return Model.parenthesis(term);
+        }
+
         if (scanner.next(TokenType.PROLOG_PREFIX)) {
             return Model.atomTerm(prologAtom());
         }
@@ -258,7 +256,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
                     return Model.atomTerm(Model.atom(vocabulary, functor));
                 }
 
-                final List<Term> terms = prologTerms();
+                final List<Term> terms = kbTerms();
 
                 if (!scanner.next(TokenType.R_PAREN)) {
                     throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_PAREN);
@@ -266,6 +264,10 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 
                 return Model.atomTerm(Model.atom(vocabulary, functor, terms));
             }
+        }
+
+        if (scanner.next(TokenType.NUMERIC_CONSTANT)) {
+            return vocabulary.cons(scanner.value());
         }
 
         if (scanner.next(TokenType.CONSTANT)) {

@@ -14,17 +14,14 @@ import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Symbol;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperator;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomTerm;
+import pt.unl.fct.di.novalincs.nohr.model.AtomOperator;
+import pt.unl.fct.di.novalincs.nohr.model.AtomOperatorTerm;
+import pt.unl.fct.di.novalincs.nohr.model.AtomTerm;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicate;
 import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
 
 public class NoHRFormatVisitor extends DefaultFormatVisitor {
-
-    private String quoted(String symbol) {
-        return "'" + symbol + "'";
-    }
 
     @Override
     public String visit(Answer answer) {
@@ -33,10 +30,6 @@ public class NoHRFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Atom atom) {
-        if (atom instanceof AtomOperator) {
-            return ((AtomOperator) atom).accept(this);
-        }
-
         final String pred = atom.getFunctor().accept(this);
         final String args = Model.concat(atom.getArguments(), this, ",");
 
@@ -57,6 +50,11 @@ public class NoHRFormatVisitor extends DefaultFormatVisitor {
     }
 
     @Override
+    public String visit(AtomOperatorTerm term) {
+        return term.getAtomOperator().accept(this);
+    }
+
+    @Override
     public String visit(AtomTerm atomTerm) {
         final Atom atom = atomTerm.getAtom();
 
@@ -69,7 +67,11 @@ public class NoHRFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(HybridConstant constant) {
-        return constant.toString();
+        if (constant.isNumber()) {
+            return constant.asString();
+        }
+
+        return StringUtils.escapeSymbol(constant.asString());
     }
 
     @Override
@@ -141,7 +143,7 @@ public class NoHRFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Symbol symbolic) {
-        return StringUtils.escapeSymbol(symbolic.toString());
+        return StringUtils.escapeSymbol(symbolic.asString());
     }
 
     @Override

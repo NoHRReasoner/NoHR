@@ -15,7 +15,8 @@ package pt.unl.fct.di.novalincs.nohr.deductivedb;
 import java.util.List;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperator;
+import pt.unl.fct.di.novalincs.nohr.model.AtomOperator;
+import pt.unl.fct.di.novalincs.nohr.model.AtomOperatorTerm;
 import pt.unl.fct.di.novalincs.nohr.model.DefaultFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.ListTerm;
@@ -27,7 +28,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Symbol;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomTerm;
+import pt.unl.fct.di.novalincs.nohr.model.AtomTerm;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridConstant;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicate;
 import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
@@ -68,7 +69,16 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
         final String arg2 = atomOp.getRight().accept(this);
 
         return arg1 + " " + pred + " " + arg2;
+    }
+    
+    @Override
+    public String visit(AtomOperatorTerm term) {
+        return term.getAtomOperator().accept(this);
+    }
 
+    @Override
+    public String visit(AtomTerm atomTerm) {
+        return atomTerm.getAtom().accept(this);
     }
 
     @Override
@@ -138,11 +148,6 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
     @Override
     public String visit(Variable variable) {
         return variable.asString();
-    }
-
-    @Override
-    public String visit(AtomTerm atomTerm) {
-        return atomTerm.getAtom().accept(this);
     }
 
     @Override

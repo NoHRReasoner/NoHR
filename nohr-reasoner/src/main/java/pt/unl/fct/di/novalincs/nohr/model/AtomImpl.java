@@ -67,41 +67,50 @@ class AtomImpl implements Atom {
     @Override
     public Atom accept(ModelVisitor visitor) {
         final Predicate pred = predicate.accept(visitor);
-        final List<Term> args = new LinkedList<Term>();
+        final List<Term> args = new LinkedList<>();
+
         if (arguments == null) {
             return new AtomImpl(pred, null);
         }
+
         for (final Term term : arguments) {
             args.add(term.accept(visitor));
         }
+
         return new AtomImpl(pred, args);
     }
 
     @Override
     public Atom apply(Map<Variable, Term> substitution) {
-        final List<Term> args = new LinkedList<Term>(arguments);
+        final List<Term> args = new LinkedList<>(arguments);
         final ListIterator<Term> argsIt = args.listIterator();
+
         while (argsIt.hasNext()) {
             final Term t = argsIt.next();
+
             if (substitution.containsKey(t)) {
                 argsIt.remove();
                 argsIt.add(substitution.get(t));
             }
         }
+
         return new AtomImpl(predicate, args);
     }
 
     @Override
     public Atom apply(Variable var, Term term) {
-        final List<Term> args = new LinkedList<Term>(arguments);
+        final List<Term> args = new LinkedList<>(arguments);
         final ListIterator<Term> argsIt = args.listIterator();
+
         while (argsIt.hasNext()) {
             final Term t = argsIt.next();
+
             if (t.equals(var)) {
                 argsIt.remove();
                 argsIt.add(term);
             }
         }
+
         return new AtomImpl(predicate, args);
     }
 

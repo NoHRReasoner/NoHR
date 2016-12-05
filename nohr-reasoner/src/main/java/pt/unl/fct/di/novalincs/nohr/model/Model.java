@@ -9,8 +9,6 @@ package pt.unl.fct.di.novalincs.nohr.model;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomOperatorImpl;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.AtomTermImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,8 +20,8 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
  * Model factory. For more conciseness statically import (see
- * {@link <a href= https://docs.oracle.com/javase/1.5.0/docs/guide/language/static-import.html">Static
- * Import</a> }) this class if you want to use their factory methods.
+ * <a href="https://docs.oracle.com/javase/1.5.0/docs/guide/language/static-import.html">Static
+ * Import</a>) this class if you want to use their factory methods.
  *
  * @author Nuno Costa
  */
@@ -98,6 +96,7 @@ public class Model {
      * given a {@code VocabularyMapping}, as functor and anonymous variables as
      * arguments.
      *
+     * @param v
      * @param functorSymbol the functor predicate, <i>P</i>.
      * @return an atom <i>P(_,..., _)</i> where {@code _} represents an
      * anonymous variable.
@@ -126,18 +125,19 @@ public class Model {
      * Create an atom with the predicate corresponding to a specified symbol as
      * functor and specified terms as arguments.
      *
+     * @param v
      * @param arguments an array of terms arguments.
      * @param predicate the functor predicate's symbol
      * @return an atom with a predicate with symbol {@code functorSymbol} as
      * functor and arguments {@code arguments}.
      */
     public static Atom atom(Vocabulary v, String predicate, Term... arguments) {
-        final List<Term> argumentsList = new LinkedList<Term>();
+        final List<Term> argumentsList = new LinkedList<>();
         Collections.addAll(argumentsList, arguments);
         return atom(v.pred(predicate, arguments.length), argumentsList);
     }
 
-    public static Atom atomOperator(Predicate predicate, Term left, Term right) {
+    public static AtomOperator atomOperator(Predicate predicate, Term left, Term right) {
         return new AtomOperatorImpl(predicate, left, right);
     }
 
@@ -145,10 +145,15 @@ public class Model {
         return new AtomTermImpl(atom);
     }
 
+    public static Term atomOperatorTerm(AtomOperator operator) {
+        return new AtomOperatorTermImpl(operator);
+    }
+
     /**
      * Concatenates the string representations, given a specified
      * {@link FormatVisitor} , of model elements from a specified array.
      *
+     * @param <E>
      * @param elements the array of elements whose representation is to
      * concatenate.
      * @param format the {@link FormatVisitor} used to obtain the string
@@ -159,11 +164,14 @@ public class Model {
      */
     public static <E extends ModelElement<?>> String concat(E[] elements, FormatVisitor format, String separator) {
         final StringBuffer sb = new StringBuffer();
+
         String sepToken = "";
+
         for (final ModelElement<?> obj : elements) {
-            sb.append(sepToken + obj.accept(format));
+            sb.append(sepToken).append(obj.accept(format));
             sepToken = separator;
         }
+
         return new String(sb);
     }
 
@@ -171,6 +179,7 @@ public class Model {
      * Concatenates the string representations, given a specified
      * {@link FormatVisitor} , of model elements from a specified list.
      *
+     * @param <E>
      * @param elements the list of elements whose representation is to
      * concatenate.
      * @param format the {@link FormatVisitor} used to obtain the string
@@ -182,8 +191,9 @@ public class Model {
     public static <E extends ModelElement<?>> String concat(List<E> elements, FormatVisitor format, String separator) {
         final StringBuffer sb = new StringBuffer();
         String sepToken = "";
+        
         for (final ModelElement<?> obj : elements) {
-            sb.append(sepToken + obj.accept(format));
+            sb.append(sepToken).append(obj.accept(format));
             sepToken = separator;
         }
         return new String(sb);

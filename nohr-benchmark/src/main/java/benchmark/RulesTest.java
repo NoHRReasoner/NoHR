@@ -53,7 +53,7 @@ public class RulesTest {
 
 	public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException,
 			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, PrologEngineCreationException, ParseException {
+			IPException, PrologEngineCreationException, ParseException, Exception {
 		if (args.length != 4) {
 			System.out.println("expected arguments: <ontology> <programs directory> <queries file> <runs>");
 			System.exit(1);

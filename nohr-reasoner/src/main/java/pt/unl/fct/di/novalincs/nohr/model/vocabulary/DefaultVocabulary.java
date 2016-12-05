@@ -44,6 +44,7 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionObject;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.search.EntitySearcher;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 import static pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateType.DOUBLE;
@@ -59,9 +60,9 @@ import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
 
 /**
  * An implementation of {@link Vocabulary} where the concrete representations of
- * concepts and rules are their IRI fragments and label annotation values (see {@link
+ * concepts and rules are their IRI fragments and label annotation values (see 
  * <a href="http://www.w3.org/TR/owl2-syntax/#Annotation_Properties">Annotation
- * Properties</a>}); and the concrete representations of the individuals are
+ * Properties</a>); and the concrete representations of the individuals are
  * their IRI fragments, when they are named, or their node IDs, otherwise.
  *
  * @author Nuno Costa
@@ -152,6 +153,8 @@ public class DefaultVocabulary implements Vocabulary {
      */
     private final OWLAnnotationProperty rdfsLabel;
 
+    private final Set<OWL2Datatype> numericDatatypesSet;
+
     /**
      * Constructs a {@link DefaultVocabulary} for a given set of ontologies;
      *
@@ -162,15 +165,37 @@ public class DefaultVocabulary implements Vocabulary {
         this.ontology = ontology;
         ontologies = ontology.getImportsClosure();
         listeners = new HashSet<>();
-        references = new HashMultiset<OWLObject>();
-        constants = new HashMap<String, HybridConstantWrapper>();
-        predicates = new HashMap<Integer, Map<String, HybridPredicateWrapper>>();
-        conceptPredicates = new HashMap<OWLClass, ConceptPredicateImpl>();
-        rolePredicates = new HashMap<OWLProperty, RolePredicateImpl>();
-        individualConstants = new HashMap<OWLIndividual, IndividualConstantImpl>();
+        references = new HashMultiset<>();
+        constants = new HashMap<>();
+        predicates = new HashMap<>();
+        conceptPredicates = new HashMap<>();
+        rolePredicates = new HashMap<>();
+        individualConstants = new HashMap<>();
         final OWLDataFactory dataFactory = OWLManager.getOWLDataFactory();
         rdfsLabel = dataFactory.getRDFSLabel();
 
+        final OWL2Datatype[] numericDatatypes = {
+            OWL2Datatype.OWL_REAL,
+            OWL2Datatype.XSD_BYTE,
+            OWL2Datatype.XSD_DECIMAL,
+            OWL2Datatype.XSD_DOUBLE,
+            OWL2Datatype.XSD_FLOAT,
+            OWL2Datatype.XSD_INT,
+            OWL2Datatype.XSD_INTEGER,
+            OWL2Datatype.XSD_LONG,
+            OWL2Datatype.XSD_NEGATIVE_INTEGER,
+            OWL2Datatype.XSD_NON_NEGATIVE_INTEGER,
+            OWL2Datatype.XSD_NON_POSITIVE_INTEGER,
+            OWL2Datatype.XSD_POSITIVE_INTEGER,
+            OWL2Datatype.XSD_SHORT,
+            OWL2Datatype.XSD_UNSIGNED_BYTE,
+            OWL2Datatype.XSD_UNSIGNED_INT,
+            OWL2Datatype.XSD_UNSIGNED_LONG,
+            OWL2Datatype.XSD_UNSIGNED_SHORT
+        };
+
+        numericDatatypesSet = new HashSet<>(Arrays.asList(numericDatatypes));
+        
         register(dataFactory.getOWLThing());
         register(dataFactory.getOWLNothing());
         register(dataFactory.getOWLTopObjectProperty());
@@ -192,6 +217,7 @@ public class DefaultVocabulary implements Vocabulary {
                 register(i);
             }
         }
+
         ontologyChangeListener = new OWLOntologyChangeListener() {
 
             @Override
@@ -344,6 +370,10 @@ public class DefaultVocabulary implements Vocabulary {
 
     @Override
     public Constant cons(OWLLiteral literal) {
+        if (numericDatatypesSet.contains(literal.getDatatype().getBuiltInDatatype())) {
+            return cons(literal.getLiteral());
+        }
+
         return new LiteralConstantImpl(literal);
     }
 
@@ -609,8 +639,8 @@ public class DefaultVocabulary implements Vocabulary {
     }
 
     @Override
-    public Predicate prologOpPred(String symbol, int arity) {
-        return new PrologOperatorPredicateImpl(symbol, arity);
+    public Predicate prologOpPred(String symbol) {
+        return new PrologOperatorPredicateImpl(symbol, 2);
     }
 
     @Override
