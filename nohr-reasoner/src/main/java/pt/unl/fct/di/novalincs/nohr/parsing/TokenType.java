@@ -69,8 +69,8 @@ public enum TokenType {
     CONSTANT("([A-Za-z][A-Za-z0-9_]*|(\\-)?\\d+(\\.\\d+)?|'([^']|'')+')", "Constant"),
     NUMERIC_CONSTANT("(\\-)?\\d+(\\.\\d+)?", "Numeric Constant"),
     NON_NUMERIC_CONSTANT("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')", "Non-Numeric Constant"),
-    FUNCTOR("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')(?=\\()", "Predicate"),
-    VARIABLE("[A-Z][A-Za-z0-9_]*", "Id");
+    FUNCTOR("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')(?=\\s*\\()", "Predicate"),
+    VARIABLE("[A-Z][A-Za-z0-9_]*", "Variable");
 
     /**
      * The regular expression that matches the tokens of this {@link TokenType}.
