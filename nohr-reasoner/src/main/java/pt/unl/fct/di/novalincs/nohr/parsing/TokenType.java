@@ -47,7 +47,7 @@ public enum TokenType {
     L_PAREN("\\(", "("), /**
      * The {@literal not } operator.
      */
-    NOT("not\\s", "not "), /**
+    NOT("not\\s", "not"), /**
      * The question mark.
      */
     QUESTION_MARK("\\?", "?"), /**
@@ -69,7 +69,7 @@ public enum TokenType {
     CONSTANT("([A-Za-z][A-Za-z0-9_]*|(\\-)?\\d+(\\.\\d+)?|'([^']|'')+')", "Constant"),
     NUMERIC_CONSTANT("(\\-)?\\d+(\\.\\d+)?", "Numeric Constant"),
     NON_NUMERIC_CONSTANT("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')", "Non-Numeric Constant"),
-    FUNCTOR("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')(?=\\s*\\()", "Predicate"),
+    FUNCTOR("([A-Za-z][A-Za-z0-9_]*|'([^']|'')+')(?=\\()", "Predicate"),
     VARIABLE("[A-Z][A-Za-z0-9_]*", "Variable");
 
     /**
