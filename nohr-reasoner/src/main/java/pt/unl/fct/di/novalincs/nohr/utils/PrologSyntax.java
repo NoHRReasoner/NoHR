@@ -8,7 +8,7 @@ import java.util.Set;
 public class PrologSyntax {
 
     private static final Set<String> OPERATORS;
-    public static final String OPERATORS_REGEX = "\\s+(is|xor|mod|rem)\\s+|[\\\\\\+\\-\\*/^<>=?@]+";
+    public static final String OPERATORS_REGEX = "[a-z\\\\\\+\\-\\*/^<>=?@]+";
     private static final Map<Integer, Set<String>> PREDICATES;
     public static final String PREDICATES_REGEX = "[a-z]+[A-Za-z0-9]*|[\\\\\\+\\-\\*/^<>=?@]+";
 
