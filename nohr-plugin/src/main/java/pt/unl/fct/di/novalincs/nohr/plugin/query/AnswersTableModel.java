@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin.query;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -30,78 +29,115 @@ import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
  */
 public class AnswersTableModel extends AbstractTableModel {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -6876572230591220016L;
-	private static final String NO_ANSWERS = "no answers found";
-	private List<Answer> answers;
-	private Query query;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -6876572230591220016L;
+    private static final String NO_ANSWERS = "no answers found";
+    private List<Answer> answers;
+    private Query query;
+    private boolean error;
+    private String errorMessage;
 
-	public AnswersTableModel() {
+    public AnswersTableModel() {
 
-	}
+    }
 
-	/**
-	 *
-	 */
-	public AnswersTableModel(Query query, List<Answer> answers) {
-		this.query = query;
-		this.answers = answers;
-		fireTableRowsInserted(0, answers.size() - 1);
-		fireTableStructureChanged();
-	}
+    /**
+     *
+     */
+    public AnswersTableModel(Query query, List<Answer> answers) {
+        this.query = query;
+        this.answers = answers;
+        this.errorMessage = null;
+        fireTableRowsInserted(0, answers.size() - 1);
+        fireTableStructureChanged();
+    }
 
-	@Override
-	public Class<?> getColumnClass(int columnIndex) {
-		return Term.class;
-	}
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        return Term.class;
+    }
 
-	@Override
-	public int getColumnCount() {
-		if (query == null)
-			return 0;
-		if (answers.size() == 0)
-			return 1;
-		return query.getVariables().size() + 1;
-	}
+    @Override
+    public int getColumnCount() {
+        if (this.errorMessage != null) {
+            return 1;
+        }
 
-	@Override
-	public String getColumnName(int columnIndex) {
-		if (query == null || columnIndex == 0)
-			return "";
-		return query.getVariables().get(columnIndex - 1).toString();
-	}
+        if (query == null) {
+            return 0;
+        }
 
-	@Override
-	public int getRowCount() {
-		if (answers == null)
-			return 0;
-		if (answers.isEmpty())
-			return 1;
-		return answers.size();
-	}
+        if (answers.isEmpty()) {
+            return 1;
+        }
 
-	@Override
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		String result;
-		if (columnIndex == 0) {
-			if (answers.isEmpty())
-				if (query.getVariables().isEmpty())
-					return TruthValue.FALSE.name().toLowerCase();
-				else
-					return NO_ANSWERS;
-			result = answers.get(rowIndex).getValuation().name().toLowerCase();
-		} else
-			result = answers.get(rowIndex).getValues().get(columnIndex - 1).toString();
-		return result;
-	}
+        return query.getVariables().size() + 1;
+    }
 
-	public void setAnswers(Query query, List<Answer> answers) {
-		this.query = query;
-		this.answers = answers;
-		super.fireTableStructureChanged();
-		super.fireTableDataChanged();
-	}
+    @Override
+    public String getColumnName(int columnIndex) {
+        if (query == null || columnIndex == 0 || error) {
+            return "";
+        }
+
+        return query.getVariables().get(columnIndex - 1).toString();
+    }
+
+    @Override
+    public int getRowCount() {
+        if (this.errorMessage != null) {
+            return 1;
+        }
+
+        if (answers == null) {
+            return 0;
+        }
+
+        if (answers.isEmpty()) {
+            return 1;
+        }
+
+        return answers.size();
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        String result;
+
+        if (this.errorMessage != null) {
+            return this.errorMessage;
+        }
+
+        if (columnIndex == 0) {
+            if (answers.isEmpty()) {
+                if (query.getVariables().isEmpty()) {
+                    return TruthValue.FALSE.name().toLowerCase();
+                } else {
+                    return NO_ANSWERS;
+                }
+            }
+            result = answers.get(rowIndex).getValuation().name().toLowerCase();
+        } else {
+            result = answers.get(rowIndex).getValues().get(columnIndex - 1).toString();
+        }
+
+        return result;
+    }
+
+    public void setAnswers(Query query, List<Answer> answers) {
+        this.query = query;
+        this.answers = answers;
+        this.errorMessage = null;
+        super.fireTableStructureChanged();
+        super.fireTableDataChanged();
+    }
+
+    void setError(String message) {
+        this.errorMessage = message;
+        super.fireTableStructureChanged();
+        super.fireTableDataChanged();
+    }
 
 }

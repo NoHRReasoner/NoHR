@@ -14,6 +14,7 @@ package pt.unl.fct.di.novalincs.nohr.plugin.rules;
  */
 
 import org.protege.editor.core.ui.list.MListItem;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.NoHRFormatVisitor;
 
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
@@ -52,7 +53,7 @@ class RuleListItem implements MListItem {
 
 	@Override
 	public String getTooltip() {
-		return rule.toString(); //"A nonmonotonic rule.";
+		return rule.accept(new NoHRFormatVisitor()); //"A nonmonotonic rule.";
 	}
 
 	@Override
@@ -79,6 +80,6 @@ class RuleListItem implements MListItem {
 
 	@Override
 	public String toString() {
-		return rule.toString();
+		return rule.accept(new NoHRFormatVisitor());
 	}
 }

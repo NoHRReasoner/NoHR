@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin.rules;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 
@@ -28,24 +27,24 @@ import pt.unl.fct.di.novalincs.nohr.plugin.Messages;
  */
 public class RuleExpressionChecker implements OWLExpressionChecker<Rule> {
 
-	private final NoHRParser parser;
+    private final NoHRParser parser;
 
-	public RuleExpressionChecker(NoHRParser parser) {
-		this.parser = parser;
-	}
+    public RuleExpressionChecker(NoHRParser parser) {
+        this.parser = parser;
+    }
 
-	@Override
-	public void check(String str) throws OWLExpressionParserException {
-		createObject(str);
-	}
+    @Override
+    public void check(String str) throws OWLExpressionParserException {
+        createObject(str);
+    }
 
-	@Override
-	public Rule createObject(String str) throws OWLExpressionParserException {
-		try {
-			return parser.parseRule(str);
-		} catch (final ParseException e) {
-			throw new OWLExpressionParserException(Messages.invalidExpressionMessage(str, e), e.getBegin(), e.getEnd(),
-					false, false, false, false, false, false, null);
-		}
-	}
+    @Override
+    public Rule createObject(String str) throws OWLExpressionParserException {
+        try {
+            return parser.parseRule(str);
+        } catch (final ParseException e) {
+            throw new OWLExpressionParserException(Messages.invalidExpressionMessage(str, e), e.getBegin(), e.getEnd(),
+                    false, false, false, false, false, false, null);
+        }
+    }
 }

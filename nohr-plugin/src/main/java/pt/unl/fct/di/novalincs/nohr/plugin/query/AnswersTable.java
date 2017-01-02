@@ -9,7 +9,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin.query;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,33 +30,38 @@ import pt.unl.fct.di.novalincs.nohr.model.Query;
  */
 public class AnswersTable extends JTable {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 4898607738785645673L;
-	/**
-	 *
-	 */
+    /**
+     *
+     */
+    private static final long serialVersionUID = 4898607738785645673L;
+    /**
+     *
+     */
 
-	private final List<ChangeListener> copyListeners = new ArrayList<ChangeListener>();
+    private final List<ChangeListener> copyListeners = new ArrayList<ChangeListener>();
 
-	public AnswersTable(OWLEditorKit owlEditorKit) {
-		super(new AnswersTableModel());
-		setAutoCreateColumnsFromModel(true);
-		getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent event) {
-				if (!event.getValueIsAdjusting()) {
-					final ChangeEvent ev = new ChangeEvent(AnswersTable.this);
-					for (final ChangeListener l : new ArrayList<ChangeListener>(copyListeners))
-						l.stateChanged(ev);
-				}
-			}
-		});
-	}
+    public AnswersTable(OWLEditorKit owlEditorKit) {
+        super(new AnswersTableModel());
+        setAutoCreateColumnsFromModel(true);
+        getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    final ChangeEvent ev = new ChangeEvent(AnswersTable.this);
+                    for (final ChangeListener l : new ArrayList<ChangeListener>(copyListeners)) {
+                        l.stateChanged(ev);
+                    }
+                }
+            }
+        });
+    }
 
-	public void setAnswers(Query query, List<Answer> answers) {
-		((AnswersTableModel) getModel()).setAnswers(query, answers);
-	}
+    public void setAnswers(Query query, List<Answer> answers) {
+        ((AnswersTableModel) getModel()).setAnswers(query, answers);
+    }
+
+    public void setError(String message) {
+        ((AnswersTableModel) getModel()).setError(message);
+    }
 
 }

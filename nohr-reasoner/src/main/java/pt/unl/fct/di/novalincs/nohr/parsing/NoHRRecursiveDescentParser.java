@@ -1,38 +1,10 @@
-/**
- *
- */
 package pt.unl.fct.di.novalincs.nohr.parsing;
-
-/*
- * #%L
- * nohr-reasoner
- * %%
- * Copyright (C) 2014 - 2015 NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)
- * %%
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
- * #L%
- */
-
-import static pt.unl.fct.di.novalincs.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.novalincs.nohr.model.Model.var;
-import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.COMMA;
-import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.ID;
-import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.IF;
-import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.L_PAREN;
-import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.NOT;
-import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.QUESTION_MARK;
-import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.R_PAREN;
-import static pt.unl.fct.di.novalincs.nohr.parsing.TokenType.SYMBOL;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLProperty;
-
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
@@ -40,232 +12,374 @@ import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
-import pt.unl.fct.di.novalincs.nohr.model.Variable;
+import pt.unl.fct.di.novalincs.nohr.model.LiteralTerm;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
-
-/**
- * A {@link <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser"> recursive descent parser</a>} that implements {@link NoHRParser}.
- *
- * @author Nuno Costa
- */
+import pt.unl.fct.di.novalincs.nohr.utils.PrologSyntax;
 
 public class NoHRRecursiveDescentParser implements NoHRParser {
 
-	/** The {@link NoHRScanner} that recoginzes and consumes the tokens. */
-	private NoHRScanner scanner;
+    private NoHRScanner scanner;
+    private Vocabulary vocabulary;
 
-	/**
-	 * The {@link Vocabulary} used to recognize {@link OWLClass concepts}, {@link OWLProperty role} and {@link OWLIndividual individual} symbols.
-	 */
-	private Vocabulary v;
+    public NoHRRecursiveDescentParser() {
+        this(null);
+    }
 
-	/**
-	 * Constructs a {@link NoHRRecursiveDescentParser}.
-	 */
-	public NoHRRecursiveDescentParser() {
-		this(null);
-	}
+    public NoHRRecursiveDescentParser(Vocabulary vocabulary) {
+        this.vocabulary = vocabulary;
+    }
 
-	/**
-	 * Constructs a {@link NoHRRecursiveDescentParser}, that recognizes the {@link OWLClass concept}, {@link OWLProperty role}, and
-	 * {@link OWLIndividual individual} symbols mapped in a given {@link Vocabulary}.
-	 *
-	 * @param vocabularyMapping
-	 *            the {@link Vocabulary} used to recognize {@link OWLClass concepts}, {@link OWLProperty roles} and {@link OWLIndividual individuals}.
-	 */
-	public NoHRRecursiveDescentParser(Vocabulary vocabularyMapping) {
-		v = vocabularyMapping;
-	}
+    @Override
+    public Vocabulary getVocabulary() {
+        return vocabulary;
+    }
 
-	/**
-	 * Tries to apply: <br>
-	 * <code> atom = symbol ["(" term {"," term} ")"].</code><br>
-	 * <br>
-	 * In case of success constructs the recognized {@link Atom} and returns it.
-	 *
-	 * @return the recognized {@link Atom}.
-	 * @throws ParseException
-	 *             if the parser can't recognize an {@link Atom} at current position.
-	 */
-	private Atom atom() throws ParseException {
-		if (!scanner.next(SYMBOL))
-			throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL);
-		final String predicateSymbol = scanner.value();
-		if (!scanner.next(L_PAREN))
-			return Model.atom(v, predicateSymbol);
-		else {
-			final List<Term> args = new LinkedList<Term>();
-			do
-				args.add(term());
-			while (scanner.next(COMMA));
-			if (!scanner.next(R_PAREN))
-				throw new ParseException(scanner.line(), scanner.position(), scanner.position(), COMMA, R_PAREN);
-			return Model.atom(v, predicateSymbol, args);
-		}
-	}
+    private Literal atom() throws ParseException {
+        if (scanner.next(TokenType.PROLOG_PREFIX)) {
+            final Atom atom = prologAtom();
 
-	@Override
-	public Vocabulary getVocabulary() {
-		return v;
-	}
+            return atom;
+        }
 
-	/**
-	 * Tries to apply: <br>
-	 * <code> literal = atom | "not " atom. </code><br>
-	 * <br>
-	 * In case of success constructs the recognized {@link Literal} and returns it.
-	 *
-	 * @return the recognized literal.
-	 * @throws ParseException
-	 *             the parser can't recognize a {@link Literal} at current position.
-	 */
-	private Literal literal() throws ParseException {
-		if (scanner.next(NOT)) {
-			final Atom atom = atom();
-			return negLiteral(atom);
-		} else
-			return atom();
-	}
+        Term term = operatorTerm(true);
 
-	/**
-	 * Tries to apply:<br>
-	 * <code> literals = literal {"," literal}.</code><br>
-	 * <br>
-	 * In case of success constructs the recognized {@link Literal} {@link List} and returns it.
-	 *
-	 * @return the recognized list of literals.
-	 * @throws ParseException
-	 *             if no {@link Literal} was recognized or there was trailing chars.
-	 */
-	private List<Literal> literals() throws ParseException {
-		final List<Literal> result = new LinkedList<Literal>();
-		do
-			result.add(literal());
-		while (scanner.next(COMMA));
-		return result;
-	}
+        if (!(term instanceof LiteralTerm)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length());
+        }
 
-	@Override
-	public Program parseProgram(File file) throws ParseException, FileNotFoundException {
-		scanner = new NoHRScanner(file);
-		return program();
-	}
+        return ((LiteralTerm) term).getLiteral();
 
-	@Override
-	public Query parseQuery(String str) throws ParseException {
-		scanner = new NoHRScanner(str);
-		final Query query = query();
-		if (scanner.hasNext())
-			throw new ParseException(scanner.line(), scanner.position(), scanner.length());
-		return query;
-	}
+    }
 
-	@Override
-	public Rule parseRule(String str) throws ParseException {
-		scanner = new NoHRScanner(str);
-		final Rule rule = rule();
-		if (scanner.hasNext())
-			throw new ParseException(scanner.line(), scanner.position(), scanner.length());
-		return rule;
-	}
+    private Atom kbAtom() throws ParseException {
+        if (scanner.next(TokenType.FUNCTOR)) {
 
-	/**
-	 * Tries to apply:<br>
-	 * <code> program = rule "." { rule "." }.</code><br>
-	 * <br>
-	 * In case of success constructs the recognized {@link Program} and returns it.
-	 *
-	 * @return the recognized program.
-	 * @throws ParseException
-	 *             if no {@link Program program} was recognized or there was trailing chars.
-	 */
-	private Program program() throws ParseException {
-		final Program program = Model.program();
-		int l = 0;
-		do {
-			program.add(rule());
-			l++;
-			if (!scanner.next(TokenType.DOT))
-				throw new ParseException(l, scanner.position(), scanner.position(), TokenType.DOT);
-		} while (scanner.hasNext());
-		return program;
-	}
+            final String functor = scanner.value();
 
-	/**
-	 * Tries to apply: <br>
-	 * <code>query = literals.}</code> <br>
-	 * <br>
-	 * In case of success constructs the recognized {@link Query} and returns it.
-	 *
-	 * @return the recognized query.
-	 * @throws ParseException
-	 *             if the parser can't recognize any {@link Query}.
-	 */
-	private Query query() throws ParseException {
-		final List<Literal> literals = literals();
-		return Model.query(literals);
-	}
+            if (scanner.next(TokenType.L_PAREN)) {
+                if (scanner.next(TokenType.R_PAREN)) {
+                    return Model.atom(vocabulary, functor);
+                }
 
-	/**
-	 * Tries to apply:<br>
-	 * <code> rule = atom [":-" literals ]. </code> <br>
-	 * <br>
-	 * In case of success contructs the recognized {@link Rule} and returns it.
-	 *
-	 * @return the recognized rule.
-	 * @throws ParseException
-	 *             if the parser can't recognize any {@link Rule}.
-	 */
-	private Rule rule() throws ParseException {
-		final Atom head = atom();
-		if (!scanner.next(IF))
-			return Model.rule(head);
-		else {
-			final List<Literal> body = literals();
-			return Model.rule(head, body);
-		}
-	}
+                final List<Term> args = kbTerms();
 
-	@Override
-	public void setVocabulary(Vocabulary vocabulary) {
-		v = vocabulary;
-	}
+                if (!scanner.next(TokenType.R_PAREN)) {
+                    throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_PAREN);
+                }
 
-	/**
-	 * Tries to apply: <br>
-	 * <code> term = variable | constant | list. </code> <br>
-	 * <br>
-	 * In cases of success constructs the recognized {@link Term} and returns if.
-	 *
-	 * @throws ParseException
-	 *             the parser can't recognize any {@link Term} at the current position.
-	 * @return the recognized term.
-	 */
-	private Term term() throws ParseException {
-		final Variable variable = variable();
-		if (variable != null)
-			return variable;
-		if (scanner.next(SYMBOL))
-			return v.cons(scanner.value());
-		throw new ParseException(scanner.line(), scanner.position(), scanner.length(), SYMBOL, QUESTION_MARK);
-	}
+                return Model.atom(vocabulary, functor, args);
+            }
 
-	/**
-	 * Tries to apply: <br>
-	 * <code> variable = "?" id.</code><br>
-	 * <br>
-	 * In case of success constructs the recognized {@link Variable} and returns it.
-	 *
-	 * @return the recognized variable, or {@code null} if none is recognized.
-	 * @throws ParseException
-	 *             if the parser can recognize an {@link TokenType#QUESTION_MARK} but not an {@link TokenType#ID}.
-	 */
-	private Variable variable() throws ParseException {
-		if (!scanner.next(QUESTION_MARK))
-			return null;
-		if (!scanner.next(ID))
-			throw new ParseException(scanner.line(), scanner.position(), scanner.length(), ID);
-		return var(scanner.value());
-	}
+            return Model.atom(vocabulary, functor);
+        }
 
+        if (scanner.next(TokenType.CONSTANT)) {
+            return Model.atom(vocabulary, scanner.value());
+        }
+
+        throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.FUNCTOR);
+    }
+
+    private Term kbTerm() throws ParseException {
+        if (scanner.next(TokenType.QUESTION_MARK)) {
+            return variableTerm();
+        }
+
+        if (scanner.next(TokenType.L_BRACK)) {
+            if (scanner.next(TokenType.R_BRACK)) {
+                return Model.list();
+            }
+
+            final Term list = listTerm();
+
+            if (!scanner.next(TokenType.R_BRACK)) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_BRACK);
+            }
+
+            return list;
+        }
+
+        if (scanner.next(TokenType.CONSTANT)) {
+            return vocabulary.cons(scanner.value());
+        }
+
+        return null;
+    }
+
+    private List<Term> kbTerms() throws ParseException {
+        final List<Term> kbTerms = new LinkedList<>();
+
+        do {
+            final Term kbTerm = kbTerm();
+
+            if (kbTerm == null) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.QUESTION_MARK, TokenType.L_BRACK, TokenType.CONSTANT);
+            }
+
+            kbTerms.add(kbTerm);
+        } while (scanner.next(TokenType.COMMA));
+
+        return kbTerms;
+    }
+
+    private Term listTerm() throws ParseException {
+        final List<Term> head = new LinkedList<>();
+
+        do {
+            final Term pTerm = kbTerm();
+
+            head.add(pTerm);
+        } while (scanner.next(TokenType.COMMA));
+
+        if (scanner.next(TokenType.PIPE)) {
+            final Term tail = kbTerm();
+
+            return Model.list(head, tail);
+        }
+
+        return Model.list(head);
+    }
+
+    private Literal literal() throws ParseException {
+        if (scanner.next(TokenType.NOT)) {
+            final Atom kbAtom = kbAtom();
+
+            return Model.negLiteral(kbAtom);
+        } else {
+            return atom();
+        }
+    }
+
+    private List<Literal> literals() throws ParseException {
+        final List<Literal> literals = new LinkedList<>();
+
+        do {
+            literals.add(literal());
+        } while (scanner.next(TokenType.COMMA));
+
+        return literals;
+    }
+
+    private Term operatorTerm(boolean literal) throws ParseException {
+        Term left = prologTerm(literal);
+
+        while (scanner.next(TokenType.PROLOG_BINARY_OPERATOR)) {
+            final String op = scanner.value();
+
+            if (!PrologSyntax.validOperator(op)) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
+            }
+
+            final Term right = operatorTerm(false);
+
+            left = Model.atomOperatorTerm(Model.atomOperator(vocabulary.prologOpPred(op), left, right));
+        }
+
+        return left;
+    }
+
+    private Atom prologAtom() throws ParseException {
+        if (!scanner.next(TokenType.PROLOG_PREDICATE_SYMBOL)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
+        }
+
+        final String functor = scanner.value();
+        final int startPos = scanner.position();
+
+        if (scanner.next(TokenType.L_PAREN)) {
+            if (scanner.next(TokenType.R_PAREN)) {
+                if (!PrologSyntax.validPredicate(functor, 0)) {
+                    throw new ParseException(scanner.line(), startPos, scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
+                }
+
+                return Model.prologAtom(vocabulary, functor, Collections.<Term>emptyList());
+            }
+
+            final List<Term> args = prologTerms();
+
+            if (!PrologSyntax.validPredicate(functor, args.size())) {
+                throw new ParseException(scanner.line(), startPos, scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
+            }
+
+            if (!scanner.next(TokenType.R_PAREN)) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.L_PAREN);
+            }
+
+            return Model.prologAtom(vocabulary, functor, args);
+        }
+
+        if (!PrologSyntax.validPredicate(functor, 0)) {
+            throw new ParseException(scanner.line(), startPos, scanner.length(), TokenType.PROLOG_PREDICATE_SYMBOL);
+        }
+
+        return Model.prologAtom(vocabulary, functor, Collections.<Term>emptyList());
+    }
+
+    private Term prologTerm(boolean literal) throws ParseException {
+        if (scanner.next(TokenType.L_PAREN)) {
+            final Term term = operatorTerm(false);
+
+            if (!scanner.next(TokenType.R_PAREN)) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_PAREN);
+            }
+
+            return Model.parenthesis(term);
+        }
+
+        if (scanner.next(TokenType.PROLOG_PREFIX)) {
+            return Model.atomTerm(prologAtom());
+        }
+
+        if (scanner.next(TokenType.QUESTION_MARK)) {
+            return variableTerm();
+        }
+
+        if (scanner.next(TokenType.L_BRACK)) {
+            if (scanner.next(TokenType.R_BRACK)) {
+                return Model.list();
+            }
+
+            final Term list = listTerm();
+
+            if (!scanner.next(TokenType.R_BRACK)) {
+                throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_BRACK);
+            }
+
+            return list;
+        }
+
+        if (scanner.next(TokenType.FUNCTOR)) {
+            final String functor = scanner.value();
+
+            if (scanner.next(TokenType.L_PAREN)) {
+                if (scanner.next(TokenType.R_PAREN)) {
+                    return Model.atomTerm(Model.atom(vocabulary, functor));
+                }
+
+                final List<Term> terms = kbTerms();
+
+                if (!scanner.next(TokenType.R_PAREN)) {
+                    throw new ParseException(scanner.line(), scanner.position(), scanner.position(), TokenType.R_PAREN);
+                }
+
+                return Model.atomTerm(Model.atom(vocabulary, functor, terms));
+            }
+        }
+
+        if (scanner.next(TokenType.NUMERIC_CONSTANT)) {
+            return vocabulary.cons(scanner.value());
+        }
+
+        if (scanner.next(TokenType.CONSTANT)) {
+            if (literal) {
+                return Model.atomTerm(Model.atom(vocabulary, scanner.value()));
+            } else {
+                return vocabulary.cons(scanner.value());
+            }
+        }
+
+        throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.CONSTANT, TokenType.FUNCTOR, TokenType.PROLOG_PREFIX, TokenType.QUESTION_MARK, TokenType.R_BRACK);
+    }
+
+    private List<Term> prologTerms() throws ParseException {
+        final List<Term> pTerms = new LinkedList<>();
+
+        do {
+            pTerms.add(operatorTerm(false));
+        } while (scanner.next(TokenType.COMMA));
+
+        return pTerms;
+    }
+
+    @Override
+    public Program parseProgram(File file) throws ParseException, FileNotFoundException {
+        this.scanner = new NoHRScanner(file);
+
+        return program();
+    }
+
+    @Override
+    public Program parseProgram(File file, Program program) throws FileNotFoundException, ParseException {
+        this.scanner = new NoHRScanner(file);
+
+        return this.program(program);
+    }
+
+    @Override
+    public Query parseQuery(String str) throws ParseException {
+        this.scanner = new NoHRScanner(str);
+
+        final Query query = query();
+
+        if (scanner.hasNext()) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length());
+        }
+
+        return query;
+    }
+
+    @Override
+    public Rule parseRule(String str) throws ParseException {
+        this.scanner = new NoHRScanner(str);
+
+        final Rule rule = rule();
+
+        if (scanner.hasNext()) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length());
+        }
+
+        return rule;
+    }
+
+    private Program program() throws ParseException {
+        final Program program = Model.program();
+
+        return this.program(program);
+    }
+
+    private Program program(Program program) throws ParseException {
+        int l = 0;
+
+        do {
+            program.add(rule());
+            l++;
+
+            if (!scanner.next(TokenType.DOT)) {
+                throw new ParseException(l, scanner.position(), scanner.position(), TokenType.DOT);
+            }
+        } while (scanner.hasNext());
+
+        return program;
+    }
+
+    private Query query() throws ParseException {
+        final List<Literal> literals = literals();
+
+        return Model.query(literals);
+    }
+
+    private Rule rule() throws ParseException {
+        final Atom head = kbAtom();
+
+        if (scanner.next(TokenType.IF)) {
+            final List<Literal> body = literals();
+
+            return Model.rule(head, body);
+        } else {
+            return Model.rule(head);
+        }
+    }
+
+    @Override
+    public void setVocabulary(Vocabulary vocabulary) {
+        this.vocabulary = vocabulary;
+    }
+
+    private Term variableTerm() throws ParseException {
+        if (!scanner.next(TokenType.VARIABLE)) {
+            throw new ParseException(scanner.line(), scanner.position(), scanner.length(), TokenType.VARIABLE);
+        }
+
+        return Model.var(scanner.value());
+    }
 }
