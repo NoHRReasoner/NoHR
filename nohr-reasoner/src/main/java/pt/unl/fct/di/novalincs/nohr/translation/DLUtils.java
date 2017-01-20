@@ -9,11 +9,22 @@ package pt.unl.fct.di.novalincs.nohr.translation;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
+import java.util.List;
+import java.util.Set;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 /**
  * Provides some DL (Description Logic) utility functions.
@@ -22,21 +33,77 @@ import org.semanticweb.owlapi.model.OWLPropertyExpression;
  */
 public class DLUtils {
 
-	/**
-	 * Gets the atomic role of a given basic DL-Lite<sub>R</sub>basic DL-Lite<sub>R</sub> role expression.
-	 *
-	 * @param role
-	 *            a role expression <i>P</i> or <i>P<sup>-</i>.
-	 * @return <i>P</i>.
-	 */
-	public static OWLProperty atomic(OWLPropertyExpression role) {
-		if (role.isObjectPropertyExpression()) {
-			final OWLObjectPropertyExpression ope = (OWLObjectPropertyExpression) role;
-			return ope.getNamedProperty();
-		} else if (role.isDataPropertyExpression())
-			return (OWLDataProperty) role;
-		else
-			throw new IllegalArgumentException();
-	}
+    /**
+     * Gets the atomic role of a given basic DL-Lite<sub>R</sub>basic
+     * DL-Lite<sub>R</sub> role expression.
+     *
+     * @param role a role expression <i>P</i> or <i>P<sup>-</i>.
+     * @return <i>P</i>.
+     */
+    public static OWLProperty atomic(OWLPropertyExpression role) {
+        if (role.isObjectPropertyExpression()) {
+            final OWLObjectPropertyExpression ope = (OWLObjectPropertyExpression) role;
+
+            return ope.getNamedProperty();
+        } else if (role.isDataPropertyExpression()) {
+            return (OWLDataProperty) role;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static OWLClassAssertionAxiom assertion(OWLOntology ontology, OWLClassExpression c, OWLIndividual a) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLClassAssertionAxiom(c, a);
+    }
+
+    public static OWLClass bottom(OWLOntology ontology) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLNothing();
+    }
+
+    public static OWLObjectIntersectionOf conjunction(OWLOntology ontology, Set<OWLClassExpression> concepts) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectIntersectionOf(concepts);
+    }
+
+    public static boolean hasDisjunctions(OWLOntology ontology) {
+        for (final OWLSubClassOfAxiom axiom : ontology.getAxioms(AxiomType.SUBCLASS_OF)) {
+            for (final OWLClassExpression ci : axiom.getSuperClass().asConjunctSet()) {
+                if (ci.isOWLNothing()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean hasExistential(OWLClassExpression ce) {
+        for (final OWLClassExpression cei : ce.asConjunctSet()) {
+            if (DLUtils.isExistential(cei)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isExistential(OWLClassExpression c) {
+        return c instanceof OWLObjectSomeValuesFrom;
+    }
+
+    public static OWLObjectSomeValuesFrom some(OWLOntology ontology, OWLObjectPropertyExpression r, OWLClassExpression c) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectSomeValuesFrom(r, c);
+    }
+
+    public static OWLSubClassOfAxiom subsumption(OWLOntology ontology, OWLClassExpression c, OWLClassExpression d) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLSubClassOfAxiom(c, d);
+    }
+
+    public static OWLSubPropertyChainOfAxiom subsumption(OWLOntology ontology, List<OWLObjectPropertyExpression> chain, OWLObjectPropertyExpression superRole) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLSubPropertyChainOfAxiom(chain, superRole);
+    }
+
+    public static OWLClass top(OWLOntology ontology) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
+    }
 
 }
