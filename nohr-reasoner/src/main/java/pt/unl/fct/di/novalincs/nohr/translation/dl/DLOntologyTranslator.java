@@ -47,7 +47,7 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
             translate(doubleAxiomsTranslator);
         }
 
-        RuntimesLogger.stop("[NOHR DL (HermiT)]: ontology translation", "loading");
+        RuntimesLogger.stop("[NOHR DL (HermiT)] ontology translation", "loading");
     }
 
     @Override

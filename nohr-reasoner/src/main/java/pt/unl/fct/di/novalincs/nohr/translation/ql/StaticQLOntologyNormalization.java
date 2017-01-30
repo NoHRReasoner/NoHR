@@ -308,7 +308,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
      *
      * @param axiom the range axiom <b>range</b><i>(Q, B)</i>.
      */
-    private void normalize(OWLObjectPropertyRangeAxiom axiom) {
+    private void normalize(OWLObjectPropertyRangeAxiom axiom) {       
         final OWLObjectPropertyExpression q = axiom.getProperty();
         final OWLClassExpression c = axiom.getRange();
         normalize(getDataFactory().getOWLSubClassOfAxiom(some(q.getInverseProperty()), c));

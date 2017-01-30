@@ -106,4 +106,8 @@ public class DLUtils {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
     }
 
+    public static OWLClassExpression some(OWLOntology ontology, OWLObjectPropertyExpression r) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectSomeValuesFrom(r, ontology.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
+    }
+
 }

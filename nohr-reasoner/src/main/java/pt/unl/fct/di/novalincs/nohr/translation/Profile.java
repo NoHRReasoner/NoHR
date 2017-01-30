@@ -107,7 +107,7 @@ public enum Profile {
         // final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
         // if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
         // throw new OWLProfilesViolationsException(report);
-        return new DLOntologyTranslator(ontology, v, dedutiveDatabase);
+        return new pt.unl.fct.di.novalincs.nohr.translation.dl.OntologyTranslator(ontology, v, dedutiveDatabase);
 
 //        switch (this) {
 //            case OWL2_QL:

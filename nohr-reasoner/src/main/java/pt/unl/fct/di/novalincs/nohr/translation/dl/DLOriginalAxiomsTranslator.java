@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -88,8 +89,8 @@ class DLOriginalAxiomsTranslator extends DLAxiomsTranslator {
      * @return <i> { S(x, y)&larr;R(x, y) } </i>.
      */
     @Override
-    Set<Rule> subsumptionTranslation(OWLProperty r, OWLProperty s) {
-        return ruleSet(rule(tr(s, X, Y), tr(r, X, Y)));
+    Set<Rule> subsumptionTranslation(OWLPropertyExpression r, OWLPropertyExpression s) {
+        return ruleSet(rule(tr((OWLProperty) s, X, Y), tr((OWLProperty) r, X, Y)));
     }
 
     /**

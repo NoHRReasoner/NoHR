@@ -391,8 +391,10 @@ public class Model {
      * @return a set with the rules of {@code rules}.
      */
     public static Set<Rule> ruleSet(Rule... rules) {
-        final Set<Rule> result = new HashSet<Rule>();
+        final Set<Rule> result = new HashSet<>();
+        
         Collections.addAll(result, rules);
+    
         return result;
     }
 

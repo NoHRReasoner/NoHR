@@ -53,6 +53,7 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
      * {@link OWLOntology ontology}.
      *
      * @param ontology the ontology that will be translated.
+     * @param v
      * @param dedutiveDatabaseManager the {@link DeductiveDatabase} where the
      * translation will be maintained.
      * @param profile the {@link Profile profile} that this
@@ -64,8 +65,9 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
      * @throws UnsupportedAxiomsException if {@code ontology} has some axioms of
      * an unsupported type.
      */
-    public OntologyTranslatorImpl(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabaseManager,
-            Profile profile) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+    public OntologyTranslatorImpl(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabaseManager, Profile profile)
+            throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+
         Objects.requireNonNull(ontology);
         Objects.requireNonNull(v);
         Objects.requireNonNull(dedutiveDatabaseManager);
@@ -113,7 +115,9 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
             newProfile = Profile.getProfile(getOntology());
         }
 
-        if (newProfile != getProfile()) {
+        final Profile implementorProfile = getProfile();
+
+        if (implementorProfile != Profile.NOHR_DL && newProfile != implementorProfile) {
             implementor.clear();
             implementor = newProfile.createOntologyTranslator(getOntology(), v, getDedutiveDatabase());
         }

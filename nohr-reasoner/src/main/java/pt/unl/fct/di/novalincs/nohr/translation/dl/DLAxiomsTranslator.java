@@ -25,19 +25,24 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
+import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedExpressionException;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
+import static pt.unl.fct.di.novalincs.nohr.model.Model.atom;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
@@ -104,7 +109,7 @@ abstract class DLAxiomsTranslator {
      * @param r1 the subsumed role
      * @param r2 the subsuming role.
      */
-    abstract Set<Rule> subsumptionTranslation(OWLProperty r1, OWLProperty r2);
+    abstract Set<Rule> subsumptionTranslation(OWLPropertyExpression r1, OWLPropertyExpression r2);
 
     /**
      * Translate an role composition to a list of atoms according to <b>
@@ -176,7 +181,8 @@ abstract class DLAxiomsTranslator {
      * ; and the corresponding double translation if {@code doub} is true.
      */
     List<Literal> tr(OWLClassExpression ce, Variable x, boolean doub) {
-        final List<Literal> result = new ArrayList<Literal>();
+        final List<Literal> result = new ArrayList<>();
+
         if (ce.isOWLThing()) {
             return literalsList();
         } else if (ce instanceof OWLClass && !ce.isOWLThing()) {
@@ -255,9 +261,11 @@ abstract class DLAxiomsTranslator {
     Set<Rule> translation(OWLSubClassOfAxiom axiom) {
         final OWLClassExpression ce1 = axiom.getSubClass();
         final OWLClassExpression ce2 = axiom.getSuperClass();
+
         if (ce2.isAnonymous()) {
             return ruleSet();
         }
+
         for (final OWLClassExpression ci : ce1.asConjunctSet()) {
             if (ci.isOWLNothing()) {
                 return ruleSet();
@@ -279,9 +287,11 @@ abstract class DLAxiomsTranslator {
      * @param axiom an axiom
      */
     Set<Rule> translation(OWLSubPropertyAxiom<?> axiom) {
-        final OWLProperty pe1 = (OWLProperty) axiom.getSubProperty();
-        final OWLProperty pe2 = (OWLProperty) axiom.getSuperProperty();
-        return subsumptionTranslation(pe1, pe2);
+//        final OWLProperty pe1 = (OWLProperty) axiom.getSubProperty();
+//        final OWLProperty pe2 = (OWLProperty) axiom.getSuperProperty();
+//        return subsumptionTranslation(pe1, pe2);
+
+        return subsumptionTranslation(axiom.getSubProperty(), axiom.getSuperProperty());
     }
 
     /**
@@ -297,4 +307,5 @@ abstract class DLAxiomsTranslator {
         final OWLObjectPropertyExpression superProperty = axiom.getSuperProperty();
         return subsumptionTranslation(chain, (OWLObjectProperty) superProperty);
     }
+
 }
