@@ -23,8 +23,8 @@
         </dependency>
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
-            <artifactId>owlapi-distribution</artifactId>
-            <version>4.2.8</version>
+            <artifactId>owlapi-osgidistribution</artifactId>
+            <version>4.2.6</version>
         </dependency>
     </dependencies>	
 </project>
