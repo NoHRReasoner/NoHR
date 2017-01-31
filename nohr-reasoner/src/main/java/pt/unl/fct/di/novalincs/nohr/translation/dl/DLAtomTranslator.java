@@ -52,7 +52,7 @@ public class DLAtomTranslator {
         }
 
         if (c instanceof OWLClass) {
-            ret.add(Model.atom(vocabulary.pred(c.asOWLClass(), doubled)));
+            ret.add(Model.atom(vocabulary.pred(c.asOWLClass(), doubled), x));
         } else if (c instanceof OWLObjectComplementOf) {
             final OWLObjectComplementOf complement = (OWLObjectComplementOf) c;
             final OWLClassExpression operand = complement.getOperand();
@@ -82,7 +82,7 @@ public class DLAtomTranslator {
             final OWLClassExpression filler = some.getFiller();
 
             ret.addAll(tr(p, X, Y, doubled));
-            ret.addAll(tr(some.getFiller(), x, doubled));
+            ret.addAll(tr(some.getFiller(), Y, doubled));
         }
 
         return ret;
