@@ -56,9 +56,9 @@ import pt.unl.fct.di.novalincs.nohr.translation.normalization.Normalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.RightConjunctionNormalizer;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
-public final class HermiTOntologyNormalization implements DLOntologyNormalization {
+public final class HermitOntologyNormalization implements DLOntologyNormalization {
 
-    private static final Logger LOG = Logger.getLogger(HermiTOntologyNormalization.class);
+    private static final Logger LOG = Logger.getLogger(HermitOntologyNormalization.class);
 
     public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{
         AxiomType.CLASS_ASSERTION,
@@ -88,7 +88,7 @@ public final class HermiTOntologyNormalization implements DLOntologyNormalizatio
     private final OWLOntology ontology;
     private final Vocabulary vocabulary;
 
-    public HermiTOntologyNormalization(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
+    public HermitOntologyNormalization(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
         Objects.requireNonNull(ontology);
         Objects.requireNonNull(vocabulary);
 

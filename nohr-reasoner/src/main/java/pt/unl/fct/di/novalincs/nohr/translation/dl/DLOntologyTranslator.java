@@ -32,7 +32,7 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
 
         RuntimesLogger.start("[NOHR DL (HermiT)] ontology normalization");
 
-        normalizedOntology = new HermiTOntologyNormalization(ontology, vocabulary);
+        normalizedOntology = new HermitOntologyNormalization(ontology, vocabulary);
 
         RuntimesLogger.stop("[NOHR DL (HermiT)] ontology normalization", "loading");
     }
@@ -64,7 +64,7 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
     }
 
     private void prepareUpdate() throws UnsupportedAxiomsException {
-        normalizedOntology = new HermiTOntologyNormalization(ontology, vocabulary);
+        normalizedOntology = new HermitOntologyNormalization(ontology, vocabulary);
     }
 
     private void translate(DLAxiomTranslator axiomTranslator) {
