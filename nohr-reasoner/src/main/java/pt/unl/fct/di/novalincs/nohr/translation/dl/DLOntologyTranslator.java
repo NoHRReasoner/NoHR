@@ -2,6 +2,9 @@ package pt.unl.fct.di.novalincs.nohr.translation.dl;
 
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -18,18 +21,18 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 public class DLOntologyTranslator extends OntologyTranslatorImplementor {
 
     private DLOntologyNormalization normalizedOntology;
-    private final DLOriginalAxiomsTranslator originalAxiomsTranslator;
-    private final DLDoubleAxiomsTranslator doubleAxiomsTranslator;
+    private final DLOriginalAxiomTranslator axiomTranslator;
+    private final DLDoubledAxiomTranslator doubledAxiomTranslator;
 
     public DLOntologyTranslator(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase dedutiveDatabase) throws UnsupportedAxiomsException {
         super(ontology, vocabulary, dedutiveDatabase);
 
-        originalAxiomsTranslator = new DLOriginalAxiomsTranslator(vocabulary);
-        doubleAxiomsTranslator = new DLDoubleAxiomsTranslator(vocabulary);
+        axiomTranslator = new DLOriginalAxiomTranslator(vocabulary);
+        doubledAxiomTranslator = new DLDoubledAxiomTranslator(vocabulary);
 
         RuntimesLogger.start("[NOHR DL (HermiT)] ontology normalization");
 
-        normalizedOntology = new HermiTDLOntologyNormalization(ontology, vocabulary);
+        normalizedOntology = new HermiTOntologyNormalization(ontology, vocabulary);
 
         RuntimesLogger.stop("[NOHR DL (HermiT)] ontology normalization", "loading");
     }
@@ -41,10 +44,10 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
 
         RuntimesLogger.start("[NOHR DL (HermiT)] ontology translation");
 
-        translate(originalAxiomsTranslator);
+        translate(axiomTranslator);
 
         if (normalizedOntology.hasDisjunctions()) {
-            translate(doubleAxiomsTranslator);
+            translate(doubledAxiomTranslator);
         }
 
         RuntimesLogger.stop("[NOHR DL (HermiT)] ontology translation", "loading");
@@ -61,41 +64,48 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
     }
 
     private void prepareUpdate() throws UnsupportedAxiomsException {
-        normalizedOntology = new HermiTDLOntologyNormalization(ontology, vocabulary);
+        normalizedOntology = new HermiTOntologyNormalization(ontology, vocabulary);
     }
 
-    private void translate(DLAxiomsTranslator axiomTranslator) {
+    private void translate(DLAxiomTranslator axiomTranslator) {
         for (final OWLSubPropertyChainOfAxiom axiom : normalizedOntology.chainSubsumptions()) {
-            translation.addAll(axiomTranslator.translation(axiom));
+            translation.addAll(axiomTranslator.translate(axiom));
         }
 
-        for (final OWLClassAssertionAxiom assertion : normalizedOntology.conceptAssertions()) {
-            translation.addAll(axiomTranslator.translation(assertion));
+        for (final OWLClassAssertionAxiom axiom : normalizedOntology.conceptAssertions()) {
+            translation.addAll(axiomTranslator.translate(axiom));
         }
 
         for (final OWLSubClassOfAxiom axiom : normalizedOntology.conceptSubsumptions()) {
-            translation.addAll(axiomTranslator.translation(axiom));
+            translation.addAll(axiomTranslator.translate(axiom));
         }
 
-        for (final OWLDataPropertyAssertionAxiom assertion : normalizedOntology.dataAssertions()) {
-            translation.addAll(axiomTranslator.translation(assertion));
+        for (final OWLDataPropertyAssertionAxiom axiom : normalizedOntology.dataAssertions()) {
+            translation.addAll(axiomTranslator.translate(axiom));
+        }
+
+        for (final OWLDisjointDataPropertiesAxiom axiom : normalizedOntology.dataDisjunctions()) {
+            translation.addAll(axiomTranslator.translate(axiom));
         }
 
         for (final OWLSubDataPropertyOfAxiom axiom : normalizedOntology.dataSubsumptions()) {
-            translation.addAll(axiomTranslator.translation(axiom));
+            translation.addAll(axiomTranslator.translate(axiom));
+        }
+
+        for (final OWLIrreflexiveObjectPropertyAxiom axiom : normalizedOntology.irreflexiveRoles()) {
+            translation.addAll(axiomTranslator.translate(axiom));
+        }
+
+        for (final OWLObjectPropertyAssertionAxiom axiom : normalizedOntology.roleAssertions()) {
+            translation.addAll(axiomTranslator.translate(axiom));
+        }
+
+        for (final OWLDisjointObjectPropertiesAxiom axiom : normalizedOntology.roleDisjunctions()) {
+            translation.addAll(axiomTranslator.translate(axiom));
         }
 
         for (final OWLSubObjectPropertyOfAxiom axiom : normalizedOntology.roleSubsumptions()) {
-            translation.addAll(axiomTranslator.translation(axiom));
-        }
-
-        for (final OWLObjectPropertyAssertionAxiom assertion : normalizedOntology.roleAssertions()) {
-            translation.addAll(axiomTranslator.translation(assertion));
-        }
-
-        for (final OWLSubObjectPropertyOfAxiom axiom : normalizedOntology.roleSubsumptions()) {
-            translation.addAll(axiomTranslator.translation(axiom));
+            translation.addAll(axiomTranslator.translate(axiom));
         }
     }
-
 }

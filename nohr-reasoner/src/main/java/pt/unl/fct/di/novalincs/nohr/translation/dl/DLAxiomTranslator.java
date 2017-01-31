@@ -5,13 +5,14 @@ import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
-public interface AxiomTranslator {
+public interface DLAxiomTranslator {
 
     Collection<Rule> translate(OWLClassAssertionAxiom axiom);
 
@@ -28,5 +29,7 @@ public interface AxiomTranslator {
     Collection<Rule> translate(OWLSubPropertyAxiom axiom);
 
     Collection<Rule> translate(OWLSubPropertyChainOfAxiom axiom);
+
+    public Collection<Rule> translate(OWLIrreflexiveObjectPropertyAxiom axiom);
 
 }

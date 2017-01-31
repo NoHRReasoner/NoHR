@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
@@ -29,6 +30,8 @@ public interface DLOntologyNormalization {
     public Iterable<OWLSubDataPropertyOfAxiom> dataSubsumptions();
 
     public boolean hasDisjunctions();
+
+    public Iterable<OWLIrreflexiveObjectPropertyAxiom> irreflexiveRoles();
 
     public Iterable<OWLObjectPropertyAssertionAxiom> roleAssertions();
 

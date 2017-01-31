@@ -24,6 +24,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 
 /**
@@ -60,6 +61,10 @@ public class DLUtils {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLNothing();
     }
 
+    public static OWLProperty bottomProperty(OWLOntology ontology) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLBottomObjectProperty();
+    }
+
     public static OWLObjectIntersectionOf conjunction(OWLOntology ontology, Set<OWLClassExpression> concepts) {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectIntersectionOf(concepts);
     }
@@ -73,7 +78,7 @@ public class DLUtils {
             }
         }
 
-        return false;
+        return ontology.getAxiomCount(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY) > 0;
     }
 
     public static boolean hasExistential(OWLClassExpression ce) {
@@ -98,12 +103,20 @@ public class DLUtils {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLSubClassOfAxiom(c, d);
     }
 
+    public static OWLSubObjectPropertyOfAxiom subsumption(OWLOntology ontology, OWLObjectPropertyExpression p, OWLObjectPropertyExpression q) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLSubObjectPropertyOfAxiom(p, q);
+    }
+
     public static OWLSubPropertyChainOfAxiom subsumption(OWLOntology ontology, List<OWLObjectPropertyExpression> chain, OWLObjectPropertyExpression superRole) {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLSubPropertyChainOfAxiom(chain, superRole);
     }
 
     public static OWLClass top(OWLOntology ontology) {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
+    }
+
+    public static OWLProperty topProperty(OWLOntology ontology) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLTopObjectProperty();
     }
 
     public static OWLClassExpression some(OWLOntology ontology, OWLObjectPropertyExpression r) {

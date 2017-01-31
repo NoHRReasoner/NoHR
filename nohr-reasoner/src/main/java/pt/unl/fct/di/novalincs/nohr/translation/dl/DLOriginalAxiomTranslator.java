@@ -1,20 +1,17 @@
 package pt.unl.fct.di.novalincs.nohr.translation.dl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -23,19 +20,17 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
-import static pt.unl.fct.di.novalincs.nohr.model.Model.rule;
-import static pt.unl.fct.di.novalincs.nohr.model.Model.ruleSet;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.AssertionsTranslation;
 
-public class OriginalAxiomTranslator implements AxiomTranslator {
+public class DLOriginalAxiomTranslator implements DLAxiomTranslator {
 
-    private final AtomTranslator atomTranslator;
+    private final DLAtomTranslator atomTranslator;
     private final Vocabulary vocabulary;
 
-    public OriginalAxiomTranslator(Vocabulary vocabulary) {
-        atomTranslator = new AtomTranslator(vocabulary);
+    public DLOriginalAxiomTranslator(Vocabulary vocabulary) {
+        atomTranslator = new DLAtomTranslator(vocabulary);
         this.vocabulary = vocabulary;
     }
 
@@ -66,7 +61,7 @@ public class OriginalAxiomTranslator implements AxiomTranslator {
             return ret;
         }
 
-        final Atom head = (Atom) atomTranslator.tr(d, AtomTranslator.X, false).get(0);
+        final Atom head = (Atom) atomTranslator.tr(d, DLAtomTranslator.X, false).get(0);
 
         if (c.isOWLThing()) {
             ret.add(Model.rule(head));
@@ -74,7 +69,7 @@ public class OriginalAxiomTranslator implements AxiomTranslator {
             return ret;
         }
 
-        final List<Literal> body = atomTranslator.tr(c, AtomTranslator.X, false);
+        final List<Literal> body = atomTranslator.tr(c, DLAtomTranslator.X, false);
 
         ret.add(Model.rule(head, body));
 
@@ -93,10 +88,10 @@ public class OriginalAxiomTranslator implements AxiomTranslator {
         }
 
         if (p.isTopEntity()) {
-            ret.add(Model.rule(atomTranslator.tr(q, AtomTranslator.X, AtomTranslator.Y, false).get(0)));
+            ret.add(Model.rule(atomTranslator.tr(q, DLAtomTranslator.X, DLAtomTranslator.Y, false).get(0)));
         } else {
-            ret.add(Model.rule(atomTranslator.tr(q, AtomTranslator.X, AtomTranslator.Y, false).get(0),
-                    atomTranslator.tr(p, AtomTranslator.X, AtomTranslator.Y, false)));
+            ret.add(Model.rule(atomTranslator.tr(q, DLAtomTranslator.X, DLAtomTranslator.Y, false).get(0),
+                    atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, false)));
         }
 
         return ret;
@@ -109,7 +104,7 @@ public class OriginalAxiomTranslator implements AxiomTranslator {
         final List<OWLObjectPropertyExpression> chain = axiom.getPropertyChain();
         final OWLObjectPropertyExpression p = axiom.getSuperProperty();
 
-        ret.add(Model.rule(atomTranslator.tr(p, AtomTranslator.X, AtomTranslator.Y, false).get(0), atomTranslator.tr(chain, AtomTranslator.X, AtomTranslator.Y, false)));
+        ret.add(Model.rule(atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, false).get(0), atomTranslator.tr(chain, DLAtomTranslator.X, DLAtomTranslator.Y, false)));
 
         return ret;
     }
@@ -126,6 +121,11 @@ public class OriginalAxiomTranslator implements AxiomTranslator {
 
     @Override
     public Collection<Rule> translate(OWLDisjointObjectPropertiesAxiom axiom) {
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
+    public Collection<Rule> translate(OWLIrreflexiveObjectPropertyAxiom axiom) {
         return Collections.EMPTY_SET;
     }
 }

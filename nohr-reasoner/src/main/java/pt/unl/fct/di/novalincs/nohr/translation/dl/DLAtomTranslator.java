@@ -21,14 +21,14 @@ import static pt.unl.fct.di.novalincs.nohr.model.Model.var;
 import pt.unl.fct.di.novalincs.nohr.model.Variable;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
-public class AtomTranslator {
+public class DLAtomTranslator {
 
     static final Variable X = Model.var("X");
     static final Variable Y = Model.var("Y");
 
     public final Vocabulary vocabulary;
 
-    public AtomTranslator(Vocabulary vocabulary) {
+    public DLAtomTranslator(Vocabulary vocabulary) {
         this.vocabulary = vocabulary;
     }
 

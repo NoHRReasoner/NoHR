@@ -11,32 +11,27 @@ import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
-import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
-import static pt.unl.fct.di.novalincs.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.novalincs.nohr.model.Model.rule;
-import static pt.unl.fct.di.novalincs.nohr.model.Model.ruleSet;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.AssertionsTranslation;
 
-public class DoubledAxiomTranslator implements AxiomTranslator {
+public class DLDoubledAxiomTranslator implements DLAxiomTranslator {
 
-    private final AtomTranslator atomTranslator;
+    private final DLAtomTranslator atomTranslator;
     private final Vocabulary vocabulary;
 
-    public DoubledAxiomTranslator(Vocabulary vocabulary) {
-        this.atomTranslator = new AtomTranslator(vocabulary);
+    public DLDoubledAxiomTranslator(Vocabulary vocabulary) {
+        this.atomTranslator = new DLAtomTranslator(vocabulary);
         this.vocabulary = vocabulary;
     }
 
@@ -68,12 +63,12 @@ public class DoubledAxiomTranslator implements AxiomTranslator {
         }
 
         if (c.isOWLThing()) {
-            ret.add(Model.rule((Atom) atomTranslator.tr(d, AtomTranslator.X, true).get(0), Model.negLiteral(atomTranslator.negTr(d, AtomTranslator.X))));
+            ret.add(Model.rule((Atom) atomTranslator.tr(d, DLAtomTranslator.X, true).get(0), Model.negLiteral(atomTranslator.negTr(d, DLAtomTranslator.X))));
         } else if (d.isOWLNothing() && !c.isAnonymous()) {
-            ret.add(Model.rule(atomTranslator.negTr(c.asOWLClass(), AtomTranslator.X)));
+            ret.add(Model.rule(atomTranslator.negTr(c.asOWLClass(), DLAtomTranslator.X)));
         } else if (d.isOWLNothing() && c.isAnonymous()) {
-            for (final Literal b : atomTranslator.tr(c, AtomTranslator.X, false)) {
-                final List<Literal> body = atomTranslator.tr(c, AtomTranslator.X, false);
+            for (final Literal b : atomTranslator.tr(c, DLAtomTranslator.X, false)) {
+                final List<Literal> body = atomTranslator.tr(c, DLAtomTranslator.X, false);
 
                 body.remove(b);
 
@@ -81,15 +76,15 @@ public class DoubledAxiomTranslator implements AxiomTranslator {
             }
         } // (c1)
         else {
-            List<Literal> body = atomTranslator.tr(c, AtomTranslator.X, true);
+            List<Literal> body = atomTranslator.tr(c, DLAtomTranslator.X, true);
 
-            body.add(Model.negLiteral(atomTranslator.negTr(d, AtomTranslator.X)));
-            ret.add(Model.rule((Atom) atomTranslator.tr(d, AtomTranslator.X, true).get(0), body));
+            body.add(Model.negLiteral(atomTranslator.negTr(d, DLAtomTranslator.X)));
+            ret.add(Model.rule((Atom) atomTranslator.tr(d, DLAtomTranslator.X, true).get(0), body));
 
-            for (final Literal b : atomTranslator.tr(c, AtomTranslator.X, false)) {
-                body = atomTranslator.tr(c, AtomTranslator.X, false);
+            for (final Literal b : atomTranslator.tr(c, DLAtomTranslator.X, false)) {
+                body = atomTranslator.tr(c, DLAtomTranslator.X, false);
 
-                body.add(atomTranslator.negTr(d, AtomTranslator.X));
+                body.add(atomTranslator.negTr(d, DLAtomTranslator.X));
                 body.remove(b);
 
                 ret.add(Model.rule(atomTranslator.negTr(b), body));
@@ -111,18 +106,18 @@ public class DoubledAxiomTranslator implements AxiomTranslator {
         }
 
         if (p.isTopEntity()) {
-            ret.add(Model.rule(atomTranslator.tr(q, AtomTranslator.X, AtomTranslator.Y, true).get(0), Model.negLiteral(atomTranslator.negTr(q, AtomTranslator.X, AtomTranslator.Y))));
+            ret.add(Model.rule(atomTranslator.tr(q, DLAtomTranslator.X, DLAtomTranslator.Y, true).get(0), Model.negLiteral(atomTranslator.negTr(q, DLAtomTranslator.X, DLAtomTranslator.Y))));
         } else if (q.isBottomEntity()) {
-            ret.add(Model.rule(atomTranslator.negTr(p, AtomTranslator.X, AtomTranslator.Y),
-                    atomTranslator.tr(p, AtomTranslator.X, AtomTranslator.Y, false)));
-            ret.add(Model.rule(atomTranslator.negTr(p, AtomTranslator.X, AtomTranslator.Y),
-                    atomTranslator.tr(p, AtomTranslator.X, AtomTranslator.Y, false)));
+            ret.add(Model.rule(atomTranslator.negTr(p, DLAtomTranslator.X, DLAtomTranslator.Y),
+                    atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, false)));
+            ret.add(Model.rule(atomTranslator.negTr(p, DLAtomTranslator.X, DLAtomTranslator.Y),
+                    atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, false)));
         } else {
-            ret.add(Model.rule(atomTranslator.tr(q, AtomTranslator.X, AtomTranslator.Y, true).get(0),
-                    atomTranslator.tr(p, AtomTranslator.X, AtomTranslator.Y, true).get(0),
-                    Model.negLiteral(atomTranslator.negTr(q, AtomTranslator.X, AtomTranslator.Y))));
-            ret.add(Model.rule(atomTranslator.negTr(p, AtomTranslator.X, AtomTranslator.Y),
-                    atomTranslator.negTr(q, AtomTranslator.X, AtomTranslator.Y)));
+            ret.add(Model.rule(atomTranslator.tr(q, DLAtomTranslator.X, DLAtomTranslator.Y, true).get(0),
+                    atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, true).get(0),
+                    Model.negLiteral(atomTranslator.negTr(q, DLAtomTranslator.X, DLAtomTranslator.Y))));
+            ret.add(Model.rule(atomTranslator.negTr(p, DLAtomTranslator.X, DLAtomTranslator.Y),
+                    atomTranslator.negTr(q, DLAtomTranslator.X, DLAtomTranslator.Y)));
         }
 
         return ret;
@@ -135,18 +130,18 @@ public class DoubledAxiomTranslator implements AxiomTranslator {
         final List<OWLObjectPropertyExpression> chain = axiom.getPropertyChain();
         final OWLObjectPropertyExpression p = axiom.getSuperProperty();
 
-        List<Atom> chainTr = atomTranslator.tr(chain, AtomTranslator.X, AtomTranslator.Y, true);
+        List<Atom> chainTr = atomTranslator.tr(chain, DLAtomTranslator.X, DLAtomTranslator.Y, true);
         List<Literal> body = new ArrayList<Literal>(chainTr);
 
-        body.add(Model.negLiteral(atomTranslator.negTr(p, AtomTranslator.X, AtomTranslator.Y)));
-        ret.add(Model.rule(atomTranslator.tr(p, AtomTranslator.X, AtomTranslator.Y, true).get(0), body));
+        body.add(Model.negLiteral(atomTranslator.negTr(p, DLAtomTranslator.X, DLAtomTranslator.Y)));
+        ret.add(Model.rule(atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, true).get(0), body));
 
-        for (final Literal r : atomTranslator.tr(chain, AtomTranslator.X, AtomTranslator.Y, false)) {
-            chainTr = atomTranslator.tr(chain, AtomTranslator.X, AtomTranslator.Y, false);
+        for (final Literal r : atomTranslator.tr(chain, DLAtomTranslator.X, DLAtomTranslator.Y, false)) {
+            chainTr = atomTranslator.tr(chain, DLAtomTranslator.X, DLAtomTranslator.Y, false);
 
             body = new ArrayList<Literal>(chainTr);
 
-            body.add(atomTranslator.negTr(p, AtomTranslator.X, AtomTranslator.Y));
+            body.add(atomTranslator.negTr(p, DLAtomTranslator.X, DLAtomTranslator.Y));
             body.remove(r);
 
             ret.add(Model.rule(atomTranslator.negTr(r), body));
@@ -167,12 +162,12 @@ public class DoubledAxiomTranslator implements AxiomTranslator {
 
             if (!c.isBottomEntity() && !d.isBottomEntity()) {
                 if (c.isOWLThing()) {
-                    ret.add(Model.rule(atomTranslator.negTr(d, AtomTranslator.X)));
+                    ret.add(Model.rule(atomTranslator.negTr(d, DLAtomTranslator.X)));
                 } else if (d.isOWLThing()) {
-                    ret.add(Model.rule(atomTranslator.negTr(c, AtomTranslator.X)));
+                    ret.add(Model.rule(atomTranslator.negTr(c, DLAtomTranslator.X)));
                 } else {
-                    ret.add(Model.rule(atomTranslator.negTr(c, AtomTranslator.X), atomTranslator.tr(d, AtomTranslator.X, false)));
-                    ret.add(Model.rule(atomTranslator.negTr(d, AtomTranslator.X), atomTranslator.tr(c, AtomTranslator.X, false)));
+                    ret.add(Model.rule(atomTranslator.negTr(c, DLAtomTranslator.X), atomTranslator.tr(d, DLAtomTranslator.X, false)));
+                    ret.add(Model.rule(atomTranslator.negTr(d, DLAtomTranslator.X), atomTranslator.tr(c, DLAtomTranslator.X, false)));
                 }
             }
         }
@@ -217,14 +212,23 @@ public class DoubledAxiomTranslator implements AxiomTranslator {
 
         if (!p.isBottomEntity() && !q.isBottomEntity()) {
             if (p.isTopEntity()) {
-                ret.add(Model.rule(atomTranslator.negTr(q, AtomTranslator.X, AtomTranslator.Y)));
+                ret.add(Model.rule(atomTranslator.negTr(q, DLAtomTranslator.X, DLAtomTranslator.Y)));
             } else if (q.isTopEntity()) {
-                ret.add(Model.rule(atomTranslator.negTr(p, AtomTranslator.X, AtomTranslator.Y)));
+                ret.add(Model.rule(atomTranslator.negTr(p, DLAtomTranslator.X, DLAtomTranslator.Y)));
             } else {
-                ret.add(Model.rule(atomTranslator.negTr(p, AtomTranslator.X, AtomTranslator.Y), atomTranslator.tr(q, AtomTranslator.X, AtomTranslator.Y, false)));
-                ret.add(Model.rule(atomTranslator.negTr(q, AtomTranslator.X, AtomTranslator.Y), atomTranslator.tr(p, AtomTranslator.X, AtomTranslator.Y, false)));
+                ret.add(Model.rule(atomTranslator.negTr(p, DLAtomTranslator.X, DLAtomTranslator.Y), atomTranslator.tr(q, DLAtomTranslator.X, DLAtomTranslator.Y, false)));
+                ret.add(Model.rule(atomTranslator.negTr(q, DLAtomTranslator.X, DLAtomTranslator.Y), atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, false)));
             }
         }
+
+        return ret;
+    }
+
+    @Override
+    public Collection<Rule> translate(OWLIrreflexiveObjectPropertyAxiom axiom) {
+        final Set<Rule> ret = new HashSet<>();
+
+        ret.add(Model.rule(atomTranslator.negTr(axiom.getProperty(), DLAtomTranslator.X, DLAtomTranslator.X)));
 
         return ret;
     }

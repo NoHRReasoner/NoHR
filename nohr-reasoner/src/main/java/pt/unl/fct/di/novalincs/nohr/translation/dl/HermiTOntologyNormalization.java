@@ -23,6 +23,7 @@ import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLIrreflexiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
@@ -42,9 +43,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.InferredAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredClassAssertionAxiomGenerator;
 import org.semanticweb.owlapi.util.InferredOntologyGenerator;
-import org.semanticweb.owlapi.util.InferredPropertyAssertionGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
-import org.semanticweb.owlapi.util.InferredSubObjectPropertyAxiomGenerator;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.DLUtils;
@@ -57,7 +56,9 @@ import pt.unl.fct.di.novalincs.nohr.translation.normalization.Normalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.RightConjunctionNormalizer;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
-public final class HermiTDLOntologyNormalization implements DLOntologyNormalization {
+public final class HermiTOntologyNormalization implements DLOntologyNormalization {
+
+    private static final Logger LOG = Logger.getLogger(HermiTOntologyNormalization.class);
 
     public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{
         AxiomType.CLASS_ASSERTION,
@@ -70,6 +71,7 @@ public final class HermiTDLOntologyNormalization implements DLOntologyNormalizat
         AxiomType.EQUIVALENT_DATA_PROPERTIES,
         AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
         AxiomType.INVERSE_OBJECT_PROPERTIES,
+        AxiomType.IRREFLEXIVE_OBJECT_PROPERTY,
         AxiomType.OBJECT_PROPERTY_ASSERTION,
         AxiomType.OBJECT_PROPERTY_DOMAIN,
         AxiomType.OBJECT_PROPERTY_RANGE,
@@ -81,14 +83,12 @@ public final class HermiTDLOntologyNormalization implements DLOntologyNormalizat
         AxiomType.TRANSITIVE_OBJECT_PROPERTY
     };
 
-    private static final Logger LOG = Logger.getLogger(HermiTDLOntologyNormalization.class);
-
     private final OWLOntology closure;
     private final boolean hasDisjunctions;
     private final OWLOntology ontology;
     private final Vocabulary vocabulary;
 
-    public HermiTDLOntologyNormalization(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
+    public HermiTOntologyNormalization(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
         Objects.requireNonNull(ontology);
         Objects.requireNonNull(vocabulary);
 
@@ -249,7 +249,7 @@ public final class HermiTDLOntologyNormalization implements DLOntologyNormalizat
         return closure.getAxioms(AxiomType.SUB_OBJECT_PROPERTY);
     }
 
-    public Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions(OWLOntology ontology) {
+    private Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions(OWLOntology ontology) {
         Set<OWLSubObjectPropertyOfAxiom> ret = new HashSet<>(ontology.getAxioms(AxiomType.SUB_OBJECT_PROPERTY));
 
         for (final OWLEquivalentObjectPropertiesAxiom axiom : ontology.getAxioms(AxiomType.EQUIVALENT_OBJECT_PROPERTIES)) {
@@ -302,6 +302,7 @@ public final class HermiTDLOntologyNormalization implements DLOntologyNormalizat
             final Set<OWLDataPropertyAssertionAxiom> dataAssertions = dataAssertions(ontology);
             final Set<OWLDisjointDataPropertiesAxiom> dataDisjunctions = dataDisjunctions(ontology);
             final Set<OWLSubDataPropertyOfAxiom> dataSubsumptions = dataSubsumptions(ontology);
+            final Set<OWLIrreflexiveObjectPropertyAxiom> irreflexiveRoles = irreflexiveRoles(ontology);
             final Set<OWLObjectPropertyAssertionAxiom> roleAssertions = roleAssertions(ontology);
             final Set<OWLDisjointObjectPropertiesAxiom> roleDisjunctions = roleDisjunctions(ontology);
             final Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions = roleSubsumptions(ontology);
@@ -311,11 +312,12 @@ public final class HermiTDLOntologyNormalization implements DLOntologyNormalizat
 
             //om.addAxioms(ret, chainSubsumptions);
             om.addAxioms(ret, conceptAssertions);
-            om.addAxioms(ret, conceptDisjunctions);
+            //om.addAxioms(ret, conceptDisjunctions);
             om.addAxioms(ret, conceptSubsumptions);
             om.addAxioms(ret, dataAssertions);
             om.addAxioms(ret, dataDisjunctions);
             om.addAxioms(ret, dataSubsumptions);
+            om.addAxioms(ret, irreflexiveRoles);
             om.addAxioms(ret, roleAssertions);
             om.addAxioms(ret, roleDisjunctions);
             om.addAxioms(ret, roleSubsumptions);
@@ -324,7 +326,6 @@ public final class HermiTDLOntologyNormalization implements DLOntologyNormalizat
         } catch (final OWLOntologyCreationException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private OWLSubClassOfAxiom normalize(OWLObjectPropertyDomainAxiom axiom) {
@@ -381,15 +382,16 @@ public final class HermiTDLOntologyNormalization implements DLOntologyNormalizat
         final OWLReasonerFactory reasonerFactory = new ReasonerFactory();
         final OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
 
-        reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+        reasoner.precomputeInferences(InferenceType.CLASS_ASSERTIONS, InferenceType.CLASS_HIERARCHY);
 
-        final List<InferredAxiomGenerator<? extends OWLAxiom>> generators = new ArrayList<>(4);
+        final List<InferredAxiomGenerator<? extends OWLAxiom>> generators = new ArrayList<>(2);
 
         generators.add(new InferredClassAssertionAxiomGenerator());
-        generators.add(new InferredPropertyAssertionGenerator());
         generators.add(new InferredSubClassAxiomGenerator());
-        generators.add(new InferredSubObjectPropertyAxiomGenerator());
 
+//        generators.add(new InferredPropertyAssertionGenerator());
+//        generators.add(new InferredSubObjectPropertyAxiomGenerator());
+//        generators.add(new InferredObjectPropertyCharacteristicAxiomGenerator());
         final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, generators);
 
         inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager().getOWLDataFactory(), ontology);
@@ -399,4 +401,12 @@ public final class HermiTDLOntologyNormalization implements DLOntologyNormalizat
         RuntimesLogger.stop("[NoHR DL (HermiT)] ontology inference", "loading");
     }
 
+    @Override
+    public Iterable<OWLIrreflexiveObjectPropertyAxiom> irreflexiveRoles() {
+        return closure.getAxioms(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY);
+    }
+
+    private Set<OWLIrreflexiveObjectPropertyAxiom> irreflexiveRoles(OWLOntology ontology) {
+        return ontology.getAxioms(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY);
+    }
 }
