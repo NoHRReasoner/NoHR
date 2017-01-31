@@ -25,6 +25,7 @@ import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
 
 /**
  * Represents the types of the supported OWL profiles. The order of enumeration
@@ -104,7 +105,7 @@ public enum Profile {
         // final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
         // if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
         // throw new OWLProfilesViolationsException(report);
-        return new pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator(ontology, v, dedutiveDatabase);
+        return new pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator(ontology, v, dedutiveDatabase, DLMode.KONCLUDE);
 
 //        switch (this) {
 //            case OWL2_QL:

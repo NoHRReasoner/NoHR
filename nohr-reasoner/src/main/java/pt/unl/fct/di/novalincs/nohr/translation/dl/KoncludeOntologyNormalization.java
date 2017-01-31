@@ -1,16 +1,20 @@
 package pt.unl.fct.di.novalincs.nohr.translation.dl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.elk.reasoner.taxonomy.InvalidTaxonomyException;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.formats.OWLXMLDocumentFormat;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -31,12 +35,15 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
+import org.semanticweb.owlapi.reasoner.BufferingMode;
+import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -56,7 +63,7 @@ import pt.unl.fct.di.novalincs.nohr.translation.normalization.Normalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.RightConjunctionNormalizer;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
-public final class HermitOntologyNormalization implements DLOntologyNormalization {
+public final class KoncludeOntologyNormalization implements DLOntologyNormalization {
 
     private static final Logger LOG = Logger.getLogger(KoncludeOntologyNormalization.class);
 
@@ -87,13 +94,17 @@ public final class HermitOntologyNormalization implements DLOntologyNormalizatio
     private final boolean hasDisjunctions;
     private final OWLOntology ontology;
     private final Vocabulary vocabulary;
+    private final String koncludePath;
+    private final long timeout;
 
-    public HermitOntologyNormalization(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
+    public KoncludeOntologyNormalization(OWLOntology ontology, Vocabulary vocabulary, String koncludePath, long timeout) throws UnsupportedAxiomsException {
         Objects.requireNonNull(ontology);
         Objects.requireNonNull(vocabulary);
 
         this.ontology = ontology;
         this.vocabulary = vocabulary;
+        this.koncludePath = koncludePath;
+        this.timeout = timeout;
 
         final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
 
@@ -146,26 +157,48 @@ public final class HermitOntologyNormalization implements DLOntologyNormalizatio
     }
 
     private void computeInferences(OWLOntology ontology) {
-        RuntimesLogger.start("[NoHR DL (HermiT)] ontology inference");
-        Logger.getLogger("org.semanticweb.hermit").setLevel(Level.ERROR);
+        RuntimesLogger.start("[NoHR DL (Konclude)] ontology inference");
+        Logger.getLogger("de.derivo.konclude").setLevel(Level.ERROR);
 
-        final OWLReasonerFactory reasonerFactory = new ReasonerFactory();
-        final OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
+        try {
+            File original = File.createTempFile("konclude", "original");
+            File classification = File.createTempFile("konclude", "classification");
+            File realization = File.createTempFile("konclude", "realization");
 
-        reasoner.precomputeInferences(InferenceType.CLASS_ASSERTIONS, InferenceType.CLASS_HIERARCHY);
+            original.deleteOnExit();
+            classification.deleteOnExit();
+            realization.deleteOnExit();
 
-        final List<InferredAxiomGenerator<? extends OWLAxiom>> generators = new ArrayList<>(2);
+            OWLOntologyManager manager = ontology.getOWLOntologyManager();
 
-        generators.add(new InferredClassAssertionAxiomGenerator());
-        generators.add(new InferredSubClassAxiomGenerator());
+            manager.saveOntology(ontology, new OWLXMLDocumentFormat(), new FileOutputStream(original));
 
-        final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, generators);
+            Process p = Runtime.getRuntime().exec(koncludePath + " classification -w AUTO -i " + original.getAbsolutePath() + " -o " + classification.getAbsolutePath());
 
-        inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager().getOWLDataFactory(), ontology);
+            p.waitFor(timeout, TimeUnit.SECONDS);
 
-        reasoner.dispose();
+            OWLOntology inferredOntology = manager.loadOntologyFromOntologyDocument(classification);
 
-        RuntimesLogger.stop("[NoHR DL (HermiT)] ontology inference", "loading");
+            for (OWLAxiom axiom : inferredOntology.getAxioms(AxiomType.SUBCLASS_OF)) {
+                manager.addAxiom(ontology, axiom);
+            }
+
+            p = Runtime.getRuntime().exec(koncludePath + " realization -w AUTO -i " + original.getAbsolutePath() + " -o " + realization.getAbsolutePath());
+
+            p.waitFor(timeout, TimeUnit.SECONDS);
+
+            inferredOntology = manager.loadOntologyFromOntologyDocument(realization);
+
+            for (OWLAxiom axiom : inferredOntology.getAxioms(AxiomType.CLASS_ASSERTION)) {
+                manager.addAxiom(ontology, axiom);
+            }
+        } catch (IOException | OWLOntologyStorageException | OWLOntologyCreationException ex) {
+            throw new RuntimeException(ex);
+        } catch (InterruptedException ex) {
+            throw new InconsistentOntologyException();
+        } finally {
+            RuntimesLogger.stop("[NoHR DL (Konclude)] ontology inference", "loading");
+        }
     }
 
     @Override

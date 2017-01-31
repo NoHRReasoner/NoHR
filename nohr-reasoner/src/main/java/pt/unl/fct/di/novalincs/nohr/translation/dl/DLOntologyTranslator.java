@@ -23,18 +23,19 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
     private DLOntologyNormalization normalizedOntology;
     private final DLOriginalAxiomTranslator axiomTranslator;
     private final DLDoubledAxiomTranslator doubledAxiomTranslator;
+    private final DLMode mode;
 
-    public DLOntologyTranslator(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase dedutiveDatabase) throws UnsupportedAxiomsException {
+    public DLOntologyTranslator(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase dedutiveDatabase, DLMode mode) throws UnsupportedAxiomsException {
         super(ontology, vocabulary, dedutiveDatabase);
 
         axiomTranslator = new DLOriginalAxiomTranslator(vocabulary);
         doubledAxiomTranslator = new DLDoubledAxiomTranslator(vocabulary);
+        this.mode = mode;
 
-        RuntimesLogger.start("[NOHR DL (HermiT)] ontology normalization");
+        RuntimesLogger.start("[NOHR DL] ontology normalization");
 
-        normalizedOntology = new HermitOntologyNormalization(ontology, vocabulary);
-
-        RuntimesLogger.stop("[NOHR DL (HermiT)] ontology normalization", "loading");
+        prepareUpdate();
+        RuntimesLogger.stop("[NOHR DL] ontology normalization", "loading");
     }
 
     @Override
@@ -42,7 +43,7 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
         prepareUpdate();
         translation.clear();
 
-        RuntimesLogger.start("[NOHR DL (HermiT)] ontology translation");
+        RuntimesLogger.start("[NOHR DL] ontology translation");
 
         translate(axiomTranslator);
 
@@ -50,7 +51,7 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
             translate(doubledAxiomTranslator);
         }
 
-        RuntimesLogger.stop("[NOHR DL (HermiT)] ontology translation", "loading");
+        RuntimesLogger.stop("[NOHR DL] ontology translation", "loading");
     }
 
     @Override
@@ -64,7 +65,11 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
     }
 
     private void prepareUpdate() throws UnsupportedAxiomsException {
-        normalizedOntology = new HermitOntologyNormalization(ontology, vocabulary);
+        if (mode == DLMode.HERMIT) {
+            normalizedOntology = new HermitOntologyNormalization(ontology, vocabulary);
+        } else if (mode == DLMode.KONCLUDE) {
+            normalizedOntology = new KoncludeOntologyNormalization(ontology, vocabulary, System.getenv("KONCLUDE_BIN"), 10);
+        }
     }
 
     private void translate(DLAxiomTranslator axiomTranslator) {
