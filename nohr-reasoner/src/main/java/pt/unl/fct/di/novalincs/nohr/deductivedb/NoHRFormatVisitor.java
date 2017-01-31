@@ -71,7 +71,7 @@ public class NoHRFormatVisitor extends DefaultFormatVisitor {
             return constant.asString();
         }
 
-        return StringUtils.escapeSymbol(constant.asString());
+        return StringUtils.escapeSymbol(constant.toString());
     }
 
     @Override
@@ -143,7 +143,7 @@ public class NoHRFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Symbol symbolic) {
-        return StringUtils.escapeSymbol(symbolic.asString());
+        return StringUtils.escapeSymbol(symbolic.toString());
     }
 
     @Override

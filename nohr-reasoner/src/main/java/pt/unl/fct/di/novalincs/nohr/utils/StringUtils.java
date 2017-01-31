@@ -63,7 +63,7 @@ public class StringUtils {
     }
 
     public static String escapeSymbol(String symbol) {
-        if (!symbol.matches("[A-z][A-z0-9_]*")) {
+        if (!symbol.matches("[A-Za-z][A-Za-z0-9_]*")) {
             return "'" + symbol.replace("'", "''") + "'";
         }
 
