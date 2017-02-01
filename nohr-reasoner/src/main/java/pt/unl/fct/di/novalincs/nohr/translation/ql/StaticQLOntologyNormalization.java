@@ -76,7 +76,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
         AxiomType.EQUIVALENT_CLASSES, AxiomType.EQUIVALENT_DATA_PROPERTIES, AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
         AxiomType.INVERSE_OBJECT_PROPERTIES, AxiomType.OBJECT_PROPERTY_ASSERTION, AxiomType.OBJECT_PROPERTY_DOMAIN,
         AxiomType.OBJECT_PROPERTY_RANGE, AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY,
-        AxiomType.SUBCLASS_OF, AxiomType.SYMMETRIC_OBJECT_PROPERTY};
+        AxiomType.SUBCLASS_OF, AxiomType.SYMMETRIC_OBJECT_PROPERTY, AxiomType.IRREFLEXIVE_OBJECT_PROPERTY};
 
     /**
      * The set of DL-Lite<sub>R</sub> concept disjunctions in this
@@ -262,7 +262,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
     @Override
     public boolean hasDisjunctions() {
         return !(conceptDisjunctions.isEmpty() && roleDisjunctions.isEmpty() && dataDisjunctions.isEmpty()
-                && unsatisfiableConcepts.isEmpty() && unsatisfiableRoles.isEmpty());
+                && unsatisfiableConcepts.isEmpty() && unsatisfiableRoles.isEmpty() && ontology.getAxiomCount(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY) == 0);
     }
 
     @Override
