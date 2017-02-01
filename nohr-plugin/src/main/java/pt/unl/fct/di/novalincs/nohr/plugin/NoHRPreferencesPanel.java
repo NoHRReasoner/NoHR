@@ -148,7 +148,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 
         add(new JLabel("Konclude Binary"));
         add(txtKoncludeBin);
-        add(createOpenButton());
+        add(createKoncludeBinOpenButton());
 
         setLayout();
     }
@@ -159,7 +159,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         }
 
         setLayout(new SpringLayout());
-        SpringUtilities.makeCompactGrid(this, 1, 3, 3, 3, 3, 3);
+        SpringUtilities.makeCompactGrid(this, 2, 3, 3, 3, 3, 3);
     }
 
     private void setXsbDir(File xsbDir) {
