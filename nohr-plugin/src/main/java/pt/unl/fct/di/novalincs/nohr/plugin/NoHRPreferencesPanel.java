@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -36,78 +35,140 @@ import layout.SpringUtilities;
  */
 public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 5160621423685035123L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 5160621423685035123L;
 
-	private static final Dimension MAX_HEIGHT_DIMENSION = new Dimension(Integer.MAX_VALUE, 1);
+    private static final Dimension MAX_HEIGHT_DIMENSION = new Dimension(Integer.MAX_VALUE, 1);
 
-	private JTextField txtXSBBinDirectory;
+    private JTextField txtXSBBinDirectory;
 
-	private File xsbBinDirectory;
+    private JTextField txtKoncludeBin;
 
-	private final NoHRPreferences preferences;
+    private File xsbBinDirectory;
 
-	public NoHRPreferencesPanel() {
-		preferences = NoHRPreferences.getInstance();
-	}
+    private File koncludeBin;
 
-	@Override
-	public void applyChanges() {
-		preferences.setXSBBinDirectory(xsbBinDirectory);
-	}
+    private final NoHRPreferences preferences;
 
-	private JButton createOpenButton() {
-		final JButton result = new JButton("Open");
-		result.addActionListener(new ActionListener() {
+    public NoHRPreferencesPanel() {
+        preferences = NoHRPreferences.getInstance();
+    }
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				final JFileChooser fc = new JFileChooser();
-				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				if (preferences.getXSBBinDirectory() != null)
-					fc.setSelectedFile(preferences.getXSBBinDirectory());
-				final int returnVal = fc.showOpenDialog(NoHRPreferencesPanel.this);
-				if (returnVal == JFileChooser.APPROVE_OPTION)
-					setXsbDir(fc.getSelectedFile());
-			}
-		});
-		return result;
-	}
+    @Override
+    public void applyChanges() {
+        preferences.setXSBBinDirectory(xsbBinDirectory);
+        preferences.setKoncludeBin(koncludeBin);
+    }
 
-	private JTextField createXSBDirectoryTextField(File xsbDir) {
-		final JTextField result;
-		if (xsbDir == null)
-			result = new JTextField(10);
-		else
-			result = new JTextField(xsbDir.getPath());
-		result.setEditable(false);
-		return result;
-	}
+    private JButton createOpenButton() {
+        final JButton result = new JButton("Open");
+        result.addActionListener(new ActionListener() {
 
-	@Override
-	public void dispose() throws Exception {
-	}
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFileChooser fc = new JFileChooser();
+                fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                if (preferences.getXSBBinDirectory() != null) {
+                    fc.setSelectedFile(preferences.getXSBBinDirectory());
+                }
+                final int returnVal = fc.showOpenDialog(NoHRPreferencesPanel.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    setXsbDir(fc.getSelectedFile());
+                }
+            }
+        });
+        return result;
+    }
 
-	@Override
-	public void initialise() throws Exception {
-		txtXSBBinDirectory = createXSBDirectoryTextField(preferences.getXSBBinDirectory());
-		add(new JLabel("XSB directory"));
-		add(txtXSBBinDirectory);
-		add(createOpenButton());
-		setLayout();
-	}
+    private JButton createKoncludeBinOpenButton() {
+        final JButton result = new JButton("Open");
 
-	private void setLayout() {
-		for (final Component component : getComponents())
-			component.setMaximumSize(MAX_HEIGHT_DIMENSION);
-		setLayout(new SpringLayout());
-		SpringUtilities.makeCompactGrid(this, 1, 3, 3, 3, 3, 3);
-	}
+        result.addActionListener(new ActionListener() {
 
-	private void setXsbDir(File xsbDir) {
-		xsbBinDirectory = xsbDir;
-		txtXSBBinDirectory.setText(xsbBinDirectory.getPath());
-	}
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFileChooser fc = new JFileChooser();
+
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+                if (preferences.getKoncludeBin() != null) {
+                    fc.setSelectedFile(preferences.getKoncludeBin());
+                }
+
+                final int returnVal = fc.showOpenDialog(NoHRPreferencesPanel.this);
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    setKoncludeBin(fc.getSelectedFile());
+                }
+            }
+        });
+
+        return result;
+    }
+
+    private JTextField createXSBDirectoryTextField(File xsbDir) {
+        final JTextField result;
+        if (xsbDir == null) {
+            result = new JTextField(10);
+        } else {
+            result = new JTextField(xsbDir.getPath());
+        }
+        result.setEditable(false);
+        return result;
+    }
+
+    private JTextField createKoncludeBinTextField(File koncludeBin) {
+        final JTextField result;
+
+        if (koncludeBin == null) {
+            result = new JTextField(10);
+        } else {
+            result = new JTextField(koncludeBin.getPath());
+        }
+
+        result.setEditable(false);
+
+        return result;
+    }
+
+    @Override
+    public void dispose() throws Exception {
+    }
+
+    @Override
+    public void initialise() throws Exception {
+        txtXSBBinDirectory = createXSBDirectoryTextField(preferences.getXSBBinDirectory());
+        txtKoncludeBin = createKoncludeBinTextField(preferences.getKoncludeBin());
+
+        add(new JLabel("XSB directory"));
+        add(txtXSBBinDirectory);
+        add(createOpenButton());
+
+        add(new JLabel("Konclude Binary"));
+        add(txtKoncludeBin);
+        add(createOpenButton());
+
+        setLayout();
+    }
+
+    private void setLayout() {
+        for (final Component component : getComponents()) {
+            component.setMaximumSize(MAX_HEIGHT_DIMENSION);
+        }
+
+        setLayout(new SpringLayout());
+        SpringUtilities.makeCompactGrid(this, 1, 3, 3, 3, 3, 3);
+    }
+
+    private void setXsbDir(File xsbDir) {
+        xsbBinDirectory = xsbDir;
+        txtXSBBinDirectory.setText(xsbBinDirectory.getPath());
+    }
+
+    private void setKoncludeBin(File koncludeBin) {
+        this.koncludeBin = koncludeBin;
+        txtKoncludeBin.setText(koncludeBin.getPath());
+    }
 }

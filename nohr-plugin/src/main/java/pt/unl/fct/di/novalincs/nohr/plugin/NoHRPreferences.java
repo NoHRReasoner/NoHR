@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.io.File;
 
 import org.protege.editor.core.prefs.Preferences;
@@ -25,30 +24,54 @@ import org.protege.editor.core.prefs.PreferencesManager;
  */
 public class NoHRPreferences {
 
-	private static NoHRPreferences instance;
+    private static NoHRPreferences instance;
 
-	private static final String XSB_BIN_DIRECTORY = "XSB_DIR";
+    private static final String XSB_BIN_DIRECTORY = "XSB_DIR";
 
-	public static synchronized NoHRPreferences getInstance() {
-		if (instance == null)
-			instance = new NoHRPreferences();
-		return instance;
-	}
+    private static final String KONCLUDE_BIN = "KONCLUDE_BIN";
 
-	private Preferences getPreferences() {
-		return PreferencesManager.getInstance().getApplicationPreferences(this.getClass());
-	}
+    public static synchronized NoHRPreferences getInstance() {
+        if (instance == null) {
+            instance = new NoHRPreferences();
+        }
 
-	public File getXSBBinDirectory() {
-		final String pathname = getPreferences().getString(XSB_BIN_DIRECTORY, null);
-		if (pathname == null)
-			return null;
-		return new File(pathname);
-	}
+        return instance;
+    }
 
-	public void setXSBBinDirectory(File xsbBinDirectory) {
-		if (xsbBinDirectory != null)
-			getPreferences().putString(XSB_BIN_DIRECTORY, xsbBinDirectory.getAbsolutePath());
-	}
+    private Preferences getPreferences() {
+        return PreferencesManager.getInstance().getApplicationPreferences(this.getClass());
+    }
+
+    public File getXSBBinDirectory() {
+        final String pathname = getPreferences().getString(XSB_BIN_DIRECTORY, null);
+
+        if (pathname == null) {
+            return null;
+        }
+
+        return new File(pathname);
+    }
+
+    public File getKoncludeBin() {
+        final String pathname = getPreferences().getString(KONCLUDE_BIN, null);
+
+        if (pathname == null) {
+            return null;
+        }
+
+        return new File(pathname);
+    }
+
+    public void setXSBBinDirectory(File xsbBinDirectory) {
+        if (xsbBinDirectory != null) {
+            getPreferences().putString(XSB_BIN_DIRECTORY, xsbBinDirectory.getAbsolutePath());
+        }
+    }
+
+    public void setKoncludeBin(File value) {
+        if (value != null) {
+            getPreferences().putString(KONCLUDE_BIN, value.getAbsolutePath());
+        }
+    }
 
 }
