@@ -12,9 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.translation;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-import java.util.LinkedList;
-import java.util.List;
-
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.profiles.OWL2ELProfile;
 import org.semanticweb.owlapi.profiles.OWL2QLProfile;
@@ -26,6 +23,9 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator;
+import pt.unl.fct.di.novalincs.nohr.translation.el.ELOntologyTranslator;
+import pt.unl.fct.di.novalincs.nohr.translation.ql.QLOntologyTranslator;
 
 /**
  * Represents the types of the supported OWL profiles. The order of enumeration
@@ -43,8 +43,9 @@ public enum Profile {
 
     OWL2_EL, OWL2_QL, NOHR_DL;
 
-    public static ELInferenceMethod OWL2_EL_INFERENCE_METHOD = ELInferenceMethod.ELK;
-    public static QLInferenceMethod OWL2_QL_INFERENCE_METHOD = QLInferenceMethod.TBOXDIGRAPH;
+    public static DLMode PREFERRED_DL_MODE = DLMode.HERMIT;
+    public static boolean USE_DL_FOR_QL = false;
+    public static boolean USE_DL_FOR_EL = false;
 
     /**
      * Returns the preferred, in terms of translation, OWL profile of a given
@@ -54,23 +55,27 @@ public enum Profile {
      * @return the preferred OWL profile of {@code ontology}.
      */
     public static Profile getProfile(OWLOntology ontology) {
-        final List<OWLProfileReport> reports = new LinkedList<>();
+//        final List<OWLProfileReport> reports = new LinkedList<>();
         int minViolations = Integer.MAX_VALUE;
         Profile minViolationsProfile = Profile.values()[0];
 
         for (final Profile profile : Profile.values()) {
-            final OWLProfileReport report = profile.owlProfile().checkOntology(ontology);
+            OWLProfile owlProfile = profile.owlProfile();
 
-            if (report.isInProfile()) {
-                return profile;
+            if (owlProfile != null) {
+                final OWLProfileReport report = owlProfile.checkOntology(ontology);
+
+                if (report.isInProfile()) {
+                    return profile;
+                }
+
+                if (report.getViolations().size() < minViolations) {
+                    minViolations = report.getViolations().size();
+                    minViolationsProfile = profile;
+                }
+
+//                reports.add(report);
             }
-
-            if (report.getViolations().size() < minViolations) {
-                minViolations = report.getViolations().size();
-                minViolationsProfile = profile;
-            }
-
-            reports.add(report);
         }
 
         if (minViolations > 0) {
@@ -90,6 +95,7 @@ public enum Profile {
      *
      * @param ontology the ontology whose
      * {@link OntologyTranslator ontology translation} will be created.
+     * @param v
      * @param dedutiveDatabase the {@link DeductiveDatabase dedutive database}
      * where the ontology translation will be loaded.
      * @return the {@link OntologyTranslator ontology translation} of
@@ -105,26 +111,25 @@ public enum Profile {
         // final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
         // if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
         // throw new OWLProfilesViolationsException(report);
-        return new pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator(ontology, v, dedutiveDatabase, DLMode.HERMIT);
 
-//        switch (this) {
-//            case OWL2_QL:
-//                if (Profile.OWL2_QL_INFERENCE_METHOD == QLInferenceMethod.TBOXDIGRAPH) {
-//                    return new QLOntologyTranslator(ontology, v, dedutiveDatabase);
-//                } else {
-//                    return new DLOntologyTranslator(ontology, v, dedutiveDatabase);
-//                }
-//            case OWL2_EL:
-//                if (Profile.OWL2_EL_INFERENCE_METHOD == ELInferenceMethod.ELK) {
-//                    return new ELOntologyTranslator(ontology, v, dedutiveDatabase);
-//                } else {
-//                    return new DLOntologyTranslator(ontology, v, dedutiveDatabase);
-//                }
-//            case NOHR_DL:
-//                return new DLOntologyTranslator(ontology, v, dedutiveDatabase);
-//            default:
-//                throw new OWLProfilesViolationsException();
-//        }
+        switch (this) {
+            case OWL2_EL:
+                if (USE_DL_FOR_EL) {
+                    return new DLOntologyTranslator(ontology, v, dedutiveDatabase, PREFERRED_DL_MODE);
+                } else {
+                    return new ELOntologyTranslator(ontology, v, dedutiveDatabase);
+                }
+            case OWL2_QL:
+                if (USE_DL_FOR_QL) {
+                    return new DLOntologyTranslator(ontology, v, dedutiveDatabase, PREFERRED_DL_MODE);
+                } else {
+                    return new QLOntologyTranslator(ontology, v, dedutiveDatabase);
+                }
+            case NOHR_DL:
+                return new DLOntologyTranslator(ontology, v, dedutiveDatabase, PREFERRED_DL_MODE);
+            default:
+                throw new OWLProfilesViolationsException();
+        }
     }
 
     /**

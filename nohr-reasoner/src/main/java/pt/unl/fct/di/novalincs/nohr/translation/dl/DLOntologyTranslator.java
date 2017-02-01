@@ -14,6 +14,7 @@ import org.semanticweb.owlapi.model.OWLSubPropertyChainOfAxiom;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.translation.InferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorImplementor;
 import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
@@ -65,11 +66,7 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
     }
 
     private void prepareUpdate() throws UnsupportedAxiomsException {
-        if (mode == DLMode.HERMIT) {
-            normalizedOntology = new HermitOntologyNormalization(ontology, vocabulary);
-        } else if (mode == DLMode.KONCLUDE) {
-            normalizedOntology = new KoncludeOntologyNormalization(ontology, vocabulary, System.getenv("KONCLUDE_BIN"), 10);
-        }
+        normalizedOntology = new DLOntologyNormailzationImpl(ontology, vocabulary, mode.getInferenceEngine());
     }
 
     private void translate(DLAxiomTranslator axiomTranslator) {
