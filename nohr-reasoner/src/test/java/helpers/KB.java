@@ -46,6 +46,7 @@ import com.declarativa.interprolog.util.IPException;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -515,7 +516,7 @@ public class KB {
     private void setup() {
         try {
             ontology = ontologyManager.createOntology(IRI.generateDocumentIRI());
-            hybridKB = new NoHRHybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profile);
+            hybridKB = new NoHRHybridKB(new NoHRHybridKBConfiguration(), ontology, profile);
             parser = new NoHRRecursiveDescentParser(hybridKB.getVocabulary());
         } catch (final IPException e) {
 

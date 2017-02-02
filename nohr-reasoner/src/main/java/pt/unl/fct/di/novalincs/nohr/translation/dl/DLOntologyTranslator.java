@@ -24,19 +24,19 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
     private DLOntologyNormalization normalizedOntology;
     private final DLOriginalAxiomTranslator axiomTranslator;
     private final DLDoubledAxiomTranslator doubledAxiomTranslator;
-    private final DLMode mode;
+    private final InferenceEngine engine;
 
-    public DLOntologyTranslator(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase dedutiveDatabase, DLMode mode) throws UnsupportedAxiomsException {
+    public DLOntologyTranslator(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase dedutiveDatabase, InferenceEngine engine) throws UnsupportedAxiomsException {
         super(ontology, vocabulary, dedutiveDatabase);
 
         axiomTranslator = new DLOriginalAxiomTranslator(vocabulary);
         doubledAxiomTranslator = new DLDoubledAxiomTranslator(vocabulary);
-        this.mode = mode;
+        this.engine = engine;
 
         RuntimesLogger.start("[NOHR DL] ontology normalization");
-
         prepareUpdate();
         RuntimesLogger.stop("[NOHR DL] ontology normalization", "loading");
+
     }
 
     @Override
@@ -66,7 +66,7 @@ public class DLOntologyTranslator extends OntologyTranslatorImplementor {
     }
 
     private void prepareUpdate() throws UnsupportedAxiomsException {
-        normalizedOntology = new DLOntologyNormailzationImpl(ontology, vocabulary, mode.getInferenceEngine());
+        normalizedOntology = new DLOntologyNormailzationImpl(ontology, vocabulary, engine);
     }
 
     private void translate(DLAxiomTranslator axiomTranslator) {

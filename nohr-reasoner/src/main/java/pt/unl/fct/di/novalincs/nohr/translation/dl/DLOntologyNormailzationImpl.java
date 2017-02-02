@@ -49,7 +49,7 @@ import pt.unl.fct.di.novalincs.nohr.translation.normalization.RightConjunctionNo
 
 public class DLOntologyNormailzationImpl implements DLOntologyNormalization {
 
-    private static final Logger LOG = Logger.getLogger(KoncludeInferenceEngine.class);
+    private static final Logger LOG = Logger.getLogger(DLOntologyNormailzationImpl.class);
     public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{
         AxiomType.CLASS_ASSERTION,
         AxiomType.DATA_PROPERTY_ASSERTION,

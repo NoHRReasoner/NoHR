@@ -43,10 +43,6 @@ public enum Profile {
 
     OWL2_EL, OWL2_QL, NOHR_DL;
 
-    public static DLMode PREFERRED_DL_MODE = DLMode.HERMIT;
-    public static boolean USE_DL_FOR_QL = false;
-    public static boolean USE_DL_FOR_EL = false;
-
     /**
      * Returns the preferred, in terms of translation, OWL profile of a given
      * ontology.
@@ -87,49 +83,6 @@ public enum Profile {
         return minViolationsProfile;
         // else
         // throw new OWLProfilesViolationsException(reports);
-    }
-
-    /**
-     * Create an {@link OntologyTranslator} of a given ontology that can handle
-     * this profile.
-     *
-     * @param ontology the ontology whose
-     * {@link OntologyTranslator ontology translation} will be created.
-     * @param v
-     * @param dedutiveDatabase the {@link DeductiveDatabase dedutive database}
-     * where the ontology translation will be loaded.
-     * @return the {@link OntologyTranslator ontology translation} of
-     * {@code ontology} for this profile.
-     * @throws UnsupportedAxiomsException if {@code ontology} has some axiom of
-     * a type that isn't supported in this profile.
-     * @throws OWLProfilesViolationsException if {@code ontology} isn't in this
-     * profile.
-     */
-    public OntologyTranslator createOntologyTranslator(OWLOntology ontology, Vocabulary v,
-            DeductiveDatabase dedutiveDatabase) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-        // final OWLProfileReport report = owlProfile().checkOntology(ontology);
-        // final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
-        // if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
-        // throw new OWLProfilesViolationsException(report);
-
-        switch (this) {
-            case OWL2_EL:
-                if (USE_DL_FOR_EL) {
-                    return new DLOntologyTranslator(ontology, v, dedutiveDatabase, PREFERRED_DL_MODE);
-                } else {
-                    return new ELOntologyTranslator(ontology, v, dedutiveDatabase);
-                }
-            case OWL2_QL:
-                if (USE_DL_FOR_QL) {
-                    return new DLOntologyTranslator(ontology, v, dedutiveDatabase, PREFERRED_DL_MODE);
-                } else {
-                    return new QLOntologyTranslator(ontology, v, dedutiveDatabase);
-                }
-            case NOHR_DL:
-                return new DLOntologyTranslator(ontology, v, dedutiveDatabase, PREFERRED_DL_MODE);
-            default:
-                throw new OWLProfilesViolationsException();
-        }
     }
 
     /**
