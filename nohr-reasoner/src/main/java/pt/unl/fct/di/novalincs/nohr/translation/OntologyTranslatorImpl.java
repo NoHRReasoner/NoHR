@@ -15,6 +15,7 @@ package pt.unl.fct.di.novalincs.nohr.translation;
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLOntology;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
 
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
@@ -38,31 +39,32 @@ import pt.unl.fct.di.novalincs.nohr.translation.ql.QLOntologyTranslator;
  *
  * @author Nuno Costa
  */
-public class OntologyTranslatorImpl implements OntologyTranslator {
-
-    private final Vocabulary v;
+public abstract class OntologyTranslatorImpl implements OntologyTranslator {
 
     /**
-     * The {@link Profile profile} that this {@link OntologyTranslator} will
-     * handle. If none is specified (i.e. if it is {@code null} ), the preferred
-     * ontology's profile will be chosen.
+     * The {@link DeductiveDatabase} where the translation is maintained.
      */
-    private final Profile profile;
+    private final DeductiveDatabase dedutiveDatabase;
 
     /**
-     * The <i>concrete implementor</i> of this <i>abstraction</i>.
+     * The {@link DatabaseProgram program} where the translation is maintained.
      */
-    private OntologyTranslator implementor;
+    protected final DatabaseProgram translation;
 
-    private final OntologyTranslatorConfiguration ontologyTranlatorConfiguration;
+    /**
+     * The translated ontology.
+     */
+    protected final OWLOntology ontology;
+    
+    protected final Vocabulary vocabulary;
 
     /**
      * Constructs an {@link OntologyTranslator} for a given
      * {@link OWLOntology ontology}.
      *
      * @param ontology the ontology that will be translated.
-     * @param v
-     * @param dedutiveDatabaseManager the {@link DeductiveDatabase} where the
+     * @param vocabulary
+     * @param dedutiveDatabase the {@link DeductiveDatabase} where the
      * translation will be maintained.
      * @param profile the {@link Profile profile} that this
      * {@link OntologyTranslator} will handle. If none is specified (i.e. if it
@@ -74,41 +76,49 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
      * @throws UnsupportedAxiomsException if {@code ontology} has some axioms of
      * an unsupported type.
      */
-    public OntologyTranslatorImpl(OntologyTranslatorConfiguration ontologyTranlatorConfiguration, OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabaseManager, Profile profile)
+    protected OntologyTranslatorImpl(
+            OWLOntology ontology,
+            Vocabulary vocabulary,
+            DeductiveDatabase dedutiveDatabase)
             throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-
+        
         Objects.requireNonNull(ontology);
-        Objects.requireNonNull(v);
-        Objects.requireNonNull(dedutiveDatabaseManager);
-
-        this.v = v;
-
-        if (profile == null) {
-            this.profile = Profile.getProfile(ontology);
-        } else {
-            this.profile = profile;
-        }
-
-        this.ontologyTranlatorConfiguration = ontologyTranlatorConfiguration;
-
-        implementor = createOntologyTranslator(ontology, v, dedutiveDatabaseManager);
-        ontologyTranlatorConfiguration.handledChanges();
+        Objects.requireNonNull(vocabulary);
+        Objects.requireNonNull(dedutiveDatabase);
+        
+        this.ontology = ontology;
+        this.vocabulary = vocabulary;
+        this.dedutiveDatabase = dedutiveDatabase;
+        
+        translation = dedutiveDatabase.createProgram();
     }
-
+    
     @Override
     public void clear() {
-        implementor.clear();
+        translation.clear();
+    }
+    
+    public static final OntologyTranslator createOntologyTranslator(
+            OntologyTranslatorConfiguration configuration,
+            OWLOntology ontology,
+            Vocabulary vocabulary,
+            DeductiveDatabase dedutiveDatabase)
+            throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+        
+        return createOntologyTranslator(configuration, ontology, vocabulary, dedutiveDatabase, null);
     }
 
     /**
      * Create an {@link OntologyTranslator} of a given ontology that can handle
      * this profile.
      *
+     * @param configuration
      * @param ontology the ontology whose
      * {@link OntologyTranslator ontology translation} will be created.
-     * @param v
+     * @param vocabulary
      * @param dedutiveDatabase the {@link DeductiveDatabase dedutive database}
      * where the ontology translation will be loaded.
+     * @param profile
      * @return the {@link OntologyTranslator ontology translation} of
      * {@code ontology} for this profile.
      * @throws UnsupportedAxiomsException if {@code ontology} has some axiom of
@@ -116,80 +126,59 @@ public class OntologyTranslatorImpl implements OntologyTranslator {
      * @throws OWLProfilesViolationsException if {@code ontology} isn't in this
      * profile.
      */
-    public final OntologyTranslator createOntologyTranslator(OWLOntology ontology,
-            Vocabulary v,
-            DeductiveDatabase dedutiveDatabase)
+    public static final OntologyTranslator createOntologyTranslator(
+            OntologyTranslatorConfiguration configuration,
+            OWLOntology ontology,
+            Vocabulary vocabulary,
+            DeductiveDatabase dedutiveDatabase,
+            Profile profile)
             throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-        // final OWLProfileReport report = owlProfile().checkOntology(ontology);
-        // final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
-        // if (!report.isInProfile() && (ignoreUnsupported == null || !ignoreUnsupported.equals("true")))
-        // throw new OWLProfilesViolationsException(report);
-
+        
+        if (profile == null) {
+            profile = Profile.getProfile(ontology);
+        }
+        
         switch (profile) {
             case OWL2_EL:
-                if (ontologyTranlatorConfiguration.getDLInferenceEngineEL()) {
-                    return new DLOntologyTranslator(ontology, v, dedutiveDatabase, getDLInferenceEngine());
+                if (configuration.getDLInferenceEngineEL()) {
+                    return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine(configuration));
                 } else {
-                    return new ELOntologyTranslator(ontology, v, dedutiveDatabase);
+                    return new ELOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
                 }
             case OWL2_QL:
-                if (ontologyTranlatorConfiguration.getDLInferenceEngineQL()) {
-                    return new DLOntologyTranslator(ontology, v, dedutiveDatabase, getDLInferenceEngine());
+                if (configuration.getDLInferenceEngineQL()) {
+                    return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine(configuration));
                 } else {
-                    return new QLOntologyTranslator(ontology, v, dedutiveDatabase);
+                    return new QLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
                 }
             case NOHR_DL:
-                return new DLOntologyTranslator(ontology, v, dedutiveDatabase, getDLInferenceEngine());
+                return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine(configuration));
             default:
                 throw new OWLProfilesViolationsException();
         }
     }
-
+    
     @Override
     public DeductiveDatabase getDedutiveDatabase() {
-        return implementor.getDedutiveDatabase();
+        return dedutiveDatabase;
     }
-
-    private InferenceEngine getDLInferenceEngine() {
-        if (ontologyTranlatorConfiguration.getDLInferenceEngine() == DLMode.KONCLUDE) {
-            return new KoncludeInferenceEngine(ontologyTranlatorConfiguration.getKoncludeBinary().getAbsolutePath());
+    
+    private static InferenceEngine getDLInferenceEngine(OntologyTranslatorConfiguration configuration) {
+        if (configuration.getDLInferenceEngine() == DLMode.KONCLUDE) {
+            return new KoncludeInferenceEngine(configuration.getKoncludeBinary().getAbsolutePath());
         } else {
             return new HermitInferenceEngine();
         }
     }
-
+    
     @Override
     public OWLOntology getOntology() {
-        return implementor.getOntology();
+        return ontology;
     }
-
-    @Override
-    public Profile getProfile() {
-        return implementor.getProfile();
+    
+    public boolean isSuitable(OWLOntology ontology) {
+        final Profile profile = Profile.getProfile(ontology);
+        
+        return (getProfile() == Profile.NOHR_DL || getProfile() == profile);
     }
-
-    @Override
-    public boolean hasDisjunctions() {
-        return implementor.hasDisjunctions();
-    }
-
-    @Override
-    public void updateTranslation() throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-        Profile newProfile = profile;
-
-        if (newProfile == null) {
-            newProfile = Profile.getProfile(getOntology());
-        }
-
-        final Profile implementorProfile = getProfile();
-
-        if ((implementorProfile != Profile.NOHR_DL && newProfile != implementorProfile) || ontologyTranlatorConfiguration.hasChanged()) {
-            implementor.clear();
-            implementor = createOntologyTranslator(getOntology(), v, getDedutiveDatabase());
-            ontologyTranlatorConfiguration.handledChanges();
-        }
-
-        implementor.updateTranslation();
-    }
-
 }

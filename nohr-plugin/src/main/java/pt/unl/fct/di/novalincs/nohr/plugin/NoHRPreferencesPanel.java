@@ -17,6 +17,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -30,6 +32,8 @@ import javax.swing.SpringLayout;
 import org.protege.editor.owl.ui.preferences.OWLPreferencesPanel;
 
 import layout.SpringUtilities;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
 
 /**
@@ -76,6 +80,12 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         preferences.setDLInferenceEngineQL(dLInferenceEngineQL);
         preferences.setKoncludeBinary(koncludeBinary);
         preferences.setXsbDirectory(xsbDirectory);
+
+        try {
+            NoHRInstance.getInstance().restart();
+        } catch (UnsupportedAxiomsException | PrologEngineCreationException ex) {
+            Logger.getLogger(NoHRPreferencesPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JComboBox<DLMode> createDLInferenceEngineComboBox(DLMode dLInferenceEngine) {
@@ -98,7 +108,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 
         return ret;
     }
-    
+
     private JCheckBox createDLInferenceEngineELCheckBox(boolean dLInferenceEngineEL) {
         final JCheckBox ret;
 

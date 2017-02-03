@@ -73,6 +73,7 @@ public interface OntologyTranslator {
      */
     public boolean hasDisjunctions();
 
+    public boolean isSuitable(OWLOntology ontology);
     /**
      * Updates the translation {@link DatabaseProgram program}(s) in the
      * {@link OntologyTranslator translator}'s {@link DeductiveDatabase deductive

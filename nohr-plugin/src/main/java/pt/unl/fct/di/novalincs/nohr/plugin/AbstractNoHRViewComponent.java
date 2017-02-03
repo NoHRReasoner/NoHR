@@ -44,21 +44,6 @@ import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
  */
 public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent {
 
-    protected class DisposableHybridKB extends NoHRHybridKB implements Disposable {
-
-        public DisposableHybridKB(final NoHRHybridKBConfiguration configuration, OWLOntology ontology, Program program,
-                Vocabulary vocabularyMapping) throws OWLProfilesViolationsException, UnsupportedAxiomsException,
-                PrologEngineCreationException {
-            super(configuration, ontology, program, vocabularyMapping, null);
-        }
-
-        @Override
-        public void dispose() {
-            super.dispose();
-        }
-
-    }
-
     class DisposableProgram extends HashSetProgram implements Disposable {
 
         public DisposableProgram() {
@@ -76,7 +61,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 
     }
 
-    protected static final Logger log = Logger.getLogger(AbstractNoHRViewComponent.class);
+    protected static final Logger LOG = Logger.getLogger(AbstractNoHRViewComponent.class);
 
     private static final long serialVersionUID = -2850791395194206722L;
 
@@ -92,13 +77,11 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
      * yet.
      */
     protected HybridKB getHybridKB() {
-        final DisposableHybridKB hybridKB = getOWLModelManager().get(HybridKB.class);
-
-        if (hybridKB == null) {
+        if (!NoHRInstance.getInstance().isStarted()) {
             throw new NullPointerException();
         }
 
-        return hybridKB;
+        return NoHRInstance.getInstance().getHybridKB();
     }
 
     /**
@@ -174,11 +157,12 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
      * Checks whether the NoHR was started.
      */
     protected boolean isNoHRStarted() {
-        return getOWLModelManager().get(HybridKB.class) != null;
+        return NoHRInstance.getInstance().isStarted();
     }
 
     protected void reset() {
-        log.info("Resetting...");
+        LOG.info("Resetting");
+
         getOWLModelManager().put(Vocabulary.class, new DisposableVocabulary(getOntology()));
         getParser().setVocabulary(getVocabulary());
         getProgramPersistenceManager().setVocabulary(getVocabulary());
@@ -188,35 +172,29 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
      * Starts the NoHR, creating a {@link NoHRHybridKB}.
      */
     protected void startNoHR() {
-        log.info("starting NoHR");
+        LOG.info("Starting NoHR");
 
         NoHRHybridKBConfiguration config = NoHRPreferences.getInstance().getConfiguration();
 
-        if (config.getXsbBin() == null) {
+        if (config.getXsbDirectory() == null) {
             Messages.xsbBinDirectoryNotSet(this);
             return;
         }
 
-        DisposableHybridKB disposableHybridKB = null;
-
         try {
-            disposableHybridKB = new DisposableHybridKB(config, getOntology(), getProgram(), getVocabulary());
+            NoHRInstance.getInstance().start(config, getOntology(), getProgram(), getVocabulary());
         } catch (final OWLProfilesViolationsException e) {
-            log.warn("Violations to " + e.getReports());
+            LOG.warn("Violations to " + e.getReports());
             Messages.violations(this, e);
         } catch (final UnsupportedAxiomsException e) {
-            log.warn("unsupported axioms: " + e.getUnsupportedAxioms());
+            LOG.warn("unsupported axioms: " + e.getUnsupportedAxioms());
             Messages.violations(this, e);
         } catch (final PrologEngineCreationException e) {
-            log.error("can't create a xsb instance" + System.lineSeparator() + e.getCause() + System.lineSeparator()
+            LOG.error("can't create a xsb instance" + System.lineSeparator() + e.getCause() + System.lineSeparator()
                     + e.getCause().getStackTrace());
             Messages.xsbDatabaseCreationProblems(this, e);
         } catch (final RuntimeException e) {
-            log.debug("Exception caught when trying to create the Hybrid KB", e);
-        }
-        if (disposableHybridKB != null) {
-            getOWLModelManager().put(HybridKB.class, disposableHybridKB);
+            LOG.debug("Exception caught when trying to create the Hybrid KB", e);
         }
     }
-
 }

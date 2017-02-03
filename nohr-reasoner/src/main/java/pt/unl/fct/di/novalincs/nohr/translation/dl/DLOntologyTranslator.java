@@ -15,11 +15,11 @@ import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.InferenceEngine;
-import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorImplementor;
+import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
-public class DLOntologyTranslator extends OntologyTranslatorImplementor {
+public class DLOntologyTranslator extends OntologyTranslatorImpl {
 
     private DLOntologyNormalization normalizedOntology;
     private final DLOriginalAxiomTranslator axiomTranslator;

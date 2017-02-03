@@ -7,27 +7,27 @@ import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
 public class NoHRHybridKBConfiguration {
 
     private final OntologyTranslatorConfiguration ontologyTranslationConfiguration;
-    private File xsbBin;
+    private File xsbDirectory;
 
     public NoHRHybridKBConfiguration() {
         this(new File(System.getenv("XSB_DIR")), new File(System.getenv("KONCLUDE_BIN")), false, false, DLMode.HERMIT);
     }
 
-    public NoHRHybridKBConfiguration(File xsbBin, File koncludeBin, boolean useDlForEl, boolean useDlForQl, DLMode dlMode) {
-        this.ontologyTranslationConfiguration = new OntologyTranslatorConfiguration(dlMode, useDlForEl, useDlForQl, koncludeBin);
-        this.xsbBin = xsbBin;
+    public NoHRHybridKBConfiguration(File xsbDirectory, File koncludeBinary, boolean dLInferenceEngineEL, boolean dLInferenceEngineQL, DLMode dLInferenceEngine) {
+        this.ontologyTranslationConfiguration = new OntologyTranslatorConfiguration(dLInferenceEngine, dLInferenceEngineEL, dLInferenceEngineQL, koncludeBinary);
+        this.xsbDirectory = xsbDirectory;
     }
 
     public OntologyTranslatorConfiguration getOntologyTranslationConfiguration() {
         return ontologyTranslationConfiguration;
     }
 
-    public File getXsbBin() {
-        return xsbBin;
+    public File getXsbDirectory() {
+        return xsbDirectory;
     }
 
-    public void setXsbBin(File xsbBin) {
-        this.xsbBin = xsbBin;
+    public void setXsbDirectory(File xsbBin) {
+        this.xsbDirectory = xsbBin;
     }
 
 }

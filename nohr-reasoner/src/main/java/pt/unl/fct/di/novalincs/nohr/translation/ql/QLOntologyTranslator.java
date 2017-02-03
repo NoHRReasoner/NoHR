@@ -41,7 +41,7 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslator;
-import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorImplementor;
+import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
@@ -53,7 +53,7 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
  *
  * @author Nuno Costa
  */
-public class QLOntologyTranslator extends OntologyTranslatorImplementor {
+public class QLOntologyTranslator extends OntologyTranslatorImpl {
 
     /**
      * The {@link QLAxiomsTranslator} that obtain the double rules of this

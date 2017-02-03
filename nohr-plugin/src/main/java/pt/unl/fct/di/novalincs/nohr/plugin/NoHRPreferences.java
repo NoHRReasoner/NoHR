@@ -38,14 +38,11 @@ public final class NoHRPreferences {
 
     private static final String XSB_DIRECTORY = "XSB_DIRECTORY";
 
-    private final NoHRHybridKBConfiguration configuration;
-
     private NoHRPreferences() {
-        configuration = new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), getDLInferenceEngine());
     }
 
     public NoHRHybridKBConfiguration getConfiguration() {
-        return configuration;
+        return new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), getDLInferenceEngine());
     }
 
     public DLMode getDLInferenceEngine() {
@@ -96,33 +93,25 @@ public final class NoHRPreferences {
         if (value != null) {
             getPreferences().putString(DL_INFERENCE_ENGINE, value.toString());
         }
-
-        configuration.getOntologyTranslationConfiguration().setDLInferenceEngine(value);
     }
 
     public void setKoncludeBinary(File value) {
         if (value != null) {
             getPreferences().putString(KONCLUDE_BINARY, value.getAbsolutePath());
         }
-
-        configuration.getOntologyTranslationConfiguration().setKoncludeBinary(value);
     }
 
     public void setDLInferenceEngineEL(boolean value) {
         getPreferences().putBoolean(DL_INFERENCE_ENGINE_EL, value);
-        configuration.getOntologyTranslationConfiguration().setDLInferenceEngineEL(value);
     }
 
     public void setDLInferenceEngineQL(boolean value) {
         getPreferences().putBoolean(DL_INFERENCE_ENGINE_QL, value);
-        configuration.getOntologyTranslationConfiguration().setDLInferenceEngineQL(value);
     }
 
     public void setXsbDirectory(File value) {
         if (value != null) {
             getPreferences().putString(XSB_DIRECTORY, value.getAbsolutePath());
         }
-
-        configuration.setXsbBin(value);
     }
 }

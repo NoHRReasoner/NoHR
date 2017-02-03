@@ -86,7 +86,7 @@ public class NoHRHybridKB implements HybridKB {
      * The underlying {@link OntologyTranslator}, that translates the
      * <i>ontology</i> component to rules.
      */
-    private final OntologyTranslator ontologyTranslator;
+    private OntologyTranslator ontologyTranslator;
 
     /**
      * The underlying {@link QueryProcessor} that mediates the queries to the
@@ -132,6 +132,8 @@ public class NoHRHybridKB implements HybridKB {
     private final ProgramChangeListener programChangeListener;
 
     private final VocabularyChangeListener vocabularyChangeListener;
+
+    private final NoHRHybridKBConfiguration configuration;
 
     /**
      * Constructs a {@link NoHRHybridKB} from a given
@@ -233,6 +235,7 @@ public class NoHRHybridKB implements HybridKB {
 
         Objects.requireNonNull(configuration);
 
+        this.configuration = configuration;
         this.ontology = ontology;
         this.program = program;
 
@@ -247,10 +250,10 @@ public class NoHRHybridKB implements HybridKB {
         }
 
         assert this.vocabulary != null;
-        dedutiveDatabase = new XSBDeductiveDatabase(configuration.getXsbBin(), this.vocabulary);
+        dedutiveDatabase = new XSBDeductiveDatabase(configuration.getXsbDirectory(), this.vocabulary);
         doubledProgram = dedutiveDatabase.createProgram();
         queryProcessor = new QueryProcessor(dedutiveDatabase);
-        ontologyTranslator = new OntologyTranslatorImpl(configuration.getOntologyTranslationConfiguration(), ontology, this.vocabulary, dedutiveDatabase, profile);
+        ontologyTranslator = OntologyTranslatorImpl.createOntologyTranslator(configuration.getOntologyTranslationConfiguration(), ontology, vocabulary, dedutiveDatabase, profile);
         hasOntologyChanges = true;
         hasProgramChanges = true;
         ontologyChangeListener = new OWLOntologyChangeListener() {
@@ -299,9 +302,11 @@ public class NoHRHybridKB implements HybridKB {
                 hasProgramChanges = true;
             }
         };
-        ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
-        program.addListener(programChangeListener);
+
+        this.ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
+        this.program.addListener(programChangeListener);
         this.vocabulary.addListener(vocabularyChangeListener);
+
         preprocess();
     }
 
@@ -422,10 +427,16 @@ public class NoHRHybridKB implements HybridKB {
     private void preprocess() throws OWLProfilesViolationsException, UnsupportedAxiomsException {
         if (hasOntologyChanges) {
             RuntimesLogger.start("ontology processing");
+
+            if (!ontologyTranslator.isSuitable(ontology)) {
+                ontologyTranslator = OntologyTranslatorImpl.createOntologyTranslator(configuration.getOntologyTranslationConfiguration(), ontology, vocabulary, dedutiveDatabase);
+            }
+
             ontologyTranslator.updateTranslation();
+
             RuntimesLogger.stop("ontology processing", "loading");
         }
-        
+
         if (hasProgramChanges || ontologyTranslator.hasDisjunctions() != hadDisjunctions) {
             RuntimesLogger.start("rules parsing");
             doubledProgram.clear();
@@ -442,6 +453,7 @@ public class NoHRHybridKB implements HybridKB {
 
             RuntimesLogger.stop("rules parsing", "loading");
         }
+
         hasOntologyChanges = false;
         hasProgramChanges = false;
         hadDisjunctions = ontologyTranslator.hasDisjunctions();
