@@ -36,7 +36,7 @@ public final class NoHRPreferences {
 
     private static final String KONCLUDE_BINARY = "KONCLUDE_BINARY";
 
-    private static final String XSB_DIRECTORY = "XSB_DIRECTORY";
+    private static final String XSB_DIRECTORY = "XSB_DIR";
 
     private NoHRPreferences() {
     }
