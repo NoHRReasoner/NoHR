@@ -89,10 +89,11 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
     public QLOntologyTranslator(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabase)
             throws UnsupportedAxiomsException {
         super(ontology, v, dedutiveDatabase);
-        ontologyNormalization = new StaticQLOntologyNormalization(ontology, v);
-        graph = new StaticTBoxDigraph(ontologyNormalization);
+
         originalAxiomsTranslator = new QLOriginalAxiomsTranslator(v);
         doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(v);
+
+        prepareUpdate();
     }
 
     /**
@@ -138,8 +139,10 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
      * and {@link TBoxDigraph} for the current version of the ontology.
      */
     private void prepareUpdate() throws UnsupportedAxiomsException {
+        RuntimesLogger.start("[OWL QL] ontology normalization");
         ontologyNormalization = new StaticQLOntologyNormalization(ontology, vocabulary);
         graph = new StaticTBoxDigraph(ontologyNormalization);
+        RuntimesLogger.stop("[OWL QL] ontology normalization", "loading");
     }
 
     private OWLObjectSomeValuesFrom some(OWLObjectPropertyExpression ope) {
@@ -214,9 +217,9 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
         prepareUpdate();
         translation.clear();
 
-        final boolean hasDisjunctions = ontologyNormalization.hasDisjunctions();
+        RuntimesLogger.start("[OWL QL] ontology translation");
 
-        RuntimesLogger.start("ontology translation");
+        final boolean hasDisjunctions = ontologyNormalization.hasDisjunctions();
 
         translation.addAll(translation(originalAxiomsTranslator));
 
@@ -224,8 +227,8 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
             translation.addAll(translation(doubleAxiomsTranslator));
             translation.addAll(disjunctionsTranslation());
 
-            RuntimesLogger.stop("ontology translation", "loading");
-            RuntimesLogger.start("ontology classification");
+            RuntimesLogger.stop("[OWL QL] ontology translation", "loading");
+            RuntimesLogger.start("[OWL QL (TBoxDigraph)] ontology inference");
 
             for (final OWLEntity e : graph.getUnsatisfiableEntities()) {
                 if (e instanceof OWLClass) {
@@ -234,12 +237,16 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
                     translation.addAll(doubleAxiomsTranslator.unsatisfiabilityTranslation((OWLProperty) e));
                 }
             }
+
             for (final OWLObjectProperty p : graph.getIrreflexiveRoles()) {
                 translation.add(doubleAxiomsTranslator.unreflexivityTranslation(p));
             }
-            RuntimesLogger.stop("ontology classification", "loading");
+
+            RuntimesLogger.stop("[OWL QL (TBoxDigraph)] ontology inference", "loading");
+        } else {
+            RuntimesLogger.stop("[OWL QL] ontology translation", "loading");
         }
-        RuntimesLogger.stop("ontology translation", "loading");
+
     }
 
 }

@@ -65,9 +65,9 @@ public class ELOntologyTranslator extends OntologyTranslatorImpl {
         super(ontology, v, dedutiveDatabase);
         originalAxiomsTranslator = new ELOriginalAxiomsTranslator(v);
         doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(v);
-        RuntimesLogger.start("ontology reduction");
+        RuntimesLogger.start("[OWL EL] ontology normalization");
         reducedOntology = new StaticELOntologyReduction(ontology, v);
-        RuntimesLogger.stop("ontology reduction", "loading");
+        RuntimesLogger.stop("[OWL EL] ontology normalization", "loading");
     }
 
     @Override
@@ -122,11 +122,11 @@ public class ELOntologyTranslator extends OntologyTranslatorImpl {
     public void updateTranslation() throws UnsupportedAxiomsException {
         prepareUpdate();
         translation.clear();
-        RuntimesLogger.start("ontology translation");
+        RuntimesLogger.start("[OWL EL] ontology translation");
         translate(originalAxiomsTranslator);
         if (reducedOntology.hasDisjunctions()) {
             translate(doubleAxiomsTranslator);
         }
-        RuntimesLogger.stop("ontology translation", "loading");
+        RuntimesLogger.stop("[OWL EL] ontology translation", "loading");
     }
 }

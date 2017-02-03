@@ -323,7 +323,6 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
      * @param ontology a OWL 2 QL ontology.
      */
     private void normalize(OWLOntology ontology) {
-        RuntimesLogger.start("ontology normalization");
         for (final OWLSubClassOfAxiom a : ontology.getAxioms(AxiomType.SUBCLASS_OF)) {
             normalize(a);
         }
@@ -378,7 +377,6 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
                 normalize(s);
             }
         }
-        RuntimesLogger.stop("ontology normalization", "loading");
     }
 
     /**

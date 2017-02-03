@@ -431,7 +431,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * @param ontology an ontology <i>O</i>.
      */
     private void classify(OWLOntology ontology) {
-        RuntimesLogger.start("ontology classification");
+        RuntimesLogger.start("[OWL EL (ELK)] ontology inference");
         Logger.getLogger("org.semanticweb.elk").setLevel(Level.ERROR);
         final OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
         final OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
@@ -445,7 +445,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
         generators.add(new InferredClassAssertionAxiomGenerator());
         final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, generators);
         inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager().getOWLDataFactory(), ontology);
-        RuntimesLogger.stop("ontology classification", "loading");
+        RuntimesLogger.stop("[OWL EL (ELK)] ontology inference", "loading");
     }
 
     /**
