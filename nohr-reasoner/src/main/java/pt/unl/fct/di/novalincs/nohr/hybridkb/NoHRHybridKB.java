@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.hybridkb;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +45,7 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateTypeVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.VocabularyChangeListener;
 import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslator;
-import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorImpl;
+import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorFactory;
 import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
@@ -87,6 +86,8 @@ public class NoHRHybridKB implements HybridKB {
      * <i>ontology</i> component to rules.
      */
     private OntologyTranslator ontologyTranslator;
+
+    private final OntologyTranslatorFactory ontologyTranslatorFactory;
 
     /**
      * The underlying {@link QueryProcessor} that mediates the queries to the
@@ -253,7 +254,8 @@ public class NoHRHybridKB implements HybridKB {
         dedutiveDatabase = new XSBDeductiveDatabase(configuration.getXsbDirectory(), this.vocabulary);
         doubledProgram = dedutiveDatabase.createProgram();
         queryProcessor = new QueryProcessor(dedutiveDatabase);
-        ontologyTranslator = OntologyTranslatorImpl.createOntologyTranslator(configuration.getOntologyTranslationConfiguration(), ontology, vocabulary, dedutiveDatabase, profile);
+        ontologyTranslatorFactory = new OntologyTranslatorFactory(configuration.getOntologyTranslationConfiguration());
+        ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, profile);
         hasOntologyChanges = true;
         hasProgramChanges = true;
         ontologyChangeListener = new OWLOntologyChangeListener() {
@@ -428,8 +430,8 @@ public class NoHRHybridKB implements HybridKB {
         if (hasOntologyChanges) {
             RuntimesLogger.start("ontology processing");
 
-            if (!ontologyTranslator.isSuitable(ontology)) {
-                ontologyTranslator = OntologyTranslatorImpl.createOntologyTranslator(configuration.getOntologyTranslationConfiguration(), ontology, vocabulary, dedutiveDatabase);
+            if (!ontologyTranslatorFactory.isPreferred(ontologyTranslator, ontology)) {
+                ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, null);
             }
 
             ontologyTranslator.updateTranslation();

@@ -18,14 +18,6 @@ import org.semanticweb.owlapi.profiles.OWL2QLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 
-import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
-import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
-import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
-import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator;
-import pt.unl.fct.di.novalincs.nohr.translation.el.ELOntologyTranslator;
-import pt.unl.fct.di.novalincs.nohr.translation.ql.QLOntologyTranslator;
 
 /**
  * Represents the types of the supported OWL profiles. The order of enumeration
