@@ -12,100 +12,100 @@ package pt.unl.fct.di.novalincs.nohr.translation;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.util.Objects;
 
 import org.semanticweb.owlapi.model.OWLOntology;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
 
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.HermitInferenceEngine;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.KoncludeInferenceEngine;
+import pt.unl.fct.di.novalincs.nohr.translation.el.ELOntologyTranslator;
+import pt.unl.fct.di.novalincs.nohr.translation.ql.QLOntologyTranslator;
 
 /**
- * The implementation of the {@link OntologyTranslator} <i>abstraction</i> (see {@link <a href="http://www.oodesign.com/bridge-pattern.html">Bridge
- * Pattern</a>}, and note that here {@link OntologyTranslator} is simultaneously the <i>abstraction</i> interface and the <i>implementor</i>
- * interface). The <i>concrete implementor</i> is chosen according to the ontology preferred {@link Profile OWL profile}, and changed appropriately in
+ * The implementation of the {@link OntologyTranslator} <i>abstraction</i> (see {@link
+ * <a href="http://www.oodesign.com/bridge-pattern.html">Bridge Pattern</a>},
+ * and note that here {@link OntologyTranslator} is simultaneously the
+ * <i>abstraction</i> interface and the <i>implementor</i>
+ * interface). The <i>concrete implementor</i> is chosen according to the
+ * ontology preferred {@link Profile OWL profile}, and changed appropriately in
  * each {@link #updateTranslation() translation}.
  *
  * @author Nuno Costa
  */
-public class OntologyTranslatorImpl implements OntologyTranslator {
+public abstract class OntologyTranslatorImpl implements OntologyTranslator {
 
-	private final Vocabulary v;
+    /**
+     * The {@link DeductiveDatabase} where the translation is maintained.
+     */
+    private final DeductiveDatabase dedutiveDatabase;
 
-	/**
-	 * The {@link Profile profile} that this {@link OntologyTranslator} will handle. If none is specified (i.e. if it is {@code null} ), the preferred
-	 * ontology's profile will be chosen.
-	 */
-	private final Profile profile;
+    /**
+     * The {@link DatabaseProgram program} where the translation is maintained.
+     */
+    protected final DatabaseProgram translation;
 
-	/** The <i>concrete implementor</i> of this <i>abstraction</i>. */
-	private OntologyTranslator implementor;
+    /**
+     * The translated ontology.
+     */
+    protected final OWLOntology ontology;
 
-	/**
-	 * Constructs an {@link OntologyTranslator} for a given {@link OWLOntology ontology}.
-	 *
-	 * @param ontology
-	 *            the ontology that will be translated.
-	 * @param dedutiveDatabaseManager
-	 *            the {@link DeductiveDatabase} where the translation will be maintained.
-	 * @param profile
-	 *            the {@link Profile profile} that this {@link OntologyTranslator} will handle. If none is specified (i.e. if it is {@code null} ),
-	 *            the preferred ontology's profile will be chosen.
-	 * @throws OWLProfilesViolationsException
-	 *             if {@code profile!=null} and the ontology isn't in {@code profile}, or {@code profile==null} and the ontology isn't in any
-	 *             supported profile.
-	 * @throws UnsupportedAxiomsException
-	 *             if {@code ontology} has some axioms of an unsupported type.
-	 */
-	public OntologyTranslatorImpl(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabaseManager,
-			Profile profile) throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-		Objects.requireNonNull(ontology);
-		Objects.requireNonNull(v);
-		Objects.requireNonNull(dedutiveDatabaseManager);
-		this.profile = profile;
-		this.v = v;
-		if (profile == null)
-			profile = Profile.getProfile(ontology);
-		implementor = profile.createOntologyTranslator(ontology, v, dedutiveDatabaseManager);
-	}
+    protected final Vocabulary vocabulary;
 
-	@Override
-	public void clear() {
-		implementor.clear();
-	}
+    /**
+     * Constructs an {@link OntologyTranslator} for a given
+     * {@link OWLOntology ontology}.
+     *
+     * @param ontology the ontology that will be translated.
+     * @param vocabulary
+     * @param dedutiveDatabase the {@link DeductiveDatabase} where the
+     * translation will be maintained.
+     * @param profile the {@link Profile profile} that this
+     * {@link OntologyTranslator} will handle. If none is specified (i.e. if it
+     * is {@code null} ), the preferred ontology's profile will be chosen.
+     * @param ontologyTranlatorConfiguration
+     * @throws OWLProfilesViolationsException if {@code profile!=null} and the
+     * ontology isn't in {@code profile}, or {@code profile==null} and the
+     * ontology isn't in any supported profile.
+     * @throws UnsupportedAxiomsException if {@code ontology} has some axioms of
+     * an unsupported type.
+     */
+    protected OntologyTranslatorImpl(
+            OWLOntology ontology,
+            Vocabulary vocabulary,
+            DeductiveDatabase dedutiveDatabase)
+            throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 
-	@Override
-	public DeductiveDatabase getDedutiveDatabase() {
-		return implementor.getDedutiveDatabase();
-	}
+        Objects.requireNonNull(ontology);
+        Objects.requireNonNull(vocabulary);
+        Objects.requireNonNull(dedutiveDatabase);
 
-	@Override
-	public OWLOntology getOntology() {
-		return implementor.getOntology();
-	}
+        this.ontology = ontology;
+        this.vocabulary = vocabulary;
+        this.dedutiveDatabase = dedutiveDatabase;
 
-	@Override
-	public Profile getProfile() {
-		return implementor.getProfile();
-	}
+        translation = dedutiveDatabase.createProgram();
+    }
 
-	@Override
-	public boolean hasDisjunctions() {
-		return implementor.hasDisjunctions();
-	}
+    @Override
+    public void clear() {
+        translation.clear();
+    }
 
-	@Override
-	public void updateTranslation() throws OWLProfilesViolationsException, UnsupportedAxiomsException {
-		Profile newProfile = profile;
-		if (newProfile == null)
-			newProfile = Profile.getProfile(getOntology());
-		if (newProfile != getProfile()) {
-			implementor.clear();
-			implementor = newProfile.createOntologyTranslator(getOntology(), v, getDedutiveDatabase());
-		}
-		implementor.updateTranslation();
-	}
+    @Override
+    public DeductiveDatabase getDedutiveDatabase() {
+        return dedutiveDatabase;
+    }
+
+    @Override
+    public OWLOntology getOntology() {
+        return ontology;
+    }
 
 }

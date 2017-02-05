@@ -12,43 +12,106 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.io.File;
 
 import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
 
 /**
  * Represents the NoHR preferences.
  *
  * @author Nuno Costa
  */
-public class NoHRPreferences {
+public final class NoHRPreferences {
 
-	private static NoHRPreferences instance;
+    private static NoHRPreferences instance;
 
-	private static final String XSB_BIN_DIRECTORY = "XSB_DIR";
+    private static final String DL_INFERENCE_ENGINE = "DL_INFERENCE_ENGINE";
 
-	public static synchronized NoHRPreferences getInstance() {
-		if (instance == null)
-			instance = new NoHRPreferences();
-		return instance;
-	}
+    private static final String DL_INFERENCE_ENGINE_EL = "DL_INFERENCE_ENGINE_EL";
 
-	private Preferences getPreferences() {
-		return PreferencesManager.getInstance().getApplicationPreferences(this.getClass());
-	}
+    private static final String DL_INFERENCE_ENGINE_QL = "DL_INFERENCE_ENGINE_QL";
 
-	public File getXSBBinDirectory() {
-		final String pathname = getPreferences().getString(XSB_BIN_DIRECTORY, null);
-		if (pathname == null)
-			return null;
-		return new File(pathname);
-	}
+    private static final String KONCLUDE_BINARY = "KONCLUDE_BINARY";
 
-	public void setXSBBinDirectory(File xsbBinDirectory) {
-		if (xsbBinDirectory != null)
-			getPreferences().putString(XSB_BIN_DIRECTORY, xsbBinDirectory.getAbsolutePath());
-	}
+    private static final String XSB_DIRECTORY = "XSB_DIR";
 
+    private NoHRPreferences() {
+    }
+
+    public NoHRHybridKBConfiguration getConfiguration() {
+        return new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), getDLInferenceEngine());
+    }
+
+    public DLMode getDLInferenceEngine() {
+        return DLMode.getDLMode(getPreferences().getString(DL_INFERENCE_ENGINE, "HERMIT"));
+    }
+
+    public static synchronized NoHRPreferences getInstance() {
+        if (instance == null) {
+            instance = new NoHRPreferences();
+        }
+
+        return instance;
+    }
+
+    public File getKoncludeBinary() {
+        final String pathname = getPreferences().getString(KONCLUDE_BINARY, null);
+
+        if (pathname == null) {
+            return null;
+        }
+
+        return new File(pathname);
+    }
+
+    private Preferences getPreferences() {
+        return PreferencesManager.getInstance().getApplicationPreferences(this.getClass());
+    }
+
+    public boolean getDLInferenceEngineEL() {
+        return getPreferences().getBoolean(DL_INFERENCE_ENGINE_EL, false);
+    }
+
+    public boolean getDLInferenceEngineQL() {
+        return getPreferences().getBoolean(DL_INFERENCE_ENGINE_QL, false);
+    }
+
+    public File getXsbDirectory() {
+        final String pathname = getPreferences().getString(XSB_DIRECTORY, null);
+
+        if (pathname == null) {
+            return null;
+        }
+
+        return new File(pathname);
+    }
+
+    public void setDLInferenceEngine(DLMode value) {
+        if (value != null) {
+            getPreferences().putString(DL_INFERENCE_ENGINE, value.toString());
+        }
+    }
+
+    public void setKoncludeBinary(File value) {
+        if (value != null) {
+            getPreferences().putString(KONCLUDE_BINARY, value.getAbsolutePath());
+        }
+    }
+
+    public void setDLInferenceEngineEL(boolean value) {
+        getPreferences().putBoolean(DL_INFERENCE_ENGINE_EL, value);
+    }
+
+    public void setDLInferenceEngineQL(boolean value) {
+        getPreferences().putBoolean(DL_INFERENCE_ENGINE_QL, value);
+    }
+
+    public void setXsbDirectory(File value) {
+        if (value != null) {
+            getPreferences().putString(XSB_DIRECTORY, value.getAbsolutePath());
+        }
+    }
 }

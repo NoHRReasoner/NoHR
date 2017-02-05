@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.hybridkb;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +45,7 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateTypeVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.VocabularyChangeListener;
 import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslator;
-import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorImpl;
+import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorFactory;
 import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
@@ -86,7 +85,9 @@ public class NoHRHybridKB implements HybridKB {
      * The underlying {@link OntologyTranslator}, that translates the
      * <i>ontology</i> component to rules.
      */
-    private final OntologyTranslator ontologyTranslator;
+    private OntologyTranslator ontologyTranslator;
+
+    private final OntologyTranslatorFactory ontologyTranslatorFactory;
 
     /**
      * The underlying {@link QueryProcessor} that mediates the queries to the
@@ -133,10 +134,13 @@ public class NoHRHybridKB implements HybridKB {
 
     private final VocabularyChangeListener vocabularyChangeListener;
 
+    private final NoHRHybridKBConfiguration configuration;
+
     /**
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
      *
+     * @param configuration
      * @param binDirectory the directory where the Prolog system to use as
      * underlying Prolog engine is located.
      * @param ontology the <i>ontology</i> component of this {@link HybridKB}.
@@ -158,16 +162,17 @@ public class NoHRHybridKB implements HybridKB {
      * @throws PrologEngineCreationException if there was some problem during
      * the creation of the underlying Prolog engine.
      */
-    public NoHRHybridKB(final File binDirectory, final OWLOntology ontology, Profile profile)
+    public NoHRHybridKB(final NoHRHybridKBConfiguration configuration, final OWLOntology ontology, Profile profile)
             throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException,
             PrologEngineCreationException {
-        this(binDirectory, ontology, Model.program(), null, profile);
+        this(configuration, ontology, Model.program(), null, profile);
     }
 
     /**
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
      *
+     * @param configuration
      * @param binDirectory the directory where the Prolog system to use as
      * underlying Prolog engine is located.
      * @param ontology the <i>ontology</i> component of this {@link HybridKB}.
@@ -181,16 +186,21 @@ public class NoHRHybridKB implements HybridKB {
      * @throws PrologEngineCreationException if there was some problem during
      * the creation of the underlying Prolog engine.
      */
-    public NoHRHybridKB(final File binDirectory, final OWLOntology ontology, final Program program)
-            throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException,
+    public NoHRHybridKB(final NoHRHybridKBConfiguration configuration,
+            final OWLOntology ontology,
+            final Program program)
+            throws OWLProfilesViolationsException,
+            IPException,
+            UnsupportedAxiomsException,
             PrologEngineCreationException {
-        this(binDirectory, ontology, program, null, null);
+        this(configuration, ontology, program, null, null);
     }
 
     /**
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
      *
+     * @param configuration
      * @param binDirectory the directory where the Prolog system to use as
      * underlying Prolog engine is located.
      * @param ontology the <i>ontology</i> component of this {@link HybridKB}.
@@ -217,25 +227,35 @@ public class NoHRHybridKB implements HybridKB {
      * @throws IllegalArgumentException if {@code vocabularyMapping} doesn't
      * contains {@code ontology}.
      */
-    public NoHRHybridKB(final File binDirectory, final OWLOntology ontology, final Program program,
-            Vocabulary vocabulary, Profile profile)
+    public NoHRHybridKB(final NoHRHybridKBConfiguration configuration,
+            final OWLOntology ontology,
+            final Program program,
+            Vocabulary vocabulary,
+            Profile profile)
             throws OWLProfilesViolationsException, UnsupportedAxiomsException, PrologEngineCreationException {
-        Objects.requireNonNull(binDirectory);
+
+        Objects.requireNonNull(configuration);
+
+        this.configuration = configuration;
         this.ontology = ontology;
         this.program = program;
+
         if (vocabulary != null) {
             if (!vocabulary.getOntology().equals(ontology)) {
                 throw new IllegalArgumentException("vocabularyMapping: must contain the given ontology");
             }
+
             this.vocabulary = vocabulary;
         } else {
             this.vocabulary = new DefaultVocabulary(ontology);
         }
+
         assert this.vocabulary != null;
-        dedutiveDatabase = new XSBDeductiveDatabase(binDirectory, this.vocabulary);
+        dedutiveDatabase = new XSBDeductiveDatabase(configuration.getXsbDirectory(), this.vocabulary);
         doubledProgram = dedutiveDatabase.createProgram();
         queryProcessor = new QueryProcessor(dedutiveDatabase);
-        ontologyTranslator = new OntologyTranslatorImpl(ontology, this.vocabulary, dedutiveDatabase, profile);
+        ontologyTranslatorFactory = new OntologyTranslatorFactory(configuration.getOntologyTranslationConfiguration());
+        ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, profile);
         hasOntologyChanges = true;
         hasProgramChanges = true;
         ontologyChangeListener = new OWLOntologyChangeListener() {
@@ -284,9 +304,11 @@ public class NoHRHybridKB implements HybridKB {
                 hasProgramChanges = true;
             }
         };
-        ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
-        program.addListener(programChangeListener);
+
+        this.ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
+        this.program.addListener(programChangeListener);
         this.vocabulary.addListener(vocabularyChangeListener);
+
         preprocess();
     }
 
@@ -407,9 +429,16 @@ public class NoHRHybridKB implements HybridKB {
     private void preprocess() throws OWLProfilesViolationsException, UnsupportedAxiomsException {
         if (hasOntologyChanges) {
             RuntimesLogger.start("ontology processing");
+
+            if (!ontologyTranslatorFactory.isPreferred(ontologyTranslator, ontology)) {
+                ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, null);
+            }
+
             ontologyTranslator.updateTranslation();
+
             RuntimesLogger.stop("ontology processing", "loading");
         }
+
         if (hasProgramChanges || ontologyTranslator.hasDisjunctions() != hadDisjunctions) {
             RuntimesLogger.start("rules parsing");
             doubledProgram.clear();
@@ -426,6 +455,7 @@ public class NoHRHybridKB implements HybridKB {
 
             RuntimesLogger.stop("rules parsing", "loading");
         }
+
         hasOntologyChanges = false;
         hasProgramChanges = false;
         hadDisjunctions = ontologyTranslator.hasDisjunctions();

@@ -168,7 +168,7 @@ abstract class ELAxiomsTranslator {
 	 * @param ce
 	 *            an concept <i>C</i>.
 	 * @param x
-	 *            a variable <i>x</i>.
+             *            a variable <i>x</i>.
 	 * @param doub
 	 *            specifies whether the atom will be doubled (i.e. with an double meta-predicate functor).
 	 * @throws UnsupportedExpressionException

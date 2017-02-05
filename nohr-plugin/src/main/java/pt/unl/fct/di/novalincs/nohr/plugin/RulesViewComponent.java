@@ -9,7 +9,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
@@ -44,101 +43,103 @@ import pt.unl.fct.di.novalincs.nohr.plugin.rules.RulesList;
  */
 public class RulesViewComponent extends AbstractNoHRViewComponent {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 6087261708132206489L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 6087261708132206489L;
 
-	private RulesList ruleList;
+    private RulesList ruleList;
 
-	private RuleEditor ruleEditor;
+    private RuleEditor ruleEditor;
 
-	@Override
-	protected void disposeOWLView() {
-	}
+    @Override
+    protected void disposeOWLView() {
+    }
 
-	public RuleListModel getRuleListModel() {
-		DisposableObject<RuleListModel> ruleListModel = getOWLModelManager().get(RuleListModel.class);
-		if (ruleListModel == null) {
-			ruleListModel = new DisposableObject<RuleListModel>(
-					new RuleListModel(getOWLEditorKit(), ruleEditor, getProgramPersistenceManager(), getProgram()));
-			getOWLModelManager().put(RuleListModel.class, ruleListModel);
-		}
-		return ruleListModel.getObject();
-	}
+    public RuleListModel getRuleListModel() {
+        DisposableObject<RuleListModel> ruleListModel = getOWLModelManager().get(RuleListModel.class);
+        if (ruleListModel == null) {
+            ruleListModel = new DisposableObject<RuleListModel>(
+                    new RuleListModel(getOWLEditorKit(), ruleEditor, getProgramPersistenceManager(), getProgram()));
+            getOWLModelManager().put(RuleListModel.class, ruleListModel);
+        }
+        return ruleListModel.getObject();
+    }
 
-	@Override
-	public void initialiseOWLView() throws Exception {
-		setLayout(new BorderLayout());
-		ruleEditor = new RuleEditor(getOWLEditorKit(), getParser());
-		final RuleListModel ruleListModel = getRuleListModel();
-		reset();
-		ruleList = new RulesList(ruleEditor, ruleListModel);
-		ruleList.setFont(new Font(this.getFont().getFontName(), Font.BOLD,14));
-		final JScrollPane jScrollPane = new JScrollPane(ruleList);
-		add(jScrollPane, BorderLayout.CENTER);
-		final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		final JButton openButton = new JButton(new AbstractAction("Open") {
+    @Override
+    public void initialiseOWLView() throws Exception {
+        setLayout(new BorderLayout());
+        ruleEditor = new RuleEditor(getOWLEditorKit(), getParser());
+        final RuleListModel ruleListModel = getRuleListModel();
+        reset();
+        ruleList = new RulesList(ruleEditor, ruleListModel);
+        ruleList.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 14));
+        final JScrollPane jScrollPane = new JScrollPane(ruleList);
+        add(jScrollPane, BorderLayout.CENTER);
+        final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        final JButton openButton = new JButton(new AbstractAction("Open") {
 
-			private static final long serialVersionUID = -2176187025244957420L;
+            private static final long serialVersionUID = -2176187025244957420L;
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				final int returnVal = fc.showOpenDialog(RulesViewComponent.this);
-				if (returnVal == JFileChooser.APPROVE_OPTION)
-					try {
-						final File file = fc.getSelectedFile();
-						RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						ruleListModel.load(file);
-					} catch (final PrologParserException e) {
-						Messages.invalidExpression(RulesViewComponent.this, e);
-					} catch (final IOException e) {
-					} catch (ParseException ex) {
-                                    Logger.getLogger(RulesViewComponent.class.getName()).log(Level.SEVERE, null, ex);
-                                } finally {
-						RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					}
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                final int returnVal = fc.showOpenDialog(RulesViewComponent.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        final File file = fc.getSelectedFile();
+                        RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        ruleListModel.load(file);
+                    } catch (final PrologParserException e) {
+                        Messages.invalidExpression(RulesViewComponent.this, e);
+                    } catch (final IOException e) {
+                    } catch (ParseException ex) {
+                        Logger.getLogger(RulesViewComponent.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    }
+                }
+            }
+        });
 
-		final JButton saveButton = new JButton(new AbstractAction("Save") {
+        final JButton saveButton = new JButton(new AbstractAction("Save") {
 
-			private static final long serialVersionUID = -2176187025244957420L;
+            private static final long serialVersionUID = -2176187025244957420L;
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				final int returnVal = fc.showSaveDialog(RulesViewComponent.this);
-				if (returnVal == JFileChooser.APPROVE_OPTION)
-					try {
-						final File file = fc.getSelectedFile();
-						RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						ruleListModel.save(file);
-					} catch (final IOException e) {
-						Messages.unsucceccfulSave(RulesViewComponent.this, e);
-					} finally {
-						RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					}
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                final int returnVal = fc.showSaveDialog(RulesViewComponent.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        final File file = fc.getSelectedFile();
+                        RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        ruleListModel.save(file);
+                    } catch (final IOException e) {
+                        Messages.unsucceccfulSave(RulesViewComponent.this, e);
+                    } finally {
+                        RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    }
+                }
 
-			}
-		});
-		final JButton clearButton = new JButton(new AbstractAction("Clear") {
+            }
+        });
+        final JButton clearButton = new JButton(new AbstractAction("Clear") {
 
-			private static final long serialVersionUID = -2176187025244957420L;
+            private static final long serialVersionUID = -2176187025244957420L;
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				ruleListModel.clear();
-			}
-		});
-		buttonHolder.add(openButton);
-		buttonHolder.add(saveButton);
-		buttonHolder.add(clearButton);
-		add(buttonHolder, BorderLayout.SOUTH);
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                ruleListModel.clear();
+            }
+        });
+        buttonHolder.add(openButton);
+        buttonHolder.add(saveButton);
+        buttonHolder.add(clearButton);
+        add(buttonHolder, BorderLayout.SOUTH);
 
-	}
+    }
 
 }

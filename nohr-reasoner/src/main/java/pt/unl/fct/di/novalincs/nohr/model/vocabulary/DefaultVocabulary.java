@@ -468,7 +468,7 @@ public class DefaultVocabulary implements Vocabulary {
      * entity IRI as fragment.
      */
     private IRI generateIRI() {
-        return IRI.create("#" + newEntitiesFiller + newEntitiesCounter++);
+        return IRI.create("owlapi:nohr#" + newEntitiesFiller + newEntitiesCounter++);
     }
 
     /**
