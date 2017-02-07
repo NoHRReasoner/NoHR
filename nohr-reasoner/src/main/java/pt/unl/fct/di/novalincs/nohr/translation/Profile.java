@@ -15,9 +15,9 @@ package pt.unl.fct.di.novalincs.nohr.translation;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.profiles.OWL2ELProfile;
 import org.semanticweb.owlapi.profiles.OWL2QLProfile;
+import org.semanticweb.owlapi.profiles.OWL2RLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
-
 
 /**
  * Represents the types of the supported OWL profiles. The order of enumeration
@@ -33,7 +33,7 @@ import org.semanticweb.owlapi.profiles.OWLProfileReport;
 // case in owlProfile() and createOntologyTranslation().
 public enum Profile {
 
-    OWL2_EL, OWL2_QL, NOHR_DL;
+    OWL2_EL, OWL2_QL, OWL2_RL, NOHR_DL;
 
     /**
      * Returns the preferred, in terms of translation, OWL profile of a given
@@ -84,6 +84,8 @@ public enum Profile {
      */
     private OWLProfile owlProfile() {
         switch (this) {
+            case OWL2_RL:
+                return new OWL2RLProfile();
             case OWL2_QL:
                 return new OWL2QLProfile();
             case OWL2_EL:

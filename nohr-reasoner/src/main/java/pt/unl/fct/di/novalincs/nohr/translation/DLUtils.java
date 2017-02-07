@@ -69,6 +69,10 @@ public class DLUtils {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectIntersectionOf(concepts);
     }
 
+    public static OWLObjectIntersectionOf conjunction(OWLOntology ontology, OWLClassExpression... concepts) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectIntersectionOf(concepts);
+    }
+
     public static boolean hasDisjunctions(OWLOntology ontology) {
         for (final OWLSubClassOfAxiom axiom : ontology.getAxioms(AxiomType.SUBCLASS_OF)) {
             for (final OWLClassExpression ci : axiom.getSuperClass().asConjunctSet()) {

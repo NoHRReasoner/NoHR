@@ -2,7 +2,7 @@ package pt.unl.fct.di.novalincs.nohr.hybridkb;
 
 import java.io.File;
 import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorConfiguration;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
 public class NoHRHybridKBConfiguration {
 
@@ -10,10 +10,10 @@ public class NoHRHybridKBConfiguration {
     private File xsbDirectory;
 
     public NoHRHybridKBConfiguration() {
-        this(new File(System.getenv("XSB_DIR")), new File(System.getenv("KONCLUDE_BIN")), false, false, DLMode.HERMIT);
+        this(new File(System.getenv("XSB_DIR")), new File(System.getenv("KONCLUDE_BIN")), false, false, DLInferenceEngine.HERMIT);
     }
 
-    public NoHRHybridKBConfiguration(File xsbDirectory, File koncludeBinary, boolean dLInferenceEngineEL, boolean dLInferenceEngineQL, DLMode dLInferenceEngine) {
+    public NoHRHybridKBConfiguration(File xsbDirectory, File koncludeBinary, boolean dLInferenceEngineEL, boolean dLInferenceEngineQL, DLInferenceEngine dLInferenceEngine) {
         this.ontologyTranslationConfiguration = new OntologyTranslatorConfiguration(dLInferenceEngine, dLInferenceEngineEL, dLInferenceEngineQL, koncludeBinary);
         this.xsbDirectory = xsbDirectory;
     }
