@@ -29,8 +29,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.util.ComponentFactory;
@@ -192,7 +196,24 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
         showInconsistentAnswersCheckBox = new JCheckBox(new QueryAction("inconsistent"));
         showInconsistentAnswersCheckBox.setSelected(true);
         optionsBox.add(showInconsistentAnswersCheckBox);
-        optionsBox.add(Box.createVerticalStrut(3));
+        optionsBox.add(Box.createVerticalStrut(5));
+
+        JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+        optionsBox.add(separator);
+        optionsBox.add(Box.createVerticalStrut(5));
+
+        final JCheckBox showIRIsCheckBox = new JCheckBox("Show IRIs");
+        showIRIsCheckBox.setSelected(false);
+
+        showIRIsCheckBox.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                answersTable.setShowIRIs(showIRIsCheckBox.isSelected());
+            }
+        });
+
+        optionsBox.add(showIRIsCheckBox);
+
         return optionsBox;
     }
 
@@ -267,6 +288,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
         final JComponent editorPanel = createQueryPanel();
         final JComponent answersPanel = createAnswersPanel();
         final JComponent optionsBox = createOptionsBox();
+
         answersPanel.add(optionsBox, BorderLayout.EAST);
 
         final JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editorPanel, answersPanel);

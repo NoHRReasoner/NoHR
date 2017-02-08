@@ -9,7 +9,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin.rules;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -25,40 +24,46 @@ import pt.unl.fct.di.novalincs.nohr.model.Rule;
  */
 public class RulesList extends MList {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 302913958066431253L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 302913958066431253L;
 
-	private final RuleListModel model;
+    private final RuleListModel model;
 
-	private final MouseListener mouseListener = new MouseAdapter() {
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			if (e.getClickCount() == 2)
-				handleEdit();
-		}
-	};
+    private final MouseListener mouseListener = new MouseAdapter() {
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                handleEdit();
+            }
+        }
+    };
 
-	private final RuleEditor ruleEditor;
+    private final RuleEditor ruleEditor;
 
-	public RulesList(RuleEditor ruleEditor, RuleListModel model) {
-		this.model = model;
-		this.ruleEditor = ruleEditor;
-		setModel(model);
-		addMouseListener(mouseListener);
-	}
+    public void setShowIRIs(boolean value) {
+        this.model.setShowIRIs(value);
+    }
 
-	@Override
-	protected void handleAdd() {
-		ruleEditor.clear();
-		final Rule newRule = ruleEditor.show();
-		if (newRule != null)
-			model.add(newRule);
-	}
+    public RulesList(RuleEditor ruleEditor, RuleListModel model) {
+        this.model = model;
+        this.ruleEditor = ruleEditor;
+        setModel(model);
+        addMouseListener(mouseListener);
+    }
 
-	@SuppressWarnings("unchecked")
-	public void setModel(RuleListModel model) {
-		super.setModel(model);
-	}
+    @Override
+    protected void handleAdd() {
+        ruleEditor.clear();
+        final Rule newRule = ruleEditor.show();
+        if (newRule != null) {
+            model.add(newRule);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void setModel(RuleListModel model) {
+        super.setModel(model);
+    }
 }

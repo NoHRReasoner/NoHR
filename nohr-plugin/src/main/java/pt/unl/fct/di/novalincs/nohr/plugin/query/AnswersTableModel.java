@@ -39,8 +39,10 @@ public class AnswersTableModel extends AbstractTableModel {
     private boolean error;
     private String errorMessage;
 
-    public AnswersTableModel() {
+    private boolean showIRIs;
 
+    public AnswersTableModel() {
+        showIRIs = false;
     }
 
     /**
@@ -50,6 +52,7 @@ public class AnswersTableModel extends AbstractTableModel {
         this.query = query;
         this.answers = answers;
         this.errorMessage = null;
+        showIRIs = false;
         fireTableRowsInserted(0, answers.size() - 1);
         fireTableStructureChanged();
     }
@@ -120,7 +123,11 @@ public class AnswersTableModel extends AbstractTableModel {
             }
             result = answers.get(rowIndex).getValuation().name().toLowerCase();
         } else {
-            result = answers.get(rowIndex).getValues().get(columnIndex - 1).toString();
+            if (showIRIs) {
+                result = answers.get(rowIndex).getValues().get(columnIndex - 1).asString();
+            } else {
+                result = answers.get(rowIndex).getValues().get(columnIndex - 1).toString();
+            }
         }
 
         return result;
@@ -140,4 +147,8 @@ public class AnswersTableModel extends AbstractTableModel {
         super.fireTableDataChanged();
     }
 
+    public void setShowIRIs(boolean value) {
+        this.showIRIs = value;
+        fireTableRowsUpdated(0, this.getRowCount());
+    }
 }

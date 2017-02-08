@@ -23,6 +23,16 @@ import pt.unl.fct.di.novalincs.nohr.utils.StringUtils;
 
 public class NoHRFormatVisitor extends DefaultFormatVisitor {
 
+    private final boolean displayIri;
+
+    public NoHRFormatVisitor() {
+        displayIri = false;
+    }
+
+    public NoHRFormatVisitor(boolean displayIri) {
+        this.displayIri = displayIri;
+    }
+
     @Override
     public String visit(Answer answer) {
         return Model.concat(answer.apply(), this, ",");
@@ -71,7 +81,11 @@ public class NoHRFormatVisitor extends DefaultFormatVisitor {
             return constant.asString();
         }
 
-        return StringUtils.escapeSymbol(constant.toString());
+        if (displayIri) {
+            return StringUtils.escapeSymbol(constant.asString());
+        } else {
+            return StringUtils.escapeSymbol(constant.toString());
+        }
     }
 
     @Override
@@ -143,7 +157,11 @@ public class NoHRFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Symbol symbolic) {
-        return StringUtils.escapeSymbol(symbolic.toString());
+        if (displayIri) {
+            return StringUtils.escapeSymbol(symbolic.asString());
+        } else {
+            return StringUtils.escapeSymbol(symbolic.toString());
+        }
     }
 
     @Override

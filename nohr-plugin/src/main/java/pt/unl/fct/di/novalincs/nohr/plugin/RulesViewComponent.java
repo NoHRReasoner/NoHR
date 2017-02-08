@@ -30,6 +30,9 @@ import org.protege.editor.core.ui.util.UIUtil;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JCheckBox;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 
 import pt.unl.fct.di.novalincs.nohr.plugin.rules.RuleEditor;
@@ -51,6 +54,8 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
     private RulesList ruleList;
 
     private RuleEditor ruleEditor;
+
+    private boolean showIRI;
 
     @Override
     protected void disposeOWLView() {
@@ -135,9 +140,22 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
                 ruleListModel.clear();
             }
         });
+
+        final JCheckBox showIRIsCheckBox = new JCheckBox("Show IRIs");
+        showIRIsCheckBox.setSelected(showIRI);
+
+        showIRIsCheckBox.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                ruleList.setShowIRIs(showIRIsCheckBox.isSelected());
+            }
+        });
+        
+        
         buttonHolder.add(openButton);
         buttonHolder.add(saveButton);
         buttonHolder.add(clearButton);
+        buttonHolder.add(showIRIsCheckBox);
         add(buttonHolder, BorderLayout.SOUTH);
 
     }
