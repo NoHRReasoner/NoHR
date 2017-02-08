@@ -9,7 +9,6 @@ package benchmark;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +33,7 @@ import benchmark.ubt.api.QueryResult;
 import benchmark.ubt.api.QuerySpecification;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
@@ -46,115 +46,121 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 public class LubmRepository {
 
-	private final Path data;
+    private final Path data;
 
-	private String lastQuery;
+    private String lastQuery;
 
-	private pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB hybridKB;
+    private pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB hybridKB;
 
-	private final File resultsDirectory;
+    private final File resultsDirectory;
 
-	Integer universities = 0;
+    Integer universities = 0;
 
-	private final Profile profiles;
+    private final Profile profiles;
 
-	private NoHRParser parser;
+    private NoHRParser parser;
 
-	public LubmRepository(Path data, File resultsDirectory, Profile profile) {
-		this.resultsDirectory = resultsDirectory;
-		this.data = data;
-		profiles = profile;
-	}
+    public LubmRepository(Path data, File resultsDirectory, Profile profile) {
+        this.resultsDirectory = resultsDirectory;
+        this.data = data;
+        profiles = profile;
+    }
 
-	public void clear() {
-		hybridKB = null;
-	}
+    public void clear() {
+        hybridKB = null;
+    }
 
-	public void close() {
-		hybridKB = null;
-		lastQuery = null;
-	}
+    public void close() {
+        hybridKB = null;
+        lastQuery = null;
+    }
 
-	public QueryResult issueQuery(QuerySpecification querySpecification) throws IOException, Exception {
-		final String queryId = querySpecification.id_;
-		RuntimesLogger.setIteration("query", queryId);
-		final String queryStr = querySpecification.query_.getString();
-		final boolean sameQuery = queryStr.equals(lastQuery);
-		final Collection<Answer> result = hybridKB.allAnswers(parser.parseQuery(queryStr));
-		RuntimesLogger.info(String.valueOf(result.size()) + " answers");
-		if (!sameQuery && resultsDirectory != null)
-			logResults(querySpecification, result);
-		lastQuery = queryStr;
-		if (!sameQuery) {
-		}
-		return new NoHRQueryResult(result);
-	}
+    public QueryResult issueQuery(QuerySpecification querySpecification) throws IOException, Exception {
+        final String queryId = querySpecification.id_;
+        RuntimesLogger.setIteration("query", queryId);
+        final String queryStr = querySpecification.query_.getString();
+        final boolean sameQuery = queryStr.equals(lastQuery);
+        final Collection<Answer> result = hybridKB.allAnswers(parser.parseQuery(queryStr));
+        RuntimesLogger.info(String.valueOf(result.size()) + " answers");
+        if (!sameQuery && resultsDirectory != null) {
+            logResults(querySpecification, result);
+        }
+        lastQuery = queryStr;
+        if (!sameQuery) {
+        }
+        return new NoHRQueryResult(result);
+    }
 
-	public boolean load(Integer universities) throws OWLOntologyCreationException, OWLOntologyStorageException,
-			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, PrologEngineCreationException {
-		this.universities = universities;
-		OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
-		RuntimesLogger.start("ontology loading");
-		final OWLOntology ontology;
-		if (universities == null)
-			ontology = ontologyManager.loadOntologyFromOntologyDocument(data.toFile());
-		else {
-			loadDirectory(universities, ontologyManager);
-			final OWLOntologyMerger merger = new OWLOntologyMerger(ontologyManager);
-			ontology = merger.createMergedOntology(ontologyManager, IRI.generateDocumentIRI());
-		}
-		RuntimesLogger.stop("ontology loading", "loading");
-		ontologyManager = null;
-		hybridKB = new NoHRHybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology, profiles);
-		parser = new NoHRRecursiveDescentParser(new DefaultVocabulary(ontology));
-		System.gc();
-		return true;
+    public boolean load(Integer universities) throws OWLOntologyCreationException, OWLOntologyStorageException,
+            OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+            IPException, PrologEngineCreationException {
+        this.universities = universities;
+        OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
+        RuntimesLogger.start("ontology loading");
+        final OWLOntology ontology;
+        if (universities == null) {
+            ontology = ontologyManager.loadOntologyFromOntologyDocument(data.toFile());
+        } else {
+            loadDirectory(universities, ontologyManager);
+            final OWLOntologyMerger merger = new OWLOntologyMerger(ontologyManager);
+            ontology = merger.createMergedOntology(ontologyManager, IRI.generateDocumentIRI());
+        }
+        RuntimesLogger.stop("ontology loading", "loading");
+        ontologyManager = null;
 
-	}
+        NoHRHybridKBConfiguration configuration = new NoHRHybridKBConfiguration();
 
-	private void loadDirectory(int universities, OWLOntologyManager ontologyManager)
-			throws OWLOntologyCreationException, IOException {
-		for (int u = 0; u < universities; u++) {
-			final DirectoryStream<Path> stream = Files.newDirectoryStream(data, "University" + u + "_*.owl");
-			for (final Path entry : stream) {
-				RuntimesLogger.info("loading " + entry.getFileName().toString());
-				if (entry.getFileName().toString().endsWith(".owl")) {
-					final File file = entry.toFile();
-					ontologyManager.loadOntologyFromOntologyDocument(file);
-				}
-			}
-			stream.close();
-		}
+        hybridKB = new NoHRHybridKB(configuration, ontology, profiles);
+        parser = new NoHRRecursiveDescentParser(new DefaultVocabulary(ontology));
+        System.gc();
+        return true;
 
-	}
+    }
 
-	private void logResults(QuerySpecification querySpecification, Collection<Answer> result2) {
-		if (resultsDirectory == null)
-			return;
-		final Charset charset = Charset.defaultCharset();
-		final String fileName = universities + "." + querySpecification.id_ + ".txt";
-		final Path path = FileSystems.getDefault().getPath(resultsDirectory.getAbsolutePath(), fileName);
-		try {
-			final BufferedWriter writer = Files.newBufferedWriter(path, charset);
-			if (result2.size() >= 1)
-				for (final Answer result : result2) {
-					for (final Term val : result.getValues()) {
-						final String valStr = val.toString();
-						writer.write(valStr, 0, valStr.length());
-						writer.write(9);
-					}
-					writer.newLine();
-				}
-			writer.close();
-		} catch (final IOException x) {
-			System.err.format("IOException: %s%n", x);
-		}
-	}
+    private void loadDirectory(int universities, OWLOntologyManager ontologyManager)
+            throws OWLOntologyCreationException, IOException {
+        for (int u = 0; u < universities; u++) {
+            final DirectoryStream<Path> stream = Files.newDirectoryStream(data, "University" + u + "_*.owl");
+            for (final Path entry : stream) {
+                RuntimesLogger.info("loading " + entry.getFileName().toString());
+                if (entry.getFileName().toString().endsWith(".owl")) {
+                    final File file = entry.toFile();
+                    ontologyManager.loadOntologyFromOntologyDocument(file);
+                }
+            }
+            stream.close();
+        }
 
-	public void setOntology(String ontology) {
-		final Path path = FileSystems.getDefault().getPath(ontology).toAbsolutePath();
-		new File(path.toString());
-	}
+    }
+
+    private void logResults(QuerySpecification querySpecification, Collection<Answer> result2) {
+        if (resultsDirectory == null) {
+            return;
+        }
+        final Charset charset = Charset.defaultCharset();
+        final String fileName = universities + "." + querySpecification.id_ + ".txt";
+        final Path path = FileSystems.getDefault().getPath(resultsDirectory.getAbsolutePath(), fileName);
+        try {
+            final BufferedWriter writer = Files.newBufferedWriter(path, charset);
+            if (result2.size() >= 1) {
+                for (final Answer result : result2) {
+                    for (final Term val : result.getValues()) {
+                        final String valStr = val.toString();
+                        writer.write(valStr, 0, valStr.length());
+                        writer.write(9);
+                    }
+                    writer.newLine();
+                }
+            }
+            writer.close();
+        } catch (final IOException x) {
+            System.err.format("IOException: %s%n", x);
+        }
+    }
+
+    public void setOntology(String ontology) {
+        final Path path = FileSystems.getDefault().getPath(ontology).toAbsolutePath();
+        new File(path.toString());
+    }
 
 }

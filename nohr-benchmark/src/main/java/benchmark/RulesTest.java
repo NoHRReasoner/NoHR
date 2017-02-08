@@ -1,4 +1,3 @@
-
 package benchmark;
 
 /*
@@ -10,7 +9,6 @@ package benchmark;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -39,6 +37,7 @@ import benchmark.ubt.api.QuerySpecification;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
@@ -51,102 +50,105 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 public class RulesTest {
 
-	public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException,
-			OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-			IPException, PrologEngineCreationException, ParseException, Exception {
-		if (args.length != 4) {
-			System.out.println("expected arguments: <ontology> <programs directory> <queries file> <runs>");
-			System.exit(1);
-		}
+    public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException,
+            OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+            IPException, PrologEngineCreationException, ParseException, Exception {
+        if (args.length != 4) {
+            System.out.println("expected arguments: <ontology> <programs directory> <queries file> <runs>");
+            System.exit(1);
+        }
 
-		final QueryConfigParser queriesParser = new QueryConfigParser();
-		final Path queriesFile = FileSystems.getDefault().getPath(args[2]).toAbsolutePath();
-		Vector<?> queries = null;
-		try {
-			queries = queriesParser.createQueryList(queriesFile.toString());
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		final int runs = Integer.valueOf(args[3]);
-		RuntimesLogger.open("loading", "queries");
-		for (int run = 1; run <= runs; run++) {
-			RuntimesLogger.setRun(run);
-			final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
-			final Path ontologyFile = FileSystems.getDefault().getPath(args[0]).toAbsolutePath();
-			final Path progsDir = FileSystems.getDefault().getPath(args[1]).toAbsolutePath();
+        final QueryConfigParser queriesParser = new QueryConfigParser();
+        final Path queriesFile = FileSystems.getDefault().getPath(args[2]).toAbsolutePath();
+        Vector<?> queries = null;
+        try {
+            queries = queriesParser.createQueryList(queriesFile.toString());
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        final int runs = Integer.valueOf(args[3]);
+        RuntimesLogger.open("loading", "queries");
+        for (int run = 1; run <= runs; run++) {
+            RuntimesLogger.setRun(run);
+            final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
+            final Path ontologyFile = FileSystems.getDefault().getPath(args[0]).toAbsolutePath();
+            final Path progsDir = FileSystems.getDefault().getPath(args[1]).toAbsolutePath();
 
-			final String name = ontologyFile.getFileName().toString().replaceFirst(".owl", "");
-			RuntimesLogger.setDataset(name);
-			RuntimesLogger.start("ontology loading");
-			OWLOntology ontology = null;
-			try {
-				ontology = om.loadOntologyFromOntologyDocument(ontologyFile.toFile());
-			} catch (final OWLOntologyCreationException e) {
-				e.printStackTrace();
-			}
-			RuntimesLogger.stop("ontology loading", "loading");
-			final HybridKB nohr = new NoHRHybridKB(new File(System.getenv("XSB_BIN_DIRECTORY")), ontology,
-					Model.program());
-			final NoHRParser parser = new NoHRRecursiveDescentParser(nohr.getVocabulary());
-			final ProgramPersistenceManager programPersistenceManager = new ProgramPersistenceManager(
-					nohr.getVocabulary());
-			final Iterator<?> queriesIt1 = queries.iterator();
-			while (queriesIt1.hasNext()) {
-				final QuerySpecification querySpecification = (QuerySpecification) queriesIt1.next();
-				RuntimesLogger.setIteration("query", querySpecification.id_);
-				try {
-					final Collection<Answer> ans = nohr
-							.allAnswers(parser.parseQuery(querySpecification.query_.getString()));
-					RuntimesLogger.info(ans.size() + " answers");
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
-			}
-			final List<Path> files = new ArrayList<Path>();
-			final DirectoryStream<Path> progsStream = Files.newDirectoryStream(progsDir);
-			for (final Path p : progsStream)
-				files.add(p);
-			Collections.sort(files, new Comparator<Path>() {
-				@Override
-				public int compare(Path o1, Path o2) {
-					try {
-						return Integer.valueOf(o1.getFileName().toString().replaceFirst(".p", ""))
-								.compareTo(Integer.valueOf(o2.getFileName().toString().replaceFirst(".p", "")));
-					} catch (final NumberFormatException e) {
-						System.err.println("program names must be numbers");
-						System.exit(1);
-						return -2;
-					}
-				}
-			});
-			for (final Path progFile : files) {
-				RuntimesLogger.setDataset(name + "+" + progFile.getFileName().toString().replaceFirst(".p", ""));
-				try {
-					RuntimesLogger.start("rules parsing");
-					final Program program = programPersistenceManager.read(progFile.toFile());
-					RuntimesLogger.stop("rules parsing", "loading");
-					nohr.getProgram().addAll(program);
-				} catch (final PrologParserException e) {
-					System.err.println("syntax error at line " + e.getLineNumber() + "column " + e.getStringPosition());
-				}
-				queries.iterator();
-				for (int i = 0; i < queries.size(); i++) {
-					final QuerySpecification querySpecification = (QuerySpecification) queries.get(i);
-					RuntimesLogger.setIteration("query", querySpecification.id_);
-					final Collection<Answer> ans = nohr
-							.allAnswers(parser.parseQuery(querySpecification.query_.getString()));
-					RuntimesLogger.info(ans.size() + " answers");
-				}
-				nohr.getProgram().clear();
-			}
-			progsStream.close();
+            final String name = ontologyFile.getFileName().toString().replaceFirst(".owl", "");
+            RuntimesLogger.setDataset(name);
+            RuntimesLogger.start("ontology loading");
+            OWLOntology ontology = null;
+            try {
+                ontology = om.loadOntologyFromOntologyDocument(ontologyFile.toFile());
+            } catch (final OWLOntologyCreationException e) {
+                e.printStackTrace();
+            }
+            RuntimesLogger.stop("ontology loading", "loading");
 
-		}
-		RuntimesLogger.close();
-		System.out.println("Consult loading times at loading.csv");
-		System.out.println("Consult query times at queries.csv");
-		System.exit(0);
+            NoHRHybridKBConfiguration configuration = new NoHRHybridKBConfiguration();
 
-	}
+            final HybridKB nohr = new NoHRHybridKB(configuration, ontology, Model.program());
+            final NoHRParser parser = new NoHRRecursiveDescentParser(nohr.getVocabulary());
+            final ProgramPersistenceManager programPersistenceManager = new ProgramPersistenceManager(
+                    nohr.getVocabulary());
+            final Iterator<?> queriesIt1 = queries.iterator();
+            while (queriesIt1.hasNext()) {
+                final QuerySpecification querySpecification = (QuerySpecification) queriesIt1.next();
+                RuntimesLogger.setIteration("query", querySpecification.id_);
+                try {
+                    final Collection<Answer> ans = nohr
+                            .allAnswers(parser.parseQuery(querySpecification.query_.getString()));
+                    RuntimesLogger.info(ans.size() + " answers");
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            final List<Path> files = new ArrayList<Path>();
+            final DirectoryStream<Path> progsStream = Files.newDirectoryStream(progsDir);
+            for (final Path p : progsStream) {
+                files.add(p);
+            }
+            Collections.sort(files, new Comparator<Path>() {
+                @Override
+                public int compare(Path o1, Path o2) {
+                    try {
+                        return Integer.valueOf(o1.getFileName().toString().replaceFirst(".p", ""))
+                                .compareTo(Integer.valueOf(o2.getFileName().toString().replaceFirst(".p", "")));
+                    } catch (final NumberFormatException e) {
+                        System.err.println("program names must be numbers");
+                        System.exit(1);
+                        return -2;
+                    }
+                }
+            });
+            for (final Path progFile : files) {
+                RuntimesLogger.setDataset(name + "+" + progFile.getFileName().toString().replaceFirst(".p", ""));
+                try {
+                    RuntimesLogger.start("rules parsing");
+                    final Program program = programPersistenceManager.read(progFile.toFile());
+                    RuntimesLogger.stop("rules parsing", "loading");
+                    nohr.getProgram().addAll(program);
+                } catch (final PrologParserException e) {
+                    System.err.println("syntax error at line " + e.getLineNumber() + "column " + e.getStringPosition());
+                }
+                queries.iterator();
+                for (int i = 0; i < queries.size(); i++) {
+                    final QuerySpecification querySpecification = (QuerySpecification) queries.get(i);
+                    RuntimesLogger.setIteration("query", querySpecification.id_);
+                    final Collection<Answer> ans = nohr
+                            .allAnswers(parser.parseQuery(querySpecification.query_.getString()));
+                    RuntimesLogger.info(ans.size() + " answers");
+                }
+                nohr.getProgram().clear();
+            }
+            progsStream.close();
+
+        }
+        RuntimesLogger.close();
+        System.out.println("Consult loading times at loading.csv");
+        System.out.println("Consult query times at queries.csv");
+        System.exit(0);
+
+    }
 
 }
