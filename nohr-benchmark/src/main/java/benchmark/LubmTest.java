@@ -118,6 +118,7 @@ public class LubmTest {
         final QueryConfigParser queryParser = new QueryConfigParser();
         final Vector<QuerySpecification> queries = queryParser.createQueryList(test.getQueriesFile().getAbsolutePath());
         Profile profile = null;
+
         if (test.isProfile()) {
             if (test.getProfile().equals("QL")) {
                 profile = Profile.OWL2_QL;
@@ -125,23 +126,24 @@ public class LubmTest {
                 profile = Profile.OWL2_EL;
             }
         }
+
         RuntimesLogger.info("warm up");
         if (test.isDataDir()) {
-            run(test, data, queries, 1, profile, test.isForceDl());
+            run(test, data, queries, 1, profile, test.getForceDL());
             RuntimesLogger.open("loading", "queries");
             if (test.isMaxUniversities()) {
                 for (int u = 1; u <= test.getMaxUniversities(); u += test.getStep()) {
-                    run(test, data, queries, u, profile, test.isForceDl());
+                    run(test, data, queries, u, profile, test.getForceDL());
                 }
             }
             if (test.isUnivs()) {
                 for (final int u : test.getUnivs()) {
-                    run(test, data, queries, u, profile, test.isForceDl());
+                    run(test, data, queries, u, profile, test.getForceDL());
                 }
             }
         } else {
-            run(test, warmUpFile, queries, null, profile, test.isForceDl());
-            run(test, data, queries, null, profile, test.isForceDl());
+            run(test, warmUpFile, queries, null, profile, test.getForceDL());
+            run(test, data, queries, null, profile, test.getForceDL());
         }
         RuntimesLogger.close();
         System.out.println("Consult loading times at loading.csv");
@@ -158,7 +160,9 @@ public class LubmTest {
         } else {
             RuntimesLogger.setDataset(data.getFileName().toString());
         }
+
         final LubmRepository nohrRepository = new LubmRepository(data, test.getOutputDir(), profile, forceDL);
+
         nohrRepository.load(u);
         final Iterator<QuerySpecification> queriesIt = queries.iterator();
         while (queriesIt.hasNext()) {

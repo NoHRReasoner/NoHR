@@ -37,10 +37,14 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
@@ -95,7 +99,7 @@ public class LubmRepository {
 
     public boolean load(Integer universities) throws OWLOntologyCreationException, OWLOntologyStorageException,
             OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
-            IPException, PrologEngineCreationException {
+            IPException, PrologEngineCreationException, ParseException {
         this.universities = universities;
         OWLOntologyManager ontologyManager = OWLManager.createOWLOntologyManager();
         RuntimesLogger.start("ontology loading");
@@ -115,11 +119,22 @@ public class LubmRepository {
         configuration.getOntologyTranslationConfiguration().setDLInferenceEngineEL(forceDL);
         configuration.getOntologyTranslationConfiguration().setDLInferenceEngineQL(forceDL);
 
-        hybridKB = new NoHRHybridKB(configuration, ontology, profiles);
-        parser = new NoHRRecursiveDescentParser(new DefaultVocabulary(ontology));
+        Vocabulary vocabulary = new DefaultVocabulary(ontology);
+
+        parser = new NoHRRecursiveDescentParser(vocabulary);
+
+        Program program;
+
+        if (profiles == Profile.OWL2_QL) {
+            program = parser.parseProgram(new File(System.getenv("NOHR_RULES")));
+        } else {
+            program = Model.program();
+        }
+
+        hybridKB = new NoHRHybridKB(configuration, ontology, program, vocabulary, profiles);
+
         System.gc();
         return true;
-
     }
 
     private void loadDirectory(int universities, OWLOntologyManager ontologyManager)

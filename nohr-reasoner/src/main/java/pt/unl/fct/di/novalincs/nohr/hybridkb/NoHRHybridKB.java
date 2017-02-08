@@ -136,6 +136,8 @@ public class NoHRHybridKB implements HybridKB {
 
     private final NoHRHybridKBConfiguration configuration;
 
+    private final Profile profile;
+    
     /**
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
@@ -239,7 +241,8 @@ public class NoHRHybridKB implements HybridKB {
         this.configuration = configuration;
         this.ontology = ontology;
         this.program = program;
-
+        this.profile = profile;
+        
         if (vocabulary != null) {
             if (!vocabulary.getOntology().equals(ontology)) {
                 throw new IllegalArgumentException("vocabularyMapping: must contain the given ontology");
@@ -255,7 +258,7 @@ public class NoHRHybridKB implements HybridKB {
         doubledProgram = dedutiveDatabase.createProgram();
         queryProcessor = new QueryProcessor(dedutiveDatabase);
         ontologyTranslatorFactory = new OntologyTranslatorFactory(configuration.getOntologyTranslationConfiguration());
-        ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, profile);
+        ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, this.vocabulary, dedutiveDatabase, profile);
         hasOntologyChanges = true;
         hasProgramChanges = true;
         ontologyChangeListener = new OWLOntologyChangeListener() {
@@ -431,7 +434,7 @@ public class NoHRHybridKB implements HybridKB {
             RuntimesLogger.start("ontology processing");
 
             if (!ontologyTranslatorFactory.isPreferred(ontologyTranslator, ontology)) {
-                ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, null);
+                ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, profile);
             }
 
             ontologyTranslator.updateTranslation();
