@@ -43,6 +43,9 @@ public class LubmTest {
         @Option(helpRequest = true)
         boolean getHelp();
 
+        @Option(longName = "force-dl")
+        boolean getForceDL();
+
         @Option(longName = "max-univs", description = "maximum number of universities")
         int getMaxUniversities();
 
@@ -79,6 +82,8 @@ public class LubmTest {
         boolean isUnivs();
 
         boolean isWarmupFile();
+
+        boolean isForceDl();
 
     }
 
@@ -122,21 +127,21 @@ public class LubmTest {
         }
         RuntimesLogger.info("warm up");
         if (test.isDataDir()) {
-            run(test, data, queries, 1, profile);
+            run(test, data, queries, 1, profile, test.isForceDl());
             RuntimesLogger.open("loading", "queries");
             if (test.isMaxUniversities()) {
                 for (int u = 1; u <= test.getMaxUniversities(); u += test.getStep()) {
-                    run(test, data, queries, u, profile);
+                    run(test, data, queries, u, profile, test.isForceDl());
                 }
             }
             if (test.isUnivs()) {
                 for (final int u : test.getUnivs()) {
-                    run(test, data, queries, u, profile);
+                    run(test, data, queries, u, profile, test.isForceDl());
                 }
             }
         } else {
-            run(test, warmUpFile, queries, null, profile);
-            run(test, data, queries, null, profile);
+            run(test, warmUpFile, queries, null, profile, test.isForceDl());
+            run(test, data, queries, null, profile, test.isForceDl());
         }
         RuntimesLogger.close();
         System.out.println("Consult loading times at loading.csv");
@@ -145,7 +150,7 @@ public class LubmTest {
     }
 
     private static void run(final Test test, final Path data, final Vector<QuerySpecification> queries, Integer u,
-            Profile profile)
+            Profile profile, boolean forceDL)
             throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
             IOException, CloneNotSupportedException, UnsupportedAxiomsException, Exception {
         if (u != null) {
@@ -153,7 +158,7 @@ public class LubmTest {
         } else {
             RuntimesLogger.setDataset(data.getFileName().toString());
         }
-        final LubmRepository nohrRepository = new LubmRepository(data, test.getOutputDir(), profile);
+        final LubmRepository nohrRepository = new LubmRepository(data, test.getOutputDir(), profile, forceDL);
         nohrRepository.load(u);
         final Iterator<QuerySpecification> queriesIt = queries.iterator();
         while (queriesIt.hasNext()) {

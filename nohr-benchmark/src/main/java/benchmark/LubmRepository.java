@@ -59,11 +59,13 @@ public class LubmRepository {
     private final Profile profiles;
 
     private NoHRParser parser;
+    private final boolean forceDL;
 
-    public LubmRepository(Path data, File resultsDirectory, Profile profile) {
+    public LubmRepository(Path data, File resultsDirectory, Profile profile, boolean forceDL) {
         this.resultsDirectory = resultsDirectory;
         this.data = data;
         profiles = profile;
+        this.forceDL = forceDL;
     }
 
     public void clear() {
@@ -109,6 +111,9 @@ public class LubmRepository {
         ontologyManager = null;
 
         NoHRHybridKBConfiguration configuration = new NoHRHybridKBConfiguration();
+
+        configuration.getOntologyTranslationConfiguration().setDLInferenceEngineEL(forceDL);
+        configuration.getOntologyTranslationConfiguration().setDLInferenceEngineQL(forceDL);
 
         hybridKB = new NoHRHybridKB(configuration, ontology, profiles);
         parser = new NoHRRecursiveDescentParser(new DefaultVocabulary(ontology));
