@@ -242,6 +242,7 @@ public class DLOntologyNormailzationImpl implements DLOntologyNormalization {
         boolean changed1;
         boolean changed2;
         boolean first = true;
+
         do {
             changed1 = normalize(axioms, new LeftConjunctionNormalizer(ontology, vocabulary));
             if (first || changed1) {
@@ -251,6 +252,7 @@ public class DLOntologyNormailzationImpl implements DLOntologyNormalization {
             }
             first = false;
         } while (changed1 || changed2);
+
         normalize(axioms, new LeftBottomNormalizer());
         normalize(axioms, new ComplexSidesNormalizer(ontology, vocabulary));
         normalize(axioms, new RightConjunctionNormalizer(ontology));

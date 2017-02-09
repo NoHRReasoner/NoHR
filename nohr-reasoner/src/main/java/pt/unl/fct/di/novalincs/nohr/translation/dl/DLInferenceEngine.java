@@ -1,11 +1,11 @@
 package pt.unl.fct.di.novalincs.nohr.translation.dl;
 
-public enum DLMode {
+public enum DLInferenceEngine {
 
     HERMIT,
     KONCLUDE;
 
-    public static DLMode getDLMode(String value) {
+    public static DLInferenceEngine getDLMode(String value) {
         switch (value) {
             case "HERMIT":
                 return HERMIT;

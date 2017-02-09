@@ -6,19 +6,20 @@ import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.HermitInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.KoncludeInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.el.ELOntologyTranslator;
 import pt.unl.fct.di.novalincs.nohr.translation.ql.QLOntologyTranslator;
+import pt.unl.fct.di.novalincs.nohr.translation.rl.RLOntologyTranslator;
 
 public class OntologyTranslatorFactory {
 
     private final File koncludeBinary;
     private final boolean preferDLEngineOverEL;
     private final boolean preferDLEngineOverQL;
-    private final DLMode preferredDLEngine;
+    private final DLInferenceEngine preferredDLEngine;
 
     public OntologyTranslatorFactory(OntologyTranslatorConfiguration configuration) {
         this.koncludeBinary = configuration.getKoncludeBinary();
@@ -35,6 +36,8 @@ public class OntologyTranslatorFactory {
         }
 
         switch (profile) {
+            case OWL2_RL:
+                return new RLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
             case OWL2_EL:
                 if (preferDLEngineOverEL) {
                     return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
@@ -55,7 +58,7 @@ public class OntologyTranslatorFactory {
     }
 
     private InferenceEngine getDLInferenceEngine() {
-        if (preferredDLEngine == DLMode.KONCLUDE) {
+        if (preferredDLEngine == DLInferenceEngine.KONCLUDE) {
             return new KoncludeInferenceEngine(koncludeBinary.getAbsolutePath());
         } else {
             return new HermitInferenceEngine();

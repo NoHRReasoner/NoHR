@@ -1,11 +1,11 @@
 package pt.unl.fct.di.novalincs.nohr.translation;
 
 import java.io.File;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
 public class OntologyTranslatorConfiguration {
 
-    private DLMode dLInferenceEngine;
+    private DLInferenceEngine dLInferenceEngine;
     private boolean dLInferenceEngineEL;
     private boolean dLInferenceEngineQL;
     private File koncludeBinary;
@@ -13,10 +13,10 @@ public class OntologyTranslatorConfiguration {
     private boolean changed;
 
     public OntologyTranslatorConfiguration() {
-        this(DLMode.HERMIT, false, false, new File(System.getenv("KONCLUDE_BIN")));
+        this(DLInferenceEngine.HERMIT, false, false, new File(System.getenv("KONCLUDE_BIN")));
     }
 
-    public OntologyTranslatorConfiguration(DLMode dLInferenceEngine, boolean dLInferenceEngineEL, boolean dLInferenceEngineQL, File koncludeBinary) {
+    public OntologyTranslatorConfiguration(DLInferenceEngine dLInferenceEngine, boolean dLInferenceEngineEL, boolean dLInferenceEngineQL, File koncludeBinary) {
         this.dLInferenceEngine = dLInferenceEngine;
         this.dLInferenceEngineEL = dLInferenceEngineEL;
         this.dLInferenceEngineQL = dLInferenceEngineQL;
@@ -25,7 +25,7 @@ public class OntologyTranslatorConfiguration {
         changed = true;
     }
 
-    public DLMode getDLInferenceEngine() {
+    public DLInferenceEngine getDLInferenceEngine() {
         return dLInferenceEngine;
     }
 
@@ -49,7 +49,7 @@ public class OntologyTranslatorConfiguration {
         changed = false;
     }
 
-    public void setDLInferenceEngine(DLMode value) {
+    public void setDLInferenceEngine(DLInferenceEngine value) {
         this.dLInferenceEngine = value;
         changed = true;
     }
