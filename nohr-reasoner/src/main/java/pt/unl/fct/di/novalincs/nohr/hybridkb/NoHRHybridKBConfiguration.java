@@ -10,7 +10,7 @@ public class NoHRHybridKBConfiguration {
     private File xsbDirectory;
 
     public NoHRHybridKBConfiguration() {
-        this(new File(System.getenv("XSB_BIN_DIRECTORY")), new File(System.getenv("KONCLUDE_BIN")), false, false, DLMode.HERMIT);
+        this(new File(System.getenv("XSB_BIN_DIRECTORY")), new File(System.getenv("KONCLUDE_BIN")), false, false, DLInferenceEngine.HERMIT);
     }
 
     public NoHRHybridKBConfiguration(File xsbDirectory, File koncludeBinary, boolean dLInferenceEngineEL, boolean dLInferenceEngineQL, DLInferenceEngine dLInferenceEngine) {
