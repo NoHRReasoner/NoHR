@@ -13,9 +13,9 @@ import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 
-public class QLQueryTest extends AbstractQLQueryTest {
+public class RLQueryTest extends AbstractRLQueryTest {
 
-    public QLQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException, IPException, PrologEngineCreationException {
+    public RLQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException, IPException, PrologEngineCreationException {
         super();
     }
 

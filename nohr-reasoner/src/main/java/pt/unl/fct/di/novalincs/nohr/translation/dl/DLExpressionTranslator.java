@@ -7,12 +7,14 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -23,6 +25,21 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 public class DLExpressionTranslator {
 
+    private static long freshVariableIndex = 0;
+
+    public static Variable X() {
+        return Model.var("X" + freshVariableIndex++);
+    }
+
+    public static Variable X(long index) {
+        if (index < 0) {
+            return Model.var("X" + (freshVariableIndex - 1));
+        }
+
+        freshVariableIndex = index;
+        return X();
+    }
+
     public static final Variable X = Model.var("X");
     public static final Variable Y = Model.var("Y");
 
@@ -32,7 +49,7 @@ public class DLExpressionTranslator {
         this.vocabulary = vocabulary;
     }
 
-    Atom negTr(Literal b) {
+    public Atom negTr(Literal b) {
         return Model.atom(vocabulary.negPred(b.getFunctor()), b.getAtom().getArguments());
     }
 
@@ -42,6 +59,22 @@ public class DLExpressionTranslator {
 
     public Atom negTr(OWLPropertyExpression p, Variable x, Variable y) {
         return Model.atom(vocabulary.negPred(p), x, y);
+    }
+
+    public List<Literal> th(OWLClassExpression c, List<Literal> body, Variable x, boolean doubled) {
+        if (c instanceof OWLObjectAllValuesFrom) {
+            final List<Literal> atoms = new LinkedList<>();
+            final OWLObjectAllValuesFrom objectAllValuesFrom = (OWLObjectAllValuesFrom) c;
+
+            final Variable y = X();
+
+            atoms.addAll(th(objectAllValuesFrom.getFiller(), body, y, false));
+            body.addAll(tr(objectAllValuesFrom.getProperty(), x, y, false));
+
+            return atoms;
+        } else {
+            return tr(c, x, doubled);
+        }
     }
 
     public List<Literal> tr(OWLClassExpression c, Variable x, boolean doubled) {
@@ -76,6 +109,8 @@ public class DLExpressionTranslator {
             for (OWLClassExpression i : intersection) {
                 ret.addAll(tr(i, x, doubled));
             }
+        } else if (c instanceof OWLObjectUnionOf) {
+            throw new IllegalArgumentException("Illegal class expression: " + c.toString());
         } else if (c instanceof OWLObjectSomeValuesFrom) {
             final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) c;
             final OWLObjectPropertyExpression p = some.getProperty();

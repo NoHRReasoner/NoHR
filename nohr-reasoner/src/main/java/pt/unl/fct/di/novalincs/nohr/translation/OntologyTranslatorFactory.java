@@ -19,12 +19,14 @@ public class OntologyTranslatorFactory {
     private final File koncludeBinary;
     private final boolean preferDLEngineOverEL;
     private final boolean preferDLEngineOverQL;
+    private final boolean preferDLEngineOverRL;
     private final DLInferenceEngine preferredDLEngine;
 
     public OntologyTranslatorFactory(OntologyTranslatorConfiguration configuration) {
         this.koncludeBinary = configuration.getKoncludeBinary();
         this.preferDLEngineOverEL = configuration.getDLInferenceEngineEL();
         this.preferDLEngineOverQL = configuration.getDLInferenceEngineQL();
+        this.preferDLEngineOverRL = configuration.getDLInferenceEngineRL();
         this.preferredDLEngine = configuration.getDLInferenceEngine();
     }
 
@@ -36,8 +38,6 @@ public class OntologyTranslatorFactory {
         }
 
         switch (profile) {
-            case OWL2_RL:
-                return new RLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
             case OWL2_EL:
                 if (preferDLEngineOverEL) {
                     return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
@@ -49,6 +49,12 @@ public class OntologyTranslatorFactory {
                     return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
                 } else {
                     return new QLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
+                }
+            case OWL2_RL:
+                if (preferDLEngineOverRL) {
+                    return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                } else {
+                    return new RLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
                 }
             case NOHR_DL:
                 return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
@@ -72,6 +78,7 @@ public class OntologyTranslatorFactory {
         return translatorProfile == ontologyProfile
                 || translatorProfile == Profile.NOHR_DL
                 && (ontologyProfile == Profile.OWL2_EL && preferDLEngineOverEL
-                || ontologyProfile == Profile.OWL2_QL && preferDLEngineOverQL);
+                || ontologyProfile == Profile.OWL2_QL && preferDLEngineOverQL
+                || ontologyProfile == Profile.OWL2_RL && preferDLEngineOverRL);
     }
 }

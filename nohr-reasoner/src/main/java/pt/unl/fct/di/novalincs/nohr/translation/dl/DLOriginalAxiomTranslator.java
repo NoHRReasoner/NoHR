@@ -57,19 +57,18 @@ public class DLOriginalAxiomTranslator implements DLAxiomTranslator {
             }
         }
 
-        if (d.isAnonymous() || d.isOWLThing() || d.isOWLNothing()) {
+        if (d.isOWLThing() || d.isOWLNothing()) {
             return ret;
         }
 
-        final Atom head = (Atom) atomTranslator.tr(d, DLExpressionTranslator.X, false).get(0);
+        final List<Literal> body = atomTranslator.tr(c, DLExpressionTranslator.X, false);
+        final Atom head = (Atom) atomTranslator.th(d, body, DLExpressionTranslator.X, false).get(0);
 
         if (c.isOWLThing()) {
             ret.add(Model.rule(head));
 
             return ret;
         }
-
-        final List<Literal> body = atomTranslator.tr(c, DLExpressionTranslator.X, false);
 
         ret.add(Model.rule(head, body));
 

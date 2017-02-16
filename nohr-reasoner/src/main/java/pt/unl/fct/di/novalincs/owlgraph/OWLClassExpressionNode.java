@@ -6,6 +6,7 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectUnionOf;
@@ -35,6 +36,8 @@ public abstract class OWLClassExpressionNode extends OWLNode {
             return new OWLObjectSomeValuesFromNode((OWLObjectSomeValuesFrom) owlce);
         } else if (owlce instanceof OWLObjectUnionOf) {
             return new OWLObjectUnionOfNode((OWLObjectUnionOf) owlce);
+        } else if (owlce instanceof OWLObjectComplementOf) {
+            return new OWLObjectComplementOfNode((OWLObjectComplementOf) owlce);
         }
 
         throw new IllegalArgumentException("Usupported class expression " + owlce.toString());

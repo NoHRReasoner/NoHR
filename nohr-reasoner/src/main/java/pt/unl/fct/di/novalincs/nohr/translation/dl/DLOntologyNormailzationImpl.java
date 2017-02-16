@@ -41,6 +41,7 @@ import pt.unl.fct.di.novalincs.nohr.translation.DLUtils;
 import pt.unl.fct.di.novalincs.nohr.translation.InferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.ComplexSidesNormalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.ConceptAssertionsNormalizer;
+import pt.unl.fct.di.novalincs.nohr.translation.normalization.GraphNormalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.LeftBottomNormalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.LeftConjunctionNormalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.LeftExistentialNormalizer;
@@ -239,19 +240,18 @@ public class DLOntologyNormailzationImpl implements DLOntologyNormalization {
     }
 
     private void normalize(Set<OWLSubClassOfAxiom> axioms) {
-        boolean changed1;
-        boolean changed2;
-        boolean first = true;
+        normalize(axioms, new GraphNormalizer(ontology));
+        boolean changed = normalize(axioms, new LeftConjunctionNormalizer(ontology, vocabulary));
 
-        do {
-            changed1 = normalize(axioms, new LeftConjunctionNormalizer(ontology, vocabulary));
-            if (first || changed1) {
-                changed2 = normalize(axioms, new LeftExistentialNormalizer(ontology, vocabulary));
-            } else {
-                changed2 = false;
+        changed = normalize(axioms, new LeftExistentialNormalizer(ontology, vocabulary)) || changed;
+
+        while (changed) {
+            changed = normalize(axioms, new LeftConjunctionNormalizer(ontology, vocabulary));
+
+            if (changed) {
+                changed = normalize(axioms, new LeftExistentialNormalizer(ontology, vocabulary)) || changed;
             }
-            first = false;
-        } while (changed1 || changed2);
+        }
 
         normalize(axioms, new LeftBottomNormalizer());
         normalize(axioms, new ComplexSidesNormalizer(ontology, vocabulary));
