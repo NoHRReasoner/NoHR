@@ -269,11 +269,30 @@ public abstract class AbstractRLQueryTest extends QueryTest {
 
         typeOf("B", "b1");
         typeOf("C", "c1");
-        
+
         rule("B(b2)");
 
         assertTrue("A(b1),A(b2),A(c1)");
         assertFalse("A(b3)");
     }
 
+    @Test
+    public final void rightAllValuesFrom() {
+        clear();
+        final OWLClassExpression expression = all(role("P"), conc("C"));
+
+        subConcept(conc("A"), expression);
+
+        object("P", "a1", "c1");
+        typeOf("A", "a1");
+
+        assertTrue("C(c1)");
+
+        clear();
+        subConcept(conc("A"), expression);
+        rule("P(a1,c1)");
+        typeOf("A", "a1");
+
+        assertTrue("C(c1)");
+    }
 }

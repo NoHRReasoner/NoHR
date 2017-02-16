@@ -42,6 +42,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
 import com.declarativa.interprolog.util.IPException;
+import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB;
@@ -183,6 +184,10 @@ public class KB {
         final OWLAxiom axiom = dataFactory.getOWLAsymmetricObjectPropertyAxiom(role(role));
         addAxiom(axiom);
         return axiom;
+    }
+
+    public OWLObjectAllValuesFrom all(OWLObjectPropertyExpression r, OWLClassExpression c) {
+        return dataFactory.getOWLObjectAllValuesFrom(r, c);
     }
 
     /**
