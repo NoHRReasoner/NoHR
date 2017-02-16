@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin.rules;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,112 +36,132 @@ import pt.unl.fct.di.novalincs.nohr.plugin.ProgramPersistenceManager;
  */
 public class RuleListModel extends AbstractListModel<Object> {
 
-	protected static final Logger log = Logger.getLogger(RuleListModel.class);
+    protected static final Logger log = Logger.getLogger(RuleListModel.class);
 
-	private static final MListSectionHeader HEADER = new MListSectionHeader() {
+    private static final MListSectionHeader HEADER = new MListSectionHeader() {
 
-		@Override
-		public boolean canAdd() {
-			return true;
-		}
+        @Override
+        public boolean canAdd() {
+            return true;
+        }
 
-		@Override
-		public String getName() {
-			return "Rules";
-		}
-	};
+        @Override
+        public String getName() {
+            return "Rules";
+        }
+    };
 
-	private static final long serialVersionUID = -5766699966244129502L;
+    private static final long serialVersionUID = -5766699966244129502L;
 
-	private final Program program;
+    private final Program program;
 
-	private final RuleEditor ruleEditor;
+    private final RuleEditor ruleEditor;
 
-	private final List<Object> ruleItems;
+    private final List<Object> ruleItems;
 
-	private final ProgramPersistenceManager programPersistenceManager;
+    private final ProgramPersistenceManager programPersistenceManager;
 
-	/**
-	 *
-	 */
+    private boolean showIRIs;
 
-	public RuleListModel(OWLEditorKit editorKit, RuleEditor ruleEditor,
-						 ProgramPersistenceManager programPersistenceManager, Program program) {
-		super();
-		this.programPersistenceManager = programPersistenceManager;
-		this.ruleEditor = ruleEditor;
-		this.program = program;
-		ruleItems = new ArrayList<Object>(program.size());
-		ruleItems.add(HEADER);
-		for (final Rule rule : program)
-			ruleItems.add(new RuleListItem(ruleItems.size() - 1, this, rule));
-	}
+    /**
+     *
+     */
+    public RuleListModel(OWLEditorKit editorKit, RuleEditor ruleEditor,
+            ProgramPersistenceManager programPersistenceManager, Program program) {
+        super();
+        this.programPersistenceManager = programPersistenceManager;
 
-	boolean add(Rule rule) {
-		final boolean added = program.add(rule);
-		if (added) {
-			final int index = ruleItems.size();
-			ruleItems.add(new RuleListItem(index, this, rule));
-			super.fireIntervalAdded(this, index, index);
-		}
-		return added;
-	}
+        this.showIRIs = false;
+        this.ruleEditor = ruleEditor;
+        this.program = program;
+        ruleItems = new ArrayList<Object>(program.size());
+        ruleItems.add(HEADER);
+        for (final Rule rule : program) {
+            ruleItems.add(new RuleListItem(ruleItems.size() - 1, this, rule));
+        }
+    }
 
-	public void clear() {
-		final int size = ruleItems.size();
-		program.clear();
-		ruleItems.clear();
-		ruleItems.add(HEADER);
-		super.fireIntervalRemoved(this, 1, size);
-	}
+    boolean add(Rule rule) {
+        final boolean added = program.add(rule);
 
-	Rule edit(int index, Rule rule) {
-		ruleEditor.setRule(rule);
-		final Rule newRule = ruleEditor.show();
-		boolean updated = false;
-		if (newRule != null)
-			updated = program.update(rule, newRule);
-		fireContentsChanged(this, index, index);
-		return updated ? newRule : null;
-	}
+        if (added) {
+            final int index = ruleItems.size();
+            ruleItems.add(new RuleListItem(index, this, rule));
+            super.fireIntervalAdded(this, index, index);
+        }
 
-	@Override
-	public Object getElementAt(int index) {
-		return ruleItems.get(index);
-	}
+        return added;
+    }
 
-	@Override
-	public int getSize() {
-		return ruleItems.size();
-	}
+    public void clear() {
+        final int size = ruleItems.size();
+        program.clear();
+        ruleItems.clear();
+        ruleItems.add(HEADER);
+        super.fireIntervalRemoved(this, 1, size);
+    }
 
-	public void load(File file) throws IOException, PrologParserException, ParseException {
-		final int size = program.size();
-		program.clear();
-		programPersistenceManager.load(file, program);
-		ruleItems.clear();
-		ruleItems.add(HEADER);
-		for (final Rule rule : program)
-			ruleItems.add(new RuleListItem(ruleItems.size(), this, rule));
-		super.fireContentsChanged(this, 0, Math.max(program.size() - 1, size - 1));
-	}
+    Rule edit(int index, Rule rule) {
+        ruleEditor.setRule(rule);
+        final Rule newRule = ruleEditor.show();
+        boolean updated = false;
+        if (newRule != null) {
+            updated = program.update(rule, newRule);
+        }
+        fireContentsChanged(this, index, index);
+        return updated ? newRule : null;
+    }
 
-	boolean remove(int index, Rule rule) {
-		final boolean removed = program.remove(rule);
-		if (removed) {
+    @Override
+    public Object getElementAt(int index) {
+        return ruleItems.get(index);
+    }
 
-			// We also need to alter the indices of elements following the one to be deleted
-			if (index <ruleItems.size()-1) {
-				for (int i=index+1;i<=ruleItems.size()-1;i++) ((RuleListItem)getElementAt(i)).setIndex(i-1);
-			}
-			ruleItems.remove(index);
-			super.fireIntervalRemoved(this, index, index);
-		}
-		return removed;
-	}
+    public boolean getShowIRIs() {
+        return showIRIs;
+    }
 
-	public void save(File file) throws IOException {
-		ProgramPersistenceManager.write(program, file);
-	}
+    @Override
+    public int getSize() {
+        return ruleItems.size();
+    }
 
+    public void load(File file) throws IOException, PrologParserException, ParseException {
+        final int size = program.size();
+        program.clear();
+        programPersistenceManager.load(file, program);
+        ruleItems.clear();
+        ruleItems.add(HEADER);
+
+        for (final Rule rule : program) {
+            ruleItems.add(new RuleListItem(ruleItems.size(), this, rule));
+
+        }
+        super.fireContentsChanged(this, 0, Math.max(program.size() - 1, size - 1));
+    }
+
+    boolean remove(int index, Rule rule) {
+        final boolean removed = program.remove(rule);
+        if (removed) {
+
+            // We also need to alter the indices of elements following the one to be deleted
+            if (index < ruleItems.size() - 1) {
+                for (int i = index + 1; i <= ruleItems.size() - 1; i++) {
+                    ((RuleListItem) getElementAt(i)).setIndex(i - 1);
+                }
+            }
+            ruleItems.remove(index);
+            super.fireIntervalRemoved(this, index, index);
+        }
+        return removed;
+    }
+
+    public void save(File file) throws IOException {
+        ProgramPersistenceManager.write(program, file);
+    }
+
+    public void setShowIRIs(boolean value) {
+        this.showIRIs = value;
+        fireContentsChanged(this, 0, ruleItems.size());
+    }
 }

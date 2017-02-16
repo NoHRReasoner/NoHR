@@ -1,4 +1,7 @@
 JAVA=java
 XMX=2g
-export XSB_BIN_DIRECTORY='/opt/XSB/config/x86_64-unknown-linux-gnu/bin'
 
+export XSB_BIN_DIRECTORY='/opt/xsb/3.7.0/config/x86_64-unknown-linux-gnu/bin'
+export KONCLUDE_BIN='/opt/konclude/0.6.2/Binaries/Konclude'
+export NOHR_BENCHMARK_ONTOLOGY='univ-benchQL.owl'
+export NOHR_BENCHMARK_RULES='univ-benchQL.nohr'

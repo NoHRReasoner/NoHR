@@ -6,7 +6,7 @@
     <parent>
         <groupId>pt.unl.fct.novalincs</groupId>
         <artifactId>nohr</artifactId>
-        <version>2.0.0</version>
+        <version>3.0.0</version>
     </parent>
     <artifactId>nohr-benchmark</artifactId>
     <name>nohr-benchmark</name>
@@ -29,5 +29,28 @@
             <artifactId>nohr-reasoner</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.5.6</version>
+        </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

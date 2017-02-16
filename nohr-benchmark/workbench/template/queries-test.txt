@@ -1,0 +1,9 @@
+# queries expressed in prolog
+# [query ID]
+# query
+
+[1]
+'GraduateStudent'(?X),takesCourse(?X,'<http://www.Department0.University0.edu/GraduateCourse0>')
+
+[7]
+teacherOf('<http://www.Department0.University0.edu/AssociateProfessor0>',?Y),'Student'(?X),'Course'(?Y),takesCourse(?X,?Y)

@@ -1,0 +1,524 @@
+Prefix(:=<http://swat.cse.lehigh.edu/onto/univ-bench.owl#>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+
+
+Ontology(<http://swat.cse.lehigh.edu/onto/univ-bench.owl>
+Annotation(rdfs:comment "An university ontology for benchmark tests")
+Annotation(rdfs:label "Univ-bench Ontology")
+Annotation(owl:versionInfo "univ-bench-ontology-owl, ver April 1, 2004")
+
+Declaration(Class(:AdministrativeStaff))
+Declaration(Class(:Article))
+Declaration(Class(:AssistantProfessor))
+Declaration(Class(:AssociateProfessor))
+Declaration(Class(:Book))
+Declaration(Class(:Chair))
+Declaration(Class(:ClericalStaff))
+Declaration(Class(:College))
+Declaration(Class(:ConferencePaper))
+Declaration(Class(:Course))
+Declaration(Class(:Dean))
+Declaration(Class(:Department))
+Declaration(Class(:Director))
+Declaration(Class(:Employee))
+Declaration(Class(:Faculty))
+Declaration(Class(:FullProfessor))
+Declaration(Class(:GraduateCourse))
+Declaration(Class(:GraduateStudent))
+Declaration(Class(:Institute))
+Declaration(Class(:JournalArticle))
+Declaration(Class(:Lecturer))
+Declaration(Class(:Manual))
+Declaration(Class(:Organization))
+Declaration(Class(:Person))
+Declaration(Class(:PostDoc))
+Declaration(Class(:Professor))
+Declaration(Class(:Program))
+Declaration(Class(:Publication))
+Declaration(Class(:Research))
+Declaration(Class(:ResearchAssistant))
+Declaration(Class(:ResearchGroup))
+Declaration(Class(:Schedule))
+Declaration(Class(:Software))
+Declaration(Class(:Specification))
+Declaration(Class(:Student))
+Declaration(Class(:SystemsStaff))
+Declaration(Class(:TeachingAssistant))
+Declaration(Class(:TechnicalReport))
+Declaration(Class(:UndergraduateStudent))
+Declaration(Class(:University))
+Declaration(Class(:UnofficialPublication))
+Declaration(Class(:VisitingProfessor))
+Declaration(Class(:Work))
+Declaration(ObjectProperty(:advisor))
+Declaration(ObjectProperty(:affiliateOf))
+Declaration(ObjectProperty(:affiliatedOrganizationOf))
+Declaration(ObjectProperty(:degreeFrom))
+Declaration(ObjectProperty(:doctoralDegreeFrom))
+Declaration(ObjectProperty(:hasAlumnus))
+Declaration(ObjectProperty(:headOf))
+Declaration(ObjectProperty(:headOfCollege))
+Declaration(ObjectProperty(:headOfDepartment))
+Declaration(ObjectProperty(:headOfProgram))
+Declaration(ObjectProperty(:listedCourse))
+Declaration(ObjectProperty(:mastersDegreeFrom))
+Declaration(ObjectProperty(:member))
+Declaration(ObjectProperty(:memberOf))
+Declaration(ObjectProperty(:orgPublication))
+Declaration(ObjectProperty(:publicationAuthor))
+Declaration(ObjectProperty(:publicationDate))
+Declaration(ObjectProperty(:publicationResearch))
+Declaration(ObjectProperty(:researchProject))
+Declaration(ObjectProperty(:softwareDocumentation))
+Declaration(ObjectProperty(:softwareVersion))
+Declaration(ObjectProperty(:subOrganizationOf))
+Declaration(ObjectProperty(:takesCourse))
+Declaration(ObjectProperty(:teacherOf))
+Declaration(ObjectProperty(:teachingAssistantOf))
+Declaration(ObjectProperty(:tenured))
+Declaration(ObjectProperty(:undergraduateDegreeFrom))
+Declaration(ObjectProperty(:worksFor))
+Declaration(DataProperty(:age))
+Declaration(DataProperty(:emailAddress))
+Declaration(DataProperty(:name))
+Declaration(DataProperty(:officeNumber))
+Declaration(DataProperty(:researchInterest))
+Declaration(DataProperty(:telephone))
+Declaration(DataProperty(:title))
+
+############################
+#   Object Properties
+############################
+
+# Object Property: :advisor (is being advised by)
+
+AnnotationAssertion(rdfs:label :advisor "is being advised by")
+ObjectPropertyDomain(:advisor :Person)
+ObjectPropertyRange(:advisor :Professor)
+
+# Object Property: :affiliateOf (is affiliated with)
+
+AnnotationAssertion(rdfs:label :affiliateOf "is affiliated with")
+ObjectPropertyDomain(:affiliateOf :Organization)
+ObjectPropertyRange(:affiliateOf :Person)
+
+# Object Property: :affiliatedOrganizationOf (is affiliated with)
+
+AnnotationAssertion(rdfs:label :affiliatedOrganizationOf "is affiliated with")
+ObjectPropertyDomain(:affiliatedOrganizationOf :Organization)
+ObjectPropertyRange(:affiliatedOrganizationOf :Organization)
+
+# Object Property: :degreeFrom (has a degree from)
+
+AnnotationAssertion(rdfs:label :degreeFrom "has a degree from")
+InverseObjectProperties(:degreeFrom :hasAlumnus)
+ObjectPropertyDomain(:degreeFrom :Person)
+ObjectPropertyRange(:degreeFrom :University)
+
+# Object Property: :doctoralDegreeFrom (has a doctoral degree from)
+
+AnnotationAssertion(rdfs:label :doctoralDegreeFrom "has a doctoral degree from")
+SubObjectPropertyOf(:doctoralDegreeFrom :degreeFrom)
+ObjectPropertyDomain(:doctoralDegreeFrom :Person)
+ObjectPropertyRange(:doctoralDegreeFrom :University)
+
+# Object Property: :hasAlumnus (has as an alumnus)
+
+AnnotationAssertion(rdfs:label :hasAlumnus "has as an alumnus")
+ObjectPropertyDomain(:hasAlumnus :University)
+ObjectPropertyRange(:hasAlumnus :Person)
+
+# Object Property: :headOf (is the head of)
+
+AnnotationAssertion(rdfs:label :headOf "is the head of")
+SubObjectPropertyOf(:headOf :worksFor)
+
+# Object Property: :headOfCollege (:headOfCollege)
+
+SubObjectPropertyOf(:headOfCollege :headOf)
+ObjectPropertyDomain(:headOfCollege :Dean)
+ObjectPropertyRange(:headOfCollege :College)
+
+# Object Property: :headOfDepartment (:headOfDepartment)
+
+SubObjectPropertyOf(:headOfDepartment :headOf)
+ObjectPropertyDomain(:headOfDepartment :Chair)
+ObjectPropertyRange(:headOfDepartment :Department)
+
+# Object Property: :headOfProgram (:headOfProgram)
+
+SubObjectPropertyOf(:headOfProgram :headOf)
+ObjectPropertyDomain(:headOfProgram :Director)
+ObjectPropertyRange(:headOfProgram :Program)
+
+# Object Property: :listedCourse (lists as a course)
+
+AnnotationAssertion(rdfs:label :listedCourse "lists as a course")
+ObjectPropertyDomain(:listedCourse :Schedule)
+ObjectPropertyRange(:listedCourse :Course)
+
+# Object Property: :mastersDegreeFrom (has a masters degree from)
+
+AnnotationAssertion(rdfs:label :mastersDegreeFrom "has a masters degree from")
+SubObjectPropertyOf(:mastersDegreeFrom :degreeFrom)
+ObjectPropertyDomain(:mastersDegreeFrom :Person)
+ObjectPropertyRange(:mastersDegreeFrom :University)
+
+# Object Property: :member (has as a member)
+
+AnnotationAssertion(rdfs:label :member "has as a member")
+InverseObjectProperties(:member :memberOf)
+ObjectPropertyDomain(:member :Organization)
+ObjectPropertyRange(:member :Person)
+
+# Object Property: :memberOf (member of)
+
+AnnotationAssertion(rdfs:label :memberOf "member of")
+
+# Object Property: :orgPublication (publishes)
+
+AnnotationAssertion(rdfs:label :orgPublication "publishes")
+ObjectPropertyDomain(:orgPublication :Organization)
+ObjectPropertyRange(:orgPublication :Publication)
+
+# Object Property: :publicationAuthor (was written by)
+
+AnnotationAssertion(rdfs:label :publicationAuthor "was written by")
+ObjectPropertyDomain(:publicationAuthor :Publication)
+ObjectPropertyRange(:publicationAuthor :Person)
+
+# Object Property: :publicationDate (was written on)
+
+AnnotationAssertion(rdfs:label :publicationDate "was written on")
+ObjectPropertyDomain(:publicationDate :Publication)
+
+# Object Property: :publicationResearch (is about)
+
+AnnotationAssertion(rdfs:label :publicationResearch "is about")
+ObjectPropertyDomain(:publicationResearch :Publication)
+ObjectPropertyRange(:publicationResearch :Research)
+
+# Object Property: :researchProject (has as a research project)
+
+AnnotationAssertion(rdfs:label :researchProject "has as a research project")
+ObjectPropertyDomain(:researchProject :ResearchGroup)
+ObjectPropertyRange(:researchProject :Research)
+
+# Object Property: :softwareDocumentation (is documented in)
+
+AnnotationAssertion(rdfs:label :softwareDocumentation "is documented in")
+ObjectPropertyDomain(:softwareDocumentation :Software)
+ObjectPropertyRange(:softwareDocumentation :Publication)
+
+# Object Property: :softwareVersion (is version)
+
+AnnotationAssertion(rdfs:label :softwareVersion "is version")
+ObjectPropertyDomain(:softwareVersion :Software)
+
+# Object Property: :subOrganizationOf (is part of)
+
+AnnotationAssertion(rdfs:label :subOrganizationOf "is part of")
+ObjectPropertyDomain(:subOrganizationOf :Organization)
+ObjectPropertyRange(:subOrganizationOf :Organization)
+
+# Object Property: :takesCourse (is taking)
+
+AnnotationAssertion(rdfs:label :takesCourse "is taking")
+ObjectPropertyDomain(:takesCourse :Student)
+ObjectPropertyRange(:takesCourse :Course)
+
+# Object Property: :teacherOf (teaches)
+
+AnnotationAssertion(rdfs:label :teacherOf "teaches")
+ObjectPropertyDomain(:teacherOf :Faculty)
+ObjectPropertyRange(:teacherOf :Course)
+
+# Object Property: :teachingAssistantOf (is a teaching assistant for)
+
+AnnotationAssertion(rdfs:label :teachingAssistantOf "is a teaching assistant for")
+ObjectPropertyDomain(:teachingAssistantOf :TeachingAssistant)
+ObjectPropertyRange(:teachingAssistantOf :Course)
+
+# Object Property: :tenured (is tenured:)
+
+AnnotationAssertion(rdfs:label :tenured "is tenured:")
+ObjectPropertyDomain(:tenured :Professor)
+
+# Object Property: :undergraduateDegreeFrom (has an undergraduate degree from)
+
+AnnotationAssertion(rdfs:label :undergraduateDegreeFrom "has an undergraduate degree from")
+SubObjectPropertyOf(:undergraduateDegreeFrom :degreeFrom)
+ObjectPropertyDomain(:undergraduateDegreeFrom :Person)
+ObjectPropertyRange(:undergraduateDegreeFrom :University)
+
+# Object Property: :worksFor (Works For)
+
+AnnotationAssertion(rdfs:label :worksFor "Works For")
+SubObjectPropertyOf(:worksFor :memberOf)
+ObjectPropertyDomain(:worksFor :Employee)
+ObjectPropertyRange(:worksFor :Organization)
+
+
+############################
+#   Data Properties
+############################
+
+# Data Property: :age (is age)
+
+AnnotationAssertion(rdfs:label :age "is age")
+
+# Data Property: :emailAddress (can be reached at)
+
+AnnotationAssertion(rdfs:label :emailAddress "can be reached at")
+
+# Data Property: :name (name)
+
+AnnotationAssertion(rdfs:label :name "name")
+
+# Data Property: :officeNumber (office room No.)
+
+AnnotationAssertion(rdfs:label :officeNumber "office room No.")
+
+# Data Property: :researchInterest (is researching)
+
+AnnotationAssertion(rdfs:label :researchInterest "is researching")
+
+# Data Property: :telephone (telephone number)
+
+AnnotationAssertion(rdfs:label :telephone "telephone number")
+
+# Data Property: :title (title)
+
+AnnotationAssertion(rdfs:label :title "title")
+
+
+
+############################
+#   Classes
+############################
+
+# Class: :AdministrativeStaff (administrative staff worker)
+
+AnnotationAssertion(rdfs:label :AdministrativeStaff "administrative staff worker")
+SubClassOf(:AdministrativeStaff :Employee)
+
+# Class: :Article (article)
+
+AnnotationAssertion(rdfs:label :Article "article")
+SubClassOf(:Article :Publication)
+
+# Class: :AssistantProfessor (assistant professor)
+
+AnnotationAssertion(rdfs:label :AssistantProfessor "assistant professor")
+SubClassOf(:AssistantProfessor :Professor)
+
+# Class: :AssociateProfessor (associate professor)
+
+AnnotationAssertion(rdfs:label :AssociateProfessor "associate professor")
+SubClassOf(:AssociateProfessor :Professor)
+
+# Class: :Book (book)
+
+AnnotationAssertion(rdfs:label :Book "book")
+SubClassOf(:Book :Publication)
+
+# Class: :Chair (chair)
+
+AnnotationAssertion(rdfs:label :Chair "chair")
+SubClassOf(:Chair :Person)
+SubClassOf(:Chair :Professor)
+SubClassOf(:Chair ObjectSomeValuesFrom(:headOfDepartment :Department))
+
+# Class: :ClericalStaff (clerical staff worker)
+
+AnnotationAssertion(rdfs:label :ClericalStaff "clerical staff worker")
+SubClassOf(:ClericalStaff :AdministrativeStaff)
+
+# Class: :College (school)
+
+AnnotationAssertion(rdfs:label :College "school")
+SubClassOf(:College :Organization)
+
+# Class: :ConferencePaper (conference paper)
+
+AnnotationAssertion(rdfs:label :ConferencePaper "conference paper")
+SubClassOf(:ConferencePaper :Article)
+
+# Class: :Course (teaching course)
+
+AnnotationAssertion(rdfs:label :Course "teaching course")
+SubClassOf(:Course :Work)
+
+# Class: :Dean (dean)
+
+AnnotationAssertion(rdfs:label :Dean "dean")
+SubClassOf(:Dean :Professor)
+SubClassOf(:Dean ObjectSomeValuesFrom(:headOfCollege :College))
+
+# Class: :Department (university department)
+
+AnnotationAssertion(rdfs:label :Department "university department")
+SubClassOf(:Department :Organization)
+
+# Class: :Director (director)
+
+AnnotationAssertion(rdfs:label :Director "director")
+SubClassOf(:Director :Person)
+SubClassOf(:Director ObjectSomeValuesFrom(:headOfProgram :Program))
+
+# Class: :Employee (Employee)
+
+AnnotationAssertion(rdfs:label :Employee "Employee")
+SubClassOf(:Employee :Person)
+SubClassOf(:Employee ObjectSomeValuesFrom(:worksFor :Organization))
+
+# Class: :Faculty (faculty member)
+
+AnnotationAssertion(rdfs:label :Faculty "faculty member")
+SubClassOf(:Faculty :Employee)
+
+# Class: :FullProfessor (full professor)
+
+AnnotationAssertion(rdfs:label :FullProfessor "full professor")
+SubClassOf(:FullProfessor :Professor)
+
+# Class: :GraduateCourse (Graduate Level Courses)
+
+AnnotationAssertion(rdfs:label :GraduateCourse "Graduate Level Courses")
+SubClassOf(:GraduateCourse :Course)
+
+# Class: :GraduateStudent (graduate student)
+
+AnnotationAssertion(rdfs:label :GraduateStudent "graduate student")
+SubClassOf(:GraduateStudent :Person)
+SubClassOf(:GraduateStudent ObjectSomeValuesFrom(:takesCourse :GraduateCourse))
+
+# Class: :Institute (institute)
+
+AnnotationAssertion(rdfs:label :Institute "institute")
+SubClassOf(:Institute :Organization)
+
+# Class: :JournalArticle (journal article)
+
+AnnotationAssertion(rdfs:label :JournalArticle "journal article")
+SubClassOf(:JournalArticle :Article)
+
+# Class: :Lecturer (lecturer)
+
+AnnotationAssertion(rdfs:label :Lecturer "lecturer")
+SubClassOf(:Lecturer :Faculty)
+
+# Class: :Manual (manual)
+
+AnnotationAssertion(rdfs:label :Manual "manual")
+SubClassOf(:Manual :Publication)
+
+# Class: :Organization (organization)
+
+AnnotationAssertion(rdfs:label :Organization "organization")
+
+# Class: :Person (person)
+
+AnnotationAssertion(rdfs:label :Person "person")
+
+# Class: :PostDoc (post doctorate)
+
+AnnotationAssertion(rdfs:label :PostDoc "post doctorate")
+SubClassOf(:PostDoc :Faculty)
+
+# Class: :Professor (professor)
+
+AnnotationAssertion(rdfs:label :Professor "professor")
+SubClassOf(:Professor :Faculty)
+
+# Class: :Program (program)
+
+AnnotationAssertion(rdfs:label :Program "program")
+SubClassOf(:Program :Organization)
+
+# Class: :Publication (publication)
+
+AnnotationAssertion(rdfs:label :Publication "publication")
+
+# Class: :Research (research work)
+
+AnnotationAssertion(rdfs:label :Research "research work")
+SubClassOf(:Research :Work)
+
+# Class: :ResearchAssistant (university research assistant)
+
+AnnotationAssertion(rdfs:label :ResearchAssistant "university research assistant")
+SubClassOf(:ResearchAssistant :Person)
+SubClassOf(:ResearchAssistant ObjectSomeValuesFrom(:worksFor :ResearchGroup))
+
+# Class: :ResearchGroup (research group)
+
+AnnotationAssertion(rdfs:label :ResearchGroup "research group")
+SubClassOf(:ResearchGroup :Organization)
+
+# Class: :Schedule (schedule)
+
+AnnotationAssertion(rdfs:label :Schedule "schedule")
+
+# Class: :Software (software program)
+
+AnnotationAssertion(rdfs:label :Software "software program")
+SubClassOf(:Software :Publication)
+
+# Class: :Specification (published specification)
+
+AnnotationAssertion(rdfs:label :Specification "published specification")
+SubClassOf(:Specification :Publication)
+
+# Class: :Student (student)
+
+AnnotationAssertion(rdfs:label :Student "student")
+SubClassOf(:Student :Person)
+SubClassOf(:Student ObjectSomeValuesFrom(:takesCourse owl:Thing))
+
+# Class: :SystemsStaff (systems staff worker)
+
+AnnotationAssertion(rdfs:label :SystemsStaff "systems staff worker")
+SubClassOf(:SystemsStaff :AdministrativeStaff)
+
+# Class: :TeachingAssistant (university teaching assistant)
+
+AnnotationAssertion(rdfs:label :TeachingAssistant "university teaching assistant")
+SubClassOf(:TeachingAssistant :Person)
+SubClassOf(:TeachingAssistant ObjectSomeValuesFrom(:teachingAssistantOf :Course))
+
+# Class: :TechnicalReport (technical report)
+
+AnnotationAssertion(rdfs:label :TechnicalReport "technical report")
+SubClassOf(:TechnicalReport :Article)
+
+# Class: :UndergraduateStudent (undergraduate student)
+
+AnnotationAssertion(rdfs:label :UndergraduateStudent "undergraduate student")
+SubClassOf(:UndergraduateStudent :Student)
+
+# Class: :University (university)
+
+AnnotationAssertion(rdfs:label :University "university")
+SubClassOf(:University :Organization)
+
+# Class: :UnofficialPublication (unnoficial publication)
+
+AnnotationAssertion(rdfs:label :UnofficialPublication "unnoficial publication")
+SubClassOf(:UnofficialPublication :Publication)
+
+# Class: :VisitingProfessor (visiting professor)
+
+AnnotationAssertion(rdfs:label :VisitingProfessor "visiting professor")
+SubClassOf(:VisitingProfessor :Professor)
+
+# Class: :Work (Work)
+
+AnnotationAssertion(rdfs:label :Work "Work")
+
+
+)

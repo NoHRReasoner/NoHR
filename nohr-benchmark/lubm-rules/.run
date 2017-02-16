@@ -1,0 +1,26 @@
+#!/bin/bash
+
+RUNS=$1
+QUERYFILE=$2
+UNIVS="${@:3:$#}" 
+
+echo "QL"
+
+for ((i=1; i<=$RUNS; i++)); do
+	echo "RUN ${i}" 
+	bash ../.runclass "benchmark.LubmTest" "--profile QL --data-dir data --queries-file ${QUERYFILE} --univs-list ${UNIVS}  --output-dir output/ql"\
+		 2>&1 | tee logs/ql${i}.txt
+	mv queries.csv ./report/queries/ql${i}.csv
+	mv loading.csv ./report/loading/ql${i}.csv
+done
+
+echo "DL-QL"
+
+for ((i=1; i<=$RUNS; i++)); do
+        echo "RUN ${i}" 
+        bash ../.runclass "benchmark.LubmTest" "--profile QL --force-dl --data-dir data --queries-file ${QUERYFILE} --univs-list ${UNIVS}  --output-dir output/dlql"
+                 2>&1 | tee logs/dlql${i}.txt
+        mv queries.csv ./report/queries/dlql${i}.csv
+        mv loading.csv ./report/loading/dlql${i}.csv
+done
+

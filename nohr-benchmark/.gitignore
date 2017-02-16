@@ -1,9 +1,0 @@
-/target/
-/lubm/data/*.owl
-/lubm/output/el/*
-/lubm/output/ql/*
-/ontoWithRules/lipid/*.p
-/pellet/Pellet.jar
-/pellet/PelletQueries.txt
-/pellet/*.owl
-/pellt/output/*

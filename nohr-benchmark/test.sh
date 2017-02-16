@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 cd pellet
-sh test.sh
+bash test.sh
 cd ..
 
 cd lubm
-sh generateData.sh
-sh test.sh
+bash generateData.sh
+bash test.sh
 cd ..

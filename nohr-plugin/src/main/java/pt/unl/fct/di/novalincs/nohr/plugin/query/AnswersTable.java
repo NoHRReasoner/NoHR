@@ -64,4 +64,8 @@ public class AnswersTable extends JTable {
         ((AnswersTableModel) getModel()).setError(message);
     }
 
+    public void setShowIRIs(boolean value) {
+        ((AnswersTableModel) this.getModel()).setShowIRIs(value);
+    }
+
 }
