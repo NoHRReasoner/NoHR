@@ -11,7 +11,6 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  */
 import java.awt.BorderLayout;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.protege.editor.core.ui.view.ViewComponent;
@@ -30,7 +28,11 @@ import org.protege.editor.core.ui.util.UIUtil;
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
@@ -73,7 +75,7 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
 
     @Override
     public void initialiseOWLView() throws Exception {
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
         ruleEditor = new RuleEditor(getOWLEditorKit(), getParser());
         final RuleListModel ruleListModel = getRuleListModel();
         reset();
@@ -81,7 +83,9 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
         ruleList.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 14));
         final JScrollPane jScrollPane = new JScrollPane(ruleList);
         add(jScrollPane, BorderLayout.CENTER);
-        final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        //final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        final Box buttonHolder = new Box(BoxLayout.X_AXIS);
+
         final JButton openButton = new JButton(new AbstractAction("Open") {
 
             private static final long serialVersionUID = -2176187025244957420L;
@@ -150,12 +154,18 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
                 ruleList.setShowIRIs(showIRIsCheckBox.isSelected());
             }
         });
-        
-        
+
+        buttonHolder.add(Box.createHorizontalStrut(5));
         buttonHolder.add(openButton);
+        buttonHolder.add(Box.createHorizontalStrut(5));
         buttonHolder.add(saveButton);
+        buttonHolder.add(Box.createHorizontalStrut(5));
         buttonHolder.add(clearButton);
+        buttonHolder.add(Box.createHorizontalStrut(5));
+        buttonHolder.add(new JSeparator(SwingConstants.VERTICAL));
+        buttonHolder.add(Box.createHorizontalStrut(5));
         buttonHolder.add(showIRIsCheckBox);
+        buttonHolder.add(Box.createHorizontalStrut(5));
         add(buttonHolder, BorderLayout.SOUTH);
 
     }
