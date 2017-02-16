@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -76,6 +77,8 @@ public class DLExpressionTranslator {
             for (OWLClassExpression i : intersection) {
                 ret.addAll(tr(i, x, doubled));
             }
+        } else if (c instanceof OWLObjectUnionOf) {
+            throw new IllegalArgumentException("Illegal class expression: " + c.toString());
         } else if (c instanceof OWLObjectSomeValuesFrom) {
             final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) c;
             final OWLObjectPropertyExpression p = some.getProperty();

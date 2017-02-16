@@ -1,0 +1,20 @@
+package unittest;
+
+import com.declarativa.interprolog.util.IPException;
+import java.io.IOException;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
+import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
+
+public class RLHermitQueryTest extends AbstractRLQueryTest {
+
+    public RLHermitQueryTest() throws OWLOntologyCreationException, OWLOntologyStorageException,
+            OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
+            IPException, PrologEngineCreationException {
+        super(new NoHRHybridKBConfiguration(true, true, true, DLInferenceEngine.HERMIT));
+    }
+}

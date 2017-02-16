@@ -85,6 +85,8 @@ public class KB {
 
     private boolean clear;
 
+    protected final NoHRHybridKBConfiguration config;
+
     public KB() throws OWLOntologyCreationException, OWLOntologyStorageException, OWLProfilesViolationsException,
             IPException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
             PrologEngineCreationException {
@@ -101,6 +103,20 @@ public class KB {
         roles = new HashMap<String, OWLObjectProperty>();
         dataRoles = new HashMap<String, OWLDataProperty>();
         individuals = new HashMap<String, OWLIndividual>();
+        this.config = new NoHRHybridKBConfiguration();
+        setup();
+        clear = true;
+    }
+
+    public KB(Profile profile, NoHRHybridKBConfiguration config) {
+        this.profile = profile;
+        ontologyManager = OWLManager.createOWLOntologyManager();
+        dataFactory = ontologyManager.getOWLDataFactory();
+        concepts = new HashMap<String, OWLClass>();
+        roles = new HashMap<String, OWLObjectProperty>();
+        dataRoles = new HashMap<String, OWLDataProperty>();
+        individuals = new HashMap<String, OWLIndividual>();
+        this.config = config;
         setup();
         clear = true;
     }
@@ -223,6 +239,11 @@ public class KB {
 
     public OWLObjectIntersectionOf conj(OWLClassExpression... concepts) {
         return getDataFactory().getOWLObjectIntersectionOf(concepts);
+    }
+
+    public OWLClassExpression union(String... conceptNames) {
+        return dataFactory.getOWLObjectUnionOf(concepts(conceptNames));
+
     }
 
     public OWLObjectIntersectionOf conj(String... conceptNames) {
@@ -516,18 +537,9 @@ public class KB {
     private void setup() {
         try {
             ontology = ontologyManager.createOntology(IRI.generateDocumentIRI());
-            hybridKB = new NoHRHybridKB(new NoHRHybridKBConfiguration(), ontology, profile);
+            hybridKB = new NoHRHybridKB(config, ontology, profile);
             parser = new NoHRRecursiveDescentParser(hybridKB.getVocabulary());
-        } catch (final IPException e) {
-
-            throw new RuntimeException(e);
-        } catch (final OWLOntologyCreationException e) {
-
-            throw new RuntimeException(e);
-        } catch (final UnsupportedAxiomsException e) {
-
-            throw new RuntimeException(e);
-        } catch (final PrologEngineCreationException e) {
+        } catch (final IPException | OWLOntologyCreationException | UnsupportedAxiomsException | PrologEngineCreationException e) {
             throw new RuntimeException(e);
         }
 

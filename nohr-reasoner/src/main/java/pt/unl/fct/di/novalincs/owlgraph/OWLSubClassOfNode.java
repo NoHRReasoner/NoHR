@@ -33,10 +33,7 @@ public class OWLSubClassOfNode extends OWLAxiomNode {
         return axioms;
     }
 
-    public static Iterable<OWLSubClassOfAxiom> flattenAxiom(OWLSubClassOfAxiom axiom) {
-        OWLClassExpressionNode subClass = OWLClassExpressionNode.create(axiom.getSubClass());
-        OWLClassExpressionNode superClass = OWLClassExpressionNode.create(axiom.getSuperClass());
-
+    public Set<OWLSubClassOfAxiom> asSubClassOfAxiom() {
         Set<OWLSubClassOfAxiom> axioms = new HashSet<>();
 
         for (OWLClassExpression i : subClass.asClassExpression(true)) {

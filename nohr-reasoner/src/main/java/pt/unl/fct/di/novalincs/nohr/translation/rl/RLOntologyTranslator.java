@@ -1,5 +1,7 @@
 package pt.unl.fct.di.novalincs.nohr.translation.rl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDisjointDataPropertiesAxiom;
@@ -16,6 +18,7 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.OntologyTranslatorImpl;
 import pt.unl.fct.di.novalincs.nohr.translation.Profile;
+import pt.unl.fct.di.novalincs.nohr.translation.UnsupportedAxiomException;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 public class RLOntologyTranslator extends OntologyTranslatorImpl {
@@ -30,7 +33,7 @@ public class RLOntologyTranslator extends OntologyTranslatorImpl {
         originalAxiomTranslator = new RLOriginalAxiomTranslator(vocabulary);
         doubledAxiomTranslator = new RLDoubledAxiomTranslator(vocabulary);
 
-        prepareUpdate();
+//        prepareUpdate();
     }
 
     @Override
@@ -40,50 +43,86 @@ public class RLOntologyTranslator extends OntologyTranslatorImpl {
 
     @Override
     public boolean hasDisjunctions() {
-        return normalizedOntology.hasDisjunctions();
+        return normalizedOntology == null || normalizedOntology.hasDisjunctions();
     }
 
     private void prepareUpdate() throws UnsupportedAxiomsException {
-        RuntimesLogger.start("[NOHR RL] ontology normalization");
+        RuntimesLogger.start("[OWL RL] ontology normalization");
         normalizedOntology = new RLOntologyNormalizationImpl(ontology, vocabulary);
-        RuntimesLogger.stop("[NOHR RL] ontology normalization", "loading");
+        RuntimesLogger.stop("[OWL RL] ontology normalization", "loading");
     }
 
     private void translate(RLAxiomTranslator axiomTranslator) {
         for (final OWLClassAssertionAxiom axiom : normalizedOntology.conceptAssertions()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (final OWLSubClassOfAxiom axiom : normalizedOntology.conceptSubsumptions()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (final OWLDataPropertyAssertionAxiom axiom : normalizedOntology.dataAssertions()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (final OWLDisjointDataPropertiesAxiom axiom : normalizedOntology.dataDisjunctions()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (final OWLSubDataPropertyOfAxiom axiom : normalizedOntology.dataSubsumptions()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (final OWLIrreflexiveObjectPropertyAxiom axiom : normalizedOntology.irreflexiveRoles()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (final OWLObjectPropertyAssertionAxiom axiom : normalizedOntology.roleAssertions()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (final OWLDisjointObjectPropertiesAxiom axiom : normalizedOntology.roleDisjunctions()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         for (final OWLSubObjectPropertyOfAxiom axiom : normalizedOntology.roleSubsumptions()) {
-            translation.addAll(axiomTranslator.translate(axiom));
+            try {
+                translation.addAll(axiomTranslator.translate(axiom));
+            } catch (UnsupportedAxiomException ex) {
+                Logger.getLogger(RLOntologyTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -92,7 +131,7 @@ public class RLOntologyTranslator extends OntologyTranslatorImpl {
         prepareUpdate();
         translation.clear();
 
-        RuntimesLogger.start("[NOHR RL] ontology translation");
+        RuntimesLogger.start("[OWL RL] ontology translation");
 
         translate(originalAxiomTranslator);
 
@@ -100,7 +139,7 @@ public class RLOntologyTranslator extends OntologyTranslatorImpl {
             translate(doubledAxiomTranslator);
         }
 
-        RuntimesLogger.stop("[NOHR RL] ontology translation", "loading");
+        RuntimesLogger.stop("[OWL RL] ontology translation", "loading");
     }
 
 }

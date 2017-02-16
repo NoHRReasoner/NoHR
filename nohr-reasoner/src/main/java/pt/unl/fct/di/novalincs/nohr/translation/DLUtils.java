@@ -16,6 +16,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
@@ -73,6 +74,10 @@ public class DLUtils {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectIntersectionOf(concepts);
     }
 
+    public static OWLDisjointObjectPropertiesAxiom disjunction(OWLOntology ontology, OWLObjectPropertyExpression p, OWLObjectPropertyExpression q) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLDisjointObjectPropertiesAxiom(p, q);
+    }
+
     public static boolean hasDisjunctions(OWLOntology ontology) {
         for (final OWLSubClassOfAxiom axiom : ontology.getAxioms(AxiomType.SUBCLASS_OF)) {
             for (final OWLClassExpression ci : axiom.getSuperClass().asConjunctSet()) {
@@ -82,7 +87,7 @@ public class DLUtils {
             }
         }
 
-        return ontology.getAxiomCount(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY) > 0;
+        return ontology.getAxiomCount(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY) > 0 || ontology.getAxiomCount(AxiomType.DISJOINT_OBJECT_PROPERTIES) > 0;
     }
 
     public static boolean hasExistential(OWLClassExpression ce) {
@@ -125,6 +130,18 @@ public class DLUtils {
 
     public static OWLClassExpression some(OWLOntology ontology, OWLObjectPropertyExpression r) {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectSomeValuesFrom(r, ontology.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
+    }
+
+    public static OWLClassExpression only(OWLOntology ontology, OWLObjectPropertyExpression r) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectAllValuesFrom(r, ontology.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
+    }
+
+    public static OWLClassExpression only(OWLOntology ontology, OWLObjectPropertyExpression r, OWLClassExpression c) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectAllValuesFrom(r, c);
+    }
+
+    public static OWLClassExpression not(OWLOntology ontology, OWLClassExpression c) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectComplementOf(c);
     }
 
 }

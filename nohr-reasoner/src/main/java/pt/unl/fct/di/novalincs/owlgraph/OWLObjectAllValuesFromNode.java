@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 
 public class OWLObjectAllValuesFromNode extends OWLClassExpressionNode {
@@ -22,7 +23,13 @@ public class OWLObjectAllValuesFromNode extends OWLClassExpressionNode {
 
         for (OWLClassExpressionNode i : children) {
             for (OWLClassExpression j : i.asClassExpression(subClass)) {
-                classExpressions.add(ontologyManager.getOWLDataFactory().getOWLObjectAllValuesFrom(propertyExpression, j));
+                if (j instanceof OWLObjectComplementOf) {
+                    final OWLClassExpression someValuesFrom = ontologyManager.getOWLDataFactory().getOWLObjectSomeValuesFrom(propertyExpression, ((OWLObjectComplementOf) j).getOperand());
+
+                    classExpressions.add(ontologyManager.getOWLDataFactory().getOWLObjectComplementOf(someValuesFrom));
+                } else {
+                    classExpressions.add(ontologyManager.getOWLDataFactory().getOWLObjectAllValuesFrom(propertyExpression, j));
+                }
             }
         }
 

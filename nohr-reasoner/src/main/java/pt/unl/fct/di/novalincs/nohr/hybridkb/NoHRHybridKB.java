@@ -136,6 +136,8 @@ public class NoHRHybridKB implements HybridKB {
 
     private final NoHRHybridKBConfiguration configuration;
 
+    private final Profile profile;
+
     /**
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
@@ -162,8 +164,12 @@ public class NoHRHybridKB implements HybridKB {
      * @throws PrologEngineCreationException if there was some problem during
      * the creation of the underlying Prolog engine.
      */
-    public NoHRHybridKB(final NoHRHybridKBConfiguration configuration, final OWLOntology ontology, Profile profile)
-            throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException,
+    public NoHRHybridKB(final NoHRHybridKBConfiguration configuration,
+            final OWLOntology ontology,
+            Profile profile)
+            throws OWLProfilesViolationsException,
+            IPException,
+            UnsupportedAxiomsException,
             PrologEngineCreationException {
         this(configuration, ontology, Model.program(), null, profile);
     }
@@ -236,6 +242,7 @@ public class NoHRHybridKB implements HybridKB {
 
         Objects.requireNonNull(configuration);
 
+        this.profile = profile;
         this.configuration = configuration;
         this.ontology = ontology;
         this.program = program;
@@ -255,7 +262,7 @@ public class NoHRHybridKB implements HybridKB {
         doubledProgram = dedutiveDatabase.createProgram();
         queryProcessor = new QueryProcessor(dedutiveDatabase);
         ontologyTranslatorFactory = new OntologyTranslatorFactory(configuration.getOntologyTranslationConfiguration());
-        ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, profile);
+        ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, this.vocabulary, dedutiveDatabase, profile);
         hasOntologyChanges = true;
         hasProgramChanges = true;
         ontologyChangeListener = new OWLOntologyChangeListener() {
@@ -430,7 +437,7 @@ public class NoHRHybridKB implements HybridKB {
         if (hasOntologyChanges) {
             RuntimesLogger.start("ontology processing");
 
-            if (!ontologyTranslatorFactory.isPreferred(ontologyTranslator, ontology)) {
+            if (profile == null && !ontologyTranslatorFactory.isPreferred(ontologyTranslator, ontology)) {
                 ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, null);
             }
 

@@ -21,12 +21,6 @@ import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.HermitInferenceEngine;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.KoncludeInferenceEngine;
-import pt.unl.fct.di.novalincs.nohr.translation.el.ELOntologyTranslator;
-import pt.unl.fct.di.novalincs.nohr.translation.ql.QLOntologyTranslator;
 
 /**
  * The implementation of the {@link OntologyTranslator} <i>abstraction</i> (see {@link

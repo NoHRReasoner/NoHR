@@ -42,7 +42,7 @@ public final class NoHRPreferences {
     }
 
     public NoHRHybridKBConfiguration getConfiguration() {
-        return new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), getDLInferenceEngine());
+        return new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), false, getDLInferenceEngine());
     }
 
     public DLInferenceEngine getDLInferenceEngine() {
