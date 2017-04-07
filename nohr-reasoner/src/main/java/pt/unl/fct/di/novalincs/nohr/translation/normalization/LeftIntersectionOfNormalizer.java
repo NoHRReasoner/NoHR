@@ -4,46 +4,46 @@ import java.util.HashSet;
 import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
-import pt.unl.fct.di.novalincs.nohr.translation.DLUtils;
+import pt.unl.fct.di.novalincs.nohr.translation.OntologyUtil;
 
-public class LeftConjunctionNormalizer implements Normalizer<OWLSubClassOfAxiom> {
+public class LeftIntersectionOfNormalizer implements Normalizer<OWLSubClassOfAxiom> {
 
-    private final OWLOntology ontology;
+    private final OntologyUtil util;
     private final Vocabulary vocabulary;
 
-    public LeftConjunctionNormalizer(OWLOntology ontology, Vocabulary vocabulary) {
-        this.ontology = ontology;
+    public LeftIntersectionOfNormalizer(OntologyUtil util, Vocabulary vocabulary) {
+        this.util = util;
         this.vocabulary = vocabulary;
     }
 
     @Override
     public boolean addNormalization(OWLSubClassOfAxiom axiom, Set<OWLSubClassOfAxiom> newAxioms) {
+        final Set<OWLClassExpression> subClassConjunctSet = axiom.getSubClass().asConjunctSet();
+        final OWLClassExpression superClass = axiom.getSuperClass();
         boolean changed = false;
-        final Set<OWLClassExpression> ce1Conj = axiom.getSubClass().asConjunctSet();
-        final OWLClassExpression ce2 = axiom.getSuperClass();
 
-        if (ce1Conj.size() > 1) {
-            final Set<OWLClassExpression> normCe1Conj = new HashSet<>();
+        if (subClassConjunctSet.size() > 1) {
+            final Set<OWLClassExpression> normalizedSubClassConjunctSet = new HashSet<>();
 
-            for (final OWLClassExpression ci : ce1Conj) {
-                if (DLUtils.isExistential(ci)) {
-                    final OWLClass anew = vocabulary.generateNewConcept();
+            for (final OWLClassExpression i : subClassConjunctSet) {
+                if (i.isAnonymous()) {
+                    final OWLClass newClass = vocabulary.generateNewConcept();
 
-                    newAxioms.add(DLUtils.subsumption(ontology, ci, anew));
-                    normCe1Conj.add(anew);
+                    newAxioms.add(util.subClassOf(i, newClass));
+                    normalizedSubClassConjunctSet.add(newClass);
                     changed = true;
                 } else {
-                    normCe1Conj.add(ci);
+                    normalizedSubClassConjunctSet.add(i);
                 }
             }
 
             if (changed) {
-                newAxioms.add(DLUtils.subsumption(ontology, DLUtils.conjunction(ontology, normCe1Conj), ce2));
+                newAxioms.add(util.subClassOf(util.intersectionOf(normalizedSubClassConjunctSet), superClass));
             }
         }
+
         return changed;
     }
 
