@@ -16,6 +16,9 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDataRange;
+import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLDisjointObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
@@ -102,6 +105,14 @@ public class DLUtils {
 
     public static boolean isExistential(OWLClassExpression c) {
         return c instanceof OWLObjectSomeValuesFrom;
+    }
+
+    public static OWLDataRange topDatatype(OWLOntology ontology) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getTopDatatype();
+    }
+
+    public static OWLDataSomeValuesFrom some(OWLOntology ontology, OWLDataPropertyExpression r, OWLDataRange d) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLDataSomeValuesFrom(r, d);
     }
 
     public static OWLObjectSomeValuesFrom some(OWLOntology ontology, OWLObjectPropertyExpression r, OWLClassExpression c) {

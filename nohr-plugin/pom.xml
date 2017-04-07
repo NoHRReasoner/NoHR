@@ -6,7 +6,7 @@
     <parent>
         <groupId>pt.unl.fct.novalincs</groupId>
         <artifactId>nohr</artifactId>
-        <version>3.0.0_beta</version>
+        <version>3.0.0</version>
     </parent>
     <artifactId>nohr-plugin</artifactId>
     <build>
@@ -74,4 +74,5 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    <version>3.0.0</version>
 </project>

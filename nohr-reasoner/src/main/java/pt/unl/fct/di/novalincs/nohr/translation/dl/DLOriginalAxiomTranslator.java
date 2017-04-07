@@ -48,27 +48,28 @@ public class DLOriginalAxiomTranslator implements DLAxiomTranslator {
     public Set<Rule> translate(OWLSubClassOfAxiom axiom) {
         final Set<Rule> ret = new HashSet<>();
 
-        final OWLClassExpression c = axiom.getSubClass();
-        final OWLClassExpression d = axiom.getSuperClass();
+        final OWLClassExpression subClass = axiom.getSubClass();
+        final OWLClassExpression superClass = axiom.getSuperClass();
 
-        for (OWLClassExpression i : c.asConjunctSet()) {
+        if (superClass.isOWLThing() || superClass.isOWLNothing() || superClass.isAnonymous()) {
+            return ret;
+        }
+
+        for (OWLClassExpression i : subClass.asConjunctSet()) {
             if (i.isOWLNothing()) {
                 return ret;
             }
         }
 
-        if (d.isOWLThing() || d.isOWLNothing()) {
-            return ret;
-        }
+        final Atom head = (Atom) atomTranslator.tr(superClass, DLExpressionTranslator.X, false).get(0);
 
-        final List<Literal> body = atomTranslator.tr(c, DLExpressionTranslator.X, false);
-        final Atom head = (Atom) atomTranslator.th(d, body, DLExpressionTranslator.X, false).get(0);
-
-        if (c.isOWLThing()) {
+        if (subClass.isOWLThing()) {
             ret.add(Model.rule(head));
 
             return ret;
         }
+
+        final List<Literal> body = atomTranslator.tr(subClass, DLExpressionTranslator.X, false);
 
         ret.add(Model.rule(head, body));
 

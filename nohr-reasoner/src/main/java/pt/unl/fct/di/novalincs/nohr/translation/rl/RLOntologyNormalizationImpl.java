@@ -34,7 +34,7 @@ import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.DLUtils;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyNormailzationImpl;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyNormalizationImpl;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.ComplexSidesNormalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.ConceptAssertionsNormalizer;
 import pt.unl.fct.di.novalincs.nohr.translation.normalization.GraphNormalizer;
@@ -46,7 +46,7 @@ import pt.unl.fct.di.novalincs.nohr.translation.normalization.RightConjunctionNo
 
 public class RLOntologyNormalizationImpl implements RLOntologyNormalization {
 
-    private static final Logger LOG = Logger.getLogger(DLOntologyNormailzationImpl.class);
+    private static final Logger LOG = Logger.getLogger(DLOntologyNormalizationImpl.class);
     public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{
         AxiomType.ASYMMETRIC_OBJECT_PROPERTY,
         AxiomType.CLASS_ASSERTION,

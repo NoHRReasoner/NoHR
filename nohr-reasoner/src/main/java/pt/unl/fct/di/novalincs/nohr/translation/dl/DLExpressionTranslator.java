@@ -7,6 +7,9 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDataRange;
+import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
@@ -61,26 +64,26 @@ public class DLExpressionTranslator {
         return Model.atom(vocabulary.negPred(p), x, y);
     }
 
-    public List<Literal> th(OWLClassExpression c, List<Literal> body, Variable x, boolean doubled) {
-        if (c instanceof OWLObjectAllValuesFrom) {
-            final List<Literal> atoms = new LinkedList<>();
-            final OWLObjectAllValuesFrom objectAllValuesFrom = (OWLObjectAllValuesFrom) c;
-
-            final Variable y = X();
-
-            atoms.addAll(th(objectAllValuesFrom.getFiller(), body, y, false));
-            body.addAll(tr(objectAllValuesFrom.getProperty(), x, y, false));
-
-            return atoms;
-        } else {
-            return tr(c, x, doubled);
-        }
-    }
+//    public List<Literal> th(OWLClassExpression c, List<Literal> body, Variable x, boolean doubled) {
+//        if (c instanceof OWLObjectAllValuesFrom) {
+//            final List<Literal> atoms = new LinkedList<>();
+//            final OWLObjectAllValuesFrom objectAllValuesFrom = (OWLObjectAllValuesFrom) c;
+//
+//            final Variable y = X();
+//
+//            atoms.addAll(th(objectAllValuesFrom.getFiller(), body, y, false));
+//            body.addAll(tr(objectAllValuesFrom.getProperty(), x, y, false));
+//
+//            return atoms;
+//        } else {
+//            return tr(c, x, doubled);
+//        }
+//    }
 
     public List<Literal> tr(OWLClassExpression c, Variable x, boolean doubled) {
         final List<Literal> ret = new LinkedList<>();
 
-        if (c.isOWLThing()) {
+        if (c.isTopEntity()) {
             return ret;
         }
 
@@ -117,7 +120,7 @@ public class DLExpressionTranslator {
             final OWLClassExpression filler = some.getFiller();
 
             ret.addAll(tr(p, X, Y, doubled));
-            ret.addAll(tr(some.getFiller(), Y, doubled));
+            ret.addAll(tr(filler, Y, doubled));
         }
 
         return ret;

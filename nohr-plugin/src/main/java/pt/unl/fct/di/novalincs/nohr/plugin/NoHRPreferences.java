@@ -46,7 +46,7 @@ public final class NoHRPreferences {
     }
 
     public DLInferenceEngine getDLInferenceEngine() {
-        return DLInferenceEngine.getDLMode(getPreferences().getString(DL_INFERENCE_ENGINE, "HERMIT"));
+        return DLInferenceEngine.getDLInferenceEngine(getPreferences().getString(DL_INFERENCE_ENGINE, "HERMIT"));
     }
 
     public static synchronized NoHRPreferences getInstance() {

@@ -7,6 +7,7 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslation;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.HermitInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.KoncludeInferenceEngine;
@@ -40,24 +41,24 @@ public class OntologyTranslatorFactory {
         switch (profile) {
             case OWL2_EL:
                 if (preferDLEngineOverEL) {
-                    return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
                 } else {
                     return new ELOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
                 }
             case OWL2_QL:
                 if (preferDLEngineOverQL) {
-                    return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
                 } else {
                     return new QLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
                 }
             case OWL2_RL:
                 if (preferDLEngineOverRL) {
-                    return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
                 } else {
                     return new RLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
                 }
             case NOHR_DL:
-                return new DLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
             default:
                 throw new OWLProfilesViolationsException();
         }

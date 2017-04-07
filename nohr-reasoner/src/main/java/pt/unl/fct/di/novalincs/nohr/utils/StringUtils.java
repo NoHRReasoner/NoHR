@@ -70,6 +70,14 @@ public class StringUtils {
         return symbol;
     }
 
+    public static String escapeXsbSymbol(String symbol) {
+        if (!symbol.matches("[a-z][A-Za-z0-9_]*")) {
+            return "'" + symbol.replace("'", "''") + "'";
+        }
+
+        return symbol;
+    }
+
     public static String quote(String symbol) {
         return "'" + symbol + "'";
     }

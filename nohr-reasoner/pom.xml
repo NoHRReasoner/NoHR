@@ -6,7 +6,7 @@
     <parent>
         <groupId>pt.unl.fct.novalincs</groupId>
         <artifactId>nohr</artifactId>
-        <version>3.0.0_beta</version>
+        <version>3.0.0</version>
     </parent>
     <artifactId>nohr-reasoner</artifactId>
     <name>nohr-reasoner</name>
@@ -26,5 +26,6 @@
             <artifactId>owlapi-osgidistribution</artifactId>
             <version>4.2.6</version>
         </dependency>
-    </dependencies>	
+    </dependencies>
+    <version>3.0.0</version>
 </project>

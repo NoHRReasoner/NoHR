@@ -5,7 +5,7 @@ public enum DLInferenceEngine {
     HERMIT,
     KONCLUDE;
 
-    public static DLInferenceEngine getDLMode(String value) {
+    public static DLInferenceEngine getDLInferenceEngine(String value) {
         switch (value) {
             case "HERMIT":
                 return HERMIT;

@@ -130,7 +130,7 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
     }
 
     @Override
-    public boolean hasDisjunctions() {
+    public boolean requiresDoubling() {
         return ontologyNormalization.hasDisjunctions();
     }
 

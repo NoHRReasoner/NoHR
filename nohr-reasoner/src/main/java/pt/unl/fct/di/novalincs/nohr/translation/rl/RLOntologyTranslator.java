@@ -42,7 +42,7 @@ public class RLOntologyTranslator extends OntologyTranslatorImpl {
     }
 
     @Override
-    public boolean hasDisjunctions() {
+    public boolean requiresDoubling() {
         return normalizedOntology == null || normalizedOntology.hasDisjunctions();
     }
 
