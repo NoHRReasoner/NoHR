@@ -71,7 +71,7 @@ public interface OntologyTranslator {
      *
      * @return iff the {@link OntologyTranslator translator}'s has disjunctions.
      */
-    public boolean hasDisjunctions();
+    public boolean requiresDoubling();
 
     /**
      * Updates the translation {@link DatabaseProgram program}(s) in the

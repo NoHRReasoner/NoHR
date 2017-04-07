@@ -52,8 +52,10 @@ public class ParserTest {
     }
 
     @Test
-    public void parseFail() {
-        final NoHRParser parser = new NoHRRecursiveDescentParser();
+    public void parseFail() throws OWLOntologyCreationException {
+        final Vocabulary v = new DefaultVocabulary(
+                OWLManager.createOWLOntologyManager().createOntology(IRI.generateDocumentIRI()));
+        final NoHRParser parser = new NoHRRecursiveDescentParser(v);
         try {
             parser.parseRule("p(?");
             Assert.fail();

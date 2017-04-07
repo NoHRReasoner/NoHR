@@ -33,7 +33,7 @@ public class DLOntologyTranslator extends OntologyTranslatorImpl {
         doubledAxiomTranslator = new DLDoubledAxiomTranslator(vocabulary);
         this.engine = engine;
 
-        prepareUpdate();
+//        prepareUpdate();
     }
 
     @Override
@@ -58,13 +58,13 @@ public class DLOntologyTranslator extends OntologyTranslatorImpl {
     }
 
     @Override
-    public boolean hasDisjunctions() {
+    public boolean requiresDoubling() {
         return normalizedOntology.hasDisjunctions();
     }
 
     private void prepareUpdate() throws UnsupportedAxiomsException {
         RuntimesLogger.start("[NOHR DL] ontology normalization");
-        normalizedOntology = new DLOntologyNormailzationImpl(ontology, vocabulary, engine);
+        normalizedOntology = new DLOntologyNormalizationImpl(ontology, vocabulary, engine);
         RuntimesLogger.stop("[NOHR DL] ontology normalization", "loading");
     }
 

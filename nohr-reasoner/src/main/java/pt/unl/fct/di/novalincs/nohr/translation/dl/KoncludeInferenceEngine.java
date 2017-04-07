@@ -23,7 +23,7 @@ public final class KoncludeInferenceEngine implements InferenceEngine {
     }
 
     @Override
-    public void computeInferences(OWLOntology ontology) {
+    public OWLOntology computeInferences(OWLOntology ontology) {
         RuntimesLogger.start("[NoHR DL (Konclude)] ontology inference");
         Logger.getLogger("de.derivo.konclude").setLevel(Level.ERROR);
 
@@ -56,5 +56,7 @@ public final class KoncludeInferenceEngine implements InferenceEngine {
         } finally {
             RuntimesLogger.stop("[NoHR DL (Konclude)] ontology inference", "loading");
         }
+
+        return ontology;
     }
 }

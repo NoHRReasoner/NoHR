@@ -21,10 +21,6 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
     private NoHRScanner scanner;
     private Vocabulary vocabulary;
 
-    public NoHRRecursiveDescentParser() {
-        this(null);
-    }
-
     public NoHRRecursiveDescentParser(Vocabulary vocabulary) {
         this.vocabulary = vocabulary;
     }

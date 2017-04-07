@@ -26,5 +26,6 @@
             <artifactId>owlapi-osgidistribution</artifactId>
             <version>4.2.6</version>
         </dependency>
-    </dependencies>	
+    </dependencies>
+    <version>3.0.0</version>
 </project>

@@ -38,7 +38,7 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
     /**
      * The {@link DeductiveDatabase} where the translation is maintained.
      */
-    private final DeductiveDatabase dedutiveDatabase;
+    private final DeductiveDatabase deductiveDatabase;
 
     /**
      * The {@link DatabaseProgram program} where the translation is maintained.
@@ -58,7 +58,7 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
      *
      * @param ontology the ontology that will be translated.
      * @param vocabulary
-     * @param dedutiveDatabase the {@link DeductiveDatabase} where the
+     * @param deductiveDatabase the {@link DeductiveDatabase} where the
      * translation will be maintained.
      * @param profile the {@link Profile profile} that this
      * {@link OntologyTranslator} will handle. If none is specified (i.e. if it
@@ -73,18 +73,18 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
     protected OntologyTranslatorImpl(
             OWLOntology ontology,
             Vocabulary vocabulary,
-            DeductiveDatabase dedutiveDatabase)
+            DeductiveDatabase deductiveDatabase)
             throws OWLProfilesViolationsException, UnsupportedAxiomsException {
 
         Objects.requireNonNull(ontology);
         Objects.requireNonNull(vocabulary);
-        Objects.requireNonNull(dedutiveDatabase);
+        Objects.requireNonNull(deductiveDatabase);
 
         this.ontology = ontology;
         this.vocabulary = vocabulary;
-        this.dedutiveDatabase = dedutiveDatabase;
+        this.deductiveDatabase = deductiveDatabase;
 
-        translation = dedutiveDatabase.createProgram();
+        translation = deductiveDatabase.createProgram();
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
 
     @Override
     public DeductiveDatabase getDedutiveDatabase() {
-        return dedutiveDatabase;
+        return deductiveDatabase;
     }
 
     @Override

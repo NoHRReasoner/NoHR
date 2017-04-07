@@ -76,7 +76,7 @@ public class ELOntologyTranslator extends OntologyTranslatorImpl {
     }
 
     @Override
-    public boolean hasDisjunctions() {
+    public boolean requiresDoubling() {
         return reducedOntology.hasDisjunctions();
     }
 

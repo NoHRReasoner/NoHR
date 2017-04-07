@@ -87,7 +87,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
             return constant.toString();
         }
 
-        return StringUtils.escapeSymbol(constant.asString());
+        return StringUtils.escapeXsbSymbol(constant.asString());
     }
 
     @Override
@@ -142,7 +142,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Symbol symbolic) {
-        return StringUtils.escapeSymbol(symbolic.asString());
+        return StringUtils.escapeXsbSymbol(symbolic.asString());
     }
 
     @Override
@@ -152,7 +152,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(PrologPredicate predicate) {
-        return StringUtils.escapeSymbol(predicate.asString());
+        return StringUtils.escapeXsbSymbol(predicate.asString());
     }
 
 }

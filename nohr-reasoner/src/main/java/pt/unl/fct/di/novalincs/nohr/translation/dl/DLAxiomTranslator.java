@@ -22,6 +22,8 @@ public interface DLAxiomTranslator {
 
     Collection<Rule> translate(OWLDisjointObjectPropertiesAxiom axiom);
 
+    Collection<Rule> translate(OWLIrreflexiveObjectPropertyAxiom axiom);
+
     Collection<Rule> translate(OWLPropertyAssertionAxiom axiom);
 
     Collection<Rule> translate(OWLSubClassOfAxiom axiom);
@@ -29,7 +31,5 @@ public interface DLAxiomTranslator {
     Collection<Rule> translate(OWLSubPropertyAxiom axiom);
 
     Collection<Rule> translate(OWLSubPropertyChainOfAxiom axiom);
-
-    public Collection<Rule> translate(OWLIrreflexiveObjectPropertyAxiom axiom);
 
 }

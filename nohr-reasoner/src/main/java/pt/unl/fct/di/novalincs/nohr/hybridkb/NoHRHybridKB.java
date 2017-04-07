@@ -79,7 +79,7 @@ public class NoHRHybridKB implements HybridKB {
      * translation and the <i>program</i> rules (and double rules, when
      * necessary) are loaded for querying
      */
-    private final DeductiveDatabase dedutiveDatabase;
+    private final DeductiveDatabase deductiveDatabase;
 
     /**
      * The underlying {@link OntologyTranslator}, that translates the
@@ -137,7 +137,7 @@ public class NoHRHybridKB implements HybridKB {
     private final NoHRHybridKBConfiguration configuration;
 
     private final Profile profile;
-    
+
     /**
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
@@ -164,8 +164,12 @@ public class NoHRHybridKB implements HybridKB {
      * @throws PrologEngineCreationException if there was some problem during
      * the creation of the underlying Prolog engine.
      */
-    public NoHRHybridKB(final NoHRHybridKBConfiguration configuration, final OWLOntology ontology, Profile profile)
-            throws OWLProfilesViolationsException, IPException, UnsupportedAxiomsException,
+    public NoHRHybridKB(final NoHRHybridKBConfiguration configuration,
+            final OWLOntology ontology,
+            Profile profile)
+            throws OWLProfilesViolationsException,
+            IPException,
+            UnsupportedAxiomsException,
             PrologEngineCreationException {
         this(configuration, ontology, Model.program(), null, profile);
     }
@@ -238,11 +242,11 @@ public class NoHRHybridKB implements HybridKB {
 
         Objects.requireNonNull(configuration);
 
+        this.profile = profile;
         this.configuration = configuration;
         this.ontology = ontology;
         this.program = program;
-        this.profile = profile;
-        
+
         if (vocabulary != null) {
             if (!vocabulary.getOntology().equals(ontology)) {
                 throw new IllegalArgumentException("vocabularyMapping: must contain the given ontology");
@@ -254,11 +258,11 @@ public class NoHRHybridKB implements HybridKB {
         }
 
         assert this.vocabulary != null;
-        dedutiveDatabase = new XSBDeductiveDatabase(configuration.getXsbDirectory(), this.vocabulary);
-        doubledProgram = dedutiveDatabase.createProgram();
-        queryProcessor = new QueryProcessor(dedutiveDatabase);
+        deductiveDatabase = new XSBDeductiveDatabase(configuration.getXsbDirectory(), this.vocabulary);
+        doubledProgram = deductiveDatabase.createProgram();
+        queryProcessor = new QueryProcessor(deductiveDatabase);
         ontologyTranslatorFactory = new OntologyTranslatorFactory(configuration.getOntologyTranslationConfiguration());
-        ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, this.vocabulary, dedutiveDatabase, profile);
+        ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, this.vocabulary, deductiveDatabase, profile);
         hasOntologyChanges = true;
         hasProgramChanges = true;
         ontologyChangeListener = new OWLOntologyChangeListener() {
@@ -344,7 +348,7 @@ public class NoHRHybridKB implements HybridKB {
 
     @Override
     public void dispose() {
-        dedutiveDatabase.dipose();
+        deductiveDatabase.dipose();
         ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
         program.removeListener(programChangeListener);
         vocabulary.removeListener(vocabularyChangeListener);
@@ -390,7 +394,7 @@ public class NoHRHybridKB implements HybridKB {
 
     @Override
     public boolean hasDisjunctions() {
-        return ontologyTranslator.hasDisjunctions();
+        return ontologyTranslator.requiresDoubling();
     }
 
     @Override
@@ -419,7 +423,7 @@ public class NoHRHybridKB implements HybridKB {
 	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
      * Step for NoHR: OWL 2 QL</a>}, depending on the current ontolgy profile,
      * so that it can be queried. The translation {@link DatabaseProgram}s,
-     * loaded in {@link #dedutiveDatabase} are updated, if the ontology has
+     * loaded in {@link #deductiveDatabase} are updated, if the ontology has
      * changed since the last call; {@link #doubledProgram} is updated, if they
      * were introduced disjunctions in the ontology, or if the program has
      * changed, since the last call.
@@ -433,8 +437,8 @@ public class NoHRHybridKB implements HybridKB {
         if (hasOntologyChanges) {
             RuntimesLogger.start("ontology processing");
 
-            if (!ontologyTranslatorFactory.isPreferred(ontologyTranslator, ontology)) {
-                ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, dedutiveDatabase, profile);
+            if (profile == null && !ontologyTranslatorFactory.isPreferred(ontologyTranslator, ontology)) {
+                ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, vocabulary, deductiveDatabase, null);
             }
 
             ontologyTranslator.updateTranslation();
@@ -442,10 +446,10 @@ public class NoHRHybridKB implements HybridKB {
             RuntimesLogger.stop("ontology processing", "loading");
         }
 
-        if (hasProgramChanges || ontologyTranslator.hasDisjunctions() != hadDisjunctions) {
+        if (hasProgramChanges || ontologyTranslator.requiresDoubling() != hadDisjunctions) {
             RuntimesLogger.start("rules parsing");
             doubledProgram.clear();
-            if (ontologyTranslator.hasDisjunctions()) {
+            if (ontologyTranslator.requiresDoubling()) {
                 for (final Rule rule : program) {
                     doubledProgram.addAll(ProgramDoubling.doubleRule(rule));
                 }
@@ -457,11 +461,13 @@ public class NoHRHybridKB implements HybridKB {
             }
 
             RuntimesLogger.stop("rules parsing", "loading");
+
+            deductiveDatabase.commit();
         }
 
         hasOntologyChanges = false;
         hasProgramChanges = false;
-        hadDisjunctions = ontologyTranslator.hasDisjunctions();
+        hadDisjunctions = ontologyTranslator.requiresDoubling();
     }
 
 }

@@ -74,4 +74,5 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    <version>3.0.0</version>
 </project>

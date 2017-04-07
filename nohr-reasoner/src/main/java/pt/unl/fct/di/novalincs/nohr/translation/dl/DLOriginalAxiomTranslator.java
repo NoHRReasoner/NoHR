@@ -26,11 +26,11 @@ import pt.unl.fct.di.novalincs.nohr.translation.AssertionsTranslation;
 
 public class DLOriginalAxiomTranslator implements DLAxiomTranslator {
 
-    private final DLAtomTranslator atomTranslator;
+    private final DLExpressionTranslator atomTranslator;
     private final Vocabulary vocabulary;
 
     public DLOriginalAxiomTranslator(Vocabulary vocabulary) {
-        atomTranslator = new DLAtomTranslator(vocabulary);
+        atomTranslator = new DLExpressionTranslator(vocabulary);
         this.vocabulary = vocabulary;
     }
 
@@ -48,28 +48,28 @@ public class DLOriginalAxiomTranslator implements DLAxiomTranslator {
     public Set<Rule> translate(OWLSubClassOfAxiom axiom) {
         final Set<Rule> ret = new HashSet<>();
 
-        final OWLClassExpression c = axiom.getSubClass();
-        final OWLClassExpression d = axiom.getSuperClass();
+        final OWLClassExpression subClass = axiom.getSubClass();
+        final OWLClassExpression superClass = axiom.getSuperClass();
 
-        for (OWLClassExpression i : c.asConjunctSet()) {
+        if (superClass.isOWLThing() || superClass.isOWLNothing() || superClass.isAnonymous()) {
+            return ret;
+        }
+
+        for (OWLClassExpression i : subClass.asConjunctSet()) {
             if (i.isOWLNothing()) {
                 return ret;
             }
         }
 
-        if (d.isAnonymous() || d.isOWLThing() || d.isOWLNothing()) {
-            return ret;
-        }
+        final Atom head = (Atom) atomTranslator.tr(superClass, DLExpressionTranslator.X, false).get(0);
 
-        final Atom head = (Atom) atomTranslator.tr(d, DLAtomTranslator.X, false).get(0);
-
-        if (c.isOWLThing()) {
+        if (subClass.isOWLThing()) {
             ret.add(Model.rule(head));
 
             return ret;
         }
 
-        final List<Literal> body = atomTranslator.tr(c, DLAtomTranslator.X, false);
+        final List<Literal> body = atomTranslator.tr(subClass, DLExpressionTranslator.X, false);
 
         ret.add(Model.rule(head, body));
 
@@ -88,10 +88,10 @@ public class DLOriginalAxiomTranslator implements DLAxiomTranslator {
         }
 
         if (p.isTopEntity()) {
-            ret.add(Model.rule(atomTranslator.tr(q, DLAtomTranslator.X, DLAtomTranslator.Y, false).get(0)));
+            ret.add(Model.rule(atomTranslator.tr(q, DLExpressionTranslator.X, DLExpressionTranslator.Y, false).get(0)));
         } else {
-            ret.add(Model.rule(atomTranslator.tr(q, DLAtomTranslator.X, DLAtomTranslator.Y, false).get(0),
-                    atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, false)));
+            ret.add(Model.rule(atomTranslator.tr(q, DLExpressionTranslator.X, DLExpressionTranslator.Y, false).get(0),
+                    atomTranslator.tr(p, DLExpressionTranslator.X, DLExpressionTranslator.Y, false)));
         }
 
         return ret;
@@ -104,7 +104,7 @@ public class DLOriginalAxiomTranslator implements DLAxiomTranslator {
         final List<OWLObjectPropertyExpression> chain = axiom.getPropertyChain();
         final OWLObjectPropertyExpression p = axiom.getSuperProperty();
 
-        ret.add(Model.rule(atomTranslator.tr(p, DLAtomTranslator.X, DLAtomTranslator.Y, false).get(0), atomTranslator.tr(chain, DLAtomTranslator.X, DLAtomTranslator.Y, false)));
+        ret.add(Model.rule(atomTranslator.tr(p, DLExpressionTranslator.X, DLExpressionTranslator.Y, false).get(0), atomTranslator.tr(chain, DLExpressionTranslator.X, DLExpressionTranslator.Y, false)));
 
         return ret;
     }

@@ -4,6 +4,6 @@ import org.semanticweb.owlapi.model.OWLOntology;
 
 public interface InferenceEngine {
 
-    void computeInferences(OWLOntology ontology);
+    OWLOntology computeInferences(OWLOntology ontology);
 
 }

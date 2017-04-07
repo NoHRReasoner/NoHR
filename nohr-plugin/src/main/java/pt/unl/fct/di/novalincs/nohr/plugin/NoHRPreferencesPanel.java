@@ -34,7 +34,7 @@ import org.protege.editor.owl.ui.preferences.OWLPreferencesPanel;
 import layout.SpringUtilities;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
 /**
  * The NoHR preferences panel.
@@ -47,8 +47,8 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 
     private static final Dimension MAX_HEIGHT_DIMENSION = new Dimension(Integer.MAX_VALUE, 1);
 
-    private DLMode dLInferenceEngine;
-    private JComboBox<DLMode> dLInferenceEngineComboBox;
+    private DLInferenceEngine dLInferenceEngine;
+    private JComboBox<DLInferenceEngine> dLInferenceEngineComboBox;
 
     private boolean dLInferenceEngineEL;
     private JCheckBox dLInferenceEngineELCheckBox;
@@ -88,11 +88,11 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         }
     }
 
-    private JComboBox<DLMode> createDLInferenceEngineComboBox(DLMode dLInferenceEngine) {
+    private JComboBox<DLInferenceEngine> createDLInferenceEngineComboBox(DLInferenceEngine dLInferenceEngine) {
         final JComboBox ret;
 
         ret = new JComboBox<>();
-        ret.setModel(new javax.swing.DefaultComboBoxModel<>(new DLMode[]{DLMode.HERMIT, DLMode.KONCLUDE}));
+        ret.setModel(new javax.swing.DefaultComboBoxModel<>(new DLInferenceEngine[]{DLInferenceEngine.HERMIT, DLInferenceEngine.KONCLUDE}));
 
         if (dLInferenceEngine != null) {
             ret.setSelectedItem(dLInferenceEngine);
@@ -102,7 +102,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setDLInferenceEngine((DLMode) ret.getSelectedItem());
+                setDLInferenceEngine((DLInferenceEngine) ret.getSelectedItem());
             }
         });
 
@@ -256,7 +256,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         setLayout();
     }
 
-    private void setDLInferenceEngine(DLMode value) {
+    private void setDLInferenceEngine(DLInferenceEngine value) {
         dLInferenceEngine = value;
         dLInferenceEngineComboBox.setSelectedItem(value);
     }

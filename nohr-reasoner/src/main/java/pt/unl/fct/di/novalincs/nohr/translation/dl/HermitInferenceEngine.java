@@ -23,7 +23,7 @@ public final class HermitInferenceEngine implements InferenceEngine {
     }
 
     @Override
-    public void computeInferences(OWLOntology ontology) {
+    public OWLOntology computeInferences(OWLOntology ontology) {
         RuntimesLogger.start("[NoHR DL (HermiT)] ontology inference");
         Logger.getLogger("org.semanticweb.hermit").setLevel(Level.ERROR);
 
@@ -44,5 +44,7 @@ public final class HermitInferenceEngine implements InferenceEngine {
         reasoner.dispose();
 
         RuntimesLogger.stop("[NoHR DL (HermiT)] ontology inference", "loading");
+
+        return ontology;
     }
 }

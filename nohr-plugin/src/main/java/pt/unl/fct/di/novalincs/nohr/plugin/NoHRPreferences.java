@@ -17,7 +17,7 @@ import java.io.File;
 import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLMode;
+import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
 /**
  * Represents the NoHR preferences.
@@ -42,11 +42,11 @@ public final class NoHRPreferences {
     }
 
     public NoHRHybridKBConfiguration getConfiguration() {
-        return new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), getDLInferenceEngine());
+        return new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), false, getDLInferenceEngine());
     }
 
-    public DLMode getDLInferenceEngine() {
-        return DLMode.getDLMode(getPreferences().getString(DL_INFERENCE_ENGINE, "HERMIT"));
+    public DLInferenceEngine getDLInferenceEngine() {
+        return DLInferenceEngine.getDLInferenceEngine(getPreferences().getString(DL_INFERENCE_ENGINE, "HERMIT"));
     }
 
     public static synchronized NoHRPreferences getInstance() {
@@ -89,7 +89,7 @@ public final class NoHRPreferences {
         return new File(pathname);
     }
 
-    public void setDLInferenceEngine(DLMode value) {
+    public void setDLInferenceEngine(DLInferenceEngine value) {
         if (value != null) {
             getPreferences().putString(DL_INFERENCE_ENGINE, value.toString());
         }

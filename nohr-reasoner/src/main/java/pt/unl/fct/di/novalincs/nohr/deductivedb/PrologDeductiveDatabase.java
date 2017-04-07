@@ -453,7 +453,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
      *
      * @throws PrologEngineCreationException
      */
-    protected void commit() {
+    public void commit() {
         if (!hasChanges) {
             return;
         }

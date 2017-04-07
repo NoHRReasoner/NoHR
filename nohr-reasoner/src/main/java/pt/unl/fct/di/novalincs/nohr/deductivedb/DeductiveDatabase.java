@@ -68,6 +68,7 @@ public interface DeductiveDatabase {
      */
     Iterable<Answer> answers(Query query);
 
+    void commit();
     /**
      * Obtains the answers to a given query, based on the loaded
      * {@link DatabaseProgram programs}.
