@@ -136,7 +136,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
      * {@link PrologEngine} will be attempted, before giving up and throw a
      * {@link PrologEngineCreationException}.
      */
-    private static final int CREATION_TIMEOUT = 3;
+    private static final int CREATION_TIMEOUT = 10;
 
     /**
      * The {@link TermModelConverter} that converts the {@link TermModel}s, of
