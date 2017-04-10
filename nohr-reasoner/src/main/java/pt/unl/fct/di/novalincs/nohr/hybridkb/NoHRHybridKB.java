@@ -461,9 +461,9 @@ public class NoHRHybridKB implements HybridKB {
             }
 
             RuntimesLogger.stop("rules parsing", "loading");
-
-            deductiveDatabase.commit();
         }
+
+        deductiveDatabase.commit();
 
         hasOntologyChanges = false;
         hasProgramChanges = false;
