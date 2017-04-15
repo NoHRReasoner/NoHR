@@ -484,7 +484,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
     protected abstract PrologEngine createPrologEngine();
 
     @Override
-    public void dipose() {
+    public void dispose() {
         try {
             headFunctors.clear();
             negativeBodyFunctors.clear();
@@ -510,7 +510,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        dipose();
+        dispose();
     }
 
     @Override
@@ -651,34 +651,42 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
      * Write the {@link Rule rules} of all the loaded
      * {@link DatabaseProgram programs} in {@link #file}, and the corresponding
      * table directives and fail rules. @
+     *
+     * @throws java.io.IOException
      */
     protected void write() throws IOException {
-        final BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-        writer.newLine();
-        for (final Predicate predicate : headFunctors) {
-            if (positiveBodyFunctors.contains(predicate)) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.newLine();
+
+            for (final Predicate predicate : headFunctors) {
+                if (positiveBodyFunctors.contains(predicate)) {
+                    writer.write(tableDirective(predicate));
+                    writer.newLine();
+                }
+            }
+
+            for (final Predicate predicate : negativeBodyFunctors) {
                 writer.write(tableDirective(predicate));
                 writer.newLine();
             }
-        }
-        for (final Predicate predicate : negativeBodyFunctors) {
-            writer.write(tableDirective(predicate));
+
+            for (final Predicate pred : negativeBodyFunctors) {
+                if (!factFunctors.contains(pred) && !headFunctors.contains(pred)) {
+                    writer.write(failRule(pred));
+                    writer.newLine();
+                }
+            }
+
+            for (final ProgramImpl program : programs) {
+                for (final Rule rule : program.rules) {
+                    writer.write(rule.accept(formatVisitor));
+                    writer.newLine();
+                }
+            }
+
             writer.newLine();
+            writer.flush();
         }
-        for (final Predicate pred : negativeBodyFunctors) {
-            if (!factFunctors.contains(pred) && !headFunctors.contains(pred)) {
-                writer.write(failRule(pred));
-                writer.newLine();
-            }
-        }
-        for (final ProgramImpl program : programs) {
-            for (final Rule rule : program.rules) {
-                writer.write(rule.accept(formatVisitor));
-                writer.newLine();
-            }
-        }
-        writer.newLine();
-        writer.close();
     }
 
 }

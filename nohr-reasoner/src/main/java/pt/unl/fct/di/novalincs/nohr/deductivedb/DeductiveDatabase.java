@@ -132,7 +132,7 @@ public interface DeductiveDatabase {
      * Dispose all {@link DatabaseProgram programs} and release all the
      * reclaimed resources.
      */
-    void dipose();
+    void dispose();
 
     /**
      * Checks if there is some answer to given query, based on the loaded

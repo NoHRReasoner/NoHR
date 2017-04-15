@@ -348,7 +348,7 @@ public class NoHRHybridKB implements HybridKB {
 
     @Override
     public void dispose() {
-        deductiveDatabase.dipose();
+        deductiveDatabase.dispose();
         ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
         program.removeListener(programChangeListener);
         vocabulary.removeListener(vocabularyChangeListener);
