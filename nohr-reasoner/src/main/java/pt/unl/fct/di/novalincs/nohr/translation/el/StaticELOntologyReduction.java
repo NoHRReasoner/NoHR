@@ -446,6 +446,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
         final InferredOntologyGenerator inferredOntologyGenerator = new InferredOntologyGenerator(reasoner, generators);
         inferredOntologyGenerator.fillOntology(ontology.getOWLOntologyManager().getOWLDataFactory(), ontology);
         RuntimesLogger.stop("[OWL EL (ELK)] ontology inference", "loading");
+        reasoner.dispose();
     }
 
     /**

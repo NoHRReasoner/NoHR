@@ -720,7 +720,7 @@ public class DefaultVocabulary implements Vocabulary {
 
     @Override
     public void removeListener(VocabularyChangeListener listener) {
-        listeners.add(listener);
+        listeners.remove(listener);
     }
 
     /**
