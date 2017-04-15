@@ -93,7 +93,7 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
         originalAxiomsTranslator = new QLOriginalAxiomsTranslator(v);
         doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(v);
 
-        prepareUpdate();
+        //prepareUpdate();
     }
 
     /**

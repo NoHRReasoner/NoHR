@@ -65,9 +65,7 @@ public class ELOntologyTranslator extends OntologyTranslatorImpl {
         super(ontology, v, dedutiveDatabase);
         originalAxiomsTranslator = new ELOriginalAxiomsTranslator(v);
         doubleAxiomsTranslator = new ELDoubleAxiomsTranslator(v);
-        RuntimesLogger.start("[OWL EL] ontology normalization");
-        reducedOntology = new StaticELOntologyReduction(ontology, v);
-        RuntimesLogger.stop("[OWL EL] ontology normalization", "loading");
+        //reducedOntology = new StaticELOntologyReduction(ontology, v);
     }
 
     @Override
@@ -81,7 +79,9 @@ public class ELOntologyTranslator extends OntologyTranslatorImpl {
     }
 
     private void prepareUpdate() throws UnsupportedAxiomsException {
+        RuntimesLogger.start("[OWL EL] ontology normalization");
         reducedOntology = new StaticELOntologyReduction(ontology, vocabulary);
+        RuntimesLogger.stop("[OWL EL] ontology normalization", "loading");
     }
 
     /**
