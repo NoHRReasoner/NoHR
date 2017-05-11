@@ -7,17 +7,11 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
-import org.semanticweb.owlapi.model.OWLDataRange;
-import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
-import org.semanticweb.owlapi.model.OWLObjectComplementOf;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
-import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
@@ -79,7 +73,6 @@ public class DLExpressionTranslator {
 //            return tr(c, x, doubled);
 //        }
 //    }
-
     public List<Literal> tr(OWLClassExpression c, Variable x, boolean doubled) {
         final List<Literal> ret = new LinkedList<>();
 
@@ -89,31 +82,12 @@ public class DLExpressionTranslator {
 
         if (c instanceof OWLClass) {
             ret.add(Model.atom(vocabulary.pred(c.asOWLClass(), doubled), x));
-        } else if (c instanceof OWLObjectComplementOf) {
-            final OWLObjectComplementOf complement = (OWLObjectComplementOf) c;
-            final OWLClassExpression operand = complement.getOperand();
-
-            if (!operand.isAnonymous()) {
-                ret.add(Model.atom(vocabulary.negPred(operand.asOWLClass()), x));
-            } else if (operand instanceof OWLObjectSomeValuesFrom) {
-                final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) operand;
-
-                if (!some.getFiller().isOWLThing()) {
-                    throw new IllegalArgumentException("Expression must be a basic concept.");
-                }
-
-                ret.add(Model.atom(vocabulary.negPred(some.getProperty()), x, Model.var()));
-            } else {
-                throw new IllegalArgumentException("Expression must be a basic concept or existential.");
-            }
         } else if (c instanceof OWLObjectIntersectionOf) {
             final Set<OWLClassExpression> intersection = c.asConjunctSet();
 
             for (OWLClassExpression i : intersection) {
                 ret.addAll(tr(i, x, doubled));
             }
-        } else if (c instanceof OWLObjectUnionOf) {
-            throw new IllegalArgumentException("Illegal class expression: " + c.toString());
         } else if (c instanceof OWLObjectSomeValuesFrom) {
             final OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) c;
             final OWLObjectPropertyExpression p = some.getProperty();
@@ -121,6 +95,8 @@ public class DLExpressionTranslator {
 
             ret.addAll(tr(p, X, Y, doubled));
             ret.addAll(tr(filler, Y, doubled));
+        } else {
+            throw new IllegalArgumentException("Illegal class expression: " + c.toString());
         }
 
         return ret;
@@ -147,16 +123,18 @@ public class DLExpressionTranslator {
 
     public List<Atom> tr(OWLPropertyExpression p, Variable x, Variable y, boolean doubled) {
         final List<Atom> ret = new LinkedList<>();
+//
+//        if (p instanceof OWLObjectComplementOf) {
+//            OWLClassExpression operand = ((OWLObjectComplementOf) p).getOperand();
+//
+//            if (operand instanceof OWLObjectProperty) {
+//                ret.add(Model.atom(vocabulary.negPred(operand.asOWLClass()), x, y));
+//            } else if (operand instanceof OWLObjectInverseOf) {
+//                ret.add(Model.atom(vocabulary.negPred(((OWLObjectInverseOf) operand).getNamedProperty()), y, x));
+//            }
+//        } else 
 
-        if (p instanceof OWLObjectComplementOf) {
-            OWLClassExpression operand = ((OWLObjectComplementOf) p).getOperand();
-
-            if (operand instanceof OWLObjectProperty) {
-                ret.add(Model.atom(vocabulary.negPred(operand.asOWLClass()), x, y));
-            } else if (operand instanceof OWLObjectInverseOf) {
-                ret.add(Model.atom(vocabulary.negPred(((OWLObjectInverseOf) operand).getNamedProperty()), y, x));
-            }
-        } else if (p instanceof OWLObjectProperty) {
+        if (p instanceof OWLObjectProperty) {
             ret.add(Model.atom(vocabulary.pred(p, doubled), x, y));
         } else if (p instanceof OWLDataProperty) {
             ret.add(Model.atom(vocabulary.pred(p, doubled), x, y));
