@@ -31,6 +31,11 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDataRange;
+import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
@@ -292,7 +297,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * <sub>&bot;</sub> <sup>+</sup></i> and handled by the ELK reasoner.
      */
     public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{AxiomType.CLASS_ASSERTION,
-        AxiomType.DATA_PROPERTY_ASSERTION, AxiomType.DECLARATION, AxiomType.DISJOINT_CLASSES,
+        AxiomType.DATA_PROPERTY_ASSERTION, AxiomType.DATA_PROPERTY_DOMAIN, AxiomType.DECLARATION, AxiomType.DISJOINT_CLASSES,
         AxiomType.EQUIVALENT_CLASSES, AxiomType.EQUIVALENT_DATA_PROPERTIES, AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
         AxiomType.OBJECT_PROPERTY_ASSERTION, AxiomType.OBJECT_PROPERTY_DOMAIN, AxiomType.SUB_DATA_PROPERTY,
         AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY, AxiomType.SUB_PROPERTY_CHAIN_OF,
@@ -513,6 +518,11 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
         for (final OWLObjectPropertyDomainAxiom axiom : ontology.getAxioms(AxiomType.OBJECT_PROPERTY_DOMAIN)) {
             conceptSubsumptions.add(norm(axiom));
         }
+
+        for (final OWLDataPropertyDomainAxiom axiom : ontology.getAxioms(AxiomType.DATA_PROPERTY_DOMAIN)) {
+            conceptSubsumptions.add(norm(axiom));
+        }
+
         return conceptSubsumptions;
     }
 
@@ -596,7 +606,15 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     private OWLSubClassOfAxiom norm(OWLObjectPropertyDomainAxiom axiom) {
         final OWLObjectPropertyExpression ope = axiom.getProperty();
         final OWLClassExpression ce = axiom.getDomain();
+
         return subsumption(some(ope, top()), ce);
+    }
+
+    private OWLSubClassOfAxiom norm(OWLDataPropertyDomainAxiom axiom) {
+        final OWLDataPropertyExpression ope = axiom.getProperty();
+        final OWLClassExpression ce = axiom.getDomain();
+
+        return subsumption(some(ope, topDatatype()), ce);
     }
 
     /**
@@ -742,6 +760,10 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLObjectSomeValuesFrom(r, c);
     }
 
+    private OWLDataSomeValuesFrom some(OWLDataPropertyExpression r, OWLDataRange c) {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLDataSomeValuesFrom(r, c);
+    }
+
     /**
      * Creates a role chain subsumption from a given list of roles and a given
      * subsuming role.
@@ -778,4 +800,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
     }
 
+    private OWLDatatype topDatatype() {
+        return ontology.getOWLOntologyManager().getOWLDataFactory().getTopDatatype();
+    }
 }

@@ -1,12 +1,16 @@
 package pt.unl.fct.di.novalincs.nohr.translation.dl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDataRange;
+import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectInverseOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -58,21 +62,6 @@ public class DLExpressionTranslator {
         return Model.atom(vocabulary.negPred(p), x, y);
     }
 
-//    public List<Literal> th(OWLClassExpression c, List<Literal> body, Variable x, boolean doubled) {
-//        if (c instanceof OWLObjectAllValuesFrom) {
-//            final List<Literal> atoms = new LinkedList<>();
-//            final OWLObjectAllValuesFrom objectAllValuesFrom = (OWLObjectAllValuesFrom) c;
-//
-//            final Variable y = X();
-//
-//            atoms.addAll(th(objectAllValuesFrom.getFiller(), body, y, false));
-//            body.addAll(tr(objectAllValuesFrom.getProperty(), x, y, false));
-//
-//            return atoms;
-//        } else {
-//            return tr(c, x, doubled);
-//        }
-//    }
     public List<Literal> tr(OWLClassExpression c, Variable x, boolean doubled) {
         final List<Literal> ret = new LinkedList<>();
 
@@ -95,11 +84,26 @@ public class DLExpressionTranslator {
 
             ret.addAll(tr(p, X, Y, doubled));
             ret.addAll(tr(filler, Y, doubled));
+        } else if (c instanceof OWLDataSomeValuesFrom) {
+            final OWLDataSomeValuesFrom some = (OWLDataSomeValuesFrom) c;
+            final OWLDataPropertyExpression p = some.getProperty();
+            final OWLDataRange filler = some.getFiller();
+
+            ret.addAll(tr(p, X, Y, doubled));
+            ret.addAll(tr(filler));
         } else {
             throw new IllegalArgumentException("Illegal class expression: " + c.toString());
         }
 
         return ret;
+    }
+
+    public List<Literal> tr(OWLDataRange d) {
+        if (!d.isTopDatatype()) {
+            throw new IllegalArgumentException("Illegal data range expression: " + d.toString());
+        }
+
+        return Collections.emptyList();
     }
 
     List<Atom> tr(List<OWLObjectPropertyExpression> chain, Variable x, Variable xk, boolean doubled) {
@@ -123,16 +127,6 @@ public class DLExpressionTranslator {
 
     public List<Atom> tr(OWLPropertyExpression p, Variable x, Variable y, boolean doubled) {
         final List<Atom> ret = new LinkedList<>();
-//
-//        if (p instanceof OWLObjectComplementOf) {
-//            OWLClassExpression operand = ((OWLObjectComplementOf) p).getOperand();
-//
-//            if (operand instanceof OWLObjectProperty) {
-//                ret.add(Model.atom(vocabulary.negPred(operand.asOWLClass()), x, y));
-//            } else if (operand instanceof OWLObjectInverseOf) {
-//                ret.add(Model.atom(vocabulary.negPred(((OWLObjectInverseOf) operand).getNamedProperty()), y, x));
-//            }
-//        } else 
 
         if (p instanceof OWLObjectProperty) {
             ret.add(Model.atom(vocabulary.pred(p, doubled), x, y));

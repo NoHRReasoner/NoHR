@@ -201,4 +201,12 @@ public abstract class AbstractELQueryTest extends QueryTest {
         assertTrue("r(a, c)");
     }
 
+    @Test
+    public void domainDataRole() {
+        clear();
+        dataDomain("r", "a");
+        rule("r(i,1)");
+        //
+        assertTrue("a(i)");
+    }
 }

@@ -8,7 +8,6 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslation;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLOntologyTranslator;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.HermitInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.KoncludeInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.el.ELOntologyTranslator;

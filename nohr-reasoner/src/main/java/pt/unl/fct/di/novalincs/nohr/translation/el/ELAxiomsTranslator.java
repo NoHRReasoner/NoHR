@@ -25,6 +25,10 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDataRange;
+import org.semanticweb.owlapi.model.OWLDataSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
@@ -198,6 +202,16 @@ abstract class ELAxiomsTranslator {
             final OWLClassExpression filler = some.getFiller();
             result.add(tr(p, X, Y, doub));
             result.addAll(tr(filler, Y, doub));
+        } else if (ce instanceof OWLDataSomeValuesFrom) {           
+            final OWLDataSomeValuesFrom some = (OWLDataSomeValuesFrom) ce;
+            final OWLProperty p = some.getProperty().asOWLDataProperty();
+            final OWLDataRange filler = some.getFiller();
+
+            result.add(tr(p, X, Y, doub));
+           
+            if (!filler.isTopDatatype()) {
+              throw new UnsupportedExpressionException(ce);
+            }
         } else {
             throw new UnsupportedExpressionException(ce);
         }

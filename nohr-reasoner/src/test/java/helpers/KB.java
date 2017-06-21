@@ -42,6 +42,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 
 import com.declarativa.interprolog.util.IPException;
+import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
@@ -264,6 +265,12 @@ public class KB {
             dataRoles.put(name, dataRole);
         }
         return dataRole;
+    }
+
+    public OWLAxiom dataDomain(String roleName, String fillerName) {
+        final OWLAxiom axiom = dataFactory.getOWLDataPropertyDomainAxiom(data(roleName), conc(fillerName));
+        addAxiom(axiom);
+        return axiom;
     }
 
     private Set<OWLDataProperty> dataRoles(String... roleNames) {
