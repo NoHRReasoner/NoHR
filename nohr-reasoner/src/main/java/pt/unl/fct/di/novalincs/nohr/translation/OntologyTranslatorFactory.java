@@ -12,7 +12,7 @@ import pt.unl.fct.di.novalincs.nohr.translation.dl.HermitInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.KoncludeInferenceEngine;
 import pt.unl.fct.di.novalincs.nohr.translation.el.ELOntologyTranslator;
 import pt.unl.fct.di.novalincs.nohr.translation.ql.QLOntologyTranslator;
-import pt.unl.fct.di.novalincs.nohr.translation.rl.RLOntologyTranslator;
+import pt.unl.fct.di.novalincs.nohr.translation.rl.RLOntologyTranslation;
 
 public class OntologyTranslatorFactory {
 
@@ -54,7 +54,7 @@ public class OntologyTranslatorFactory {
                 if (preferDLEngineOverRL) {
                     return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
                 } else {
-                    return new RLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
+                    return new RLOntologyTranslation(ontology, vocabulary, dedutiveDatabase);
                 }
             case NOHR_DL:
                 return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
