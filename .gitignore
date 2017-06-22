@@ -4,3 +4,5 @@ target/
 nohr-benchmark/workbench/data/
 nohr-benchmark/workbench/lib/
 nohr-benchmark/workbench/output/
+
+run.sh
