@@ -9,10 +9,12 @@ package pt.unl.fct.di.novalincs.nohr.translation.ql;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import org.semanticweb.owlapi.model.AxiomType;
 
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
@@ -55,6 +57,28 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
  */
 public class QLOntologyTranslator extends OntologyTranslatorImpl {
 
+    public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{
+        AxiomType.ASYMMETRIC_OBJECT_PROPERTY,
+        AxiomType.CLASS_ASSERTION,
+        AxiomType.DATA_PROPERTY_ASSERTION,
+        AxiomType.DECLARATION,
+        AxiomType.DISJOINT_CLASSES,
+        AxiomType.DISJOINT_DATA_PROPERTIES,
+        AxiomType.DISJOINT_OBJECT_PROPERTIES,
+        AxiomType.EQUIVALENT_CLASSES,
+        AxiomType.EQUIVALENT_DATA_PROPERTIES,
+        AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
+        AxiomType.INVERSE_OBJECT_PROPERTIES,
+        AxiomType.OBJECT_PROPERTY_ASSERTION,
+        AxiomType.OBJECT_PROPERTY_DOMAIN,
+        AxiomType.OBJECT_PROPERTY_RANGE,
+        AxiomType.SUB_DATA_PROPERTY,
+        AxiomType.SUB_OBJECT_PROPERTY,
+        AxiomType.SUBCLASS_OF,
+        AxiomType.SYMMETRIC_OBJECT_PROPERTY,
+        AxiomType.IRREFLEXIVE_OBJECT_PROPERTY
+    };
+
     /**
      * The {@link QLAxiomsTranslator} that obtain the double rules of this
      * {@link OntologyTranslator}.
@@ -83,17 +107,33 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
      * Constructs an {@link OntologyTranslator} of a given OWL 2 QL ontology.
      *
      * @param ontology an OWL 2 QL ontology.
+     * @param v
+     * @param dedutiveDatabase
      * @throws UnsupportedAxiomsException if {@code ontology} contains some
      * axioms of unsupported types.
      */
     public QLOntologyTranslator(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabase)
             throws UnsupportedAxiomsException {
-        super(ontology, v, dedutiveDatabase);
+        this(ontology, v, dedutiveDatabase, false, Collections.EMPTY_SET);
+    }
+
+    /**
+     * Constructs an {@link OntologyTranslator} of a given OWL 2 QL ontology.
+     *
+     * @param ontology an OWL 2 QL ontology.
+     * @param v
+     * @param dedutiveDatabase
+     * @param ignoreAllUnsupportedAxioms
+     * @param ignoredUnsupportedAxioms
+     * @throws UnsupportedAxiomsException if {@code ontology} contains some
+     * axioms of unsupported types.
+     */
+    public QLOntologyTranslator(OWLOntology ontology, Vocabulary v, DeductiveDatabase dedutiveDatabase, boolean ignoreAllUnsupportedAxioms, Set<AxiomType<?>> ignoredUnsupportedAxioms)
+            throws UnsupportedAxiomsException {
+        super(ontology, v, dedutiveDatabase, ignoreAllUnsupportedAxioms, ignoredUnsupportedAxioms);
 
         originalAxiomsTranslator = new QLOriginalAxiomsTranslator(v);
         doubleAxiomsTranslator = new QLDoubleAxiomsTranslator(v);
-
-        //prepareUpdate();
     }
 
     /**
@@ -127,6 +167,11 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
     @Override
     public Profile getProfile() {
         return Profile.OWL2_QL;
+    }
+
+    @Override
+    public AxiomType<?>[] getSupportedAxioms() {
+        return SUPPORTED_AXIOM_TYPES;
     }
 
     @Override

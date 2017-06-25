@@ -16,6 +16,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.List;
@@ -88,7 +90,13 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
             progress = new NoHRProgressUI(getOWLEditorKit(), this);
             progress.reasonerTaskStarted("Preprocessing");
             progress.reasonerTaskBusy();
+
+            if (isNoHRStarted()) {
+                NoHRInstance.getInstance().stop();
+            }
+
             startNoHR();
+
             return null;
         }
 
@@ -277,6 +285,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
     @Override
     public void handleChange(OWLModelManagerChangeEvent event) {
         if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
+            answersTable.clear();
             reset();
             preprocess();
         }
@@ -285,6 +294,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
     @Override
     protected void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(10, 10));
+
         final JComponent editorPanel = createQueryPanel();
         final JComponent answersPanel = createAnswersPanel();
         final JComponent optionsBox = createOptionsBox();
@@ -292,24 +302,27 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
         answersPanel.add(optionsBox, BorderLayout.EAST);
 
         final JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editorPanel, answersPanel);
-        splitter.setDividerLocation(0.3);
 
+        splitter.setDividerLocation(0.3);
         add(splitter, BorderLayout.CENTER);
 
-        reset();
+        //      reset();
         preprocess();
 
         getOWLModelManager().addListener(this);
 
         addHierarchyListener(new HierarchyListener() {
             @Override
-            public void hierarchyChanged(HierarchyEvent event) {
-                if (!isNoHRStarted()) {
-                    preprocess();
-                }
-                if (requiresRefresh && isShowing()) {
-                    final QueryTask queryTask = new QueryTask();
-                    queryTask.execute();
+            public void hierarchyChanged(HierarchyEvent e) {
+                if (isShowing()) {
+                    if (!isNoHRStarted()) {
+                        preprocess();
+                    }
+
+                    if (requiresRefresh) {
+                        final QueryTask queryTask = new QueryTask();
+                        queryTask.execute();
+                    }
                 }
             }
         });
@@ -317,7 +330,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
 
     protected void preprocess() {
         final PreprocessTask preprocessTask = new PreprocessTask();
+
         preprocessTask.execute();
     }
-
 }

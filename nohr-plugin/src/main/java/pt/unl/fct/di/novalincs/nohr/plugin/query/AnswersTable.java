@@ -44,6 +44,7 @@ public class AnswersTable extends JTable {
         super(new AnswersTableModel());
         setAutoCreateColumnsFromModel(true);
         getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
             @Override
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
@@ -66,6 +67,10 @@ public class AnswersTable extends JTable {
 
     public void setShowIRIs(boolean value) {
         ((AnswersTableModel) this.getModel()).setShowIRIs(value);
+    }
+
+    public void clear() {
+        ((AnswersTableModel) this.getModel()).setAnswers(null, null);
     }
 
 }

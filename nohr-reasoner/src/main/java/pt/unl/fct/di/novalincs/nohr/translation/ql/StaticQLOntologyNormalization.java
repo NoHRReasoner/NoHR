@@ -68,17 +68,6 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
     private static final Logger log = Logger.getLogger(StaticQLOntologyNormalization.class);
 
     /**
-     * The set of supported OWL 2 QL axiom types
-     */
-    static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{AxiomType.ASYMMETRIC_OBJECT_PROPERTY,
-        AxiomType.CLASS_ASSERTION, AxiomType.DATA_PROPERTY_ASSERTION, AxiomType.DECLARATION,
-        AxiomType.DISJOINT_CLASSES, AxiomType.DISJOINT_DATA_PROPERTIES, AxiomType.DISJOINT_OBJECT_PROPERTIES,
-        AxiomType.EQUIVALENT_CLASSES, AxiomType.EQUIVALENT_DATA_PROPERTIES, AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
-        AxiomType.INVERSE_OBJECT_PROPERTIES, AxiomType.OBJECT_PROPERTY_ASSERTION, AxiomType.OBJECT_PROPERTY_DOMAIN,
-        AxiomType.OBJECT_PROPERTY_RANGE, AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY,
-        AxiomType.SUBCLASS_OF, AxiomType.SYMMETRIC_OBJECT_PROPERTY, AxiomType.IRREFLEXIVE_OBJECT_PROPERTY};
-
-    /**
      * The set of DL-Lite<sub>R</sub> concept disjunctions in this
      * {@link QLOntologyNormalization}
      */
@@ -167,18 +156,9 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
      */
     public StaticQLOntologyNormalization(OWLOntology ontology, Vocabulary vocabulary)
             throws UnsupportedAxiomsException {
-        final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
         Objects.requireNonNull(ontology);
         Objects.requireNonNull(vocabulary);
-        if (ignoreUnsupported == null || !ignoreUnsupported.equals("true")) {
-            @SuppressWarnings("unchecked")
-            final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(
-                    (Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), SUPPORTED_AXIOM_TYPES);
-            if (unsupportedAxioms.size() > 0) {
-                log.error("unsupported axioms: " + unsupportedAxioms);
-                throw new UnsupportedAxiomsException(unsupportedAxioms);
-            }
-        }
+
         this.ontology = ontology;
         this.vocabulary = vocabulary;
         conceptSubsumptions = new HashSet<OWLSubClassOfAxiom>();
@@ -308,7 +288,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
      *
      * @param axiom the range axiom <b>range</b><i>(Q, B)</i>.
      */
-    private void normalize(OWLObjectPropertyRangeAxiom axiom) {       
+    private void normalize(OWLObjectPropertyRangeAxiom axiom) {
         final OWLObjectPropertyExpression q = axiom.getProperty();
         final OWLClassExpression c = axiom.getRange();
         normalize(getDataFactory().getOWLSubClassOfAxiom(some(q.getInverseProperty()), c));

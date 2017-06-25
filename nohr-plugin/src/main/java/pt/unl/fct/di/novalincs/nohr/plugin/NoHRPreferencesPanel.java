@@ -17,8 +17,11 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,12 +29,14 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import org.protege.editor.owl.ui.preferences.OWLPreferencesPanel;
 
 import layout.SpringUtilities;
+import org.semanticweb.owlapi.model.AxiomType;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
@@ -64,6 +69,15 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
     private File xsbDirectory;
     private JTextField xsbDirectoryTextField;
 
+    private JPanel reasonerPanel;
+    private JPanel unsupportedAxiomsPanel;
+
+    private Set<JCheckBox> unsupportedAxiomsCheckBoxes;
+
+    private final AxiomType<?>[] ignorableAxioms;
+    private final Set<AxiomType<?>> ignoredUnsupportedAxioms;
+    private boolean ignoreAllUnsupportedAxioms;
+
     public NoHRPreferencesPanel() {
         preferences = NoHRPreferences.getInstance();
         dLInferenceEngine = preferences.getDLInferenceEngine();
@@ -71,6 +85,16 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         dLInferenceEngineQL = preferences.getDLInferenceEngineQL();
         koncludeBinary = preferences.getKoncludeBinary();
         xsbDirectory = preferences.getXsbDirectory();
+        ignoredUnsupportedAxioms = preferences.getIgnoredUnsupportedAxioms();
+        ignoreAllUnsupportedAxioms = preferences.getIgnoreAllUnsupportedAxioms();
+
+        ignorableAxioms = new AxiomType<?>[]{
+            AxiomType.DATA_PROPERTY_RANGE,
+            AxiomType.FUNCTIONAL_OBJECT_PROPERTY,
+            AxiomType.OBJECT_PROPERTY_RANGE
+        };
+
+        unsupportedAxiomsCheckBoxes = new HashSet<>();
     }
 
     @Override
@@ -78,14 +102,12 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         preferences.setDLInferenceEngine(dLInferenceEngine);
         preferences.setDLInferenceEngineEL(dLInferenceEngineEL);
         preferences.setDLInferenceEngineQL(dLInferenceEngineQL);
+        preferences.setIgnoreAllUnsupportedAxioms(ignoreAllUnsupportedAxioms);
+        preferences.setIgnoredUnsupportedAxioms(ignoredUnsupportedAxioms);
         preferences.setKoncludeBinary(koncludeBinary);
         preferences.setXsbDirectory(xsbDirectory);
 
-        try {
-            NoHRInstance.getInstance().restart();
-        } catch (UnsupportedAxiomsException | PrologEngineCreationException ex) {
-            Logger.getLogger(NoHRPreferencesPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        NoHRInstance.getInstance().stop();
     }
 
     private JComboBox<DLInferenceEngine> createDLInferenceEngineComboBox(DLInferenceEngine dLInferenceEngine) {
@@ -221,6 +243,57 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         return result;
     }
 
+    private JPanel createUnsupportedAxiomsPanel() {
+        final JPanel result = new JPanel();
+
+        result.setBorder(BorderFactory.createTitledBorder("Treat Unsupported Axioms as Warnings"));
+
+        final JCheckBox allAxiomsCheckBox = new JCheckBox("All axioms", ignoreAllUnsupportedAxioms);
+
+        allAxiomsCheckBox.addActionListener(new java.awt.event.ActionListener() {
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ignoreAllUnsupportedAxioms = allAxiomsCheckBox.isSelected();
+                preferences.setIgnoreAllUnsupportedAxioms(ignoreAllUnsupportedAxioms);
+
+                for (JCheckBox i : unsupportedAxiomsCheckBoxes) {
+                    i.setEnabled(!ignoreAllUnsupportedAxioms);
+                }
+            }
+        });
+
+        final JSeparator sep = new JSeparator();
+
+        result.add(allAxiomsCheckBox);
+        result.add(sep);
+
+        for (AxiomType<?> i : ignorableAxioms) {
+            final JCheckBox axiomCheckBox = new JCheckBox(i.getName(), ignoredUnsupportedAxioms.contains(i));
+
+            unsupportedAxiomsCheckBoxes.add(axiomCheckBox);
+            axiomCheckBox.setEnabled(!ignoreAllUnsupportedAxioms);
+
+            axiomCheckBox.addActionListener(new java.awt.event.ActionListener() {
+
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    if (axiomCheckBox.isSelected()) {
+                        ignoredUnsupportedAxioms.add(AxiomType.getAxiomType(axiomCheckBox.getText()));
+                    } else {
+                        ignoredUnsupportedAxioms.remove(AxiomType.getAxiomType(axiomCheckBox.getText()));
+                    }
+
+                    preferences.setIgnoredUnsupportedAxioms(ignoredUnsupportedAxioms);
+                }
+            });
+
+            result.add(axiomCheckBox);
+        }
+
+        return result;
+    }
+
     @Override
     public void dispose() throws Exception {
     }
@@ -232,26 +305,34 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         dLInferenceEngineComboBox = createDLInferenceEngineComboBox(preferences.getDLInferenceEngine());
         dLInferenceEngineELCheckBox = createDLInferenceEngineELCheckBox(preferences.getDLInferenceEngineEL());
         dLInferenceEngineQLCheckBox = createDLInferenceEngineQLCheckBox(preferences.getDLInferenceEngineQL());
+        unsupportedAxiomsPanel = createUnsupportedAxiomsPanel();
 
-        add(new JLabel("XSB Directory"));
-        add(xsbDirectoryTextField);
-        add(createXsbDirectoryOpenButton());
+        reasonerPanel = new JPanel();
 
-        add(new JLabel("DL Inference Engine"));
-        add(dLInferenceEngineComboBox);
-        add(new JPanel());
+        reasonerPanel.add(new JLabel("XSB Directory"));
+        reasonerPanel.add(xsbDirectoryTextField);
+        reasonerPanel.add(createXsbDirectoryOpenButton());
 
-        add(new JPanel());
-        add(dLInferenceEngineELCheckBox);
-        add(new JPanel());
+        reasonerPanel.add(new JLabel("DL Inference Engine"));
+        reasonerPanel.add(dLInferenceEngineComboBox);
+        reasonerPanel.add(new JPanel());
 
-        add(new JPanel());
-        add(dLInferenceEngineQLCheckBox);
-        add(new JPanel());
+        reasonerPanel.add(new JPanel());
+        reasonerPanel.add(dLInferenceEngineELCheckBox);
+        reasonerPanel.add(new JPanel());
 
-        add(new JLabel("Konclude Binary"));
-        add(koncludeBinaryTextField);
-        add(createKoncludeBinaryOpenButton());
+        reasonerPanel.add(new JPanel());
+        reasonerPanel.add(dLInferenceEngineQLCheckBox);
+        reasonerPanel.add(new JPanel());
+
+        reasonerPanel.add(new JLabel("Konclude Binary"));
+        reasonerPanel.add(koncludeBinaryTextField);
+        reasonerPanel.add(createKoncludeBinaryOpenButton());
+
+        reasonerPanel.add(unsupportedAxiomsPanel);
+
+        add(reasonerPanel);
+        add(unsupportedAxiomsPanel);
 
         setLayout();
     }
@@ -282,7 +363,13 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         }
 
         setLayout(new SpringLayout());
-        SpringUtilities.makeCompactGrid(this, 5, 3, 3, 3, 10, 10);
+        SpringUtilities.makeCompactGrid(this, 2, 1, 3, 3, 10, 10);
+
+        reasonerPanel.setLayout(new SpringLayout());
+        SpringUtilities.makeCompactGrid(reasonerPanel, 5, 3, 3, 3, 10, 10);
+
+        unsupportedAxiomsPanel.setLayout(new SpringLayout());
+        SpringUtilities.makeCompactGrid(unsupportedAxiomsPanel, unsupportedAxiomsPanel.getComponentCount(), 1, 10, 10, 10, 10);
     }
 
     private void setXsbDirectory(File value) {

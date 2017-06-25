@@ -1,11 +1,9 @@
 package pt.unl.fct.di.novalincs.nohr.translation.normalization;
 
-import java.util.HashSet;
 import java.util.Set;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectAllValuesFrom;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
-import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.OntologyUtil;

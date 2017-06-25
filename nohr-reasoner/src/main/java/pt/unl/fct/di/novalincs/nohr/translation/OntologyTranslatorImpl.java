@@ -12,7 +12,12 @@ package pt.unl.fct.di.novalincs.nohr.translation;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
+import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.OWLAxiom;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
@@ -40,15 +45,18 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
      */
     private final DeductiveDatabase deductiveDatabase;
 
-    /**
-     * The {@link DatabaseProgram program} where the translation is maintained.
-     */
-    protected final DatabaseProgram translation;
+    private boolean ignoreAllUnsupportedAxioms;
 
+    private final Set<AxiomType<?>> ignoredUnsupportedAxioms;
     /**
      * The translated ontology.
      */
     protected final OWLOntology ontology;
+
+    /**
+     * The {@link DatabaseProgram program} where the translation is maintained.
+     */
+    protected final DatabaseProgram translation;
 
     protected final Vocabulary vocabulary;
 
@@ -70,12 +78,13 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
      * @throws UnsupportedAxiomsException if {@code ontology} has some axioms of
      * an unsupported type.
      */
-    protected OntologyTranslatorImpl(
-            OWLOntology ontology,
-            Vocabulary vocabulary,
-            DeductiveDatabase deductiveDatabase)
+    protected OntologyTranslatorImpl(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase deductiveDatabase)
             throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+        this(ontology, vocabulary, deductiveDatabase, false, Collections.EMPTY_SET);
+    }
 
+    protected OntologyTranslatorImpl(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase deductiveDatabase, boolean ignoreAllUnsupportedAxioms, Set<AxiomType<?>> ignoredUnsupportedAxioms)
+            throws UnsupportedAxiomsException {
         Objects.requireNonNull(ontology);
         Objects.requireNonNull(vocabulary);
         Objects.requireNonNull(deductiveDatabase);
@@ -83,13 +92,37 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
         this.ontology = ontology;
         this.vocabulary = vocabulary;
         this.deductiveDatabase = deductiveDatabase;
+        this.ignoreAllUnsupportedAxioms = ignoreAllUnsupportedAxioms;
+        this.ignoredUnsupportedAxioms = ignoredUnsupportedAxioms;
 
-        translation = deductiveDatabase.createProgram();
+        this.translation = deductiveDatabase.createProgram();
+
+        evaluateOntologySupport();
     }
 
     @Override
     public void clear() {
         translation.clear();
+    }
+
+    private void evaluateOntologySupport() throws UnsupportedAxiomsException {
+        if (!ignoreAllUnsupportedAxioms) {
+            final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes((Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), getSupportedAxioms());
+
+            final Iterator<OWLAxiom> it = unsupportedAxioms.iterator();
+
+            while (it.hasNext()) {
+                final OWLAxiom i = it.next();
+
+                if (i.isOfType(ignoredUnsupportedAxioms)) {
+                    it.remove();
+                }
+            }
+
+            if (!unsupportedAxioms.isEmpty()) {
+                throw new UnsupportedAxiomsException(unsupportedAxioms);
+            }
+        }
     }
 
     @Override
@@ -100,6 +133,21 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
     @Override
     public OWLOntology getOntology() {
         return ontology;
+    }
+
+    @Override
+    public Set<AxiomType<?>> getIgnoredUnsupportedAxioms() {
+        return ignoredUnsupportedAxioms;
+    }
+
+    @Override
+    public boolean ignoreAllUnsupportedAxioms() {
+        return ignoreAllUnsupportedAxioms;
+    }
+
+    @Override
+    public void setIgnoreAllUnsupportedAxioms(boolean value) {
+        ignoreAllUnsupportedAxioms = value;
     }
 
 }

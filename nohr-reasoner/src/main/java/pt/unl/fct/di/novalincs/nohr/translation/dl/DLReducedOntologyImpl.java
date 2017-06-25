@@ -2,6 +2,8 @@ package pt.unl.fct.di.novalincs.nohr.translation.dl;
 
 import pt.unl.fct.di.novalincs.nohr.translation.OntologyUtil;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,14 +70,10 @@ public class DLReducedOntologyImpl implements DLReducedOntology {
     private final Set<OWLSubPropertyChainOfAxiom> subPropertyChainOfAxioms;
 
     public DLReducedOntologyImpl(OWLOntology ontology) throws UnsupportedAxiomsException {
-        this(ontology, null, false);
+        this(ontology, null);
     }
 
     public DLReducedOntologyImpl(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
-        this(ontology, vocabulary, false);
-    }
-
-    public DLReducedOntologyImpl(OWLOntology ontology, Vocabulary vocabulary, boolean ignoreUnsupported) throws UnsupportedAxiomsException {
         this.ontology = ontology;
         this.util = new OntologyUtil(this.ontology.getOWLOntologyManager().getOWLDataFactory());
         this.vocabulary = (vocabulary == null ? new DefaultVocabulary(ontology) : vocabulary);
@@ -90,14 +88,6 @@ public class DLReducedOntologyImpl implements DLReducedOntology {
         this.subDataPropertyOfAxioms = new HashSet<>(ontology.getAxioms(AxiomType.SUB_DATA_PROPERTY));
         this.subObjectPropertyOfAxioms = new HashSet<>(ontology.getAxioms(AxiomType.SUB_OBJECT_PROPERTY));
         this.subPropertyChainOfAxioms = new HashSet<>(ontology.getAxioms(AxiomType.SUB_PROPERTY_CHAIN_OF));
-
-        if (!ignoreUnsupported) {
-            final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes((Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), SUPPORTED_AXIOM_TYPES);
-
-            if (!unsupportedAxioms.isEmpty()) {
-                throw new UnsupportedAxiomsException(unsupportedAxioms);
-            }
-        }
 
         simplify();
         reduce();

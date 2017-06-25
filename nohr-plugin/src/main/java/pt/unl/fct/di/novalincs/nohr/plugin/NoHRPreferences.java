@@ -13,9 +13,15 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  * #L%
  */
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
+import org.semanticweb.owlapi.model.AxiomType;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
@@ -34,6 +40,10 @@ public final class NoHRPreferences {
 
     private static final String DL_INFERENCE_ENGINE_QL = "DL_INFERENCE_ENGINE_QL";
 
+    private static final String IGNORE_ALL_UNSUPPORTED_AXIOMS = "IGNORE_ALL_UNSUPPORTED_AXIOMS";
+
+    private static final String IGNORED_UNSUPPORTED_AXIOMS = "IGNORED_UNSUPPORTED_AXIOMS";
+
     private static final String KONCLUDE_BINARY = "KONCLUDE_BINARY";
 
     private static final String XSB_DIRECTORY = "XSB_DIR";
@@ -42,7 +52,13 @@ public final class NoHRPreferences {
     }
 
     public NoHRHybridKBConfiguration getConfiguration() {
-        return new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), false, getDLInferenceEngine());
+        final NoHRHybridKBConfiguration configuration = new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), false, getDLInferenceEngine());
+
+        configuration.getOntologyTranslationConfiguration().setIgnoreAllunsupportedAxioms(this.getIgnoreAllUnsupportedAxioms());
+        configuration.getOntologyTranslationConfiguration().getIgnoredUnsupportedAxioms().clear();
+        configuration.getOntologyTranslationConfiguration().getIgnoredUnsupportedAxioms().addAll(this.getIgnoredUnsupportedAxioms());
+
+        return configuration;
     }
 
     public DLInferenceEngine getDLInferenceEngine() {
@@ -79,6 +95,21 @@ public final class NoHRPreferences {
         return getPreferences().getBoolean(DL_INFERENCE_ENGINE_QL, false);
     }
 
+    public boolean getIgnoreAllUnsupportedAxioms() {
+        return getPreferences().getBoolean(IGNORE_ALL_UNSUPPORTED_AXIOMS, false);
+    }
+
+    public Set<AxiomType<?>> getIgnoredUnsupportedAxioms() {
+        final List<String> axioms = getPreferences().getStringList(IGNORED_UNSUPPORTED_AXIOMS, Collections.EMPTY_LIST);
+        final Set<AxiomType<?>> ignoredUnsupportedAxioms = new HashSet<>();
+
+        for (String i : axioms) {
+            ignoredUnsupportedAxioms.add(AxiomType.getAxiomType(i));
+        }
+
+        return ignoredUnsupportedAxioms;
+    }
+
     public File getXsbDirectory() {
         final String pathname = getPreferences().getString(XSB_DIRECTORY, null);
 
@@ -93,6 +124,20 @@ public final class NoHRPreferences {
         if (value != null) {
             getPreferences().putString(DL_INFERENCE_ENGINE, value.toString());
         }
+    }
+
+    public void setIgnoreAllUnsupportedAxioms(boolean value) {
+        getPreferences().putBoolean(IGNORE_ALL_UNSUPPORTED_AXIOMS, value);
+    }
+
+    public void setIgnoredUnsupportedAxioms(Set<AxiomType<?>> value) {
+        final List<String> list = new ArrayList<>(value.size());
+
+        for (AxiomType<?> i : value) {
+            list.add(i.getName());
+        }
+
+        getPreferences().putStringList(IGNORED_UNSUPPORTED_AXIOMS, list);
     }
 
     public void setKoncludeBinary(File value) {

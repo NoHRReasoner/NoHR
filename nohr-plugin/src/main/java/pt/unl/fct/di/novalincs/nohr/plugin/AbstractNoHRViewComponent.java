@@ -12,6 +12,7 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -101,10 +102,12 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
      */
     protected NoHRParser getParser() {
         DisposableObject<NoHRParser> disposableObject = getOWLModelManager().get(NoHRParser.class);
+
         if (disposableObject == null) {
             disposableObject = new DisposableObject<NoHRParser>(new NoHRRecursiveDescentParser(getVocabulary()));
             getOWLModelManager().put(NoHRParser.class, disposableObject);
         }
+
         return disposableObject.getObject();
     }
 
@@ -116,10 +119,12 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
      */
     protected Program getProgram() {
         DisposableProgram program = getOWLModelManager().get(Program.class);
+
         if (program == null) {
             program = new DisposableProgram();
             getOWLModelManager().put(Program.class, program);
         }
+
         return program;
     }
 
@@ -129,28 +134,25 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
      * @return the {@link ProgramPersistenceManager}.
      */
     protected ProgramPersistenceManager getProgramPersistenceManager() {
-        DisposableObject<ProgramPersistenceManager> disposableObject = getOWLModelManager()
-                .get(ProgramPersistenceManager.class);
+        DisposableObject<ProgramPersistenceManager> disposableObject = getOWLModelManager().get(ProgramPersistenceManager.class);
+
         if (disposableObject == null) {
-            disposableObject = new DisposableObject<>(
-                    new ProgramPersistenceManager(getVocabulary()));
+            disposableObject = new DisposableObject<>(new ProgramPersistenceManager(getVocabulary()));
             getOWLModelManager().put(ProgramPersistenceManager.class, disposableObject);
         }
+
         return disposableObject.getObject();
     }
 
     protected Vocabulary getVocabulary() {
         DisposableVocabulary vocabulary = getOWLModelManager().get(Vocabulary.class);
+
         if (vocabulary == null) {
             vocabulary = new DisposableVocabulary(getOntology());
             getOWLModelManager().put(Vocabulary.class, vocabulary);
         }
+
         return vocabulary;
-    }
-
-    @Override
-    protected void initialiseOWLView() throws Exception {
-
     }
 
     /**
@@ -161,7 +163,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
     }
 
     protected void reset() {
-        LOG.info("Resetting");
+        LOG.info("Resetting NoHR");
 
         getOWLModelManager().put(Vocabulary.class, new DisposableVocabulary(getOntology()));
         getParser().setVocabulary(getVocabulary());
@@ -172,8 +174,6 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
      * Starts the NoHR, creating a {@link NoHRHybridKB}.
      */
     protected void startNoHR() {
-        LOG.info("Starting NoHR");
-
         NoHRHybridKBConfiguration config = NoHRPreferences.getInstance().getConfiguration();
 
         if (config.getXsbDirectory() == null) {
@@ -190,8 +190,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
             LOG.warn("unsupported axioms: " + e.getUnsupportedAxioms());
             Messages.violations(this, e);
         } catch (final PrologEngineCreationException e) {
-            LOG.error("can't create a xsb instance" + System.lineSeparator() + e.getCause() + System.lineSeparator()
-                    + e.getCause().getStackTrace());
+            LOG.error("can't create a xsb instance" + System.lineSeparator() + e.getCause() + System.lineSeparator() + Arrays.toString(e.getCause().getStackTrace()));
             Messages.xsbDatabaseCreationProblems(this, e);
         } catch (final RuntimeException e) {
             LOG.debug("Exception caught when trying to create the Hybrid KB", e);

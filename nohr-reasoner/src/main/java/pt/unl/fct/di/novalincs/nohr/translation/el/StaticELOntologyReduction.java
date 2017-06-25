@@ -292,18 +292,6 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     private static final Logger log = Logger.getLogger(StaticELOntologyReduction.class);
 
     /**
-     * The axiom types that can be reduced by this {@link ELOntologyReduction}
-     * implementation, i.e. those that can be expressed in <i>EL
-     * <sub>&bot;</sub> <sup>+</sup></i> and handled by the ELK reasoner.
-     */
-    public static final AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{AxiomType.CLASS_ASSERTION,
-        AxiomType.DATA_PROPERTY_ASSERTION, AxiomType.DATA_PROPERTY_DOMAIN, AxiomType.DECLARATION, AxiomType.DISJOINT_CLASSES,
-        AxiomType.EQUIVALENT_CLASSES, AxiomType.EQUIVALENT_DATA_PROPERTIES, AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
-        AxiomType.OBJECT_PROPERTY_ASSERTION, AxiomType.OBJECT_PROPERTY_DOMAIN, AxiomType.SUB_DATA_PROPERTY,
-        AxiomType.SUB_DATA_PROPERTY, AxiomType.SUB_OBJECT_PROPERTY, AxiomType.SUB_PROPERTY_CHAIN_OF,
-        AxiomType.SUBCLASS_OF, AxiomType.TRANSITIVE_OBJECT_PROPERTY};
-
-    /**
      * The set of role chain subsumptions <i>R<sub>1</sub>&SmallCircle; ...
      * &SmallCircle;S<sub>n</sub> &sqsube; A</i> in this
      * {@link ELOntologyReduction reduction}.
@@ -358,17 +346,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     public StaticELOntologyReduction(OWLOntology ontology, Vocabulary vocabulary) throws UnsupportedAxiomsException {
         Objects.requireNonNull(ontology);
         Objects.requireNonNull(vocabulary);
-        final String ignoreUnsupported = System.getenv("IGNORE_UNSUPPORTED");
-        if (ignoreUnsupported == null || !ignoreUnsupported.equals("true")) {
-            log.info("checking axioms support");
-            @SuppressWarnings("unchecked")
-            final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes(
-                    (Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), SUPPORTED_AXIOM_TYPES);
-            if (unsupportedAxioms.size() > 0) {
-                log.error("unsupported axioms " + unsupportedAxioms);
-                throw new UnsupportedAxiomsException(unsupportedAxioms);
-            }
-        }
+
         this.ontology = ontology;
         this.vocabulary = vocabulary;
         final Set<OWLClassAssertionAxiom> conceptAssertions = ontology.getAxioms(AxiomType.CLASS_ASSERTION);

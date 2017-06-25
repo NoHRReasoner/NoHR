@@ -1,6 +1,9 @@
 package pt.unl.fct.di.novalincs.nohr.translation;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
@@ -21,6 +24,8 @@ public class OntologyTranslatorFactory {
     private final boolean preferDLEngineOverQL;
     private final boolean preferDLEngineOverRL;
     private final DLInferenceEngine preferredDLEngine;
+    private final boolean ignoreAllUnsupportedAxiom;
+    private final Set<AxiomType<?>> ignoredUnsupportedAxioms;
 
     public OntologyTranslatorFactory(OntologyTranslatorConfiguration configuration) {
         this.koncludeBinary = configuration.getKoncludeBinary();
@@ -28,6 +33,8 @@ public class OntologyTranslatorFactory {
         this.preferDLEngineOverQL = configuration.getDLInferenceEngineQL();
         this.preferDLEngineOverRL = configuration.getDLInferenceEngineRL();
         this.preferredDLEngine = configuration.getDLInferenceEngine();
+        this.ignoreAllUnsupportedAxiom = configuration.ignoreAllUnsupportedAxioms();
+        this.ignoredUnsupportedAxioms = configuration.getIgnoredUnsupportedAxioms();
     }
 
     public OntologyTranslator createOntologyTranslator(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase dedutiveDatabase, Profile profile)
@@ -40,24 +47,24 @@ public class OntologyTranslatorFactory {
         switch (profile) {
             case OWL2_EL:
                 if (preferDLEngineOverEL) {
-                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine(), ignoreAllUnsupportedAxiom, ignoredUnsupportedAxioms);
                 } else {
-                    return new ELOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
+                    return new ELOntologyTranslator(ontology, vocabulary, dedutiveDatabase, ignoreAllUnsupportedAxiom, ignoredUnsupportedAxioms);
                 }
             case OWL2_QL:
                 if (preferDLEngineOverQL) {
-                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine(), ignoreAllUnsupportedAxiom, ignoredUnsupportedAxioms);
                 } else {
-                    return new QLOntologyTranslator(ontology, vocabulary, dedutiveDatabase);
+                    return new QLOntologyTranslator(ontology, vocabulary, dedutiveDatabase, ignoreAllUnsupportedAxiom, ignoredUnsupportedAxioms);
                 }
             case OWL2_RL:
                 if (preferDLEngineOverRL) {
-                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                    return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine(), ignoreAllUnsupportedAxiom, ignoredUnsupportedAxioms);
                 } else {
-                    return new RLOntologyTranslation(ontology, vocabulary, dedutiveDatabase);
+                    return new RLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, ignoreAllUnsupportedAxiom, ignoredUnsupportedAxioms);
                 }
             case NOHR_DL:
-                return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine());
+                return new DLOntologyTranslation(ontology, vocabulary, dedutiveDatabase, getDLInferenceEngine(), ignoreAllUnsupportedAxiom, ignoredUnsupportedAxioms);
             default:
                 throw new OWLProfilesViolationsException();
         }

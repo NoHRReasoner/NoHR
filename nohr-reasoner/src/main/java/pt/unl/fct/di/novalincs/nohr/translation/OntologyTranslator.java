@@ -9,6 +9,8 @@ package pt.unl.fct.di.novalincs.nohr.translation;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
+import java.util.Set;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
@@ -47,14 +49,7 @@ public interface OntologyTranslator {
      */
     public DeductiveDatabase getDedutiveDatabase();
 
-    /**
-     * Returns the {@link OWLOntology} that this
-     * {@link OntologyTranslator translator} translates.
-     *
-     * @return the {@link OWLOntology} that this
-     * {@link OntologyTranslator translator} translates.
-     */
-    public OWLOntology getOntology();
+    public Set<AxiomType<?>> getIgnoredUnsupportedAxioms();
 
     /**
      * Returns the profile of the {@link OntologyTranslator translator}'s
@@ -66,12 +61,27 @@ public interface OntologyTranslator {
     public Profile getProfile();
 
     /**
+     * Returns the {@link OWLOntology} that this
+     * {@link OntologyTranslator translator} translates.
+     *
+     * @return the {@link OWLOntology} that this
+     * {@link OntologyTranslator translator} translates.
+     */
+    public OWLOntology getOntology();
+
+    public AxiomType<?>[] getSupportedAxioms();
+
+    public boolean ignoreAllUnsupportedAxioms();
+
+    /**
      * Returns true iff the {@link OntologyTranslator translator}'s ontology has
      * disjunctions.
      *
      * @return iff the {@link OntologyTranslator translator}'s has disjunctions.
      */
     public boolean requiresDoubling();
+
+    public void setIgnoreAllUnsupportedAxioms(boolean value);
 
     /**
      * Updates the translation {@link DatabaseProgram program}(s) in the

@@ -46,6 +46,7 @@ class NoHRInstance {
         final Program program = hybridKB.getProgram();
         final Vocabulary vocabulary = hybridKB.getVocabulary();
 
+        stop();
         start(NoHRPreferences.getInstance().getConfiguration(), ontology, program, vocabulary);
     }
 
@@ -53,7 +54,6 @@ class NoHRInstance {
         LOG.info("Starting NoHR");
 
         hybridKB = new DisposableHybridKB(configuration, ontology, program, vocabulary);
-
     }
 
     public void stop() {
@@ -61,6 +61,7 @@ class NoHRInstance {
 
         if (isStarted()) {
             hybridKB.dispose();
+            hybridKB = null;
         }
     }
 

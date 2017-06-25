@@ -1,5 +1,7 @@
 package pt.unl.fct.di.novalincs.nohr.translation.dl;
 
+import java.util.Collections;
+import java.util.Set;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -24,20 +26,47 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 public final class DLOntologyTranslation extends OntologyTranslatorImpl {
 
+    private final static AxiomType<?>[] SUPPORTED_AXIOM_TYPES = new AxiomType<?>[]{
+        AxiomType.ASYMMETRIC_OBJECT_PROPERTY,
+        AxiomType.CLASS_ASSERTION,
+        AxiomType.DATA_PROPERTY_ASSERTION,
+        AxiomType.DATA_PROPERTY_DOMAIN,
+        AxiomType.DECLARATION,
+        AxiomType.DISJOINT_CLASSES,
+        AxiomType.DISJOINT_DATA_PROPERTIES,
+        AxiomType.DISJOINT_OBJECT_PROPERTIES,
+        AxiomType.EQUIVALENT_CLASSES,
+        AxiomType.EQUIVALENT_DATA_PROPERTIES,
+        AxiomType.EQUIVALENT_OBJECT_PROPERTIES,
+        AxiomType.INVERSE_OBJECT_PROPERTIES,
+        AxiomType.IRREFLEXIVE_OBJECT_PROPERTY,
+        AxiomType.OBJECT_PROPERTY_ASSERTION,
+        AxiomType.OBJECT_PROPERTY_DOMAIN,
+        AxiomType.OBJECT_PROPERTY_RANGE,
+        AxiomType.SUB_DATA_PROPERTY,
+        AxiomType.SUB_OBJECT_PROPERTY,
+        AxiomType.SUB_PROPERTY_CHAIN_OF,
+        AxiomType.SYMMETRIC_OBJECT_PROPERTY,
+        AxiomType.SUBCLASS_OF,
+        AxiomType.TRANSITIVE_OBJECT_PROPERTY
+    };
+
     private final DLOriginalAxiomTranslator originalAxiomTranslator;
     private final DLDoubledAxiomTranslator doubledAxiomTranslator;
     private final InferenceEngine inferenceEngine;
     private boolean requiresDoubling;
 
     public DLOntologyTranslation(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase deductiveDatabase, InferenceEngine inferenceEngine) throws UnsupportedAxiomsException {
-        super(ontology, vocabulary, deductiveDatabase);
+        this(ontology, vocabulary, deductiveDatabase, inferenceEngine, false, Collections.EMPTY_SET);
+    }
+
+    public DLOntologyTranslation(OWLOntology ontology, Vocabulary vocabulary, DeductiveDatabase deductiveDatabase, InferenceEngine inferenceEngine, boolean ignoreAllUnsupportedAxioms, Set<AxiomType<?>> ignoredUnsupportedAxioms) throws UnsupportedAxiomsException {
+        super(ontology, vocabulary, deductiveDatabase, ignoreAllUnsupportedAxioms, ignoredUnsupportedAxioms);
 
         this.inferenceEngine = inferenceEngine;
 
         originalAxiomTranslator = new DLOriginalAxiomTranslator(vocabulary);
         doubledAxiomTranslator = new DLDoubledAxiomTranslator(vocabulary);
-
-        //updateTranslation();
     }
 
     private boolean evaluateDoubling(OWLOntology inferredOntology) {
@@ -66,6 +95,11 @@ public final class DLOntologyTranslation extends OntologyTranslatorImpl {
     @Override
     public Profile getProfile() {
         return Profile.NOHR_DL;
+    }
+
+    @Override
+    public AxiomType<?>[] getSupportedAxioms() {
+        return SUPPORTED_AXIOM_TYPES;
     }
 
     private OWLOntology inferredOntology() throws UnsupportedAxiomsException {
@@ -145,4 +179,5 @@ public final class DLOntologyTranslation extends OntologyTranslatorImpl {
 
         RuntimesLogger.stop("[NOHR DL] ontology translation", "loading");
     }
+
 }
