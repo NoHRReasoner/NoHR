@@ -33,10 +33,10 @@ public class OntologyTranslatorConfiguration {
         this.ignoreAllUnsupported = Boolean.parseBoolean(System.getenv("IGNORE_UNSUPPORTED"));
         this.ignoredUnsupportedAxioms = new HashSet<>();
 
-        final boolean ignoreUnsupportedAxioms = System.getenv().containsKey("IGNORE_UNSUPPORTED_AXIOMS");
+        final boolean ignoreUnsupportedAxioms = System.getenv().containsKey("IGNORED_UNSUPPORTED_AXIOMS");
 
         if (!this.ignoreAllUnsupported && ignoreUnsupportedAxioms) {
-            final String ignoreUnsupportedAxiomsString = System.getenv("IGNORE_UNSUPPORTED_AXIOMS");
+            final String ignoreUnsupportedAxiomsString = System.getenv("IGNORED_UNSUPPORTED_AXIOMS");
             final String[] ignoreUnsupportedAxiomsStrings = ignoreUnsupportedAxiomsString.split(",");
 
             for (String i : ignoreUnsupportedAxiomsStrings) {

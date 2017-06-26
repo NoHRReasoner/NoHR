@@ -105,7 +105,7 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
         translation.clear();
     }
 
-    private void evaluateOntologySupport() throws UnsupportedAxiomsException {
+    protected void evaluateOntologySupport() throws UnsupportedAxiomsException {
         if (!ignoreAllUnsupportedAxioms) {
             final Set<OWLAxiom> unsupportedAxioms = AxiomType.getAxiomsWithoutTypes((Set<OWLAxiom>) (Set<? extends OWLAxiom>) ontology.getLogicalAxioms(), getSupportedAxioms());
 

@@ -150,6 +150,8 @@ public class ELOntologyTranslator extends OntologyTranslatorImpl {
 
     @Override
     public void updateTranslation() throws UnsupportedAxiomsException {
+        evaluateOntologySupport();
+
         prepareUpdate();
         translation.clear();
         RuntimesLogger.start("[OWL EL] ontology translation");

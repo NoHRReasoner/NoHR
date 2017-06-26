@@ -157,6 +157,8 @@ public final class RLOntologyTranslation extends OntologyTranslatorImpl {
 
     @Override
     public void updateTranslation() throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+        evaluateOntologySupport();
+
         final OWLOntology normalizedOntology = normalizedOntology();
         final boolean doubling = evaluateDoubling(normalizedOntology);
         requiresDoubling = doubling;

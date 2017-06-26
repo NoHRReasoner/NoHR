@@ -259,6 +259,8 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
 
     @Override
     public void updateTranslation() throws UnsupportedAxiomsException {
+        evaluateOntologySupport();
+
         prepareUpdate();
         translation.clear();
 

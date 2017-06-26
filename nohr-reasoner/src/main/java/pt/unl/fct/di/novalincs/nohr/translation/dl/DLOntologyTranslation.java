@@ -163,6 +163,8 @@ public final class DLOntologyTranslation extends OntologyTranslatorImpl {
 
     @Override
     public void updateTranslation() throws OWLProfilesViolationsException, UnsupportedAxiomsException {
+        evaluateOntologySupport();
+
         final OWLOntology inferredOntology = inferredOntology();
         final boolean doubling = evaluateDoubling(inferredOntology);
         requiresDoubling = doubling;
