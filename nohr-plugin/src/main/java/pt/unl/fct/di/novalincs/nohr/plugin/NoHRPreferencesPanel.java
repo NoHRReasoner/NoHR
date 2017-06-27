@@ -19,8 +19,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 
 import javax.swing.JButton;
@@ -37,8 +35,6 @@ import org.protege.editor.owl.ui.preferences.OWLPreferencesPanel;
 
 import layout.SpringUtilities;
 import org.semanticweb.owlapi.model.AxiomType;
-import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
 /**
@@ -49,50 +45,40 @@ import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 public class NoHRPreferencesPanel extends OWLPreferencesPanel {
 
     private static final long serialVersionUID = 5160621423685035123L;
-
     private static final Dimension MAX_HEIGHT_DIMENSION = new Dimension(Integer.MAX_VALUE, 1);
 
     private DLInferenceEngine dLInferenceEngine;
     private JComboBox<DLInferenceEngine> dLInferenceEngineComboBox;
-
     private boolean dLInferenceEngineEL;
     private JCheckBox dLInferenceEngineELCheckBox;
-
     private boolean dLInferenceEngineQL;
     private JCheckBox dLInferenceEngineQLCheckBox;
-
+    private boolean dLInferenceEngineRL;
+    private JCheckBox dLInferenceEngineRLCheckBox;
     private File koncludeBinary;
     private JTextField koncludeBinaryTextField;
-
     private final NoHRPreferences preferences;
-
     private File xsbDirectory;
     private JTextField xsbDirectoryTextField;
 
     private JPanel reasonerPanel;
     private JPanel unsupportedAxiomsPanel;
 
-    private Set<JCheckBox> unsupportedAxiomsCheckBoxes;
-
-    private final AxiomType<?>[] ignorableAxioms;
-    private final Set<AxiomType<?>> ignoredUnsupportedAxioms;
     private boolean ignoreAllUnsupportedAxioms;
+    private final Set<AxiomType<?>> ignoredUnsupportedAxioms;
+    private final Set<JCheckBox> unsupportedAxiomsCheckBoxes;
 
     public NoHRPreferencesPanel() {
         preferences = NoHRPreferences.getInstance();
         dLInferenceEngine = preferences.getDLInferenceEngine();
         dLInferenceEngineEL = preferences.getDLInferenceEngineEL();
         dLInferenceEngineQL = preferences.getDLInferenceEngineQL();
+        dLInferenceEngineRL = preferences.getDLInferenceEngineRL();
+
         koncludeBinary = preferences.getKoncludeBinary();
         xsbDirectory = preferences.getXsbDirectory();
         ignoredUnsupportedAxioms = preferences.getIgnoredUnsupportedAxioms();
         ignoreAllUnsupportedAxioms = preferences.getIgnoreAllUnsupportedAxioms();
-
-        ignorableAxioms = new AxiomType<?>[]{
-            AxiomType.DATA_PROPERTY_RANGE,
-            AxiomType.FUNCTIONAL_OBJECT_PROPERTY,
-            AxiomType.OBJECT_PROPERTY_RANGE
-        };
 
         unsupportedAxiomsCheckBoxes = new HashSet<>();
     }
@@ -157,6 +143,22 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setDLInferenceEngineQL(ret.isSelected());
+            }
+        });
+
+        return ret;
+    }
+
+    private JCheckBox createDLInferenceEngineRLCheckBox(boolean dLInferenceEngineRL) {
+        final JCheckBox ret;
+
+        ret = new JCheckBox("Use DL Inference Engine for RL profile", dLInferenceEngineRL);
+
+        ret.addActionListener(new java.awt.event.ActionListener() {
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setDLInferenceEngineRL(ret.isSelected());
             }
         });
 
@@ -268,7 +270,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         result.add(allAxiomsCheckBox);
         result.add(sep);
 
-        for (AxiomType<?> i : ignorableAxioms) {
+        for (AxiomType<?> i : preferences.getIgnorableAxioms()) {
             final JCheckBox axiomCheckBox = new JCheckBox(i.getName(), ignoredUnsupportedAxioms.contains(i));
 
             unsupportedAxiomsCheckBoxes.add(axiomCheckBox);
@@ -305,6 +307,7 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         dLInferenceEngineComboBox = createDLInferenceEngineComboBox(preferences.getDLInferenceEngine());
         dLInferenceEngineELCheckBox = createDLInferenceEngineELCheckBox(preferences.getDLInferenceEngineEL());
         dLInferenceEngineQLCheckBox = createDLInferenceEngineQLCheckBox(preferences.getDLInferenceEngineQL());
+        dLInferenceEngineRLCheckBox = createDLInferenceEngineRLCheckBox(preferences.getDLInferenceEngineRL());
         unsupportedAxiomsPanel = createUnsupportedAxiomsPanel();
 
         reasonerPanel = new JPanel();
@@ -325,6 +328,9 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         reasonerPanel.add(dLInferenceEngineQLCheckBox);
         reasonerPanel.add(new JPanel());
 
+//        reasonerPanel.add(new JPanel());
+//        reasonerPanel.add(dLInferenceEngineRLCheckBox);
+//        reasonerPanel.add(new JPanel());
         reasonerPanel.add(new JLabel("Konclude Binary"));
         reasonerPanel.add(koncludeBinaryTextField);
         reasonerPanel.add(createKoncludeBinaryOpenButton());
@@ -350,6 +356,11 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
     private void setDLInferenceEngineQL(boolean value) {
         dLInferenceEngineQL = value;
         dLInferenceEngineQLCheckBox.setSelected(value);
+    }
+
+    private void setDLInferenceEngineRL(boolean value) {
+        dLInferenceEngineRL = value;
+        dLInferenceEngineRLCheckBox.setSelected(value);
     }
 
     private void setKoncludeBinary(File value) {

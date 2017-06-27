@@ -35,7 +35,7 @@ public class OntologyTranslatorConfiguration {
 
         final boolean ignoreUnsupportedAxioms = System.getenv().containsKey("IGNORED_UNSUPPORTED_AXIOMS");
 
-        if (!this.ignoreAllUnsupported && ignoreUnsupportedAxioms) {
+        if (ignoreUnsupportedAxioms) {
             final String ignoreUnsupportedAxiomsString = System.getenv("IGNORED_UNSUPPORTED_AXIOMS");
             final String[] ignoreUnsupportedAxiomsStrings = ignoreUnsupportedAxiomsString.split(",");
 
@@ -43,6 +43,7 @@ public class OntologyTranslatorConfiguration {
                 this.ignoredUnsupportedAxioms.add(AxiomType.getAxiomType(i));
             }
         }
+        
         changed = true;
     }
 

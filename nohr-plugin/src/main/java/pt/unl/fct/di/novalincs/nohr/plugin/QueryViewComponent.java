@@ -16,8 +16,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.List;
@@ -62,6 +60,8 @@ import pt.unl.fct.di.novalincs.nohr.plugin.query.QueryExpressionChecker;
  * @author Nuno Costa
  */
 public class QueryViewComponent extends AbstractNoHRViewComponent implements OWLModelManagerListener {
+
+    private boolean forcePreprocess;
 
     class NoHRProgressUI extends ReasonerProgressUI {
 
@@ -229,7 +229,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
         final JPanel editorPanel = new JPanel(new BorderLayout());
 
         final QueryExpressionChecker checker = new QueryExpressionChecker(getParser());
-        queryEditor = new ExpressionEditor<Query>(getOWLEditorKit(), checker);
+        queryEditor = new ExpressionEditor<>(getOWLEditorKit(), checker);
         queryEditor.addStatusChangedListener(new InputVerificationStatusChangedListener() {
             @Override
             public void verifiedStatusChanged(boolean newState) {
@@ -284,10 +284,17 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
 
     @Override
     public void handleChange(OWLModelManagerChangeEvent event) {
-        if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
+        if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)
+                || event.isType(EventType.ONTOLOGY_LOADED) 
+                || event.isType(EventType.ONTOLOGY_RELOADED)) {
             answersTable.clear();
             reset();
-            preprocess();
+
+            if (isShowing()) {
+                preprocess();
+            } else {
+                forcePreprocess = true;
+            }
         }
     }
 
@@ -315,7 +322,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
             @Override
             public void hierarchyChanged(HierarchyEvent e) {
                 if (isShowing()) {
-                    if (!isNoHRStarted()) {
+                    if (!isNoHRStarted() || forcePreprocess) {
                         preprocess();
                     }
 
