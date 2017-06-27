@@ -19,8 +19,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 
 import javax.swing.JButton;
@@ -38,8 +36,6 @@ import org.protege.editor.owl.ui.preferences.OWLPreferencesPanel;
 import layout.SpringUtilities;
 import org.protege.editor.owl.model.event.EventType;
 import org.semanticweb.owlapi.model.AxiomType;
-import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
 /**
