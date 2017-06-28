@@ -143,7 +143,7 @@ public class QueryProcessor {
      * Checks if there is some answer to a given query.
      *
      * @param query the query.
-     * @param isDoubled specifies whether the KB is doubled.
+     * @param hasDoubled specifies whether the KB is doubled.
      * @return true iff there is at least one answer to {@code query} valued
      * according to the {@code trueAnswers}, {@code undefinedAnswers} and
      * {@code inconsistentAnswers} flags. @ if the underlying
@@ -248,7 +248,7 @@ public class QueryProcessor {
      * Obtains one answers to a given query.
      *
      * @param query the query.
-     * @param isDoubled specifies whether the KB is doubled.
+     * @param hasDoubled specifies whether the KB is doubled.
      * @return one answer to {@code query}. @ if the underlying
      * {@link DeductiveDatabase} needed to read or write some file and was
      * unsuccessful.

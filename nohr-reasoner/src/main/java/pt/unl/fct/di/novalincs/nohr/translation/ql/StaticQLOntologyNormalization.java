@@ -17,7 +17,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAsymmetricObjectPropertyAxiom;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -53,7 +52,6 @@ import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.translation.DLUtils;
-import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 /**
  * The implementation of {@link QLOntologyNormalization}. This
@@ -276,7 +274,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
      */
     private void normalize(OWLAsymmetricObjectPropertyAxiom axiom) {
         final OWLObjectPropertyExpression q = axiom.getProperty();
-        roleDisjunctions.add(disjunction(q.getSimplified(), q.getInverseProperty().getSimplified()));
+        roleDisjunctions.add(disjunction(q, q.getInverseProperty()));
     }
 
     /**
@@ -428,7 +426,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
      * Step for NoHR: OWL 2 QL</a>}, adding the obtained axioms to the
      * appropriate fields.
      *
-     * @param axiom a OWL 2 QL role subsumption.
+     * @param alpha a OWL 2 QL role subsumption.
      */
     private void normalize(OWLSubPropertyAxiom<?> alpha) {
         final OWLPropertyExpression q1 = alpha.getSubProperty();
@@ -456,7 +454,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
      * Step for NoHR: OWL 2 QL</a>}, adding the obtained axioms to the
      * appropriate fields.
      *
-     * @param axiom a OWL 2 QL role disjunction.
+     * @param alpha a OWL 2 QL role disjunction.
      */
     private <P extends OWLPropertyExpression> void normalizeDisjunction(OWLNaryPropertyAxiom<P> alpha) {
         final Set<P> props = alpha.getProperties();
@@ -514,7 +512,7 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
      * @return <i>&exist;Q</i>.
      */
     private OWLClassExpression some(OWLObjectPropertyExpression q) {
-        return getDataFactory().getOWLObjectSomeValuesFrom(q.getSimplified(), getDataFactory().getOWLThing());
+        return getDataFactory().getOWLObjectSomeValuesFrom(q, getDataFactory().getOWLThing());
     }
 
 }

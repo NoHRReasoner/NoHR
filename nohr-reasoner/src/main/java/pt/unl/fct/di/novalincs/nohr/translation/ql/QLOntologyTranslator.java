@@ -226,8 +226,8 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
                 final OWLSubObjectPropertyOfAxiom axiom = (OWLSubObjectPropertyOfAxiom) subsumption;
                 final OWLObjectPropertyExpression ope1 = axiom.getSubProperty();
                 final OWLObjectPropertyExpression ope2 = axiom.getSuperProperty();
-                final OWLObjectPropertyExpression invOpe1 = ope1.getInverseProperty().getSimplified();
-                final OWLObjectPropertyExpression invOpe2 = ope2.getInverseProperty().getSimplified();
+                final OWLObjectPropertyExpression invOpe1 = ope1.getInverseProperty();
+                final OWLObjectPropertyExpression invOpe2 = ope2.getInverseProperty();
                 if ((ontologyNormalization.isSuper(some(ope1)) || ontologyNormalization.isSuper(ope1))
                         && (ontologyNormalization.isSub(some(ope2)) || ontologyNormalization.isSub(ope2))) {
                     result.add(axiomsTranslator.domainSubsumptionTranslation(axiom.getSubProperty(),

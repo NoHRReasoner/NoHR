@@ -46,8 +46,10 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	@Override
 	protected PrologEngine createPrologEngine() {
+                // Here we can switch between normal interprolog mode (first line) and debug mode (second line) 
 		return new XSBSubprocessEngine(binDirectory.toPath().toAbsolutePath().toString());
-	}
+	 	//return new XSBSubprocessEngine(binDirectory.toPath().toAbsolutePath().toString(),true); 
+        }
 
 	@Override
 	protected String failRule(Predicate pred) {

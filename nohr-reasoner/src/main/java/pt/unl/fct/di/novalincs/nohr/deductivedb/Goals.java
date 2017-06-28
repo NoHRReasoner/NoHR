@@ -70,7 +70,7 @@ class Goals {
 	 *
 	 * @param query
 	 *            the query.
-	 * @param trueAnswers
+	 * @param trueAnswer
 	 *            specifies whether the considered answers valuations will be {@link TruthValue#TRUE true}. The considered answers will have a
 	 *            {@link TruthValue#TRUE true} valuation if {@code trueAnswers == true}; a {@link TruthValue#UNDEFINED undefined} valuation if
 	 *            {@code trueAnswers == false}; and any of the two if {@code trueAnswers == null}.

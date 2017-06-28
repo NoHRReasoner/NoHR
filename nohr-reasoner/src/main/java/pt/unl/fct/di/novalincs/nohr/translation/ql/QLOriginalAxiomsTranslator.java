@@ -117,9 +117,9 @@ class QLOriginalAxiomsTranslator extends QLAxiomsTranslator {
 	 *             if <i>R</i> isn't a DL-Lite<sub>R</sub> role.
 	 */
 	Atom existTr(OWLObjectPropertyExpression q, Variable x) {
-		if (q.getSimplified() instanceof OWLObjectProperty)
+		if (q instanceof OWLObjectProperty)
 			return atom(v.origDomPred(q), x);
-		else if (q.getSimplified() instanceof OWLObjectInverseOf)
+		else if (q instanceof OWLObjectInverseOf)
 			return atom(v.origRanPred(q), x);
 		else
 			throw new IllegalArgumentException("q: must be a basic role");

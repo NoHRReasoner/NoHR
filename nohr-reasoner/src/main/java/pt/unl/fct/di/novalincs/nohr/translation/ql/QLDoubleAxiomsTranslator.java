@@ -184,9 +184,9 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
      * role.
      */
     Atom existTr(OWLObjectPropertyExpression q, Variable x) {
-        if (q.getSimplified() instanceof OWLObjectProperty) {
+        if (q instanceof OWLObjectProperty) {
             return atom(v.doubDomPred(q), x);
-        } else if (q.getSimplified() instanceof OWLObjectInverseOf) {
+        } else if (q instanceof OWLObjectInverseOf) {
             return atom(v.doubRanPred(q.getNamedProperty()), x);
         } else {
             throw new IllegalArgumentException("q: must be a basic role");

@@ -29,7 +29,7 @@ public interface VocabularyChangeListener {
 	/**
 	 * Called when a predicate was changed.
 	 *
-	 * @param constant
+	 * @param predicate
 	 *            the constant that changed.
 	 */
 	void predicateChanged(Predicate predicate);

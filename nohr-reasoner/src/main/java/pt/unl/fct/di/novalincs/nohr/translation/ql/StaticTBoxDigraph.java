@@ -382,7 +382,7 @@ public class StaticTBoxDigraph implements TBoxDigraph {
             if (v instanceof OWLObjectSomeValuesFrom) {
                 final OWLObjectSomeValuesFrom exist = (OWLObjectSomeValuesFrom) v;
                 final OWLObjectPropertyExpression prop = exist.getProperty();
-                final OWLObjectPropertyExpression invProp = prop.getInverseProperty().getSimplified();
+                final OWLObjectPropertyExpression invProp = prop.getInverseProperty();
                 final OWLDataFactory dataFactory = ontology.getOntology().getOWLOntologyManager().getOWLDataFactory();
                 final OWLObjectSomeValuesFrom invExist = dataFactory.getOWLObjectSomeValuesFrom(invProp,
                         dataFactory.getOWLThing());
@@ -407,11 +407,11 @@ public class StaticTBoxDigraph implements TBoxDigraph {
      */
     private Set<OWLObjectProperty> inverselyOccurringRoles2(Set<OWLPropertyExpression> s1,
             Set<OWLPropertyExpression> s2) {
-        final Set<OWLObjectProperty> result = new HashSet<OWLObjectProperty>();
+        final Set<OWLObjectProperty> result = new HashSet<>();
         for (final OWLPropertyExpression v : s1) {
             if (v instanceof OWLObjectPropertyExpression) {
                 final OWLObjectPropertyExpression vo = (OWLObjectPropertyExpression) v;
-                if (s2.contains(vo.getInverseProperty().getSimplified())) {
+                if (s2.contains(vo.getInverseProperty())) {
                     result.add(vo.getNamedProperty());
                 }
             }
