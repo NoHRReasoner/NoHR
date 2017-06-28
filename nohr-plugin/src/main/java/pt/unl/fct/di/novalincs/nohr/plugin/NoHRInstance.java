@@ -1,8 +1,11 @@
 package pt.unl.fct.di.novalincs.nohr.plugin;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import org.semanticweb.owlapi.model.OWLOntology;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
-import pt.unl.fct.di.novalincs.nohr.hybridkb.HybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
@@ -15,12 +18,19 @@ class NoHRInstance {
     private static NoHRInstance instance;
 
     private DisposableHybridKB hybridKB;
+    private Set<NoHRInstanceChangedListener> listeners;
 
     private NoHRInstance() {
+        listeners = new HashSet<>();
+    }
+
+    public void addListener(NoHRInstanceChangedListener listener) {
+        listeners.add(listener);
     }
 
     public DisposableHybridKB getHybridKB() {
         return hybridKB;
+
     }
 
     public static NoHRInstance getInstance() {
@@ -33,6 +43,16 @@ class NoHRInstance {
 
     public boolean isStarted() {
         return hybridKB != null;
+    }
+
+    public void requestRestart() {
+        for (NoHRInstanceChangedListener i : listeners) {
+            i.instanceChanged(new NoHRInstanceChangedEventImpl(NoHRInstanceChangedEventType.REQUEST_RESTART));
+        }
+    }
+
+    public void removeListener(NoHRInstanceChangedListener listener) {
+        listeners.remove(listener);
     }
 
     public void restart() throws UnsupportedAxiomsException, OWLProfilesViolationsException, PrologEngineCreationException {

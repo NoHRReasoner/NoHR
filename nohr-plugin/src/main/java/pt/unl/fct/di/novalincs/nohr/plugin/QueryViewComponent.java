@@ -59,9 +59,9 @@ import pt.unl.fct.di.novalincs.nohr.plugin.query.QueryExpressionChecker;
  *
  * @author Nuno Costa
  */
-public class QueryViewComponent extends AbstractNoHRViewComponent implements OWLModelManagerListener {
+public class QueryViewComponent extends AbstractNoHRViewComponent implements OWLModelManagerListener, NoHRInstanceChangedListener {
 
-    private boolean forcePreprocess;
+    private boolean preprocess;
 
     class NoHRProgressUI extends ReasonerProgressUI {
 
@@ -96,7 +96,8 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
             }
 
             startNoHR();
-
+            preprocess = false;
+            
             return null;
         }
 
@@ -253,6 +254,7 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
     @Override
     public void disposeOWLView() {
         getOWLModelManager().removeListener(this);
+        NoHRInstance.getInstance().removeListener(this);
     }
 
     private void doQuery() {
@@ -285,16 +287,20 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
     @Override
     public void handleChange(OWLModelManagerChangeEvent event) {
         if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)
-                || event.isType(EventType.ONTOLOGY_LOADED) 
+                || event.isType(EventType.ONTOLOGY_LOADED)
                 || event.isType(EventType.ONTOLOGY_RELOADED)) {
-            answersTable.clear();
-            reset();
+            repreprocess();
+        }
+    }
 
-            if (isShowing()) {
-                preprocess();
-            } else {
-                forcePreprocess = true;
-            }
+    private void repreprocess() {
+        answersTable.clear();
+        reset();
+
+        if (isShowing()) {
+            preprocess();
+        } else {
+            preprocess = true;
         }
     }
 
@@ -313,16 +319,16 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
         splitter.setDividerLocation(0.3);
         add(splitter, BorderLayout.CENTER);
 
-        //      reset();
         preprocess();
 
         getOWLModelManager().addListener(this);
+        NoHRInstance.getInstance().addListener(this);
 
         addHierarchyListener(new HierarchyListener() {
             @Override
             public void hierarchyChanged(HierarchyEvent e) {
                 if (isShowing()) {
-                    if (!isNoHRStarted() || forcePreprocess) {
+                    if (!isNoHRStarted() || preprocess) {
                         preprocess();
                     }
 
@@ -333,6 +339,13 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
                 }
             }
         });
+    }
+
+    @Override
+    public void instanceChanged(NoHRInstanceChangedEvent evt) {
+        if (evt.getType() == NoHRInstanceChangedEventType.REQUEST_RESTART) {
+            repreprocess();
+        }
     }
 
     protected void preprocess() {

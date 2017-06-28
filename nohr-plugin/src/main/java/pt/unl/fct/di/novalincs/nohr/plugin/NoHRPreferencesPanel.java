@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.event.DocumentEvent;
 
 import org.protege.editor.owl.ui.preferences.OWLPreferencesPanel;
 
@@ -89,12 +90,13 @@ public class NoHRPreferencesPanel extends OWLPreferencesPanel {
         preferences.setDLInferenceEngine(dLInferenceEngine);
         preferences.setDLInferenceEngineEL(dLInferenceEngineEL);
         preferences.setDLInferenceEngineQL(dLInferenceEngineQL);
+        preferences.setDLInferenceEngineRL(dLInferenceEngineRL);
         preferences.setIgnoreAllUnsupportedAxioms(ignoreAllUnsupportedAxioms);
         preferences.setIgnoredUnsupportedAxioms(ignoredUnsupportedAxioms);
         preferences.setKoncludeBinary(koncludeBinary);
         preferences.setXsbDirectory(xsbDirectory);
 
-        getOWLModelManager().fireEvent(EventType.ONTOLOGY_RELOADED);
+        NoHRInstance.getInstance().requestRestart();
     }
 
     private JComboBox<DLInferenceEngine> createDLInferenceEngineComboBox(DLInferenceEngine dLInferenceEngine) {
