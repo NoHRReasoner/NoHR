@@ -1,9 +1,8 @@
 package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
 
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
-import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 
-public class PrologOperatorPredicateImpl implements Predicate {
+public class PrologOperatorPredicateImpl implements PrologPredicate {
 
     private final int arity;
     private final String symbol;
@@ -14,8 +13,8 @@ public class PrologOperatorPredicateImpl implements Predicate {
     }
 
     @Override
-    public Predicate accept(ModelVisitor modelVisitor) {
-        return modelVisitor.visit(this);
+    public PrologPredicate accept(ModelVisitor modelVisitor) {
+        return (PrologPredicate) modelVisitor.visit(this);
     }
 
     @Override
