@@ -293,6 +293,16 @@ public class Model {
     public static Atom prologAtom(Vocabulary v, String predicate, List<Term> arguments) {
         return atom(v.prologPred(predicate, arguments.size()), arguments);
     }
+    
+    /**
+     * Create a set of db mappings from an array of db mappings.
+     *
+     * @param rules the array of rules;
+     * @return the program containing the given rules.
+     */
+    public static DBMappingSet dbMappingSet(DBMapping... DBMapping) {
+        return new HashSetDBMappingSet(new HashSet<DBMapping>(Arrays.asList(DBMapping)));
+    }
 
     /**
      * Create a query from a specified list of literals.

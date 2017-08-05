@@ -13,7 +13,12 @@ package pt.unl.fct.di.novalincs.nohr.deductivedb;
 import static pt.unl.fct.di.novalincs.nohr.model.Model.*;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.apache.commons.io.FileUtils;
+
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
@@ -46,10 +51,8 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	@Override
 	protected PrologEngine createPrologEngine() {
-                // Here we can switch between normal interprolog mode (first line) and debug mode (second line) 
 		return new XSBSubprocessEngine(binDirectory.toPath().toAbsolutePath().toString());
-	 	//return new XSBSubprocessEngine(binDirectory.toPath().toAbsolutePath().toString(),true); 
-        }
+	}
 
 	@Override
 	protected String failRule(Predicate pred) {
@@ -68,6 +71,39 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	@Override
 	protected void load() {
+		File dest = new File("C:\\Users\\VedranPC\\Desktop\\rules.txt");
+		try {
+			//connection to the database
+			FileWriter  out = new FileWriter (file,true);
+			out.write(":- import odbc_open/3 from odbc_call.\n"+
+			":- import odbc_sql/3 from odbc_call.\n"+
+			":- import odbc_import/2 from odbc_call.\n"+
+			":- import odbc_close/0 from odbc_call.\n"+
+			":- import odbc_data_sources/2 from odbc_call.\n"+
+			"?- odbc_open(test,root,root).\n"+
+//			"?- odbc_import(crimes('id', 'Case_Number'), aq01a).\n"+
+//			"?- odbc_import(crimes('id', 'Case_Number'), dq01d).\n"+
+//			"?- odbc_import(crimesindex('id', 'Case_Number'), aq02a).\n"+
+//			"?- odbc_import(crimesindex('id', 'Case_Number'), dq02d).\n"+
+//			"aq11(X) :- odbc_sql([1],'SELECT id FROM test.crimes where Case_Number=\\\'HP409947\\\'', [X]).\n"+
+//			"aq12(X) :- odbc_sql([1],'SELECT id FROM test.crimesindex where Case_Number=\\\'HP409947\\\'', [X]).\n"+
+//			"aq21(X) :- odbc_sql([1],'SELECT Case_Number FROM test.crimes where id=\\\'6320453\\\'', [X]).\n"+
+			"aq22(X) :- odbc_sql([1],'SELECT Case_Number FROM test.crimesindex where id=\\\'6320453\\\'', [X]).\n"+
+			"dq22(X) :- odbc_sql([1],'SELECT Case_Number FROM test.crimesindex where id=\\\'6320453\\\'', [X]).\n"+
+//			"aq31(X,Y) :- odbc_sql([1],'SELECT id, Case_Number FROM test.crimes', [X,Y]).\n"+
+//			"aq32(X,Y) :- odbc_sql([1],'SELECT id, Case_Number FROM test.crimesindex', [X,Y]).\n"+
+			"anew3(X,Y) :- nonvar(X),nonvar(Y),odbc_sql([X,Y],'SELECT id, Case_Number FROM test.crimesindex where id = ? and Case_Number = ?', [X,Y]).\n"+
+			"anew3(X,Y) :- nonvar(X),odbc_sql([X],'SELECT id, Case_Number FROM test.crimesindex where id = ?', [X,Y]).\n"+
+			"anew3(X,Y) :- nonvar(Y),odbc_sql([Y],'SELECT id, Case_Number FROM test.crimesindex where Case_Number = ?', [X,Y]).\n"+
+			"dnew3(X,Y) :- nonvar(X),nonvar(Y),odbc_sql([X,Y],'SELECT id, Case_Number FROM test.crimesindex where id = ? and Case_Number = ?', [X,Y]).\n"+
+			"dnew3(X,Y) :- nonvar(X),odbc_sql([X],'SELECT id, Case_Number FROM test.crimesindex where id = ?', [X,Y]).\n"+
+			"dnew3(X,Y) :- nonvar(Y),odbc_sql([Y],'SELECT id, Case_Number FROM test.crimesindex where Case_Number = ?', [X,Y]).\n");
+			out.close();
+			FileUtils.copyFile(file, dest);
+		} catch (IOException e) {
+			System.err.println("Greskaa!");
+		    e.printStackTrace();
+		}
 		if (!prologEngine.load_dynAbsolute(file.getAbsoluteFile()))
 			throw new IPException("file not loaded");
 	}

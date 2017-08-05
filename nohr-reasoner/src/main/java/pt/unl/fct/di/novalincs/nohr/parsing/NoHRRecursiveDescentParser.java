@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
@@ -366,6 +368,20 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
         }
     }
 
+	@Override
+	public DBMapping parseDBMapping(String str) throws ParseException {
+		// TODO HAVE TO BE DEFINED
+		return null;
+	}
+	
+	@Override
+	public void parseDBMappingSet(File file, DBMappingSet dbMappingSet) {
+		// TODO HAVE TO BE DEFINED
+		
+	}
+
+    
+    
     @Override
     public void setVocabulary(Vocabulary vocabulary) {
         this.vocabulary = vocabulary;
@@ -378,4 +394,7 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 
         return Model.var(scanner.value());
     }
+
+
+
 }

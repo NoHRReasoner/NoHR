@@ -91,6 +91,18 @@ public class Messages {
 				"Could not save the rules." + System.lineSeparator() + System.lineSeparator() + e.getMessage(),
 				"Unsuccessful save", JOptionPane.WARNING_MESSAGE);
 	}
+	
+	/**
+	 * The message shown when a IOException occurs while trying to save the DB mapping.
+	 *
+	 * @param dbMappingViewComponent
+	 * @param e
+	 */
+	public static void unsucceccfulSave(DBMappingViewComponent dbMappingViewComponent, IOException e) {
+		JOptionPane.showMessageDialog(dbMappingViewComponent,
+				"Could not save the DB mapping." + System.lineSeparator() + System.lineSeparator() + e.getMessage(),
+				"Unsuccessful save", JOptionPane.WARNING_MESSAGE);
+	}
 
 	/**
 	 * The message shown when the ontology has some axiom of an unsupported type.

@@ -15,6 +15,8 @@ package pt.unl.fct.di.novalincs.nohr.parsing;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
@@ -77,6 +79,22 @@ public interface NoHRParser {
      */
     public Rule parseRule(String str) throws ParseException;
 
+    /**
+     * Parses a given string and returns the corresponding {@link Query query},
+     * if represents some DBMapping.
+     *
+     * @param str the string to be parsed.
+     * @return the {@link Query query} that {@code str} represents.
+     * @throws ParseException if {@code str} violates the DBMapping syntax.
+     */
+    
+    public DBMapping parseDBMapping(String str) throws ParseException;
+    
+    public void parseDBMappingSet(File file, DBMappingSet dbMappingSet);
+    
     public void setVocabulary(Vocabulary vocabulary);
+
+	
+
 
 }

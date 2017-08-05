@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  nohr-plugin
+  %%
+  Copyright (C) 2014 - 2015 NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)
+  %%
+  This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #L%
+  -->
+
+<layout>
+    <VSNode splits="0.3 0.7">
+        <HSNode splits="0.6 0.4">
+            <CNode>
+                <Component label="Class hierarchy">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
+                </Component>
+                <Component label="Class hierarchy (inferred)">
+                    <Property id="pluginId" value="org.protege.editor.owl.InferredOWLClassHierarchy"/>
+                </Component>
+            </CNode>
+            <CNode>
+                <Component label="NoHR Rules">
+                    <Property id="pluginId" value="pt.unl.fct.di.novalincs.nohr.plugin.RulesViewComponent"/>
+                </Component>
+            </CNode>
+        </HSNode>
+        <CNode>
+            <Component label="NoHR Database Mapping">
+                <Property id="pluginId" value="pt.unl.fct.di.novalincs.nohr.plugin.DBMappingViewComponent"/>
+            </Component>
+        </CNode>
+    </VSNode>
+</layout>

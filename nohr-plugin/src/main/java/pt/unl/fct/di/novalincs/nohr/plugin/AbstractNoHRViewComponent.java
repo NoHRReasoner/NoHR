@@ -28,6 +28,9 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
+import pt.unl.fct.di.novalincs.nohr.model.HashSetDBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.HashSetProgram;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
@@ -61,6 +64,24 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
         }
 
     }
+    
+    class DisposableDBMappingSet extends HashSetDBMappingSet implements Disposable {
+
+        public DisposableDBMappingSet() {
+            this(Collections.<DBMapping>emptySet());
+        }
+
+        DisposableDBMappingSet(Set<DBMapping> dbMappings) {
+            super(dbMappings);
+        }
+
+        @Override
+        public void dispose() throws Exception {
+            super.clear();
+        }
+
+    }
+    
 
     protected static final Logger LOG = Logger.getLogger(AbstractNoHRViewComponent.class);
 
@@ -127,6 +148,24 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
 
         return program;
     }
+    
+    /**
+     * Returns the considered {@link DBMappingSet dbMappingSet}, i.e. the program
+     * component of the {@link HybridKB}.
+     *
+     * @return the considered program.
+     */
+    protected DBMappingSet getDBMappingSet() {
+        DisposableDBMappingSet dbMappingSet = getOWLModelManager().get(DBMappingSet.class);
+
+        if (dbMappingSet == null) {
+        	dbMappingSet = new DisposableDBMappingSet();
+            getOWLModelManager().put(DBMappingSet.class, dbMappingSet);
+        }
+
+        return dbMappingSet;
+    }
+    
 
     /**
      * Returns the {@link ProgramPersistenceManager}.
@@ -139,6 +178,22 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
         if (disposableObject == null) {
             disposableObject = new DisposableObject<>(new ProgramPersistenceManager(getVocabulary()));
             getOWLModelManager().put(ProgramPersistenceManager.class, disposableObject);
+        }
+
+        return disposableObject.getObject();
+    }
+    
+    /**
+     * Returns the {@link ProgramPersistenceManager}.
+     *
+     * @return the {@link ProgramPersistenceManager}.
+     */
+    protected DBMappingSetPersistenceManager getDBMappingSetPersistenceManager() {
+        DisposableObject<DBMappingSetPersistenceManager> disposableObject = getOWLModelManager().get(DBMappingSetPersistenceManager.class);
+
+        if (disposableObject == null) {
+            disposableObject = new DisposableObject<>(new DBMappingSetPersistenceManager(getVocabulary()));
+            getOWLModelManager().put(DBMappingSetPersistenceManager.class, disposableObject);
         }
 
         return disposableObject.getObject();

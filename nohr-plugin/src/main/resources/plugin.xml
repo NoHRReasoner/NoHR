@@ -31,6 +31,12 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
         <class value="pt.unl.fct.di.novalincs.nohr.plugin.RulesViewComponent"></class>
         <category value="@org.protege.querycategory"></category>
     </extension> 
+     <extension id="DBMappingViewComponent" point="org.protege.editor.core.application.ViewComponent">
+        <label value="NoHR Database Mapping"></label>
+        <headerColor value="@org.protege.classcolor"/>
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.DBMappingViewComponent"></class>
+        <category value="@org.protege.querycategory"></category>
+    </extension>
     <extension id="QueryTab" point="org.protege.editor.core.application.WorkspaceTab">
         <label value="NoHR Query"></label>
         <headerColor value="@org.protege.classcolor"/>
@@ -46,6 +52,14 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
         <index value="X"></index>
         <editorKitId value="OWLEditorKit"></editorKitId>
         <defaultViewConfigFileName value="viewconfig-rulestab.xml"></defaultViewConfigFileName>
+    </extension>
+    <extension id="DBMappingTab" point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="NoHR Database Mapping"></label>
+        <headerColor value="@org.protege.classcolor"/>
+        <class value="org.protege.editor.owl.ui.OWLWorkspaceViewsTab"></class>
+        <index value="Z"></index>
+        <editorKitId value="OWLEditorKit"></editorKitId>
+        <defaultViewConfigFileName value="viewconfig-dbmappingtab.xml"></defaultViewConfigFileName>
     </extension>
    
 </plugin>
