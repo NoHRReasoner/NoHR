@@ -56,7 +56,8 @@ class DBMappingListItem implements MListItem {
 
     @Override
     public String getTooltip() {
-        return dbMapping.accept(new NoHRFormatVisitor(true));
+    	return "Greska";
+//        return dbMapping.accept(new NoHRFormatVisitor(true));
     }
 
     @Override
@@ -85,6 +86,8 @@ class DBMappingListItem implements MListItem {
 
     @Override
     public String toString() {
-        return dbMapping.accept(new NoHRFormatVisitor(model.getShowIRIs()));
+    	System.out.println("DBMappingListItem.toString() called");
+    	 return dbMapping.toString();
+//        return dbMapping.accept(new NoHRFormatVisitor(model.getShowIRIs()));
     }
 }

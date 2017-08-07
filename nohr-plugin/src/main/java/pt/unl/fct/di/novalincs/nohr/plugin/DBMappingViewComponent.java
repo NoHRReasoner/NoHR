@@ -15,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
@@ -35,7 +36,7 @@ import pt.unl.fct.di.novalincs.nohr.plugin.rules.RuleListModel;
 import pt.unl.fct.di.novalincs.nohr.plugin.rules.RulesList;
 
 /**
- * The {@link ViewComponent} where the the queries are executed.
+ * The {@link ViewComponent} where the mappings are defined.
  *
  * @author Vedran Kasalica
  */
@@ -68,7 +69,7 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
     @Override
     public void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(10, 10));
-        dbMappingEditor = new DBMappingEditor(getOWLEditorKit(), getParser(),this);
+        dbMappingEditor = new DBMappingEditor(getOWLEditorKit(),this);
 //        define the object that represents the tab
         final DBMappingListModel dbMappingListModel = getDBMappingListModel();
 //        reset();
@@ -113,20 +114,20 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
-                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                final int returnVal = fc.showSaveDialog(DBMappingViewComponent.this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        final File file = fc.getSelectedFile();
-                        DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        dbMappingListModel.save(file);
-                    } catch (final IOException e) {
-                        Messages.unsucceccfulSave(DBMappingViewComponent.this, e);
-                    } finally {
-                    	DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    }
-                }
+//                final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
+//                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+//                final int returnVal = fc.showSaveDialog(DBMappingViewComponent.this);
+//                if (returnVal == JFileChooser.APPROVE_OPTION) {
+//                    try {
+//                        final File file = fc.getSelectedFile();
+//                        DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//                        dbMappingListModel.save(file);
+//                    } catch (final IOException e) {
+//                        Messages.unsucceccfulSave(DBMappingViewComponent.this, e);
+//                    } finally {
+//                    	DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//                    }
+//                }
 
             }
         });

@@ -14,6 +14,7 @@ package pt.unl.fct.di.novalincs.nohr.plugin;
  */
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -28,6 +29,7 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.HashSetDBMappingSet;

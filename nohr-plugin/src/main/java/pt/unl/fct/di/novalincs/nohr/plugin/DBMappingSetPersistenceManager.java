@@ -68,7 +68,8 @@ public class DBMappingSetPersistenceManager {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (final DBMapping dbMapping : dbMappingSet) {
-                writer.write(dbMapping.accept(format));
+            	writer.write(dbMapping.toString());
+//                writer.write(dbMapping.accept(format));
                 writer.write(".");
                 writer.newLine();
             }

@@ -23,6 +23,7 @@ import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.semanticweb.owlapi.model.OWLException;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.NoHRFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
 import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
 import pt.unl.fct.di.novalincs.nohr.plugin.DBMappingViewComponent;
 
@@ -35,28 +36,33 @@ import pt.unl.fct.di.novalincs.nohr.plugin.DBMappingViewComponent;
  */
 public class DBMappingEditor {
 
-    private final ExpressionEditor<DBMapping> editor;
+    
+    private final DBMappingEditForm editor;
 
     private final OWLEditorKit editorKit;
     
     private final Container dbMappingViewComponent;
 
     /**
-     * @param dbMappingViewComponent 
+     * 
      *
-     */
-    public DBMappingEditor(OWLEditorKit editorKit, NoHRParser parser, DBMappingViewComponent dbMappingViewComponent) {
+     */ 
+    public DBMappingEditor(OWLEditorKit editorKit, DBMappingViewComponent dbMappingViewComponent) {
         this.editorKit = editorKit;
-        editor = new ExpressionEditor<>(editorKit, new DBMappingExpressionChecker(parser));
+        editor = new DBMappingEditForm();
         this.dbMappingViewComponent=dbMappingViewComponent;
     }
 
     public void clear() {
-        editor.setText("");
+        editor.setTableText("");
+        editor.setColumnsText("");
+        editor.setPredicateText("");
     }
 
     public void setDBMapping(DBMapping dbMapping) {
-        editor.setText(dbMapping.accept(new NoHRFormatVisitor()));
+    	editor.setTableText(dbMapping.getTable());
+        editor.setColumnsText(dbMapping.getColumnsString());
+        editor.setPredicateText(dbMapping.getPredicate());
     }
 
     public DBMapping show() {
@@ -64,12 +70,9 @@ public class DBMappingEditor {
         final int ret = uiHelper.showDialog("Database-Mapping Editor", editor, null);
 
         if (ret == JOptionPane.OK_OPTION) {
-            try {
-                return editor.createObject();
-            } catch (final OWLException e) { // e is an
-                // OWLExpresionParserException
-                return null;
-            }
+        	DBMappingImpl tmp=new DBMappingImpl(editor.getTableText(), editor.getColumnsText(), editor.getPredicateText());
+        	System.out.println("DBMappingEditor.show() - "+tmp.toString());
+            return tmp;
         }
 
         return null;

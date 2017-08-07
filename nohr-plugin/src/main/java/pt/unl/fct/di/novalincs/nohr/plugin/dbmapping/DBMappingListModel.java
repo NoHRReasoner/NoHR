@@ -67,17 +67,17 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 
 	private final DBMappingSetPersistenceManager dbMappingSetPersistenceManager;
 
-	private boolean showIRIs;
 
 	/**
 	 *
 	 */
+	
+//  TODO
 	public DBMappingListModel(OWLEditorKit editorKit, DBMappingEditor dbMappingEditor,
 			DBMappingSetPersistenceManager dbMappingSetPersistenceManager, DBMappingSet dbMappingSet) {
 		super();
 		this.dbMappingSetPersistenceManager = dbMappingSetPersistenceManager;
 
-		this.showIRIs = false;
 		this.dbMappingEditor = dbMappingEditor;
 		this.dbMappingSet = dbMappingSet;
 		dbMappingItems = new ArrayList<Object>(dbMappingSet.size());
@@ -88,10 +88,13 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 			}
 	}
 
+//  TODO
 	boolean add(DBMapping dbMapping) {
 		final boolean added = dbMappingSet.add(dbMapping);
 
+		System.out.println("DBMappingListModel.add() called");
 		if (added) {
+			System.out.println("Confirmed!");
 			final int index = dbMappingItems.size();
 			dbMappingItems.add(new DBMappingListItem(index, this, dbMapping));
 			super.fireIntervalAdded(this, index, index);
@@ -100,6 +103,7 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 		return added;
 	}
 
+//  TODO
 	public void clear() {
 		final int size = dbMappingItems.size();
 		dbMappingSet.clear();
@@ -108,6 +112,7 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 		super.fireIntervalRemoved(this, 1, size);
 	}
 
+//  TODO
 	DBMapping edit(int index, DBMapping dbMapping) {
 		dbMappingEditor.setDBMapping(dbMapping);
 		final DBMapping newDBMapping = dbMappingEditor.show();
@@ -119,20 +124,22 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 		return updated ? newDBMapping : null;
 	}
 
+//  TODO
 	@Override
 	public Object getElementAt(int index) {
 		return dbMappingItems.get(index);
 	}
 
-	public boolean getShowIRIs() {
-		return showIRIs;
-	}
 
+
+//  TODO
 	@Override
 	public int getSize() {
 		return dbMappingItems.size();
 	}
 
+
+//  TODO
 	public void load(File file) throws IOException, PrologParserException, ParseException {
 		final int size = dbMappingSet.size();
 		dbMappingSet.clear();
@@ -147,6 +154,8 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 		super.fireContentsChanged(this, 0, Math.max(dbMappingSet.size() - 1, size - 1));
 	}
 
+
+//  TODO
 	boolean remove(int index, DBMapping dbMapping) {
 		final boolean removed = dbMappingSet.remove(dbMapping);
 		if (removed) {
@@ -164,12 +173,10 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 		return removed;
 	}
 
+
+//  TODO
 	public void save(File file) throws IOException {
 		DBMappingSetPersistenceManager.write(dbMappingSet, file);
 	}
 
-	public void setShowIRIs(boolean value) {
-		this.showIRIs = value;
-		fireContentsChanged(this, 0, dbMappingItems.size());
-	}
 }

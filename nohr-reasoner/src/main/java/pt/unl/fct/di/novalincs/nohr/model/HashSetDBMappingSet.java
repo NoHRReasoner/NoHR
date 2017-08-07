@@ -7,7 +7,7 @@ package pt.unl.fct.di.novalincs.nohr.model;
  * #%L
  * nohr-reasoner
  * %%
- * Copyright (C) 2014 - 2015 NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)
+ * Copyright (C) 2016 - 2017 NOVA
  * %%
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
@@ -19,108 +19,152 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Implementation of {@link Program}.
+ * Implementation of {@link DBMappingSet}.
  *
  * @author Vedran Kasalica
  */
 public class HashSetDBMappingSet implements DBMappingSet {
 
-	public HashSetDBMappingSet(Set<DBMapping> dbMappings) {
-		// TODO Auto-generated constructor stub
+	private final Set<DBMappingsSetChangeListener> listeners;
+
+	private final Set<DBMapping> dBMappings;
+
+	protected HashSetDBMappingSet(Set<DBMapping> dbMappings) {
+		if (dbMappings != null)
+			this.dBMappings = new HashSet<DBMapping>(dbMappings);
+		else
+			this.dBMappings = new HashSet<DBMapping>();
+		listeners = new HashSet<DBMappingsSetChangeListener>();
 	}
 
 	@Override
-	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean contains(Object o) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Iterator<DBMapping> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T> T[] toArray(T[] a) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean add(DBMapping e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean remove(Object o) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean containsAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean add(DBMapping dBMapping) {
+		final boolean added = dBMappings.add(dBMapping);
+		if (added)
+			for (final DBMappingsSetChangeListener listener : listeners)
+				listener.added(dBMapping);
+		return added;
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends DBMapping> c) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean changed = false;
+		for (final DBMapping dBMapping : c)
+			if (add(dBMapping))
+				changed = true;
+		return changed;
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+	public void addListener(DBMappingsSetChangeListener listner) {
+		listeners.add(listner);
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+		if (!dBMappings.isEmpty())
+			for (final DBMappingsSetChangeListener listner : listeners)
+				listner.cleared();
+		dBMappings.clear();
 	}
 
 	@Override
-	public void addListener(ProgramChangeListener listner) {
-		// TODO Auto-generated method stub
-		
+	public boolean contains(Object obj) {
+		return dBMappings.contains(obj);
 	}
 
 	@Override
-	public void removeListener(ProgramChangeListener listener) {
-		// TODO Auto-generated method stub
-		
+	public boolean containsAll(Collection<?> c) {
+		return dBMappings.containsAll(c);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final HashSetDBMappingSet other = (HashSetDBMappingSet) obj;
+		if (!dBMappings.equals(other.dBMappings))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + dBMappings.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return dBMappings.isEmpty();
+	}
+
+	@Override
+	public Iterator<DBMapping> iterator() {
+		return dBMappings.iterator();
+	}
+
+	@Override
+	public boolean remove(Object dBMapping) {
+		final boolean removed = dBMappings.remove(dBMapping);
+		if (removed)
+			for (final DBMappingsSetChangeListener listener : listeners)
+				listener.removed((DBMapping) dBMapping);
+		return removed;
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		boolean changed = false;
+		for (final Object obj : c)
+			if (remove(obj))
+				changed = true;
+		return changed;
+	}
+
+	@Override
+	public void removeListener(DBMappingsSetChangeListener listener) {
+		listeners.remove(listener);
+	}
+
+	/**
+	 * Not supported.
+	 */
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int size() {
+		return dBMappings.size();
+	}
+
+	@Override
+	public Object[] toArray() {
+		return dBMappings.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return dBMappings.toArray(a);
 	}
 
 	@Override
 	public boolean update(DBMapping oldDBMapping, DBMapping newDBMapping) {
-		// TODO Auto-generated method stub
-		return false;
-	}}
+		if (!dBMappings.contains(oldDBMapping) || dBMappings.contains(newDBMapping))
+			return false;
+		remove(oldDBMapping);
+		add(newDBMapping);
+		for (final DBMappingsSetChangeListener listener : listeners)
+			listener.updated(oldDBMapping, newDBMapping);
+		return true;
+	}
+
+}

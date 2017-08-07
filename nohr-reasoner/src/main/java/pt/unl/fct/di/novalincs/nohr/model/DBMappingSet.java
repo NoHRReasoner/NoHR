@@ -23,30 +23,26 @@ import java.util.Set;
 public interface DBMappingSet extends Set<DBMapping> {
 
 	/**
-	 * Adds a {@link ProgramChangeListener}, which listens all changes to this {@link DBMappingSet rule-base}.
+	 * Adds a {@link DBMappingsSetChangeListener}, which listens all changes to this {@link DBMappingSet set of mappings}.
 	 *
 	 * @param listner
-	 *            a {@link ProgramChangeListener}.
+	 *            a {@link DBMappingsSetChangeListener}.
 	 */
-	void addListener(ProgramChangeListener listner);
+	void addListener(DBMappingsSetChangeListener listner);
 
 	/**
-	 * Removes a previously added {@link ProgramChangeListener}.
+	 * Removes a previously added {@link DBMappingsSetChangeListener}.
 	 *
 	 * @param listener
-	 *            a {@link ProgramChangeListener}.
+	 *            a {@link DBMappingsSetChangeListener}.
 	 */
-	void removeListener(ProgramChangeListener listener);
+	void removeListener(DBMappingsSetChangeListener listener);
 
 	/**
-	 * Update a given {@link DBMappingSet rule-base's} rule. If the given role isn't in this {@link DBMappingSet rule-base}, nothing is done.
+	 * Update a given {@link DBMapping database mapping} mapping. If the given mapping isn't in this {@link DBMappingSet set of mappings}, nothing is done.
 	 *
-	 * @param oldRule
-	 *            the rule that will be replaced.
-	 * @param newRule
-	 *            the new rule.
-	 * @return true iff the the rule could be updated, i.e. this {@link DBMappingSet rule-base} contained {@code oldRule}.
 	 */
 	boolean update(DBMapping oldDBMapping, DBMapping newDBMapping);
+
 
 }

@@ -43,9 +43,6 @@ public class DBMappingList extends MList {
 
     private final DBMappingEditor dbMappingEditor;
 
-    public void setShowIRIs(boolean value) {
-        this.model.setShowIRIs(value);
-    }
 
     public DBMappingList(DBMappingEditor dbMappingEditor, DBMappingListModel model) {
         this.model = model;
@@ -53,12 +50,14 @@ public class DBMappingList extends MList {
         setModel(model);
         addMouseListener(mouseListener);
     }
-
+    
+//    handling the addition a new mapping
     @Override
     protected void handleAdd() {
     	dbMappingEditor.clear();
         final DBMapping newDBMapping = dbMappingEditor.show();
         if (newDBMapping != null) {
+        	System.out.println("New mapping added.");
             model.add(newDBMapping);
         }
     }

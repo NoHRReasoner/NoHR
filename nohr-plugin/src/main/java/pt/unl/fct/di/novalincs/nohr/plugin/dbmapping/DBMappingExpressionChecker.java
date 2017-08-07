@@ -24,6 +24,8 @@ import pt.unl.fct.di.novalincs.nohr.plugin.Messages;
  * An {@link OWLExpressionChecker} for {@link DBMapping dbMapping}.
  *
  * @author Vedran Kasalica
+ * 
+ * Not used so far
  */
 public class DBMappingExpressionChecker implements OWLExpressionChecker<DBMapping> {
 
