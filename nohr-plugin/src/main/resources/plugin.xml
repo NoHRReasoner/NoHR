@@ -19,6 +19,10 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
         <label value="NoHR"></label>
         <class value="pt.unl.fct.di.novalincs.nohr.plugin.NoHRPreferencesPanel"></class>
     </extension>
+    <extension id="odbcpreferences" point="org.protege.editor.core.application.preferencespanel">
+        <label value="ODBC drivers"></label>
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.ODBCPreferencesPanel"></class>
+    </extension>
     <extension id="QueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
         <label value="NoHR Query"></label>
         <headerColor value="@org.protege.classcolor"/>

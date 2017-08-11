@@ -11,7 +11,10 @@ import javax.swing.JTextField;
 
 public class DBMappingEditForm extends JPanel {
 	/**
+	 *  The class is used to define the view of a single database mapping (create/edit).
 	 * 
+	 *
+	 * @author Vedran Kasalica
 	 */
 	private static final long serialVersionUID = -5207499377408633751L;
 

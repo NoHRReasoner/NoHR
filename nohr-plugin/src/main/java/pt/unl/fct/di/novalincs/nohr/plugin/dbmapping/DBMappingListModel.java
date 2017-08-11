@@ -3,15 +3,6 @@
  */
 package pt.unl.fct.di.novalincs.nohr.plugin.dbmapping;
 
-/*
- * #%L
- * nohr-plugin
- * %%
- * Copyright (C) 2014 - 2015 NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)
- * %%
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
- * #L%
- */
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +26,7 @@ import pt.unl.fct.di.novalincs.nohr.plugin.DBMappingSetPersistenceManager;
 import pt.unl.fct.di.novalincs.nohr.plugin.ProgramPersistenceManager;
 
 /**
- * An {@link ListModel list model} of {@link DBMapping DBMappings}.
+ * ListModel for our DBMapping. models the whole mapping setup.
  *
  * @author Vedran Kasalica
  */
@@ -72,7 +63,6 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 	 *
 	 */
 	
-//  TODO
 	public DBMappingListModel(OWLEditorKit editorKit, DBMappingEditor dbMappingEditor,
 			DBMappingSetPersistenceManager dbMappingSetPersistenceManager, DBMappingSet dbMappingSet) {
 		super();
@@ -88,7 +78,6 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 			}
 	}
 
-//  TODO
 	boolean add(DBMapping dbMapping) {
 		final boolean added = dbMappingSet.add(dbMapping);
 
@@ -103,7 +92,6 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 		return added;
 	}
 
-//  TODO
 	public void clear() {
 		final int size = dbMappingItems.size();
 		dbMappingSet.clear();
@@ -112,7 +100,6 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 		super.fireIntervalRemoved(this, 1, size);
 	}
 
-//  TODO
 	DBMapping edit(int index, DBMapping dbMapping) {
 		dbMappingEditor.setDBMapping(dbMapping);
 		final DBMapping newDBMapping = dbMappingEditor.show();
@@ -124,7 +111,6 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 		return updated ? newDBMapping : null;
 	}
 
-//  TODO
 	@Override
 	public Object getElementAt(int index) {
 		return dbMappingItems.get(index);
@@ -132,14 +118,12 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 
 
 
-//  TODO
 	@Override
 	public int getSize() {
 		return dbMappingItems.size();
 	}
 
 
-//  TODO
 	public void load(File file) throws IOException, PrologParserException, ParseException {
 		final int size = dbMappingSet.size();
 		dbMappingSet.clear();
@@ -155,7 +139,6 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 	}
 
 
-//  TODO
 	boolean remove(int index, DBMapping dbMapping) {
 		final boolean removed = dbMappingSet.remove(dbMapping);
 		if (removed) {
@@ -174,7 +157,6 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 	}
 
 
-//  TODO
 	public void save(File file) throws IOException {
 		DBMappingSetPersistenceManager.write(dbMappingSet, file);
 	}

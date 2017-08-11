@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Implementation of {@link Rule}.
+ * Implementation of {@link DBMapping}.
  *
  * @author Vedran Kasalica
  */
@@ -30,7 +30,7 @@ public class DBMappingImpl implements DBMapping {
 	public DBMappingImpl(String table, String cols, String predicate) {
 		super();
 		this.table = table;
-		this.columns = Arrays.asList(cols.split(","));
+		this.columns = Arrays.asList(cols.split("\\s*,\\s*"));
 		this.predicate = predicate;
 
 	}
@@ -81,6 +81,18 @@ public class DBMappingImpl implements DBMapping {
 	@Override
 	public String toString() {
 		System.out.println("DBMappingImpl.toString() called");
+		String tmpCols = new String("");
+		for (int i = 0; i < columns.size(); i++) {
+			tmpCols = tmpCols.concat(columns.get(i) + ",");
+		}
+		if (columns.size() > 0) {
+			tmpCols = tmpCols.substring(0, tmpCols.length() - 1);
+		}
+		return predicate + "  <-  "+table+"("+tmpCols+")";
+	}
+	
+	public String toRule() {
+		System.out.println("DBMappingImpl.toRule () called");
 		String tmpVar = new String("");
 		String tmpCols = new String("");
 		for (int i = 0; i < columns.size(); i++) {
