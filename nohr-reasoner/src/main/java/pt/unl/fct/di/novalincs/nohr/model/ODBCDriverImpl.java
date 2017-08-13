@@ -1,7 +1,5 @@
 package pt.unl.fct.di.novalincs.nohr.model;
 
-import java.util.List;
-import java.util.Set;
 
 /**
  * Implementation of {@link ODBCDriver}.
@@ -22,7 +20,7 @@ public class ODBCDriverImpl implements ODBCDriver{
 	public ODBCDriverImpl(String conectionName, String username, String password, String databaseName,
 			DatabaseType databaseType) {
 		super();
-		this.odbcID="1";
+		this.odbcID="ODBCDriverImpl";
 		this.conectionName = conectionName;
 		this.username = username;
 		this.password = password;
@@ -41,40 +39,58 @@ public class ODBCDriverImpl implements ODBCDriver{
 		this.databaseType = databaseType;
 	}
 	
-	
-	@Override
-	public String getID() {
-		return odbcID;
-	}
-	
-	@Override
-	public String getConnName() {
+
+
+	public String getConectionName() {
 		return conectionName;
 	}
 
-	@Override
+	public void setConectionName(String conectionName) {
+		this.conectionName = conectionName;
+	}
+
 	public String getUsername() {
 		return username;
 	}
 
-	@Override
-	public String getPass() {
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
 		return password;
 	}
 
-	@Override
-	public String getDBName() {
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getDatabaseName() {
 		return databaseName;
 	}
 
-	@Override
-	public DatabaseType getDBType() {
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+
+	public DatabaseType getDatabaseType() {
 		return databaseType;
 	}
 
+	public void setDatabaseType(DatabaseType databaseType) {
+		this.databaseType = databaseType;
+	}
+
+	public String getOdbcID() {
+		return odbcID;
+	}
 
 	@Override
 	public String toString() {
+		return conectionName;
+	}
+	
+	public String getInfo() {
 		return odbcID+"_"+conectionName+"_"+username+"_"+password+"_"+databaseName+"_"+databaseType.toString();
 	}
 	

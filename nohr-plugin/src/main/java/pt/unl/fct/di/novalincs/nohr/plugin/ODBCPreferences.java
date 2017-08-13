@@ -46,7 +46,9 @@ public final class ODBCPreferences {
     	Preferences prefs = PreferencesManager.getInstance().getPreferencesForSet(PREFERENCES_SET, DRIVER_PREFERENCES_KEY);
     	Iterator<String> driverStrings  = prefs.getStringList(DRIVER_PREFERENCES_KEY, new ArrayList<>()).iterator();
     	while (driverStrings.hasNext()) {
-    		drivers.add(new ODBCDriverImpl(driverStrings.next(), driverStrings.next(), driverStrings.next(), driverStrings.next(),driverStrings.next(),new DatabaseType(driverStrings.next())));
+    		ODBCDriver tmp = new ODBCDriverImpl(driverStrings.next(), driverStrings.next(), driverStrings.next(), driverStrings.next(),driverStrings.next(),new DatabaseType(driverStrings.next()));
+    		System.out.println("toString(): "+tmp.toString());
+    		drivers.add(tmp);
     	}
     	return drivers;
     }
@@ -54,12 +56,13 @@ public final class ODBCPreferences {
     	Preferences prefs = PreferencesManager.getInstance().getPreferencesForSet(PREFERENCES_SET, DRIVER_PREFERENCES_KEY);
     	List<String>  prefsStringList = new ArrayList<>();
     	for  (ODBCDriver driver : drivers) {
-    		prefsStringList.add(driver.getID());
-    		prefsStringList.add(driver.getConnName());
+    		System.out.println(driver.getOdbcID()+"_"+driver.getConectionName()+"_"+driver.getUsername()+"_"+driver.getPassword()+"_"+driver.getDatabaseName()+"_"+driver.getDatabaseType().toString()+"_");
+    		prefsStringList.add(driver.getOdbcID());
+    		prefsStringList.add(driver.getConectionName());
     		prefsStringList.add(driver.getUsername());
-    		prefsStringList.add(driver.getPass());
-    		prefsStringList.add(driver.getDBName());
-    		prefsStringList.add(driver.getDBType().toString());
+    		prefsStringList.add(driver.getPassword());
+    		prefsStringList.add(driver.getDatabaseName());
+    		prefsStringList.add(driver.getDatabaseType().toString());
     	}
         prefs.clear();
     	prefs.putStringList(DRIVER_PREFERENCES_KEY, prefsStringList);

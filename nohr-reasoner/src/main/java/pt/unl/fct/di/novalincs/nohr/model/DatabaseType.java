@@ -40,7 +40,7 @@ public class DatabaseType {
 	 */
 	public static String getQuotation(ODBCDriver odbc) throws InvalidAttributesException{
 		
-		switch (odbc.getDBType().toString()) {
+		switch (odbc.getDatabaseType().toString()) {
 		case "MySQL":
 			return "`";
 		case "Oracle":

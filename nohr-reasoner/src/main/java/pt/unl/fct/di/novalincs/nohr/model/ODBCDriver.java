@@ -11,17 +11,28 @@ import java.util.List;
 
 public interface ODBCDriver   {
 
-	public String getID();
+	public String getOdbcID();
 	
-	public String getConnName();
+	public String getConectionName();
 	
 	public String getUsername();
 	
-	public String getPass();
+	public String getPassword();
 
-	public String getDBName();
+	public String getDatabaseName();
 
-	public DatabaseType getDBType(); 
+	public DatabaseType getDatabaseType(); 
+	
+	public void setConectionName(String string);
+	
+	public void setUsername(String string);
+	
+	public void setPassword(String string);
+
+	public void setDatabaseName(String string);
+	
+	public void setDatabaseType(DatabaseType databaseType);
+
 
 
 }

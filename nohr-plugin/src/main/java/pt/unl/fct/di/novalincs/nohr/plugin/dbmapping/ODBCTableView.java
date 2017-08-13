@@ -55,11 +55,11 @@ public class ODBCTableView extends AbstractTableModel {
 		ODBCDriver info = drivers.get(rowIndex);
 		switch (Column.values()[columnIndex]) {
 		case NAME:
-			return info != null ? info.getConnName() : null;
+			return info != null ? info.getConectionName() : null;
 		case DATABASE:
-			return info != null ? info.getDBName().toString() : null;
+			return info != null ? info.getDatabaseName().toString() : null;
 		case TYPE:
-			return info != null ? info.getDBType() : null;
+			return info != null ? info.getDatabaseType() : null;
 	    default:
 	    	throw new UnsupportedOperationException("Error in ODBCTableView.getValueAt call.");
 		}
