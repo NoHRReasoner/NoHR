@@ -71,6 +71,15 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	@Override
 	protected void load() {
+		
+		local();
+//		giannis();
+		
+		if (!prologEngine.load_dynAbsolute(file.getAbsoluteFile()))
+			throw new IPException("file not loaded");
+	}
+	
+	public void local(){
 		File dest = new File("C:\\Users\\VedranPC\\Desktop\\rules.txt");
 		try {
 			//connection to the database
@@ -104,9 +113,106 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 			System.err.println("Greskaa!");
 		    e.printStackTrace();
 		}
-		if (!prologEngine.load_dynAbsolute(file.getAbsoluteFile()))
-			throw new IPException("file not loaded");
 	}
+	
+	public void giannis(){
+		File dest = new File("G:\\Users\\gerochrisi.V2\\Desktop\\mappingStuff\\rules.txt");
+		try {
+			//connection to the database
+			FileWriter  out = new FileWriter (file,true);
+			out.write(":- import odbc_open/3 from odbc_call.\n"+
+			":- import odbc_sql/3 from odbc_call.\n"+
+			":- import odbc_close/0 from odbc_call.\n"+
+			":- import odbc_data_sources/2 from odbc_call.\n"+
+			"?- odbc_open('oracle_fi','NOC_USER','CrnbwXyaBMUVOh').\n");
+			out.close();
+		} catch (IOException e) {
+			System.err.println("Mistake!");
+		    e.printStackTrace();
+		}
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "z_vendor", "CONNECTION_TRAIL_INST_ID", "Z_VENDOR", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "er_type", "CONNECTION_TRAIL_INST_ID", "ER_TYPE", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "a_netype", "CONNECTION_TRAIL_INST_ID", "A_NETYPE", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "z_physicalportid", "CONNECTION_TRAIL_INST_ID", "Z_PHYSICALPORTID", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "z_netype", "CONNECTION_TRAIL_INST_ID", "Z_NETYPE", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "a_physicalportid", "CONNECTION_TRAIL_INST_ID", "A_PHYSICALPORTID", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "connection_trail_inst_id", "CONNECTION_TRAIL_INST_ID", "CONNECTION_TRAIL_INST_ID", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "a_mek", "CONNECTION_TRAIL_INST_ID", "A_MEK", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "a_vendor", "CONNECTION_TRAIL_INST_ID", "A_VENDOR", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "logicalresourcename", "CONNECTION_TRAIL_INST_ID", "LOGICALRESOURCENAME", file);
+		createDataProperties("NOC_USER","PT_CONNECTIONS_MV", "z_mek", "CONNECTION_TRAIL_INST_ID", "Z_MEK", file);
+		
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "address", "SITEMEK", "ADDRESS", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "siteist", "SITEMEK", "SITEIST", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "sitemek", "SITEMEK", "SITEMEK", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "lat", "SITEMEK", "LAT", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "longt", "SITEMEK", "LONGT", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "location_clli", "SITEMEK", "CLLI", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "contacts", "SITEMEK", "CONTACTS", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "post_code_1", "SITEMEK", "POST_CODE_1", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "city", "SITEMEK", "CITY", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "state_prov", "SITEMEK", "STATE_PROV", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "country", "SITEMEK", "COUNTRY", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "location_status", "SITEMEK", "STATUS", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "last_mod_ts", "SITEMEK", "LAST_MOD_TS", file);
+		createDataProperties("NOC_USER","PT_LOCATIONS_MV", "last_mod_by", "SITEMEK", "LAST_MOD_BY", file);
+		
+		createDataProperties("NOC_USER","PT_NODES_MV", "holdercomposite_inst_id", "HOLDERCOMPOSITEID", "HOLDER_COMPOSITE_INST_ID", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "placeid_inst_id", "HOLDERCOMPOSITEID", "PLACEID_INST_ID", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "node_clli", "HOLDERCOMPOSITEID", "CLLI", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "model", "HOLDERCOMPOSITEID", "MODEL", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "holdercompositeid", "HOLDERCOMPOSITEID", "HOLDERCOMPOSITEID", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "physicalresourcerolename", "HOLDERCOMPOSITEID", "PHYSICALRESOURCEROLENAME", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "node_status", "HOLDERCOMPOSITEID", "STATUS", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "last_modified_ts", "HOLDERCOMPOSITEID", "LAST_MODIFIED_TS", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "last_modified_by", "HOLDERCOMPOSITEID", "LAST_MODIFIED_BY", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "vendor", "HOLDERCOMPOSITEID", "VENDOR", file);
+		createDataProperties("NOC_USER","PT_NODES_MV", "site", "HOLDERCOMPOSITEID", "SITE", file);
+		
+		try {
+			FileUtils.copyFile(file, dest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void createDataProperties(String db, String table, String predicate, String column1, String column2,File file){
+		String ontologyDest = "<http://www.semanticweb.org/gerochrisi/ontologies/2017/4/inventory-ontology#";
+		try {
+			FileWriter  out = new FileWriter (file,true);
+			out.write("'a" + ontologyDest +predicate + ">'(X,Y) :- nonvar(X),nonvar(Y),odbc_sql([X,Y],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column1+"\\\" = \\\'?\\\' and \\\""+column2+"\\\" = \\\'?\\\' ', [X,Y]). \n"+
+			"'a" + ontologyDest +predicate + ">'(X,Y) :- nonvar(X),odbc_sql([X],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column1+"\\\" = \\\'?\\\'', [X,Y]). \n"+
+			"'a" + ontologyDest +predicate + ">'(X,Y) :- nonvar(Y),odbc_sql([Y],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column2+"\\\" = \\\'?\\\'', [X,Y]). \n"+
+			"'a" + ontologyDest +predicate + ">'(X,Y) :- odbc_sql([],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" ', [X,Y]). \n"+
+			"'d" + ontologyDest +predicate + ">'(X,Y) :- nonvar(X),nonvar(Y),odbc_sql([X,Y],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column1+"\\\" = \\\'?\\\' and \\\""+column2+"\\\" = \\\'?\\\' ', [X,Y]). \n"+
+			"'d" + ontologyDest +predicate + ">'(X,Y) :- nonvar(X),odbc_sql([X],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column1+"\\\" = \\\'?\\\' ', [X,Y]). \n"+
+			"'d" + ontologyDest +predicate + ">'(X,Y) :- nonvar(Y),odbc_sql([Y],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column2+"\\\" = \\\'?\\\' ', [X,Y]). \n"+
+			"'d" + ontologyDest +predicate + ">'(X,Y) :- odbc_sql([],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" ', [X,Y]). \n");
+			out.close();
+		} catch (IOException e) {
+			System.err.println("Mistake!");
+		    e.printStackTrace();
+		}
+	}
+	
+//	public static void createConcepts(String db, String table, String predicate, String column1,File file){
+//		String ontologyDest = "<http://www.semanticweb.org/gerochrisi/ontologies/2017/4/inventory-ontology#";
+//		try {
+//			FileWriter  out = new FileWriter (file,true);
+//			out.write("'a" + ontologyDest +predicate + ">'(X) :- nonvar(X),odbc_sql([X],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column1+"\\\" = \\\'?\\\'', [X,Y]). \n"+
+//			"'a" + ontologyDest +predicate + ">'(X,Y) :- nonvar(Y),odbc_sql([Y],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column2+"\\\" = \\\'?\\\'', [X,Y]). \n"+
+//			"'a" + ontologyDest +predicate + ">'(X,Y) :- odbc_sql([],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" ', [X,Y]). \n"+
+//			"'d" + ontologyDest +predicate + ">'(X,Y) :- nonvar(X),nonvar(Y),odbc_sql([X,Y],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column1+"\\\" = \\\'?\\\' and \\\""+column2+"\\\" = \\\'?\\\' ', [X,Y]). \n"+
+//			"'d" + ontologyDest +predicate + ">'(X,Y) :- nonvar(X),odbc_sql([X],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column1+"\\\" = \\\'?\\\' ', [X,Y]). \n"+
+//			"'d" + ontologyDest +predicate + ">'(X,Y) :- nonvar(Y),odbc_sql([Y],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" where \\\""+column2+"\\\" = \\\'?\\\' ', [X,Y]). \n"+
+//			"'d" + ontologyDest +predicate + ">'(X,Y) :- odbc_sql([],'SELECT \\\"" + column1 + "\\\", \\\"" + column2 + "\\\" FROM \\\""+db+"\\\".\\\""+table+"\\\" ', [X,Y]). \n");
+//			out.close();
+//		} catch (IOException e) {
+//			System.err.println("Mistake!");
+//		    e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	protected String tableDirective(Predicate pred) {

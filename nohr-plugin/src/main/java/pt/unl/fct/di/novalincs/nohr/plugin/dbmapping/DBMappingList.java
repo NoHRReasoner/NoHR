@@ -7,7 +7,6 @@ import java.awt.event.MouseListener;
 import org.protege.editor.core.ui.list.MList;
 
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
-import pt.unl.fct.di.novalincs.nohr.model.Rule;
 
 /**
  *  Defining the list of mappings shown in the Database mappings view.
@@ -58,4 +57,6 @@ public class DBMappingList extends MList {
     public void setModel(DBMappingListModel model) {
         super.setModel(model);
     }
+    
+    
 }

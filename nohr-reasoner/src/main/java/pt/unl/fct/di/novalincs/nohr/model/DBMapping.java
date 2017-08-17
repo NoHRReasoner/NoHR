@@ -18,6 +18,8 @@ public interface DBMapping   {
 	public String getTable();
 
 	public String getPredicate(); 
+	
+	public ODBCDriver getODBC(); 
 
 	String getColumnsString();
 

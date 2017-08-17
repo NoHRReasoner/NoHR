@@ -49,4 +49,17 @@ public class DatabaseType {
 			throw new InvalidAttributesException("The database type is not supported.");
 		}
 	}
+	
+	 @Override
+	    public boolean equals(Object obj) {
+	        if (obj == null) 
+	            return false;
+	        if (!(obj instanceof DatabaseType)) 
+	            return false;
+
+	        if (this.dbtype.matches(obj.toString())) 
+	            return true;
+
+	        return false;
+	    }
 }

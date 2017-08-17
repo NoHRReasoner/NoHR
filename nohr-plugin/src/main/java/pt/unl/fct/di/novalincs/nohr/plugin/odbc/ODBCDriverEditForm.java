@@ -1,4 +1,4 @@
-package pt.unl.fct.di.novalincs.nohr.plugin.dbmapping;
+package pt.unl.fct.di.novalincs.nohr.plugin.odbc;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -166,7 +166,7 @@ public class ODBCDriverEditForm extends JPanel {
 		lblNoteTheOdbc = new JLabel("<html><b>Note:</b><br> The ODBC Driver needs to be avaliable, i.e. it has an entry in \"odbc.ini\" file.<br> This can be checked by running Microsoft ODBC Administrator or similar tool, depending on the operating sistem.</html>");
 		GridBagConstraints gbc_lblNoteTheOdbc = new GridBagConstraints();
 		gbc_lblNoteTheOdbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblNoteTheOdbc.gridwidth = 3;
+		gbc_lblNoteTheOdbc.gridwidth = 4;
 		gbc_lblNoteTheOdbc.insets = new Insets(0, 0, 0, 5);
 		gbc_lblNoteTheOdbc.gridx = 2;
 		gbc_lblNoteTheOdbc.gridy = 9;
@@ -230,7 +230,6 @@ public class ODBCDriverEditForm extends JPanel {
 	
 	public ODBCDriver getODBCDriver(){
 		ODBCDriver tmp=new ODBCDriverImpl(odbcID, getODBCName(), getUsername(), getPassword(), getDBName(), getDBType());
-		System.out.println("ODBCDriverEditForm.getODBCDriver() <- "+tmp.toString());
 		return tmp;
 	}
 

@@ -1,4 +1,4 @@
-package pt.unl.fct.di.novalincs.nohr.plugin;
+package pt.unl.fct.di.novalincs.nohr.plugin.odbc;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -21,8 +21,8 @@ import org.protege.editor.owl.ui.preferences.OWLPreferencesPanel;
 
 import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
 import pt.unl.fct.di.novalincs.nohr.model.ODBCDriverImpl;
-import pt.unl.fct.di.novalincs.nohr.plugin.dbmapping.ODBCDriverEditForm;
-import pt.unl.fct.di.novalincs.nohr.plugin.dbmapping.ODBCTableView;
+import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCDriverEditForm;
+import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCTableView;
 
 /**
  * The class is used to define the panel for ODBC drivers. It represents new tab
@@ -85,9 +85,6 @@ public class ODBCPreferencesPanel extends OWLPreferencesPanel {
 				ODBCDriverEditForm editor = new ODBCDriverEditForm();
 				final int ret = uiHelper.showDialog("Database-Mapping Editor", editor, null);
 				if (ret == JOptionPane.OK_OPTION) {
-					System.out.println("ODBCPreferencesPanel.handleAdd() called with -> " + editor.getODBCName() + " "
-							+ editor.getUsername() + " " + editor.getPassword() + " " + editor.getDBName() + " "
-							+ editor.getDBType());
 					ODBCDriver info = editor.getODBCDriver();
 					driverTableModel.addDriver(info);
 				}
@@ -101,7 +98,6 @@ public class ODBCPreferencesPanel extends OWLPreferencesPanel {
 		remove.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("ODBCPreferencesPanel.handleRemove() called");
 				int[] rows = table.getSelectedRows();
 				List<Integer> rowList = new ArrayList<>();
 				for (int row : rows) {
@@ -117,7 +113,6 @@ public class ODBCPreferencesPanel extends OWLPreferencesPanel {
 //			handle edit of a rule
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("ODBCPreferencesPanel.handleEdit() called");
 				int row = table.getSelectedRow();
 				if (row > -1) {
 					ODBCDriver existing = driverTableModel.getDrivers().get(row);

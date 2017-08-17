@@ -94,6 +94,19 @@ public class ODBCDriverImpl implements ODBCDriver{
 		return odbcID+"_"+conectionName+"_"+username+"_"+password+"_"+databaseName+"_"+databaseType.toString();
 	}
 	
+	@Override
+    public boolean equals(Object obj) {
+        if (obj == null) 
+            return false;
+        if (!(obj instanceof ODBCDriverImpl)) 
+            return false;
+
+        if (this.conectionName.matches(obj.toString())) 
+            return true;
+
+        return false;
+    }
+	
 	
 
 }

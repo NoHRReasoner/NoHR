@@ -37,12 +37,16 @@ public class DBMappingEditor {
     }
 
     public void clear() {
+    	editor.refreshComboBox();
+    	editor.setODBCDriver(null);
         editor.setTableText("");
         editor.setColumnsText("");
         editor.setPredicateText("");
     }
 
     public void setDBMapping(DBMapping dbMapping) {
+    	editor.refreshComboBox();
+    	editor.setODBCDriver(dbMapping.getODBC());
     	editor.setTableText(dbMapping.getTable());
         editor.setColumnsText(dbMapping.getColumnsString());
         editor.setPredicateText(dbMapping.getPredicate());
@@ -53,7 +57,7 @@ public class DBMappingEditor {
         final int ret = uiHelper.showDialog("Database-Mapping Editor", editor, null);
 
         if (ret == JOptionPane.OK_OPTION) {
-        	DBMappingImpl tmp=new DBMappingImpl(editor.getTableText(), editor.getColumnsText(), editor.getPredicateText());
+        	DBMapping tmp=editor.getDBMapping();
         	System.out.println("DBMappingEditor.show() - "+tmp.toString());
             return tmp;
         }

@@ -1,4 +1,4 @@
-package pt.unl.fct.di.novalincs.nohr.plugin.dbmapping;
+package pt.unl.fct.di.novalincs.nohr.plugin.odbc;
 
 
 
@@ -71,13 +71,11 @@ public class ODBCTableView extends AbstractTableModel {
 	}
 	
 	public void addDriver(ODBCDriver driver) {
-		System.out.println("ODBCTableView.addDriver() called -> "+driver.toString());
 		drivers.add(driver);
 		fireTableStructureChanged();
 	}
 	
 	public void removeDrivers(List<Integer> rows) {
-		System.out.println("ODBCTableView.removeDrivers() called -> "+rows);
 	    Collections.sort(rows);
 	    Collections.reverse(rows);
 	    for (Integer row : rows) {
@@ -87,7 +85,6 @@ public class ODBCTableView extends AbstractTableModel {
 	}
 	
 	public void replaceDriver(int row, ODBCDriver newDriver) {
-		System.out.println("ODBCTableView.replaceDriver() called -> "+row +" .. "+newDriver.toString());
 	    drivers.remove(row);
 	    drivers.add(row, newDriver);
 	    fireTableStructureChanged();

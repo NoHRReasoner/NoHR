@@ -1,4 +1,4 @@
-package pt.unl.fct.di.novalincs.nohr.plugin;
+package pt.unl.fct.di.novalincs.nohr.plugin.odbc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,13 +41,12 @@ public final class ODBCPreferences {
     }
 
     
-    static List<ODBCDriver> getDrivers() {
-    	List<ODBCDriver> drivers  = new ArrayList<>();
+    public static List<ODBCDriver> getDrivers() {
+    	List<ODBCDriver> drivers  = new ArrayList<ODBCDriver>();
     	Preferences prefs = PreferencesManager.getInstance().getPreferencesForSet(PREFERENCES_SET, DRIVER_PREFERENCES_KEY);
-    	Iterator<String> driverStrings  = prefs.getStringList(DRIVER_PREFERENCES_KEY, new ArrayList<>()).iterator();
+    	Iterator<String> driverStrings  = prefs.getStringList(DRIVER_PREFERENCES_KEY, new ArrayList<String>()).iterator();
     	while (driverStrings.hasNext()) {
     		ODBCDriver tmp = new ODBCDriverImpl(driverStrings.next(), driverStrings.next(), driverStrings.next(), driverStrings.next(),driverStrings.next(),new DatabaseType(driverStrings.next()));
-    		System.out.println("toString(): "+tmp.toString());
     		drivers.add(tmp);
     	}
     	return drivers;
@@ -68,13 +67,9 @@ public final class ODBCPreferences {
     	prefs.putStringList(DRIVER_PREFERENCES_KEY, prefsStringList);
     }
     
-//    public NoHRHybridKBConfiguration getConfiguration() {
-//        final NoHRHybridKBConfiguration configuration = new NoHRHybridKBConfiguration(getXsbDirectory(), getKoncludeBinary(), getDLInferenceEngineEL(), getDLInferenceEngineQL(), false, getDLInferenceEngine());
-//
-//
-//        return configuration;
+//    static void getNumberOfDrivers(){
+//    	
 //    }
-
 
     public static synchronized ODBCPreferences getInstance() {
         if (instance == null) {

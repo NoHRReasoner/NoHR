@@ -78,8 +78,10 @@ class DBMappingListItem implements MListItem {
 
     @Override
     public String toString() {
-    	System.out.println("DBMappingListItem.toString() called");
+//    	for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+//    	    System.out.println(ste);
+//    	}
+//    	System.out.println("DBMappingListItem.toString() called -> "+dbMapping.toString());
     	 return dbMapping.toString();
-//        return dbMapping.accept(new NoHRFormatVisitor(model.getShowIRIs()));
     }
 }

@@ -11,6 +11,10 @@ import java.util.List;
  */
 public class DBMappingImpl implements DBMapping {
 
+	
+	/** ODBC connection that is beeing used */
+	private final ODBCDriver odbcDriver;
+	
 	/** Table that is being mapped */
 	private final String table;
 
@@ -19,16 +23,20 @@ public class DBMappingImpl implements DBMapping {
 
 	/** Predicate that the query is being mapped to */
 	private final String predicate;
+	
+	
 
-	public DBMappingImpl(String table, List<String> columns, String predicate) {
+	public DBMappingImpl(ODBCDriver driver,String table, List<String> columns, String predicate) {
 		super();
+		this.odbcDriver=driver;
 		this.table = table;
 		this.columns = columns;
 		this.predicate = predicate;
 	}
 
-	public DBMappingImpl(String table, String cols, String predicate) {
+	public DBMappingImpl(ODBCDriver driver, String table, String cols, String predicate) {
 		super();
+		this.odbcDriver=driver;
 		this.table = table;
 		this.columns = Arrays.asList(cols.split("\\s*,\\s*"));
 		this.predicate = predicate;
@@ -66,8 +74,12 @@ public class DBMappingImpl implements DBMapping {
 	public String getPredicate() {
 		return predicate;
 	}
+	
+	@Override
+	public ODBCDriver getODBC() {
+		return odbcDriver;
+	}
 
-	// TODO
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -80,7 +92,7 @@ public class DBMappingImpl implements DBMapping {
 
 	@Override
 	public String toString() {
-		System.out.println("DBMappingImpl.toString() called");
+//		System.out.println("DBMappingImpl.toString() called");
 		String tmpCols = new String("");
 		for (int i = 0; i < columns.size(); i++) {
 			tmpCols = tmpCols.concat(columns.get(i) + ",");
@@ -88,7 +100,7 @@ public class DBMappingImpl implements DBMapping {
 		if (columns.size() > 0) {
 			tmpCols = tmpCols.substring(0, tmpCols.length() - 1);
 		}
-		return predicate + "  <-  "+table+"("+tmpCols+")";
+		return predicate + "  <-  "+table+"("+tmpCols+") _____"+odbcDriver.toString();
 	}
 	
 	public String toRule() {

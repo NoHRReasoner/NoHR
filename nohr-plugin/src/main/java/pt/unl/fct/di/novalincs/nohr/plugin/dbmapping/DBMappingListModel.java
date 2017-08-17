@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
-import javax.swing.ListModel;
 
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.list.MListSectionHeader;
@@ -19,11 +18,8 @@ import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
-import pt.unl.fct.di.novalincs.nohr.model.Program;
-import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.plugin.DBMappingSetPersistenceManager;
-import pt.unl.fct.di.novalincs.nohr.plugin.ProgramPersistenceManager;
 
 /**
  * ListModel for our DBMapping. models the whole mapping setup.
@@ -56,6 +52,7 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 
 	private final List<Object> dbMappingItems;
 
+//	used to parse mapping file into protege
 	private final DBMappingSetPersistenceManager dbMappingSetPersistenceManager;
 
 
