@@ -22,6 +22,10 @@ public interface DBMapping   {
 	public ODBCDriver getODBC(); 
 
 	String getColumnsString();
+	
+	public String getFileSyntax();
+	
+	DBMapping setDBMapping(String stringFromFile, List<ODBCDriver> drivers);
 
 
 }

@@ -114,20 +114,20 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-//                final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
-//                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-//                final int returnVal = fc.showSaveDialog(DBMappingViewComponent.this);
-//                if (returnVal == JFileChooser.APPROVE_OPTION) {
-//                    try {
-//                        final File file = fc.getSelectedFile();
-//                        DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//                        dbMappingListModel.save(file);
-//                    } catch (final IOException e) {
-//                        Messages.unsucceccfulSave(DBMappingViewComponent.this, e);
-//                    } finally {
-//                    	DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-//                    }
-//                }
+                final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                final int returnVal = fc.showSaveDialog(DBMappingViewComponent.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        final File file = fc.getSelectedFile();
+                        DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        dbMappingListModel.save(file);
+                    } catch (final IOException e) {
+                        Messages.unsucceccfulSave(DBMappingViewComponent.this, e);
+                    } finally {
+                    	DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    }
+                }
 
             }
         });

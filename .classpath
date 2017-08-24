@@ -12,7 +12,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="target/jgoodies-forms-1.8.0-sources.jar"/>
-	<classpathentry kind="lib" path="target/jgoodies-forms-1.8.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

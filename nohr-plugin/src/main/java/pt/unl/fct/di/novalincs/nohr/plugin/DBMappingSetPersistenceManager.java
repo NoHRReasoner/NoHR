@@ -1,37 +1,19 @@
 package pt.unl.fct.di.novalincs.nohr.plugin;
 
-import static pt.unl.fct.di.novalincs.nohr.model.Model.negLiteral;
-import static pt.unl.fct.di.novalincs.nohr.model.Model.var;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-import pt.unl.fct.di.novalincs.nohr.model.Atom;
+import com.igormaznitsa.prologparser.exceptions.PrologParserException;
+
+import pt.unl.fct.di.novalincs.nohr.deductivedb.NoHRFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
-import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
-import pt.unl.fct.di.novalincs.nohr.model.Rule;
-import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
-
-import com.igormaznitsa.prologparser.exceptions.PrologParserException;
-import com.igormaznitsa.prologparser.terms.AbstractPrologTerm;
-import com.igormaznitsa.prologparser.terms.PrologAtom;
-import com.igormaznitsa.prologparser.terms.PrologFloatNumber;
-import com.igormaznitsa.prologparser.terms.PrologIntegerNumber;
-import com.igormaznitsa.prologparser.terms.PrologStructure;
-import com.igormaznitsa.prologparser.terms.PrologTermType;
-import pt.unl.fct.di.novalincs.nohr.deductivedb.NoHRFormatVisitor;
-import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
-import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
 import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 
 /**
@@ -45,37 +27,6 @@ import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
  */
 public class DBMappingSetPersistenceManager {
 
-    /**
-     * Writes a given program to a given file.
-     *
-     * @param program the program the write.
-     * @param file the file to where the program will be written.
-     * @throws java.io.IOException
-     */
-    public static void write(DBMappingSet dbMappingSet, File file) throws IOException {
-        //final FormatVisitor format = new PrologFormatVisitor();
-        final FormatVisitor format = new NoHRFormatVisitor();
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            for (final DBMapping dbMapping : dbMappingSet) {
-            	writer.write(dbMapping.toString());
-//                writer.write(dbMapping.accept(format));
-                writer.write(".");
-                writer.newLine();
-            }
-        }
-    }
-
-    /**
-     * The prolog parser used to read programs.
-     */
-//    private final PrologParser parser;
-    private final NoHRParser parser;
-    /**
-     * The vocabulary used to recognize the predicates and constants of the
-     * readed program.
-     */
-    private Vocabulary v;
 
     /**
      * Constructs a new {@link ProgramPersistenceManager} with a given
@@ -84,97 +35,37 @@ public class DBMappingSetPersistenceManager {
      * @param vocabulary the vocabulary used to recognize the predicates and
      * constants of the readed program.
      */
-    public DBMappingSetPersistenceManager(Vocabulary vocabulary) {
-        v = vocabulary;
-        //parser = new PrologParser(null);
-        parser = new NoHRRecursiveDescentParser(v);
+    public DBMappingSetPersistenceManager() {
     }
 
-    private Atom atom(final AbstractPrologTerm term) {
-        if (term.getType() == PrologTermType.STRUCT) {
-            final PrologStructure struct = (PrologStructure) term;
-            final String pred = unquote(struct.getFunctor().getText());
-            final List<Term> args = new ArrayList<Term>(struct.getArity());
-            for (int i = 0; i < struct.getArity(); i++) {
-                final AbstractPrologTerm prologArg = struct.getElement(i);
-                switch (prologArg.getType()) {
-                    case ATOM:
-                        if (prologArg instanceof PrologIntegerNumber) {
-                            args.add(v.cons(((PrologIntegerNumber) prologArg).getValue()));
-                        } else if (prologArg instanceof PrologFloatNumber) {
-                            args.add(v.cons(((PrologFloatNumber) prologArg).getValue()));
-                        } else {
-                            args.add(v.cons(unquote(prologArg.getText())));
-                        }
-                        break;
-                    case VAR:
-                        args.add(var(prologArg.getText()));
-                        break;
-                    default:
-                        break;
-                }
-            }
-            return Model.atom(v, pred, args);
-        } else if (term.getType() == PrologTermType.ATOM) {
-            final PrologAtom atom = (PrologAtom) term;
-            return Model.atom(v, unquote(atom.getText()));
-        } else {
-            throw new IllegalArgumentException("isn't an atom");
-        }
-    }
-
-    public Vocabulary getVoculary() {
-        return v;
-    }
-
-    private Literal literal(AbstractPrologTerm term) {
-        if (term.getType() == PrologTermType.STRUCT) {
-            final String pred = ((PrologStructure) term).getFunctor().getText();
-            if (pred.equals("tnot")) {
-                return negLiteral(atom(((PrologStructure) term).getElement(0)));
-            }
-        }
-        return atom(term);
-    }
-
-    private void literalsList(PrologStructure struct, List<Literal> literals)
-            throws IOException, PrologParserException {
-        final String functor = struct.getFunctor().getText();
-        // If the functor is not a "," then struct is an atom of arity >0 or appears under tnot
-        if (!functor.equals(",")) {
-            literals.add(literal(struct));
-        } //Otherwise, there are at least two body elements
-        else {
-            // Handle the first element in literal()
-            literals.add(literal(struct.getElement(0)));
-            // Handle the remaining atoms recursively
-            if (struct.getElement(1).getType() == PrologTermType.STRUCT) {
-                literalsList((PrologStructure) struct.getElement(1), literals);
-            } // Unless it is a single atom of arity 0, taken care of next
-            else if (struct.getElement(1).getType() == PrologTermType.ATOM) {
-                literals.add(atom(struct.getElement(1)));
-            } else {
-                throw new IllegalArgumentException("This is not a body element in the correct format.");
-            }
-        }
-    }
 
     /**
-     * Loads the rules of a given file to a given program.
+     * Writes a given set of database mappings to a given file.
      *
-     * @param file the file from where to read the rules.
-     * @param program the program where the rules will be loaded.
+     * @param program the db mappings set the write.
+     * @param file the file to where the program will be written.
+     * @throws java.io.IOException
+     */
+    public static void write(DBMappingSet dbMappingSet, File file) throws IOException {
+        final FormatVisitor format = new NoHRFormatVisitor();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            for (final DBMapping dbMapping : dbMappingSet) {
+            	writer.write(dbMapping.getFileSyntax());
+                writer.write(";");
+                writer.newLine();
+            }
+        }
+    }
+    /**
+     * Loads the mappings of a given file.
+     *
+     * @param file the file from where to read the mappings.
+     * @param DBMappingSet the DBMappingSet where the mappings will be loaded.
      * @throws IOException
-     * @throws PrologParserException if the file has some syntax error.
      */
     public void load(File file, DBMappingSet dbMappingSet) throws IOException, PrologParserException, ParseException {
-//        final PrologCharDataSource src = new PrologCharDataSource(new BufferedReader(new FileReader(file)));
-//        Rule currentRule = nextRule(src);
-//        while (currentRule != null) {
-//            program.add(currentRule);
-//            currentRule = nextRule(src);
-//        }
-        parser.parseDBMappingSet(file, dbMappingSet);
+
     }
 
 //    private Rule nextRule(PrologCharDataSource src) throws IOException, PrologParserException {
@@ -232,9 +123,6 @@ public class DBMappingSetPersistenceManager {
 //        }
 //    }
 
-    public void setVocabulary(Vocabulary vocabulary) {
-        v = vocabulary;
-    }
 
     private String unquote(String symbol) {
         // As the parser removes any outer "'", either also remove the " introduced when writing the file or

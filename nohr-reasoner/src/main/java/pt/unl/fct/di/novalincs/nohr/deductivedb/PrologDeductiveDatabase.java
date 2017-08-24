@@ -31,6 +31,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.io.FileUtils;
+
 import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.SolutionIterator;
 import com.declarativa.interprolog.TermModel;
@@ -431,9 +433,11 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
         }
 
         commit();
-
+        System.out.println("Query1: "+query.toString());
+        
+        
         final Object[] bindings = prologEngine.deterministicGoal(Goals.nonDetGoal(formatVisitor, query, trueAnswers, "TM"), "[TM]");
-
+        
         if (bindings == null) {
             return answers;
         }

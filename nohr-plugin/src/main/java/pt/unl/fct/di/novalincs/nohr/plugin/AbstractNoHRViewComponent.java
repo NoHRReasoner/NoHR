@@ -194,7 +194,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
         DisposableObject<DBMappingSetPersistenceManager> disposableObject = getOWLModelManager().get(DBMappingSetPersistenceManager.class);
 
         if (disposableObject == null) {
-            disposableObject = new DisposableObject<>(new DBMappingSetPersistenceManager(getVocabulary()));
+            disposableObject = new DisposableObject<>(new DBMappingSetPersistenceManager());
             getOWLModelManager().put(DBMappingSetPersistenceManager.class, disposableObject);
         }
 

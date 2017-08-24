@@ -104,7 +104,6 @@ public class DBMappingImpl implements DBMapping {
 	}
 	
 	public String toRule() {
-		System.out.println("DBMappingImpl.toRule () called");
 		String tmpVar = new String("");
 		String tmpCols = new String("");
 		for (int i = 0; i < columns.size(); i++) {
@@ -117,6 +116,33 @@ public class DBMappingImpl implements DBMapping {
 		}
 		return predicate + "(" + tmpVar + ") :- odbc_sql([],'SELECT " + tmpCols + " FROM "+table+"', [" + tmpVar
 				+ "])";
+	}
+
+	@Override
+	public String getFileSyntax() {
+		String tmp = new String("");
+		if(odbcDriver==null)
+			return null;
+		tmp=tmp.concat(odbcDriver.getConectionName()+"<break>");
+		tmp=tmp.concat(table+",");
+		for (int i = 0; i < columns.size(); i++) {
+			tmp = tmp.concat(columns.get(i) + ",");
+		}
+		if (columns.size() > 0) {
+			tmp = tmp.substring(0, tmp.length() - 1);
+		}
+		tmp=tmp.concat("<break>");
+		tmp=tmp.concat(predicate);
+		return tmp;
+	}
+
+	@Override
+	public DBMapping setDBMapping(String stringFromFile, List<ODBCDriver> drivers) {
+		String[] map=stringFromFile.split("<break>");
+		if(map==null || map.length!=4)
+			return null;
+		
+		return null;
 	}
 
 }
