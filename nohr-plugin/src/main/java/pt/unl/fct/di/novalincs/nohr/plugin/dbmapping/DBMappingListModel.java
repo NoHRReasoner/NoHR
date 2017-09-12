@@ -121,7 +121,7 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 	}
 
 
-	public void load(File file) throws IOException, PrologParserException, ParseException {
+	public void load(File file) throws IOException {
 		final int size = dbMappingSet.size();
 		dbMappingSet.clear();
 		dbMappingSetPersistenceManager.load(file, dbMappingSet);

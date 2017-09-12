@@ -79,8 +79,9 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	@Override
 	protected void load() {
 
-//		vedran();
-		 giannis();
+		 vedran();
+//		giannis();
+		 
 
 		if (!prologEngine.load_dynAbsolute(file.getAbsoluteFile()))
 			throw new IPException("file not loaded");
@@ -107,20 +108,20 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 		CreatingMappings mapRule = new CreatingMappings("`", "test",
 				"http://www.semanticweb.org/vedranpc/ontologies/2017/7/crimes#");
 
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "Primary_Type" }, "crimeType", true,
-				dest, ontologyDest, "`");
+		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "Primary_Type" },
+				new boolean[] { false, false }, "crimeType", true, dest, ontologyDest, "`");
 
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID" }, "crime", true, file, ontologyDest,
-				"`");
+		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID" }, new boolean[] { false }, "crime",
+				true, file, ontologyDest, "`");
 
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "District" }, "district", true, file,
-				ontologyDest, "`");
+		mapRule.createPredicateMapping("crimesindex1", new String[] { "District" }, new boolean[] { false, false },
+				"district", true, file, ontologyDest, "`");
 
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "Primary_Type" }, "crimeType", true,
-				file, ontologyDest, "`");
+		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "Primary_Type" },
+				new boolean[] { false, false }, "crimeType", true, file, ontologyDest, "`");
 
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "District" }, "crimeDristrict", true,
-				file, ontologyDest, "`");
+		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "District" },
+				new boolean[] { false, false }, "crimeDristrict", true, file, ontologyDest, "`");
 
 		try {
 			FileUtils.copyFile(file, dest);
@@ -137,7 +138,8 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 			FileWriter out = new FileWriter(file, true);
 			out.write(":- import odbc_open/3 from odbc_call.\n" + ":- import findall_odbc_sql/3 from odbc_call.\n"
 					+ ":- import odbc_close/0 from odbc_call.\n" + ":- import odbc_data_sources/2 from odbc_call.\n"
-					+ "?- odbc_open('oracle_fi','NOC_USER','CrnbwXyaBMUVOh').\n" + ":- table 'doneconn'/2.\n"
+					+ "?- odbc_open('oracle preprod fi','NOC_USER','noc_user').\n" + ":- table 'doneconn'/2.\n"
+//					+ "?- odbc_open('oracle_fi','NOC_USER','CrnbwXyaBMUVOh').\n" + ":- table 'doneconn'/2.\n"
 					+ ":- table 'aoneconn'/2.\n");
 			out.close();
 		} catch (IOException e) {
@@ -147,105 +149,116 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 		CreatingMappings mapRule = new CreatingMappings("\"", "NOC_USER",
 				"http://www.semanticweb.org/gerochrisi/ontologies/2017/4/inventory-ontology#");
 
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "Z_VENDOR" },
-				"z_vendor", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "ER_TYPE" },
-				"er_type", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "A_NETYPE" },
-				"a_netype", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV",
-				new String[] { "CONNECTION_TRAIL_INST_ID", "Z_PHYSICALPORTID" }, "z_physicalportid", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "Z_NETYPE" },
-				"z_netype", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV",
-				new String[] { "CONNECTION_TRAIL_INST_ID", "A_PHYSICALPORTID" }, "a_physicalportid", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV",
-				new String[] { "CONNECTION_TRAIL_INST_ID", "CONNECTION_TRAIL_INST_ID" }, "connection_trail_inst_id",
-				true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "A_MEK" },
-				"a_mek", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "A_VENDOR" },
-				"a_vendor", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV",
-				new String[] { "CONNECTION_TRAIL_INST_ID", "LOGICALRESOURCENAME" }, "logicalresourcename", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "Z_MEK" },
-				"z_mek", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "Z_VENDOR" },
+				new boolean[] { true, false }, "z_vendor", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "ER_TYPE" },
+				new boolean[] { true, false }, "er_type", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "A_NETYPE" },
+				new boolean[] { true, false }, "a_netype", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV",
+				new String[] { "CONNECTION_TRAIL_INST_ID", "Z_PHYSICALPORTID" }, new boolean[] { true, true },
+				"z_physicalportid", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "Z_NETYPE" },
+				new boolean[] { true, false }, "z_netype", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV",
+				new String[] { "CONNECTION_TRAIL_INST_ID", "A_PHYSICALPORTID" }, new boolean[] { true, true },
+				"a_physicalportid", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV",
+				new String[] { "CONNECTION_TRAIL_INST_ID", "CONNECTION_TRAIL_INST_ID" }, new boolean[] { true, true },
+				"connection_trail_inst_id", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "A_MEK" },
+				new boolean[] { true, false }, "a_mek", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "A_VENDOR" },
+				new boolean[] { true, false }, "a_vendor", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV",
+				new String[] { "CONNECTION_TRAIL_INST_ID", "LOGICALRESOURCENAME" }, new boolean[] { true, false },
+				"logicalresourcename", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID", "Z_MEK" },
+				new boolean[] { true, false }, "z_mek", true, file, ontologyDest, "\"");
 
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "ADDRESS" }, "address", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "SITEIST" }, "siteist", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "SITEMEK" }, "sitemek", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "LAT" }, "lat", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "LONGT" }, "longt", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "CLLI" }, "location_clli", true,
-				file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "CONTACTS" }, "contacts", true,
-				file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "POST_CODE_1" }, "post_code_1",
-				true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "CITY" }, "city", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "STATE_PROV" }, "state_prov", true,
-				file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "COUNTRY" }, "country", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "STATUS" }, "location_status", true,
-				file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "LAST_MOD_TS" }, "last_mod_ts",
-				true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK", "LAST_MOD_BY" }, "last_mod_by",
-				true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "ADDRESS" },
+				new boolean[] { true, false }, "address", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "SITEIST" },
+				new boolean[] { true, true }, "siteist", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "SITEMEK" },
+				new boolean[] { true, false }, "sitemek", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "LAT" },
+				new boolean[] { true, false }, "lat", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "LONGT" },
+				new boolean[] { true, false }, "longt", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "CLLI" },
+				new boolean[] { true, false }, "location_clli", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "CONTACTS" },
+				new boolean[] { true, false }, "contacts", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "POST_CODE_1" },
+				new boolean[] { true, false }, "post_code_1", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "CITY" },
+				new boolean[] { true, false }, "city", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "STATE_PROV" },
+				new boolean[] { true, false }, "state_prov", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "COUNTRY" },
+				new boolean[] { true, false }, "country", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "STATUS" },
+				new boolean[] { true, false }, "location_status", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "LAST_MOD_TS" },
+				new boolean[] { true, false }, "last_mod_ts", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST", "LAST_MOD_BY" },
+				new boolean[] { true, false }, "last_mod_by", true, file, ontologyDest, "\"");
 
-		mapRule.createPredicateMapping("PT_NODES_MV",
-				new String[] { "holdercomposite_inst_id", "HOLDERCOMPOSITEID", "HOLDER_COMPOSITE_INST_ID" },
-				"holdercomposite_inst_id", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "PLACEID_INST_ID" },
-				"placeid_inst_id", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "CLLI" }, "node_clli", true,
-				file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "MODEL" }, "model", true,
-				file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "HOLDERCOMPOSITEID" },
-				"holdercompositeid", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "PHYSICALRESOURCEROLENAME" },
-				"physicalresourcerolename", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "STATUS" }, "node_status",
-				true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "LAST_MODIFIED_TS" },
-				"last_modified_ts", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "LAST_MODIFIED_BY" },
-				"last_modified_by", true, file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "VENDOR" }, "vendor", true,
-				file, ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID", "SITE" }, "site", true, file,
-				ontologyDest, "\"");
+//		mapRule.createPredicateMapping("TEST_NODES_MV",
+//				new String[] {"HOLDERCOMPOSITEID", "HOLDERCOMPOSITE_INST_ID" },
+//				new boolean[] { false, true }, "holdercomposite_inst_id", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "PLACEID_INST_ID" },
+				new boolean[] { true, true }, "placeid_inst_id", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "CLLI" },
+				new boolean[] { true, false }, "node_clli", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "MODEL" },
+				new boolean[] { true, false }, "model", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "HOLDERCOMPOSITEID" },
+				new boolean[] { true, false }, "holdercompositeid", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "PHYSICALRESOURCEROLENAME" },
+				new boolean[] { true, false }, "physicalresourcerolename", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "STATUS" },
+				new boolean[] { true, false }, "node_status", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "LAST_MODIFIED_TS" },
+				new boolean[] { true, false }, "last_modified_ts", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "LAST_MODIFIED_BY" },
+				new boolean[] { true, false }, "last_modified_by", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "VENDOR" },
+				new boolean[] { true, false }, "vendor", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "SITE" },
+				new boolean[] { true, true }, "site", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "HOLDERCOMPOSITE_INST_ID" },
+				new boolean[] { true, true }, "holdercomposite_inst_id", true, file, ontologyDest, "\"");
 
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "Z_MEK", "A_NETYPE" }, "oneconn", false,
-				file, "", "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "A_MEK", "Z_NETYPE" }, "oneconn", false,
-				file, "", "\"");
+		// typeConn
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "A_MEK", "Z_MEK", "A_NETYPE", "Z_NETYPE" },
+				new boolean[] { false, false, false, false }, "typeConn", false, file, "", "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "Z_MEK", "A_MEK", "Z_NETYPE", "A_NETYPE" },
+				new boolean[] { false, false, false, false }, "typeConn", false, file, "", "\"");
 
-		mapRule.createPredicateMapping("PT_NODES_MV", new String[] { "HOLDERCOMPOSITEID" }, "Node", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_LOCATIONS_MV", new String[] { "SITEMEK" }, "Location", true, file,
-				ontologyDest, "\"");
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID" }, "Connection",
-				true, file, ontologyDest, "\"");
+		// vendorConn
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "A_MEK", "Z_MEK", "A_VENDOR", "Z_VENDOR" },
+				new boolean[] { false, false, false, false }, "vendorConn", false, file, "", "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "Z_MEK", "A_MEK", "Z_VENDOR", "A_VENDOR" },
+				new boolean[] { false, false, false, false }, "vendorConn", false, file, "", "\"");
 
-		createObjectProperties("NOC_USER", "PT_NODES_MV", "PT_LOCATIONS_MV", "SITE", "SITEIST", "isLocated",
-				"HOLDERCOMPOSITEID", "SITEMEK", file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID" }, new boolean[] { false },
+				"Node", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_LOCATIONS_MV", new String[] { "SITEIST" }, new boolean[] { false },
+				"Location", true, file, ontologyDest, "\"");
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "CONNECTION_TRAIL_INST_ID" },
+				new boolean[] { true }, "Connection", true, file, ontologyDest, "\"");
 
-		mapRule.createPredicateMapping("PT_CONNECTIONS_MV", new String[] { "A_MEK", "Z_MEK" }, "isConnected", true,
-				file, ontologyDest, "\"");
-//		createObjectProperties("NOC_USER", "PT_NODES_MV", "PT_NODES_MV", "HOLDERCOMPOSITEID", "HOLDERCOMPOSITEID",
-//				"isConnected", "HOLDERCOMPOSITEID", "HOLDERCOMPOSITEID", file, ontologyDest, "\"");
+//		mapRule.createPredicateMapping("TEST_NODES_MV", new String[] { "HOLDERCOMPOSITE_INST_ID", "SITE" },
+//				new boolean[] { false, true }, "isLocated", true, file, ontologyDest, "\"");
+		
+		createObjectProperties("NOC_USER", "TEST_NODES_MV", "TEST_LOCATIONS_MV", "SITE", "SITEIST", "isLocated",
+				"HOLDERCOMPOSITE_INST_ID", "SITEIST", file, ontologyDest, "\"");
+
+		mapRule.createPredicateMapping("TEST_CONNECTIONS_MV", new String[] { "A_MEK", "Z_MEK" },
+				new boolean[] { false, false }, "isConnected", true, file, ontologyDest, "\"");
+
 
 		try {
 			FileUtils.copyFile(file, dest);
@@ -255,111 +268,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 		}
 	}
 
-	/*
-	 * public void createDataProperties(String db, String table, String
-	 * predicate, String column1, String column2,File file,String ontology,
-	 * String apostrophe){ boolean isDL=!ontology.matches(""); String
-	 * ontologyDest=""; String cl=""; if(isDL){ ontologyDest=ontology; cl=">"; }
-	 * String aph="\\"+apostrophe; try { FileWriter out = new FileWriter
-	 * (file,true); // out.write( // predicate(false, true, predicate) + vars(2)
-	 * + " :- nonvar(X),nonvar(Y),findall_odbc_sql([X,Y],'SELECT "+ aph +
-	 * column1 + aph + ", "+ aph + column2 + aph + " FROM "+ aph+db+aph + "."+
-	 * aph+table+aph + " WHERE "+ aph+column1+aph + " = ? AND "+ aph+column2+aph
-	 * + " = ? ', [X,Y]). \n"+ // predicate(false, true, predicate) + vars(2) +
-	 * " :- nonvar(X), var(Y), findall_odbc_sql([X],'SELECT "+ aph + column1 +
-	 * aph + ", "+ aph + column2 + aph + " FROM "+ aph+db+aph + "."+
-	 * aph+table+aph + " WHERE "+ aph+column1+aph + " = ?', [X,Y]). \n"+ //
-	 * predicate(false, true, predicate) + vars(2) +
-	 * " :- var(X), nonvar(Y), findall_odbc_sql([Y],'SELECT "+ aph + column1 +
-	 * aph + ", "+ aph + column2 + aph + " FROM "+ aph+db+aph + "."+
-	 * aph+table+aph + " WHERE "+ aph+column2+aph + " = ?', [X,Y]). \n"+ //
-	 * predicate(false, true, predicate) + vars(2) +
-	 * " :- var(X), var(Y), findall_odbc_sql([],'SELECT "+ a + column1 + a +
-	 * ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a +
-	 * " ', [X,Y]). \n"+ // predicate(true, true, predicate) + vars(2) +
-	 * " :- nonvar(X),nonvar(Y),findall_odbc_sql([X,Y],'SELECT "+ aph + column1
-	 * + aph + ", "+ aph + column2 + aph + " FROM "+ aph+db+aph + "."+
-	 * aph+table+aph + " WHERE "+ aph+column1+aph + " = ? AND "+ aph+column2+aph
-	 * + " = ? ', [X,Y]). \n"+ // predicate(true, true, predicate) + vars(2) +
-	 * " :- nonvar(X), var(Y), findall_odbc_sql([X],'SELECT "+ aph + column1 +
-	 * aph + ", "+ aph + column2 + aph + " FROM "+ aph+db+aph + "."+
-	 * aph+table+aph + " WHERE "+ aph+column1+aph + " = ? ', [X,Y]). \n"+ //
-	 * predicate(true, true, predicate) + vars(2) +
-	 * " :- var(X), nonvar(Y),findall_odbc_sql([Y],'SELECT "+ aph + column1 +
-	 * aph + ", "+ aph + column2 + aph + " FROM "+ aph+db+aph + "."+
-	 * aph+table+aph + " WHERE "+ aph+column2+aph + " = ? ', [X,Y]). \n"+ //
-	 * predicate(true, true, predicate) + vars(2) +
-	 * " :- var(X), var(Y), findall_odbc_sql([],'SELECT "+ a + column1 + a +
-	 * ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a +
-	 * " ', [X,Y]). \n"); out.close(); } catch (IOException e) {
-	 * System.err.println("Mistake with createDataProperties.");
-	 * e.printStackTrace(); } } private String vars(int n){ String vars="";
-	 * for(int i=0;i<n;i++) vars=vars+"V"+i+","; return vars.substring(0,
-	 * vars.length()-1); } private String predicate(boolean doubled, boolean
-	 * isDL, String predicate){ String fullPred, type = doubled ? "d" : "a";
-	 * 
-	 * if(isDL) fullPred = "'"+ type + "<" + ontologyDesc + predicate + ">";
-	 * else fullPred= "'"+ type + predicate +"'";
-	 * 
-	 * return fullPred; }
-	 * 
-	 * public void createNonDLDataProperties(String db, String table, String
-	 * predicate, String column1, String column2,File file,String ontologyDest,
-	 * String apostrophe){
-	 * 
-	 * String a="\\"+apostrophe; try { FileWriter out = new FileWriter
-	 * (file,true); out.write("'a" + ontologyDest +predicate +
-	 * "'(X,Y) :- nonvar(X),nonvar(Y),findall_odbc_sql([X,Y],'SELECT "+ a +
-	 * column1 + a + ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a +
-	 * " WHERE "+ a+column1+a + " = ? AND "+ a+column2+a + " = ? ', [X,Y]). \n"+
-	 * "'a" + ontologyDest +predicate +
-	 * "'(X,Y) :- nonvar(X), var(Y), findall_odbc_sql([X],'SELECT "+ a + column1
-	 * + a + ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a +
-	 * " WHERE "+ a+column1+a + " = ?', [X,Y]). \n"+ "'a" + ontologyDest
-	 * +predicate +
-	 * "'(X,Y) :- var(X), nonvar(Y), findall_odbc_sql([Y],'SELECT "+ a + column1
-	 * + a + ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a +
-	 * " WHERE "+ a+column2+a + " = ?', [X,Y]). \n"+ // "'a" + ontologyDest
-	 * +predicate + "'(X,Y) :- var(X), var(Y), findall_odbc_sql([],'SELECT "+ a
-	 * + column1 + a + ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a
-	 * + " ', [X,Y]). \n"+ "'d" + ontologyDest +predicate +
-	 * "'(X,Y) :- nonvar(X),nonvar(Y),findall_odbc_sql([X,Y],'SELECT "+ a +
-	 * column1 + a + ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a +
-	 * " WHERE "+ a+column1+a + " = ? AND "+ a+column2+a + " = ? ', [X,Y]). \n"+
-	 * "'d" + ontologyDest +predicate +
-	 * "'(X,Y) :- nonvar(X), var(Y), findall_odbc_sql([X],'SELECT "+ a + column1
-	 * + a + ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a +
-	 * " WHERE "+ a+column1+a + " = ? ', [X,Y]). \n"+ "'d" + ontologyDest
-	 * +predicate + "'(X,Y) :- var(X), nonvar(Y),findall_odbc_sql([Y],'SELECT "+
-	 * a + column1 + a + ", "+ a + column2 + a + " FROM "+ a+db+a + "."+
-	 * a+table+a + " WHERE "+ a+column2+a + " = ? ', [X,Y]). \n"); // "'d" +
-	 * ontologyDest +predicate +
-	 * "'(X,Y) :- var(X), var(Y), findall_odbc_sql([],'SELECT "+ a + column1 + a
-	 * + ", "+ a + column2 + a + " FROM "+ a+db+a + "."+ a+table+a +
-	 * " ', [X,Y]). \n"); out.close(); } catch (IOException e) {
-	 * System.err.println("Mistake with createDataProperties.");
-	 * e.printStackTrace(); } }
-	 * 
-	 * public static void createConcepts(String db, String table, String
-	 * predicate, String column,File file,String ontology, String apostrophe){
-	 * boolean isDL=!ontology.matches(""); String ontologyDest=""; String cl="";
-	 * if(isDL){ ontologyDest=ontology; cl=">"; } String a="\\"+apostrophe; try
-	 * { FileWriter out = new FileWriter (file,true); out.write("'a" +
-	 * ontologyDest +predicate +
-	 * ">'(X) :- nonvar(X),findall_odbc_sql([X],'SELECT "+ a + column + a +
-	 * " FROM "+ a+db+a + "."+ a+table+a + " WHERE "+ a+column+a +
-	 * " = ?', [X]). \n"+ "'a" + ontologyDest +predicate +
-	 * ">'(X) :- var(X), findall_odbc_sql([],'SELECT "+ a + column + a +
-	 * " FROM "+ a+db+a + "."+ a+table+a + " ', [X]). \n"+ "'d" + ontologyDest
-	 * +predicate + ">'(X) :- nonvar(X), findall_odbc_sql([X],'SELECT "+ a +
-	 * column + a + " FROM "+ a+db+a + "."+ a+table+a + " WHERE "+ a+column+a +
-	 * " = ?', [X]). \n"+ "'d" + ontologyDest +predicate +
-	 * ">'(X) :- var(X), findall_odbc_sql([],'SELECT "+ a + column + a +
-	 * " FROM "+ a+db+a + "."+ a+table+a + " ', [X]). \n"); out.close(); } catch
-	 * (IOException e) { System.err.println("Mistake with createConcepts.");
-	 * e.printStackTrace(); } }
-	 * 
-	 */
+
 	public void createObjectProperties(String db, String table1, String table2, String joinColumn1, String joinColumn2,
 			String predicate, String column1, String column2, File file, String ontology, String apostrophe) {
 		boolean isDL = !ontology.matches("");
@@ -372,40 +281,53 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 		String a = "\\" + apostrophe;
 		try {
 			FileWriter out = new FileWriter(file, true);
-			out.write("'a<" + ontologyDest + predicate + ">'(X,Y) :- nonvar(X),nonvar(Y),findall_odbc_sql([X,Y],'SELECT "
-					+ a + column1 + a + ", " + a + column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN "
-					+ a + db + a + "." + a + table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a
-					+ table2 + a + "." + a + joinColumn2 + a + " WHERE " + a + column1 + a + " = ? AND " + a + column2
-					+ a + " = ? ', [X,Y]). \n" + "'a<" + ontologyDest + predicate
-					+ ">'(X,Y) :- nonvar(X), var(Y), findall_odbc_sql([X],'SELECT " + a + column1 + a + ", " + a
-					+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "." + a
-					+ table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2 + a + "." + a
-					+ joinColumn2 + a + " WHERE " + a + column1 + a + " = ?', [X,Y]). \n" + "'a<" + ontologyDest
-					+ predicate + ">'(X,Y) :- var(X), nonvar(Y),findall_odbc_sql([Y],'SELECT " + a + column1 + a + ", "
-					+ a + column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "." + a
-					+ table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2 + a + "." + a
-					+ joinColumn2 + a + " WHERE " + a + column2 + a + " = ?', [X,Y]). \n" + "'a<" + ontologyDest
-					+ predicate + ">'(X,Y) :- var(X), var(Y), findall_odbc_sql([],'SELECT " + a + column1 + a + ", " + a
-					+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "." + a
-					+ table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2 + a + "." + a
-					+ joinColumn2 + a + " ', [X,Y]). \n" + "'d<" + ontologyDest + predicate
-					+ ">'(X,Y) :- nonvar(X),nonvar(Y),findall_odbc_sql([X,Y],'SELECT " + a + column1 + a + ", " + a
-					+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "." + a
-					+ table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2 + a + "." + a
-					+ joinColumn2 + a + " WHERE " + a + column1 + a + " = ? AND " + a + column2 + a
-					+ " = ? ', [X,Y]). \n" + "'d<" + ontologyDest + predicate
-					+ ">'(X,Y) :- nonvar(X), var(Y), findall_odbc_sql([X],'SELECT " + a + column1 + a + ", " + a
-					+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "." + a
-					+ table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2 + a + "." + a
-					+ joinColumn2 + a + " WHERE " + a + column1 + a + " = ? ', [X,Y]). \n" + "'d<" + ontologyDest
-					+ predicate + ">'(X,Y) :- var(X), nonvar(Y), findall_odbc_sql([Y],'SELECT " + a + column1 + a + ", "
-					+ a + column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "." + a
-					+ table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2 + a + "." + a
-					+ joinColumn2 + a + " WHERE " + a + column2 + a + " = ? ', [X,Y]). \n" + "'d<" + ontologyDest
-					+ predicate + ">'(X,Y) :- var(X), var(Y), findall_odbc_sql([],'SELECT " + a + column1 + a + ", " + a
-					+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "." + a
-					+ table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2 + a + "." + a
-					+ joinColumn2 + a + " ', [X,Y]). \n");
+			out.write(
+					"'a<" + ontologyDest + predicate + ">'(X,Y) :- nonvar(X),nonvar(Y),findall_odbc_sql([X,Y],'SELECT "
+							+ a + column1 + a + ", " + a + column2 + a + " FROM " + a + db + a + "." + a + table1 + a
+							+ " JOIN " + a + db + a + "." + a + table2 + a + " ON " + a + table1 + a + "." + a
+							+ joinColumn1 + a + "=" + a + table2 + a + "." + a + joinColumn2 + a + " WHERE " + a
+							+ column1 + a + " = ? AND " + a + column2 + a + " = ? ', [X1,Y1]), X is floor(X1), Y is floor(Y1). \n" +
+
+							"'a<" + ontologyDest + predicate
+							+ ">'(X,Y) :- nonvar(X), var(Y), findall_odbc_sql([X],'SELECT " + a + column1 + a + ", " + a
+							+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "."
+							+ a + table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2
+							+ a + "." + a + joinColumn2 + a + " WHERE " + a + column1 + a + " = ?', [X1,Y1]), X is floor(X1), Y is floor(Y1). \n" +
+
+							"'a<" + ontologyDest + predicate
+							+ ">'(X,Y) :- var(X), nonvar(Y),findall_odbc_sql([Y],'SELECT " + a + column1 + a + ", " + a
+							+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "."
+							+ a + table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2
+							+ a + "." + a + joinColumn2 + a + " WHERE " + a + column2 + a + " = ?', [X1,Y1]), X is floor(X1), Y is floor(Y1). \n" +
+
+							"'a<" + ontologyDest + predicate + ">'(X,Y) :- var(X), var(Y), findall_odbc_sql([],'SELECT "
+							+ a + column1 + a + ", " + a + column2 + a + " FROM " + a + db + a + "." + a + table1 + a
+							+ " JOIN " + a + db + a + "." + a + table2 + a + " ON " + a + table1 + a + "." + a
+							+ joinColumn1 + a + "=" + a + table2 + a + "." + a + joinColumn2 + a + " ', [X1,Y1]), X is floor(X1), Y is floor(Y1). \n" +
+
+							"'d<" + ontologyDest + predicate
+							+ ">'(X,Y) :- nonvar(X),nonvar(Y),findall_odbc_sql([X,Y],'SELECT " + a + column1 + a + ", "
+							+ a + column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a
+							+ "." + a + table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a
+							+ table2 + a + "." + a + joinColumn2 + a + " WHERE " + a + column1 + a + " = ? AND " + a
+							+ column2 + a + " = ? ', [X1,Y1]), X is floor(X1), Y is floor(Y1). \n" +
+
+							"'d<" + ontologyDest + predicate
+							+ ">'(X,Y) :- nonvar(X), var(Y), findall_odbc_sql([X],'SELECT " + a + column1 + a + ", " + a
+							+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "."
+							+ a + table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2
+							+ a + "." + a + joinColumn2 + a + " WHERE " + a + column1 + a + " = ? ', [X1,Y1]), X is floor(X1), Y is floor(Y1). \n" +
+
+							"'d<" + ontologyDest + predicate
+							+ ">'(X,Y) :- var(X), nonvar(Y), findall_odbc_sql([Y],'SELECT " + a + column1 + a + ", " + a
+							+ column2 + a + " FROM " + a + db + a + "." + a + table1 + a + " JOIN " + a + db + a + "."
+							+ a + table2 + a + " ON " + a + table1 + a + "." + a + joinColumn1 + a + "=" + a + table2
+							+ a + "." + a + joinColumn2 + a + " WHERE " + a + column2 + a + " = ? ', [X1,Y1]), X is floor(X1), Y is floor(Y1). \n" +
+
+							"'d<" + ontologyDest + predicate + ">'(X,Y) :- var(X), var(Y), findall_odbc_sql([],'SELECT "
+							+ a + column1 + a + ", " + a + column2 + a + " FROM " + a + db + a + "." + a + table1 + a
+							+ " JOIN " + a + db + a + "." + a + table2 + a + " ON " + a + table1 + a + "." + a
+							+ joinColumn1 + a + "=" + a + table2 + a + "." + a + joinColumn2 + a + " ', [X1,Y1]), X is floor(X1), Y is floor(Y1). \n");
 			out.close();
 		} catch (IOException e) {
 			System.err.println("Mistake with createDataProperties.");

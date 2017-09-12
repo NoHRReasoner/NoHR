@@ -1,5 +1,6 @@
 package pt.unl.fct.di.novalincs.nohr.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,9 +16,11 @@ public class DBMappingImpl implements DBMapping {
 	/** ODBC connection that is beeing used */
 	private final ODBCDriver odbcDriver;
 	
-	/** Table that is being mapped */
-	private final String table;
-
+	/** Tables that are being mapped */
+	private final String[][]  table;
+	
+//	private on 
+	
 	/** Columns from the table */
 	private final List<String> columns;
 
@@ -26,22 +29,25 @@ public class DBMappingImpl implements DBMapping {
 	
 	
 
-	public DBMappingImpl(ODBCDriver driver,String table, List<String> columns, String predicate) {
+	public DBMappingImpl(ODBCDriver driver,String[][] table, List<String> columns, String predicate) {
 		super();
 		this.odbcDriver=driver;
 		this.table = table;
-		this.columns = columns;
+		this.columns = new ArrayList<String>();
+		for(String s:columns)
+			this.columns.add(s);
 		this.predicate = predicate;
 	}
+	
 
-	public DBMappingImpl(ODBCDriver driver, String table, String cols, String predicate) {
-		super();
-		this.odbcDriver=driver;
-		this.table = table;
-		this.columns = Arrays.asList(cols.split("\\s*,\\s*"));
-		this.predicate = predicate;
-
-	}
+//	public DBMappingImpl(ODBCDriver driver, String[][] table, String cols, String predicate) {
+//		super();
+//		this.odbcDriver=driver;
+//		this.table = table;
+//		this.columns = Arrays.asList(cols.split("\\s*,\\s*"));
+//		this.predicate = predicate;
+//
+//	}
 
 	@Override
 	public List<String> getColumns() {
@@ -56,8 +62,8 @@ public class DBMappingImpl implements DBMapping {
 			return "";
 
 		String tmpCols = new String("");
-		for (int i = 0; i < columns.size(); i++)
-			tmpCols = tmpCols.concat(columns.get(i) + ",");
+		for (String s: columns)
+			tmpCols = tmpCols.concat(s + ",");
 
 		if (columns.size() > 0)
 			tmpCols = tmpCols.substring(0, tmpCols.length() - 1);
@@ -66,7 +72,7 @@ public class DBMappingImpl implements DBMapping {
 	}
 
 	@Override
-	public String getTable() {
+	public String[][] getTable() {
 		return table;
 	}
 
@@ -94,13 +100,23 @@ public class DBMappingImpl implements DBMapping {
 	public String toString() {
 //		System.out.println("DBMappingImpl.toString() called");
 		String tmpCols = new String("");
-		for (int i = 0; i < columns.size(); i++) {
+		for (int i = 0; i < columns.size(); i++) { 
 			tmpCols = tmpCols.concat(columns.get(i) + ",");
 		}
 		if (columns.size() > 0) {
 			tmpCols = tmpCols.substring(0, tmpCols.length() - 1);
 		}
-		return predicate + "  <-  "+table+"("+tmpCols+") _____"+odbcDriver.toString();
+		return predicate + "  <-  "+getTables()+"("+tmpCols+")";
+	}
+	
+	public String getTables(){
+		String temp=new String();
+		for(int i=0;i<table.length;i++){
+			if(i>0)
+				temp+=",";
+			temp+=table[i][0];
+		}
+		return temp;
 	}
 	
 	public String toRule() {

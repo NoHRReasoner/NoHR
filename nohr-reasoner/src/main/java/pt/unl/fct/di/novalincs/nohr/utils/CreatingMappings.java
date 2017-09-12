@@ -30,7 +30,8 @@ public class CreatingMappings {
 		return list;
 	}
 	
-	public void createPredicateMapping(String table,  String[]  columns, String predicate, Boolean isDL,
+	public void createPredicateMapping(String table,
+			String[] columns, boolean [] floats, String predicate, Boolean isDL,
 			File file, String ontology, String apostrophe) {
 
 		int arrity = columns.length;
@@ -66,14 +67,19 @@ public class CreatingMappings {
 					}
 					currRule +=" WHERE " + where;
 				}
-//				list or mapped values and the end of the rule
-				currRule +=" ', [" + varList(arrity) + "]). \n";
+//				list of mapped values
+				currRule +=" ', [" + returnVar(floats) + "])";
 				
+//				add float columns casting to integer
+				currRule += setCast(floats);
+				
+//				ending of the rule
+				String ending=". \n";
 //				adding original rule
-					rules += predicate(false, isDL, predicate) + currRule;
+					rules += predicate(false, isDL, predicate) + currRule + ending;
 					
 //				adding doubled rule
-					rules += predicate(true, isDL, predicate) + currRule;
+					rules += predicate(true, isDL, predicate) + currRule + ending;
 			}
 			out.write(rules);
 			out.close();
@@ -81,6 +87,29 @@ public class CreatingMappings {
 			System.err.println("Mistake with createDataProperties.");
 			e.printStackTrace();
 		}
+	}
+	
+	public String setCast(boolean [] floats){
+		String cast="";
+		for(int i=0;i<floats.length;i++){
+			if(floats[i]){
+				cast += ", " + getVar(floats.length, i) + " is floor(" + getVar(floats.length, i) + "c)" ;
+			}
+		}
+		
+		return cast;
+	}
+	
+	public String returnVar(boolean [] floats){
+		String returnVar="";
+		for(int i=0;i<floats.length;i++){
+			if(floats[i]){
+				returnVar += getVar(floats.length, i) + "c" +",";
+			}else
+				returnVar += getVar(floats.length, i) +",";
+		}
+				
+		return returnVar.substring(0, returnVar.length()-1);
 	}
 
 	public String table(String table) {
@@ -117,15 +146,8 @@ public class CreatingMappings {
 //	list of variables base on the arrity of the predicate
 	private String varList(int n) {
 		String vars = "";
-		if (n > 9){
-			for (int i = 0; i < n; i++)
-				if(i>10)
-					vars = vars + "V" + i + ",";
-				else
-					vars = vars + "V0" + i + ",";
-		}else
-			for (int i = 0; i < n; i++)
-				vars = vars + "V" + i + ",";
+		for (int i = 0; i < n; i++)
+			vars += getVar(n,i) + ",";
 		return vars.substring(0, vars.length() - 1);
 	}
 
@@ -159,20 +181,23 @@ public class CreatingMappings {
 		}
 		return sets;
 	}
+	
+	public String getVar(int size, int i){
+		if(size>9){
+			if(i>9)
+				return "V"+i;
+			else
+				return "V0"+i;
+		}else
+			return "V"+i;
+	}
 
 //	function used to generate all combinations of var/nonvar arguments
-	public static void varGenerator(int n, List<Set<String>> nonvarsSet, List<Set<String>> varsSet) {
+	public void varGenerator(int n, List<Set<String>> nonvarsSet, List<Set<String>> varsSet) {
 		Set<String> mySet = new HashSet<String>();
 		
-		if (n > 9){
 			for (int i = 0; i < n; i++)
-				if(i>10)
-					mySet.add("V" + i);
-				else
-					mySet.add("V0" + i);
-		}else
-			for (int i = 0; i < n; i++)
-				mySet.add("V" + i);
+					mySet.add(getVar(n,i));
 		
 		
 		for (Set<String> s : powerSet(mySet)) {

@@ -64,7 +64,7 @@ public class DBMappingSetPersistenceManager {
      * @param DBMappingSet the DBMappingSet where the mappings will be loaded.
      * @throws IOException
      */
-    public void load(File file, DBMappingSet dbMappingSet) throws IOException, PrologParserException, ParseException {
+    public void load(File file, DBMappingSet dbMappingSet) throws IOException{
 
     }
 

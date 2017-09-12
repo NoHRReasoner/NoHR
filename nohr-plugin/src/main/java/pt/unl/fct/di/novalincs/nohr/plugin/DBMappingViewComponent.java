@@ -90,20 +90,20 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
                 final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 final int returnVal = fc.showOpenDialog(DBMappingViewComponent.this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        final File file = fc.getSelectedFile();
-                        DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        dbMappingListModel.load(file);
-                    } catch (final PrologParserException e) {
-                        Messages.invalidExpression(DBMappingViewComponent.this, e);
-                    } catch (final IOException e) {
-                    } catch (ParseException ex) {
-                        Logger.getLogger(DBMappingViewComponent.class.getName()).log(Level.SEVERE, null, ex);
-                    } finally {
-                    	DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    }
-                }
+//                if (returnVal == JFileChooser.APPROVE_OPTION) {
+//                    try {
+//                        final File file = fc.getSelectedFile();
+//                        DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//                        dbMappingListModel.load(file);
+//                    } catch (final Exception e) {
+//                        Messages.invalidmappingFile(DBMappingViewComponent.this, e);
+//                    } catch (final IOException e) {
+//                    } catch (ParseException ex) {
+//                        Logger.getLogger(DBMappingViewComponent.class.getName()).log(Level.SEVERE, null, e0x);
+//                    } finally {
+//                    	DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+//                    }
+//                }
             }
         });
 

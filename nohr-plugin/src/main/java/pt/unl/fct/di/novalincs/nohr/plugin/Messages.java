@@ -103,6 +103,10 @@ public class Messages {
 				"Could not save the DB mapping." + System.lineSeparator() + System.lineSeparator() + e.getMessage(),
 				"Unsuccessful save", JOptionPane.WARNING_MESSAGE);
 	}
+	
+	public static void invalidmappingFile(Component parent, final Exception e) {
+		JOptionPane.showMessageDialog(parent, e.getMessage(), "File error", JOptionPane.WARNING_MESSAGE);
+	}
 
 	/**
 	 * The message shown when the ontology has some axiom of an unsupported type.

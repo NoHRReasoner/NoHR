@@ -4,6 +4,7 @@ import java.awt.Container;
 
 import javax.swing.JOptionPane;
 
+import org.protege.editor.core.ui.util.JOptionPaneEx;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.UIHelper;
 
@@ -39,22 +40,22 @@ public class DBMappingEditor {
     public void clear() {
     	editor.refreshComboBox();
     	editor.setODBCDriver(null);
-        editor.setTableText("");
-        editor.setColumnsText("");
+        editor.setTables(null);
+        editor.setColumns(null);
         editor.setPredicateText("");
     }
 
     public void setDBMapping(DBMapping dbMapping) {
     	editor.refreshComboBox();
     	editor.setODBCDriver(dbMapping.getODBC());
-    	editor.setTableText(dbMapping.getTable());
-        editor.setColumnsText(dbMapping.getColumnsString());
+    	editor.setTables(dbMapping.getTable());
+        editor.setColumns(dbMapping.getColumns());
         editor.setPredicateText(dbMapping.getPredicate());
     }
 
     public DBMapping show() {
-        final UIHelper uiHelper = new UIHelper(editorKit);
-        final int ret = uiHelper.showDialog("Database-Mapping Editor", editor, null);
+        final int ret = JOptionPaneEx.showConfirmDialog(dbMappingViewComponent, "Database-Mapping Editor", editor,
+				JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
 
         if (ret == JOptionPane.OK_OPTION) {
         	DBMapping tmp=editor.getDBMapping();

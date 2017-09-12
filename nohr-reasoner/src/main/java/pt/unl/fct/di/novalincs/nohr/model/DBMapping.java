@@ -15,7 +15,7 @@ public interface DBMapping   {
 
 	public List<String> getColumns();
 
-	public String getTable();
+	public String[][] getTable();
 
 	public String getPredicate(); 
 	

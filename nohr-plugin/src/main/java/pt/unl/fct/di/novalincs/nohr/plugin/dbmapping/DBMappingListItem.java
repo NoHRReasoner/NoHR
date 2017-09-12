@@ -48,7 +48,7 @@ class DBMappingListItem implements MListItem {
 
     @Override
     public String getTooltip() {
-    	return "Greska";
+    	return "NoHR Database Mapping";
 //        return dbMapping.accept(new NoHRFormatVisitor(true));
     }
 
