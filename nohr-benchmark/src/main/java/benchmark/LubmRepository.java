@@ -37,6 +37,8 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
@@ -131,7 +133,11 @@ public class LubmRepository {
             program = Model.program();
         }
 
-        hybridKB = new NoHRHybridKB(configuration, ontology, program, vocabulary, profiles);
+//        TODO define properly the mappings
+        
+        DBMappingSet dbMappings = Model.dbMappingSet();
+        
+        hybridKB = new NoHRHybridKB(configuration, ontology, program, dbMappings, vocabulary, profiles);
 
         System.gc();
         return true;

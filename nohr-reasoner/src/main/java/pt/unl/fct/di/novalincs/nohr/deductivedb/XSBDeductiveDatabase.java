@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
@@ -23,8 +25,13 @@ import com.declarativa.interprolog.PrologEngine;
 import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
 
+import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRScanner;
+import pt.unl.fct.di.novalincs.nohr.parsing.TokenType;
 import pt.unl.fct.di.novalincs.nohr.utils.CreatingMappings;
 
 /**
@@ -78,8 +85,23 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	@Override
 	protected void load() {
-
+		
 		 vedran();
+//		 final List<Term> kbTerms = new LinkedList<>();
+//
+//		 if (new NoHRScanner("crime(?V0)").next(TokenType.FUNCTOR)) {
+//			 System.out.println("Dobar format");
+//		 }else{
+//			 System.out.println("nije dobar format");
+//		 }
+//		 
+//		 final Term kbTerm = Model.var("V0");
+//		 kbTerms.add(kbTerm);
+//		 Rule x = Model.rule(Model.atom(vocabulary, "crime", kbTerms));
+//		 Model.var("V0");
+//		 x.getHead().getFunctor().accept(formatVisitor);
+//		 System.out.println("Pravilo: "+ x.getHead().getFunctor().accept(formatVisitor));
+//		 System.out.println("Pravilo: "+formatVisitor.visit(x));
 //		giannis();
 		 
 
@@ -90,38 +112,38 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	public void vedran() {
 
 		File dest = new File("C:\\Users\\VedranPC\\Desktop\\rules.txt");
-		String ontologyDest = "http://www.semanticweb.org/vedranpc/ontologies/2017/7/crimes#";
-		try {
-			// connection to the database
-			FileWriter out = new FileWriter(file, true);
-			out.write(":- import odbc_open/3 from odbc_call.\n" + ":- import findall_odbc_sql/3 from odbc_call.\n" +
-			// ":- import odbc_import/2 from odbc_call.\n"+
-					":- import odbc_close/0 from odbc_call.\n" + ":- import odbc_data_sources/2 from odbc_call.\n"
-					+ "?- odbc_open(test,root,root).\n");
-			out.close();
-
-		} catch (IOException e) {
-			System.err.println("Greskaa!");
-			e.printStackTrace();
-		}
-
-		CreatingMappings mapRule = new CreatingMappings("`", "test",
-				"http://www.semanticweb.org/vedranpc/ontologies/2017/7/crimes#");
-
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "Primary_Type" },
-				new boolean[] { false, false }, "crimeType", true, dest, ontologyDest, "`");
-
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID" }, new boolean[] { false }, "crime",
-				true, file, ontologyDest, "`");
-
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "District" }, new boolean[] { false, false },
-				"district", true, file, ontologyDest, "`");
-
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "Primary_Type" },
-				new boolean[] { false, false }, "crimeType", true, file, ontologyDest, "`");
-
-		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "District" },
-				new boolean[] { false, false }, "crimeDristrict", true, file, ontologyDest, "`");
+//		String ontologyDest = "http://www.semanticweb.org/vedranpc/ontologies/2017/7/crimes#";
+//		try {
+//			// connection to the database
+//			FileWriter out = new FileWriter(file, true);
+//			out.write(":- import odbc_open/3 from odbc_call.\n" + ":- import findall_odbc_sql/3 from odbc_call.\n" +
+//			// ":- import odbc_import/2 from odbc_call.\n"+
+//					":- import odbc_close/0 from odbc_call.\n" + ":- import odbc_data_sources/2 from odbc_call.\n"
+//					+ "?- odbc_open(test,root,root).\n");
+//			out.close();
+//
+//		} catch (IOException e) {
+//			System.err.println("Greskaa!");
+//			e.printStackTrace();
+//		}
+//
+//		CreatingMappings mapRule = new CreatingMappings("`", "test",
+//				"http://www.semanticweb.org/vedranpc/ontologies/2017/7/crimes#");
+//
+//		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "Primary_Type" },
+//				new boolean[] { false, false }, "crimeType", true, dest, ontologyDest, "`");
+//
+//		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID" }, new boolean[] { false }, "crime",
+//				true, file, ontologyDest, "`");
+//
+//		mapRule.createPredicateMapping("crimesindex1", new String[] { "District" }, new boolean[] { false, false },
+//				"district", true, file, ontologyDest, "`");
+//
+//		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "Primary_Type" },
+//				new boolean[] { false, false }, "crimeType", true, file, ontologyDest, "`");
+//
+//		mapRule.createPredicateMapping("crimesindex1", new String[] { "crimesID", "District" },
+//				new boolean[] { false, false }, "crimeDristrict", true, file, ontologyDest, "`");
 
 		try {
 			FileUtils.copyFile(file, dest);

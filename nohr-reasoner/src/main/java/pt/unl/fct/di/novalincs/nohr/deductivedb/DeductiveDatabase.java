@@ -127,6 +127,15 @@ public interface DeductiveDatabase {
      * @return a new {@link DatabaseProgram program}.
      */
     DatabaseProgram createProgram();
+    
+    
+    /**
+     * Creates and loads a new {@link DatabaseDBMappings dbMappings}.
+     *
+     * @return a new {@link DatabaseDBMappings dbMappings}.
+     */
+    DatabaseDBMappings createDBMappings();
+    
 
     /**
      * Dispose all {@link DatabaseProgram programs} and release all the

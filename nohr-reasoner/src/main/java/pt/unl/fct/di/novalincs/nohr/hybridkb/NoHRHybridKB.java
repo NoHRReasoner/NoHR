@@ -26,12 +26,17 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import com.declarativa.interprolog.util.IPException;
 import com.declarativa.interprolog.util.IPPrologError;
 
+import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseDBMappings;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DatabaseProgram;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.DeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.PrologEngineCreationException;
 import pt.unl.fct.di.novalincs.nohr.deductivedb.XSBDeductiveDatabase;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.model.Constant;
+import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingsSetChangeListener;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
@@ -68,6 +73,11 @@ public class NoHRHybridKB implements HybridKB {
      * The <i>program</i> component of this {@link HybridKB}
      */
     private final Program program;
+    
+    /**
+    * The <i>database mappings</i> component of this {@link HybridKB}
+    */
+   private final DBMappingSet dbMappings;
 
     /**
      * The {@link Vocabulary} that this {@link HybridKB} applies.
@@ -95,6 +105,14 @@ public class NoHRHybridKB implements HybridKB {
      */
     private final QueryProcessor queryProcessor;
 
+    
+    /**
+     * The {@link DatabaseDBMappings} that contains the database mappings of the
+     * <i>dbMappings</i> component.
+     */
+    private final DatabaseDBMappings databaseMappings;
+    
+    
     /**
      * The {@link DatabaseProgram} that contains the doubled (or only the
      * original ones, if the ontology doesn't have disjunctions) rules of the
@@ -131,6 +149,8 @@ public class NoHRHybridKB implements HybridKB {
      * {@link Program} changes.
      */
     private final ProgramChangeListener programChangeListener;
+    
+    private final DBMappingsSetChangeListener dbMappingsSetChangeListener;
 
     private final VocabularyChangeListener vocabularyChangeListener;
 
@@ -171,7 +191,7 @@ public class NoHRHybridKB implements HybridKB {
             IPException,
             UnsupportedAxiomsException,
             PrologEngineCreationException {
-        this(configuration, ontology, Model.program(), null, profile);
+        this(configuration, ontology, Model.program(), Model.dbMappingSet(), null, profile);
     }
 
     /**
@@ -183,6 +203,7 @@ public class NoHRHybridKB implements HybridKB {
      * underlying Prolog engine is located.
      * @param ontology the <i>ontology</i> component of this {@link HybridKB}.
      * @param program the <i>program</i> component of this {@link HybridKB}.
+     * @param dbMappings the <i>database mappings</i> component of this {@link HybridKB}
      * @throws OWLProfilesViolationsException if {@code profile != null} and
      * {@code ontology} isn't in the profile {@code profile}; or
      * {@code profile == null} and the {@code ontology} isn't in any supported
@@ -194,12 +215,13 @@ public class NoHRHybridKB implements HybridKB {
      */
     public NoHRHybridKB(final NoHRHybridKBConfiguration configuration,
             final OWLOntology ontology,
-            final Program program)
+            final Program program,
+            final DBMappingSet dbMappings)
             throws OWLProfilesViolationsException,
             IPException,
             UnsupportedAxiomsException,
             PrologEngineCreationException {
-        this(configuration, ontology, program, null, null);
+        this(configuration, ontology, program, dbMappings, null, null);
     }
 
     /**
@@ -211,6 +233,7 @@ public class NoHRHybridKB implements HybridKB {
      * underlying Prolog engine is located.
      * @param ontology the <i>ontology</i> component of this {@link HybridKB}.
      * @param program the <i>program</i> component of this {@link HybridKB}.
+     * @param dbMappings the <i>database mappings</i> component of this {@link HybridKB}
      * @param profile the {@link Profile OWL profile} that will be considered
      * during the ontology translation. That will determine which the
      * translation - {@link <a>A Correct EL Oracle for NoHR (Technical
@@ -236,7 +259,8 @@ public class NoHRHybridKB implements HybridKB {
     public NoHRHybridKB(final NoHRHybridKBConfiguration configuration,
             final OWLOntology ontology,
             final Program program,
-            Vocabulary vocabulary,
+            DBMappingSet dbMappings,
+            Vocabulary vocabulary, 
             Profile profile)
             throws OWLProfilesViolationsException, UnsupportedAxiomsException, PrologEngineCreationException {
 
@@ -246,6 +270,7 @@ public class NoHRHybridKB implements HybridKB {
         this.configuration = configuration;
         this.ontology = ontology;
         this.program = program;
+        this.dbMappings = dbMappings;
 
         if (vocabulary != null) {
             if (!vocabulary.getOntology().equals(ontology)) {
@@ -260,6 +285,7 @@ public class NoHRHybridKB implements HybridKB {
         assert this.vocabulary != null;
         deductiveDatabase = new XSBDeductiveDatabase(configuration.getXsbDirectory(), this.vocabulary);
         doubledProgram = deductiveDatabase.createProgram();
+        databaseMappings = deductiveDatabase.createDBMappings();
         queryProcessor = new QueryProcessor(deductiveDatabase);
         ontologyTranslatorFactory = new OntologyTranslatorFactory(configuration.getOntologyTranslationConfiguration());
         ontologyTranslator = ontologyTranslatorFactory.createOntologyTranslator(ontology, this.vocabulary, deductiveDatabase, profile);
@@ -299,6 +325,34 @@ public class NoHRHybridKB implements HybridKB {
                 hasProgramChanges = true;
             }
         };
+        
+        dbMappingsSetChangeListener = new DBMappingsSetChangeListener() {
+			
+			@Override
+			public void updated(DBMapping oldDBMapping, DBMapping newDBMapping) {
+				hasProgramChanges = true;
+				
+			}
+			
+			@Override
+			public void removed(DBMapping dBMapping) {
+				hasProgramChanges = true;
+				
+			}
+			
+			@Override
+			public void cleared() {
+				hasProgramChanges = true;
+				
+			}
+			
+			@Override
+			public void added(DBMapping dBMapping) {
+				hasProgramChanges = true;
+				
+			}
+		};
+
         vocabularyChangeListener = new VocabularyChangeListener() {
 
             @Override
@@ -314,6 +368,7 @@ public class NoHRHybridKB implements HybridKB {
 
         this.ontology.getOWLOntologyManager().addOntologyChangeListener(ontologyChangeListener);
         this.program.addListener(programChangeListener);
+        this.dbMappings.addListener(dbMappingsSetChangeListener);
         this.vocabulary.addListener(vocabularyChangeListener);
 
         preprocess();
@@ -351,6 +406,7 @@ public class NoHRHybridKB implements HybridKB {
         deductiveDatabase.dispose();
         ontology.getOWLOntologyManager().removeOntologyChangeListener(ontologyChangeListener);
         program.removeListener(programChangeListener);
+        dbMappings.removeListener(dbMappingsSetChangeListener);
         vocabulary.removeListener(vocabularyChangeListener);
     }
 
@@ -371,6 +427,14 @@ public class NoHRHybridKB implements HybridKB {
     @Override
     public Program getProgram() {
         return program;
+    }
+    
+    /**
+     * @return the database mappings
+     */
+    @Override
+    public DBMappingSet getDBMappings() {
+        return dbMappings;
     }
 
     @Override
@@ -426,7 +490,7 @@ public class NoHRHybridKB implements HybridKB {
      * loaded in {@link #deductiveDatabase} are updated, if the ontology has
      * changed since the last call; {@link #doubledProgram} is updated, if they
      * were introduced disjunctions in the ontology, or if the program has
-     * changed, since the last call.
+     * changed, since the last call. Also {@link #databaseMappings} is updated accordingly.
      *
      * @throws UnsupportedAxiomsException if the current version of the ontology
      * has some axioms of an unsupported type.
@@ -447,7 +511,7 @@ public class NoHRHybridKB implements HybridKB {
         }
 
         if (hasProgramChanges || ontologyTranslator.requiresDoubling() != hadDisjunctions) {
-            RuntimesLogger.start("rules parsing");
+        	RuntimesLogger.start("rules parsing");
             doubledProgram.clear();
             if (ontologyTranslator.requiresDoubling()) {
                 for (final Rule rule : program) {
@@ -459,6 +523,26 @@ public class NoHRHybridKB implements HybridKB {
                     doubledProgram.add(rule.accept(originalPredicates));
                 }
             }
+            
+            databaseMappings.clear();
+            final ModelVisitor originalEncoder = new PredicateTypeVisitor(PredicateType.ORIGINAL);
+            final ModelVisitor doubleEncoder = new PredicateTypeVisitor(PredicateType.DOUBLE);
+            if (ontologyTranslator.requiresDoubling()) {
+            	for(DBMapping dbMapping : dbMappings){
+            		DBMapping originalMapping, doubleMapping;
+            		originalMapping = new DBMappingImpl(dbMapping, originalEncoder);
+            		doubleMapping = new DBMappingImpl(dbMapping, doubleEncoder);
+            		databaseMappings.add(originalMapping);
+            		databaseMappings.add(doubleMapping);
+            	}
+            }else{
+            	for(DBMapping dbMapping : dbMappings){
+            		DBMapping originalMapping;
+            		originalMapping = new DBMappingImpl(dbMapping, originalEncoder);
+            		databaseMappings.add(originalMapping);
+            	}
+            }
+            
 
             RuntimesLogger.stop("rules parsing", "loading");
         }

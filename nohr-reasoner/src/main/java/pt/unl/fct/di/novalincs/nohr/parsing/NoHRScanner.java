@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  *
  * @author Nuno Costa
  */
-class NoHRScanner {
+public class NoHRScanner {
 
     private static final Pattern DOUBLE_SLASH = Pattern.compile("\\\\\\\\");
 
@@ -73,7 +73,7 @@ class NoHRScanner {
      *
      * @param str the string that will be scanned.
      */
-    NoHRScanner(String str) {
+    public NoHRScanner(String str) {
         scanner = new Scanner(str);
         length = str.length();
         position = 0;
@@ -125,7 +125,7 @@ class NoHRScanner {
      * @param type the type of the token to consume.
      * @return true iff a token of the type {@code type} was found.
      */
-    boolean next(TokenType type) {
+    public boolean next(TokenType type) {
         try {
             scanner.skip(type.pattern());
             position = scanner.match().end();

@@ -1,20 +1,27 @@
 package pt.unl.fct.di.novalincs.nohr.plugin;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.novalincs.nohr.deductivedb.NoHRFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
+import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
+import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
 
 /**
  * Reads and writes {@link DBMappingSet dbMappingSet} with the Prolog syntax. Uses
@@ -52,7 +59,6 @@ public class DBMappingSetPersistenceManager {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (final DBMapping dbMapping : dbMappingSet) {
             	writer.write(dbMapping.getFileSyntax());
-                writer.write(";");
                 writer.newLine();
             }
         }
@@ -65,7 +71,15 @@ public class DBMappingSetPersistenceManager {
      * @throws IOException
      */
     public void load(File file, DBMappingSet dbMappingSet) throws IOException{
-
+    	FileReader in = new FileReader(file);
+        BufferedReader input = new BufferedReader(in);
+        String mapping;
+        int line=1;
+        while ((mapping = input.readLine()) != null) {
+        	dbMappingSet.add(new DBMappingImpl(mapping, ODBCPreferences.getDrivers(),line));
+        	line++;
+        }
+        
     }
 
 //    private Rule nextRule(PrologCharDataSource src) throws IOException, PrologParserException {

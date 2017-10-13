@@ -69,7 +69,8 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
     @Override
     public void initialiseOWLView() throws Exception {
         setLayout(new BorderLayout(10, 10));
-        dbMappingEditor = new DBMappingEditor(getOWLEditorKit(),this);
+       
+        dbMappingEditor = new DBMappingEditor( getVocabulary(),this);
 //        define the object that represents the tab
         final DBMappingListModel dbMappingListModel = getDBMappingListModel();
 //        reset();
@@ -81,15 +82,15 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
         final Box buttonHolder = new Box(BoxLayout.X_AXIS);
 
 //        TODO
-        final JButton openButton = new JButton(new AbstractAction("Open-X") {
+        final JButton openButton = new JButton(new AbstractAction("Open") {
 
             private static final long serialVersionUID = -2176187025244957420L;
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
-                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                final int returnVal = fc.showOpenDialog(DBMappingViewComponent.this);
+//                final JFileChooser fc = new JFileChooser(UIUtil.getCurrentFileDirectory());
+//                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+//                final int returnVal = fc.showOpenDialog(DBMappingViewComponent.this);
 //                if (returnVal == JFileChooser.APPROVE_OPTION) {
 //                    try {
 //                        final File file = fc.getSelectedFile();
@@ -97,9 +98,6 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
 //                        dbMappingListModel.load(file);
 //                    } catch (final Exception e) {
 //                        Messages.invalidmappingFile(DBMappingViewComponent.this, e);
-//                    } catch (final IOException e) {
-//                    } catch (ParseException ex) {
-//                        Logger.getLogger(DBMappingViewComponent.class.getName()).log(Level.SEVERE, null, e0x);
 //                    } finally {
 //                    	DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 //                    }
@@ -108,7 +106,7 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
         });
 
 //      TODO
-        final JButton saveButton = new JButton(new AbstractAction("Save-X") {
+        final JButton saveButton = new JButton(new AbstractAction("Save") {
 
             private static final long serialVersionUID = -2176187025244957420L;
 
@@ -133,7 +131,7 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
         });
         
 //      TODO
-        final JButton clearButton = new JButton(new AbstractAction("Clear-X") {
+        final JButton clearButton = new JButton(new AbstractAction("Clear") {
 
             private static final long serialVersionUID = -2176187025244957420L;
 

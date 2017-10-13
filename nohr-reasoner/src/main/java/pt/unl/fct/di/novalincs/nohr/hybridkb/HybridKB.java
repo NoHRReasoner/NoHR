@@ -20,6 +20,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
@@ -92,6 +93,17 @@ public interface HybridKB {
     Program getProgram();
 
     /**
+     * Returns the <i>database mappings</i> component of this {@link HybridKB <i>Hybrid
+     * MKNF knowledge base</i>}.
+     *
+     * @return returns the <i>database mappings</i> component of this {@link HybridKB
+     * <i>Hybrid MKNF knowledge base</i>}
+     */
+    
+    
+    DBMappingSet getDBMappings();
+    
+    /**
      * Returns the {@link Vocabulary} that this {@link HybridKB} applies.
      *
      * @return the {@link Vocabulary} that this {@link HybridKB} applies.
@@ -146,5 +158,6 @@ public interface HybridKB {
      */
     Answer oneAnswer(Query query, boolean trueAnswers, boolean undefinedAnswers, boolean inconsistentAnswers)
             throws OWLProfilesViolationsException, UnsupportedAxiomsException;
+
 
 }

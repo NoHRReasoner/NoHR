@@ -98,7 +98,7 @@ public class ODBCDriverImpl implements ODBCDriver{
     public boolean equals(Object obj) {
         if (obj == null) 
             return false;
-        if (!(obj instanceof ODBCDriverImpl)) 
+        if (!(obj instanceof ODBCDriverImpl || obj instanceof String)) 
             return false;
 
         if (this.conectionName.matches(obj.toString())) 

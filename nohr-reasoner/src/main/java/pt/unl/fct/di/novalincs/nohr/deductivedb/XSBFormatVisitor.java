@@ -130,9 +130,7 @@ public class XSBFormatVisitor extends DefaultFormatVisitor {
 
     @Override
     public String visit(Rule rule) {
-    	System.out.println("XSB. visit(Rule rule) - rule: "+ rule.toString());
         final String head = rule.getHead().accept(this);
-        System.out.println("XSB. visit(Rule rule) - head: "+ head);
         final String body = Model.concat(rule.getBody(), this, ",");
 
         if (rule.isFact()) {

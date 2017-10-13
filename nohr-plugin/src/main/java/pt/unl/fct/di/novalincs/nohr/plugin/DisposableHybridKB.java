@@ -7,15 +7,16 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.OWLProfilesViolationsException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 class DisposableHybridKB extends NoHRHybridKB implements Disposable {
 
-    public DisposableHybridKB(final NoHRHybridKBConfiguration configuration, OWLOntology ontology, Program program,
+    public DisposableHybridKB(final NoHRHybridKBConfiguration configuration, OWLOntology ontology, Program program, DBMappingSet dbMappingsSet,
             Vocabulary vocabularyMapping) throws OWLProfilesViolationsException, UnsupportedAxiomsException,
             PrologEngineCreationException {
-        super(configuration, ontology, program, vocabularyMapping, null);
+        super(configuration, ontology, program, dbMappingsSet, vocabularyMapping, null);
     }
 
     @Override

@@ -239,7 +239,7 @@ public abstract class AbstractNoHRViewComponent extends AbstractOWLViewComponent
         }
 
         try {
-            NoHRInstance.getInstance().start(config, getOntology(), getProgram(), getVocabulary());
+            NoHRInstance.getInstance().start(config, getOntology(), getProgram(), getDBMappingSet(), getVocabulary());
         } catch (final OWLProfilesViolationsException e) {
             LOG.warn("Violations to " + e.getReports());
             Messages.violations(this, e);

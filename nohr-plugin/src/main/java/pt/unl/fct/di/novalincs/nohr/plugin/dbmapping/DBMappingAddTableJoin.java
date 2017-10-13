@@ -3,6 +3,8 @@ package pt.unl.fct.di.novalincs.nohr.plugin.dbmapping;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -11,6 +13,7 @@ import javax.swing.JTextField;
 
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
+import pt.unl.fct.di.novalincs.nohr.model.DBTable;
 import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
 import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
 
@@ -40,18 +43,24 @@ public class DBMappingAddTableJoin extends JPanel {
 	private JLabel lblNewLabel_1;
 	private JTextField feildNewCol;
 	private JLabel lblNewLabel_2;
-	private JTextField feildOldTable;
 	private JLabel label;
 	private JTextField feildOldCol;
+	private boolean firstTable;
+	private JComboBox comboOldTable;
+	private List<String> tables;
 
 	/**
 	 * Create the frame.
 	 */
 	public DBMappingAddTableJoin() {
+
+		firstTable = true;
+		tables = new ArrayList<String>();
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
-		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0 };
 		setLayout(gridBagLayout);
 
@@ -75,35 +84,37 @@ public class DBMappingAddTableJoin extends JPanel {
 		gbc_lblNewLabel.gridx = 1;
 		gbc_lblNewLabel.gridy = 3;
 		add(lblNewLabel, gbc_lblNewLabel);
-		
-				feildNewtable = new JTextField();
-				GridBagConstraints gbc_feildNewtable = new GridBagConstraints();
-				gbc_feildNewtable.fill = GridBagConstraints.HORIZONTAL;
-				gbc_feildNewtable.insets = new Insets(0, 0, 5, 5);
-				gbc_feildNewtable.gridx = 3;
-				gbc_feildNewtable.gridy = 3;
-				GhostText ghostText1 = new GhostText(feildNewtable, "Enter new table name...");
-				add(feildNewtable, gbc_feildNewtable);
-				feildNewtable.setColumns(20);
-		
-				label = new JLabel(".");
-				GridBagConstraints gbc_label = new GridBagConstraints();
-				gbc_label.anchor = GridBagConstraints.EAST;
-				gbc_label.insets = new Insets(0, 0, 5, 5);
-				gbc_label.gridx = 4;
-				gbc_label.gridy = 3;
-				add(label, gbc_label);
-	
+
+		feildNewtable = new JTextField();
+		GridBagConstraints gbc_feildNewtable = new GridBagConstraints();
+		gbc_feildNewtable.fill = GridBagConstraints.HORIZONTAL;
+		gbc_feildNewtable.insets = new Insets(0, 0, 5, 5);
+		gbc_feildNewtable.gridx = 3;
+		gbc_feildNewtable.gridy = 3;
+		// GhostText ghostText1 = new GhostText(feildNewtable, "Enter new table
+		// name...");
+		add(feildNewtable, gbc_feildNewtable);
+		feildNewtable.setColumns(20);
+
+		label = new JLabel(".");
+		GridBagConstraints gbc_label = new GridBagConstraints();
+		gbc_label.anchor = GridBagConstraints.EAST;
+		gbc_label.insets = new Insets(0, 0, 5, 5);
+		gbc_label.gridx = 4;
+		gbc_label.gridy = 3;
+		add(label, gbc_label);
+
 		feildNewCol = new JTextField();
 		GridBagConstraints gbc_feildNewCol = new GridBagConstraints();
 		gbc_feildNewCol.insets = new Insets(0, 0, 5, 5);
 		gbc_feildNewCol.fill = GridBagConstraints.HORIZONTAL;
 		gbc_feildNewCol.gridx = 5;
 		gbc_feildNewCol.gridy = 3;
-		GhostText ghostText2 = new GhostText(feildNewCol, "Enter column name");
+		// GhostText ghostText2 = new GhostText(feildNewCol, "Enter column
+		// name");
 		add(feildNewCol, gbc_feildNewCol);
 		feildNewCol.setColumns(10);
-		
+
 		lblNewLabel_2 = new JLabel("Join with:");
 		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
 		gbc_lblNewLabel_2.anchor = GridBagConstraints.EAST;
@@ -111,17 +122,15 @@ public class DBMappingAddTableJoin extends JPanel {
 		gbc_lblNewLabel_2.gridx = 1;
 		gbc_lblNewLabel_2.gridy = 5;
 		add(lblNewLabel_2, gbc_lblNewLabel_2);
-		
-		feildOldTable = new JTextField();
-		GridBagConstraints gbc_feildOldTable = new GridBagConstraints();
-		gbc_feildOldTable.insets = new Insets(0, 0, 5, 5);
-		gbc_feildOldTable.fill = GridBagConstraints.HORIZONTAL;
-		gbc_feildOldTable.gridx = 3;
-		gbc_feildOldTable.gridy = 5;
-		GhostText ghostText3 = new GhostText(feildOldTable, "Enter table name...");
-		add(feildOldTable, gbc_feildOldTable);
-		feildOldTable.setColumns(10);
-		
+
+		comboOldTable = new JComboBox();
+		GridBagConstraints gbc_comboOldTable = new GridBagConstraints();
+		gbc_comboOldTable.insets = new Insets(0, 0, 5, 5);
+		gbc_comboOldTable.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboOldTable.gridx = 3;
+		gbc_comboOldTable.gridy = 5;
+		add(comboOldTable, gbc_comboOldTable);
+
 		label = new JLabel(".");
 		GridBagConstraints gbc_label2 = new GridBagConstraints();
 		gbc_label2.anchor = GridBagConstraints.EAST;
@@ -129,27 +138,102 @@ public class DBMappingAddTableJoin extends JPanel {
 		gbc_label2.gridx = 4;
 		gbc_label2.gridy = 5;
 		add(label, gbc_label2);
-		
+
 		feildOldCol = new JTextField();
 		GridBagConstraints gbc_feildOldCol = new GridBagConstraints();
 		gbc_feildOldCol.insets = new Insets(0, 0, 5, 5);
 		gbc_feildOldCol.fill = GridBagConstraints.HORIZONTAL;
 		gbc_feildOldCol.gridx = 5;
 		gbc_feildOldCol.gridy = 5;
-		GhostText ghostText4 = new GhostText(feildOldCol, "Enter column name...");
+		// GhostText ghostText4 = new GhostText(feildOldCol, "Enter column
+		// name...");
 		add(feildOldCol, gbc_feildOldCol);
 		feildOldCol.setColumns(10);
-						
 
 	}
 
-
 	public String[] getTable() {
 		String[] tableJoin = new String[4];
-		tableJoin[0]=feildNewtable.getText();
-		tableJoin[1]=feildOldTable.getText();
-		tableJoin[2]=feildNewCol.getText();
-		tableJoin[3]=feildOldCol.getText();
+		tableJoin[0] = feildNewtable.getText();
+
+		tableJoin[1] = feildNewCol.getText();
+		tableJoin[2] = (String) comboOldTable.getSelectedItem();
+		tableJoin[3] = feildOldCol.getText();
+
+		// List<String> items = Arrays.asList(str.split("\\s*,\\s*"));
+
 		return tableJoin;
+	}
+
+	public DBTable getTableModel() {
+
+		List<String> newCol = Arrays.asList(feildNewCol.getText().split("\\s*,\\s*"));
+		List<String> oldCol = Arrays.asList(feildOldCol.getText().split("\\s*,\\s*"));
+		System.out.println("newCol: " + newCol);
+		System.out.println("oldCol: " + oldCol);
+		DBTable tableJoin = new DBTable(feildNewtable.getText(), (String) comboOldTable.getSelectedItem(), newCol,
+				oldCol, firstTable);
+
+		// List<String> items = Arrays.asList(str.split("\\s*,\\s*"));
+
+		return tableJoin;
+	}
+
+	public void clear() {
+		feildNewtable.setText("");
+		feildNewCol.setText("");
+		if (tables.size() > 0)
+			comboOldTable.setSelectedIndex(0);
+		else
+			comboOldTable.setSelectedIndex(-1);
+		feildOldCol.setText("");
+
+	}
+
+	public void edit(DBTable table) {
+		feildNewtable.setText(table.getNewTableName());
+		feildNewCol.setText(table.getNewCols());
+		comboOldTable.setSelectedIndex(getTableIndex(table.getOldTableName()));
+		feildOldCol.setText(table.getOldCols());
+
+	}
+
+	private int getTableIndex(String table) {
+		if (table != null) {
+			for (int i = 0; i < tables.size(); i++) {
+				if (tables.get(i).matches(table))
+					return i;
+			}
+		}
+		System.out.println("Table no longer exists.");
+		return -1;
+	}
+
+	public void first(boolean firstTable) {
+		this.firstTable = firstTable;
+		feildNewCol.setEditable(!firstTable);
+		feildNewCol.setEnabled(!firstTable);
+		comboOldTable.setEnabled(!firstTable);
+		feildOldCol.setEditable(!firstTable);
+		feildOldCol.setEnabled(!firstTable);
+
+	}
+
+	public void setTables(List<DBTable> list, int curr) {
+		tables.clear();
+		for (int i = 0; i < list.size(); i++) {
+			if (i != curr) {
+				tables.add(list.get(i).getNewTableName());
+			}
+		}
+		refreshComboBox();
+	}
+
+	private void refreshComboBox() {
+		comboOldTable.removeAllItems();
+		for (String item : tables) {
+			comboOldTable.addItem(item);
+		}
+
 	}
 }

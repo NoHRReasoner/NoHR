@@ -16,63 +16,84 @@ import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 
+import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.novalincs.nohr.plugin.dbmapping.DBMappingListModel;
 import pt.unl.fct.di.novalincs.nohr.plugin.rules.RuleListModel;
 
 public class NoHREditorKitHook extends OWLEditorKitHook implements OWLModelManagerListener {
 
-    protected static final Logger log = Logger.getLogger(NoHREditorKitHook.class);
+	protected static final Logger log = Logger.getLogger(NoHREditorKitHook.class);
 
-    @Override
-    public void dispose() throws Exception {
-        getEditorKit().getOWLModelManager().removeListener(this);
-        final RuleListModel ruleListModel = getRuleListModel();
-        if (ruleListModel != null) {
-            ruleListModel.clear();
-        }
-        log.info("NoHR disposed");
-    }
+	@Override
+	public void dispose() throws Exception {
+		getEditorKit().getOWLModelManager().removeListener(this);
+		final RuleListModel ruleListModel = getRuleListModel();
+		if (ruleListModel != null) {
+			ruleListModel.clear();
+		}
+		final DBMappingListModel dbMappingListModel = getDBMappingListModel();
+		if (dbMappingListModel != null) {
+			dbMappingListModel.clear();
+		}
+		log.info("NoHR disposed");
+	}
 
-    private RuleListModel getRuleListModel() {
-        final DisposableObject<RuleListModel> disposableRuleListModel = getEditorKit().getOWLModelManager()
-                .get(RuleListModel.class);
-        if (disposableRuleListModel == null) {
-            return null;
-        }
-        return disposableRuleListModel.getObject();
-    }
+	private RuleListModel getRuleListModel() {
+		final DisposableObject<RuleListModel> disposableRuleListModel = getEditorKit().getOWLModelManager()
+				.get(RuleListModel.class);
+		if (disposableRuleListModel == null) {
+			return null;
+		}
+		return disposableRuleListModel.getObject();
+	}
 
-    @Override
-    public void handleChange(OWLModelManagerChangeEvent ev) {
-        if (ev.getType() == EventType.ACTIVE_ONTOLOGY_CHANGED) {
-            final RuleListModel ruleListModel = getRuleListModel();
-            if (ruleListModel != null) {
-                ruleListModel.clear();
-                reset();
-            }
-        }
-    }
+	private DBMappingListModel getDBMappingListModel() {
+		final DisposableObject<DBMappingListModel> disposableDBMappingListModel = getEditorKit().getOWLModelManager()
+				.get(DBMappingListModel.class);
+		if (disposableDBMappingListModel == null) {
+			return null;
+		}
+		return disposableDBMappingListModel.getObject();
+	}
 
-    @Override
-    public void initialise() throws Exception {
-        getEditorKit().getOWLModelManager().addListener(this);
-        log.info("NoHR initialised");
-    }
+	@Override
+	public void handleChange(OWLModelManagerChangeEvent ev) {
+		if (ev.getType() == EventType.ACTIVE_ONTOLOGY_CHANGED) {
+			final RuleListModel ruleListModel = getRuleListModel();
+			final DBMappingListModel dbMappingListModel = getDBMappingListModel();
 
-    private void reset() {
-        log.info("NoHR resetted");
+			if ((ruleListModel != null) || (dbMappingListModel != null)) {
+				if (ruleListModel != null)
+					ruleListModel.clear();
+				if (dbMappingListModel != null)
+					dbMappingListModel.clear();
+				reset();
+			}
+		}
+	}
 
-        final OWLModelManager modelManager = getEditorKit().getOWLModelManager();
-        final DisposableVocabulary vocabulary = new DisposableVocabulary(modelManager.getActiveOntology());
+	@Override
+	public void initialise() throws Exception {
+		getEditorKit().getOWLModelManager().addListener(this);
+		log.info("NoHR initialised");
+	}
 
-        modelManager.put(Vocabulary.class, vocabulary);
+	private void reset() {
+		log.info("NoHR resetted");
 
-        final DisposableObject<NoHRParser> disposableParser = modelManager.get(NoHRParser.class);
-        final DisposableObject<ProgramPersistenceManager> disposablePersistenceManager = modelManager.get(ProgramPersistenceManager.class);
+		final OWLModelManager modelManager = getEditorKit().getOWLModelManager();
+		final DisposableVocabulary vocabulary = new DisposableVocabulary(modelManager.getActiveOntology());
 
-        disposableParser.getObject().setVocabulary(vocabulary);
-        disposablePersistenceManager.getObject().setVocabulary(vocabulary);
-    }
+		modelManager.put(Vocabulary.class, vocabulary);
+
+		final DisposableObject<NoHRParser> disposableParser = modelManager.get(NoHRParser.class);
+		final DisposableObject<ProgramPersistenceManager> disposablePersistenceManager = modelManager
+				.get(ProgramPersistenceManager.class);
+
+		disposableParser.getObject().setVocabulary(vocabulary);
+		disposablePersistenceManager.getObject().setVocabulary(vocabulary);
+	}
 
 }

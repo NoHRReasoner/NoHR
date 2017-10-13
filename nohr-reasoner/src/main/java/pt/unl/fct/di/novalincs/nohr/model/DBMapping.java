@@ -13,19 +13,24 @@ import pt.unl.fct.di.novalincs.nohr.deductivedb.NoHRFormatVisitor;
 
 public interface DBMapping   {
 
-	public List<String> getColumns();
+	public List<String[]> getColumns();
+	
+	public String getSQL();
 
-	public String[][] getTable();
+	public List<DBTable> getTables();
 
-	public String getPredicate(); 
+	public Predicate getPredicate(); 
 	
 	public ODBCDriver getODBC(); 
+	
+	public Integer getArity(); 
+	
+	public boolean isSQL(); 
 
-	String getColumnsString();
+//	String getColumnsString();
 	
 	public String getFileSyntax();
 	
-	DBMapping setDBMapping(String stringFromFile, List<ODBCDriver> drivers);
 
 
 }

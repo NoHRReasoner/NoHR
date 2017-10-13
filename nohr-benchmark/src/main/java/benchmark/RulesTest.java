@@ -87,7 +87,8 @@ public class RulesTest {
 
             NoHRHybridKBConfiguration configuration = new NoHRHybridKBConfiguration();
 
-            final HybridKB nohr = new NoHRHybridKB(configuration, ontology, Model.program());
+//          TODO define properly the mappings
+            final HybridKB nohr = new NoHRHybridKB(configuration, ontology, Model.program(), Model.dbMappingSet());
             final NoHRParser parser = new NoHRRecursiveDescentParser(nohr.getVocabulary());
             final ProgramPersistenceManager programPersistenceManager = new ProgramPersistenceManager(
                     nohr.getVocabulary());

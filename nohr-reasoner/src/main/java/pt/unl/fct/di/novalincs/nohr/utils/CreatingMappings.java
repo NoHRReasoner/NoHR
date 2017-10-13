@@ -38,8 +38,6 @@ public class CreatingMappings {
 		List<Set<String>> nonvarsSet = new ArrayList<Set<String>>();
 		List<Set<String>> varsSet = new ArrayList<Set<String>>();
 		varGenerator(arrity, nonvarsSet, varsSet);
-//		for (int i = 0; i < varsSet.size(); i++)
-//			System.out.println(nonvarsSet.get(i) + "___" + varsSet.get(i));
 
 		String rules = "";
 
@@ -182,7 +180,7 @@ public class CreatingMappings {
 		return sets;
 	}
 	
-	public String getVar(int size, int i){
+	public static String getVar(int size, int i){
 		if(size>9){
 			if(i>9)
 				return "V"+i;
