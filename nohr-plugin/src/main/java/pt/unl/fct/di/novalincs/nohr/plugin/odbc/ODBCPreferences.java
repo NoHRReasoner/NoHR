@@ -55,7 +55,6 @@ public final class ODBCPreferences {
     	Preferences prefs = PreferencesManager.getInstance().getPreferencesForSet(PREFERENCES_SET, DRIVER_PREFERENCES_KEY);
     	List<String>  prefsStringList = new ArrayList<>();
     	for  (ODBCDriver driver : drivers) {
-    		System.out.println(driver.getOdbcID()+"_"+driver.getConectionName()+"_"+driver.getUsername()+"_"+driver.getPassword()+"_"+driver.getDatabaseName()+"_"+driver.getDatabaseType().toString()+"_");
     		prefsStringList.add(driver.getOdbcID());
     		prefsStringList.add(driver.getConectionName());
     		prefsStringList.add(driver.getUsername());

@@ -21,6 +21,8 @@ public interface DBMapping   {
 
 	public Predicate getPredicate(); 
 	
+	public Predicate getNPredicate();
+	
 	public ODBCDriver getODBC(); 
 	
 	public Integer getArity(); 

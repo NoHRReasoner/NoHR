@@ -34,6 +34,9 @@ public class DBMappingImpl implements DBMapping {
 
 	/** Predicate that the query is being mapped to */
 	private final Predicate predicate;
+	
+	/** Classically negated predicate - used only with doubled predicate*/
+	private final Predicate nPredicate;
 
 //	 constructor for GUI - mapping
 	public DBMappingImpl(ODBCDriver driver, List<DBTable> tables, List<String[]> columns,
@@ -47,13 +50,14 @@ public class DBMappingImpl implements DBMapping {
 		for (String[] col : columns)
 			this.columns.add(col);
 		this.predicate = predicate;
+		this.nPredicate = null;
 		this.isSQL = false;
 		this.arity = columns.size();
 		this.sql = null;
 	}
 
 	// create original or doubled mapping according to the encoder
-	public DBMappingImpl(DBMapping dbMapping, ModelVisitor encoder) {
+	public DBMappingImpl(DBMapping dbMapping, ModelVisitor encoder,  ModelVisitor encoderTnot) {
 		super();
 		this.odbcDriver = dbMapping.getODBC();
 		this.tables = new ArrayList<DBTable>();
@@ -63,6 +67,11 @@ public class DBMappingImpl implements DBMapping {
 		for (String[] col : dbMapping.getColumns())
 			this.columns.add(col);
 		this.predicate = dbMapping.getPredicate().accept(encoder);
+		if(encoderTnot==null){
+			this.nPredicate = null;
+		}else{
+			this.nPredicate = dbMapping.getPredicate().accept(encoderTnot);
+		}
 		this.isSQL = dbMapping.isSQL();
 		this.arity = dbMapping.getArity();
 		this.sql = dbMapping.getSQL();
@@ -164,7 +173,8 @@ public class DBMappingImpl implements DBMapping {
 		this.arity = null;
 		
 		this.predicate = null;
-
+		this.nPredicate = null;
+		
 		this.sql = null;
 	}
 
@@ -175,6 +185,7 @@ public class DBMappingImpl implements DBMapping {
 		this.tables = new ArrayList<DBTable>();
 		this.columns = new ArrayList<String[]>();;
 		this.predicate = predicate;
+		this.nPredicate = null;
 		this.isSQL = true;
 		this.arity = arity;
 		this.sql = sql;
@@ -210,6 +221,11 @@ public class DBMappingImpl implements DBMapping {
 	@Override
 	public Predicate getPredicate() {
 		return predicate;
+	}
+	
+	@Override
+	public Predicate getNPredicate() {
+		return nPredicate;
 	}
 
 	@Override

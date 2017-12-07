@@ -61,7 +61,7 @@ public class ODBCPreferencesPanel extends OWLPreferencesPanel {
 		listConstraints.weightx = 1;
 		listConstraints.weighty = 1;
 		GridBagConstraints buttonsConstraints = new GridBagConstraints();
-		buttonsConstraints.gridx = 0;
+		buttonsConstraints.gridx = 2;
 		buttonsConstraints.gridy = 4;
 		add(createList(), listConstraints);
 		add(createButtons(), buttonsConstraints);
@@ -110,7 +110,6 @@ public class ODBCPreferencesPanel extends OWLPreferencesPanel {
 		JButton edit = new JButton("Edit");
 		panel.add(edit);
 		edit.addActionListener(new ActionListener() {
-//			handle edit of a rule
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int row = table.getSelectedRow();
@@ -121,10 +120,8 @@ public class ODBCPreferencesPanel extends OWLPreferencesPanel {
 					final int ret = uiHelper.showDialog("Database-Mapping Editor", editor, null);
 					if (ret == JOptionPane.OK_OPTION)
 						driverTableModel.replaceDriver(row, editor.getODBCDriver());
-					else
-						System.err.println("No rows selected.");
-
-				}
+				} else
+					System.err.println("No rows selected.");
 			}
 
 		});

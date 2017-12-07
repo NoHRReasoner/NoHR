@@ -66,7 +66,6 @@ public class MappingGenerator {
 	}
 
 	public List<String> createMappingBody() {
-		System.out.println("x0");
 		if (sql == null)
 			return createBasicMapping();
 		else
@@ -121,20 +120,15 @@ public class MappingGenerator {
 	}
 
 	public List<String> createSQLMapping() {
-		System.out.println("x1");
 		List<String> mappingBody = new ArrayList<String>();
 
 		String currRule = "";
-		System.out.println("x1.1");
 		// writing the first part of the mapping
 		currRule += "(" + varList(arrity) + ")";
-		System.out.println("x1.2");
 		currRule += " :- " + "findall_odbc_sql([],'" + sql + "', [" + returnVar(new boolean[arrity])
 				+ "]).";
-		System.out.println("x2");
 		// adding the rule
 		mappingBody.add(currRule);
-		System.out.println("x3");
 		return mappingBody;
 	}
 
@@ -150,15 +144,11 @@ public class MappingGenerator {
 	}
 
 	public String returnVar(boolean[] floats) {
-		System.out.println("x1.2");
 		String returnVar = "";
 		for (int i = 0; i < floats.length; i++) {
-			System.out.println("x1.x");
 			if (floats[i]) {
-				System.out.println("x1.x1");
 				returnVar += getVar(floats.length, i) + "c" + ",";
 			} else{
-				System.out.println("x1.x1");
 				returnVar += getVar(floats.length, i) + ",";
 			}
 		}

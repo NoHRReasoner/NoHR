@@ -527,18 +527,19 @@ public class NoHRHybridKB implements HybridKB {
             databaseMappings.clear();
             final ModelVisitor originalEncoder = new PredicateTypeVisitor(PredicateType.ORIGINAL);
             final ModelVisitor doubleEncoder = new PredicateTypeVisitor(PredicateType.DOUBLE);
+            final ModelVisitor negativeEncoder = new PredicateTypeVisitor(PredicateType.DOUBLE);
             if (ontologyTranslator.requiresDoubling()) {
             	for(DBMapping dbMapping : dbMappings){
             		DBMapping originalMapping, doubleMapping;
-            		originalMapping = new DBMappingImpl(dbMapping, originalEncoder);
-            		doubleMapping = new DBMappingImpl(dbMapping, doubleEncoder);
+            		originalMapping = new DBMappingImpl(dbMapping, originalEncoder, null);
+            		doubleMapping = new DBMappingImpl(dbMapping, doubleEncoder, negativeEncoder);
             		databaseMappings.add(originalMapping);
             		databaseMappings.add(doubleMapping);
             	}
             }else{
             	for(DBMapping dbMapping : dbMappings){
             		DBMapping originalMapping;
-            		originalMapping = new DBMappingImpl(dbMapping, originalEncoder);
+            		originalMapping = new DBMappingImpl(dbMapping, originalEncoder, null);
             		databaseMappings.add(originalMapping);
             	}
             }

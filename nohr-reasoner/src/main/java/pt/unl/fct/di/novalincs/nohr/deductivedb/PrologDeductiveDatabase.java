@@ -779,20 +779,44 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 			}
 			
 			writer.write(":- import odbc_open/3 from odbc_call.\n" + ":- import findall_odbc_sql/3 from odbc_call.\n" +
-							":- import odbc_close/0 from odbc_call.\n" + ":- import odbc_data_sources/2 from odbc_call.\n"
-							+ "?- odbc_open(test,root,root).\n");
-			System.out.println("1");
-			for (final DBMappingSetImpl program : dbMappingSets) {
-				for (final DBMapping rule : program.dbMappings) {
-					System.out.println("2");
-					MappingGenerator tmp = new MappingGenerator(rule);
-					System.out.println("4");
-					List<String> mappingBodies = tmp.createMappingBody();
+							":- import odbc_close/0 from odbc_call.\n" + ":- import odbc_data_sources/2 from odbc_call.\n"+
+							 "?-odbc_open('test','root','root').\n");
+			
+//			writer.write(":- import odbc_open/3 from odbc_call.\n"+
+//			":- import odbc_sql/3 from odbc_call.\n"+
+//			":- import odbc_import/2 from odbc_call.\n"+
+//			":- import odbc_close/0 from odbc_call.\n"+
+//			":- import odbc_data_sources/2 from odbc_call.\n"+
+//			"?- odbc_open(test,root,root).\n"+
+//			
+//			"?- odbc_import(crime1('crimeID', 'Case_Number'), ap1).\n"+
+//			"?- odbc_import(crime10('crimeID', 'Case_Number'), ap10).\n"+
+//			"?- odbc_import(crime50('crimeID', 'Case_Number'), ap50).\n"+
+//			"?- odbc_import(crime('crimeID', 'Case_Number'), ap100).\n"+
+//			"?- odbc_import(crime200('crimesID', 'Case_Number'), ap200).\n"+
+//            "?- odbc_import(crime500('crimesID', 'Case_Number'), ap500).\n"+
+//            "?- odbc_import(crime1000('crimesID', 'Case_Number'), ap1m).\n"+
+//            "?- odbc_import(crime3000('crimesID', 'Case_Number'), ap3m).\n"+
+//            "?- odbc_import(crimesindex('crimesID', 'Case_Number'), ap6m).\n"+
+//
+//            
+//			"aq1(X,Y) :- odbc_sql([X,Y],'SELECT crimeID, Case_Number FROM test.crime1 where crimeID = ? and Case_Number = ?', [X,Y]).\n"+
+//			"aq10(X,Y) :- odbc_sql([X,Y],'SELECT crimeID, Case_Number FROM test.crime10 where crimeID = ? and Case_Number = ?', [X,Y]).\n"+
+//			"aq50(X,Y) :- odbc_sql([X,Y],'SELECT crimeID, Case_Number FROM test.crime50 where crimeID = ? and Case_Number = ?', [X,Y]).\n"+
+//			"aq100(X,Y) :- odbc_sql([X,Y],'SELECT crimeID, Case_Number FROM test.crime where crimeID = ? and Case_Number = ?', [X,Y]).\n"+ 
+//			"aq200(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime200 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
+//			"aq500(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime500 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
+//			"aq1m(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime1000 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
+//			"aq3m(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime3000 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
+//			"aq6m(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crimesindex where crimesID = ? and Case_Number = ?', [X,Y]).\n");
+			for (final DBMappingSetImpl mappingSet : dbMappingSets) {
+				for (final DBMapping mapping : mappingSet.dbMappings) {
+					MappingGenerator generator = new MappingGenerator(mapping);
+					List<String> mappingBodies = generator.createMappingBody();
 					for(String mappingBody : mappingBodies){
-						writer.write(rule.getPredicate().accept(formatVisitor) + mappingBody);
+						writer.write(mapping.getPredicate().accept(formatVisitor) + mappingBody);
 						writer.newLine();
 					}
-					System.out.println("5");
 				}
 			}
 
