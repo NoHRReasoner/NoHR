@@ -527,7 +527,7 @@ public class NoHRHybridKB implements HybridKB {
             databaseMappings.clear();
             final ModelVisitor originalEncoder = new PredicateTypeVisitor(PredicateType.ORIGINAL);
             final ModelVisitor doubleEncoder = new PredicateTypeVisitor(PredicateType.DOUBLE);
-            final ModelVisitor negativeEncoder = new PredicateTypeVisitor(PredicateType.DOUBLE);
+            final ModelVisitor negativeEncoder = new PredicateTypeVisitor(PredicateType.NEGATIVE);
             if (ontologyTranslator.requiresDoubling()) {
             	for(DBMapping dbMapping : dbMappings){
             		DBMapping originalMapping, doubleMapping;

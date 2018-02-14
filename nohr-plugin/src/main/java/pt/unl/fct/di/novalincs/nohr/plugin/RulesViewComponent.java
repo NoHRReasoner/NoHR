@@ -1,5 +1,7 @@
 package pt.unl.fct.di.novalincs.nohr.plugin;
 
+import static pt.unl.fct.di.novalincs.nohr.plugin.AbstractNoHRViewComponent.LOG;
+
 /*
  * #%L
  * nohr-plugin
@@ -104,6 +106,8 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
                         Messages.invalidExpression(RulesViewComponent.this, e);
                     } catch (final IOException e) {
                     } catch (ParseException ex) {
+                    	 LOG.warn("Loaded rule file was corrupted.");
+                    	 Messages.unsucceccfulLoad(RulesViewComponent.this);
                         Logger.getLogger(RulesViewComponent.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         RulesViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

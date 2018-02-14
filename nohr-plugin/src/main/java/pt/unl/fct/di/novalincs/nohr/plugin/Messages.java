@@ -81,6 +81,20 @@ public class Messages {
 	}
 
 	/**
+	 * The message shown when a ParseException occurs while trying to load rule files.
+	 *
+	 * @param rulesViewComponent
+	 * @param e
+	 */
+	public static void unsucceccfulLoad(RulesViewComponent rulesViewComponent) {
+		JOptionPane.showMessageDialog(rulesViewComponent,
+				"Could not load the rules.",
+				"Corrupted file", JOptionPane.WARNING_MESSAGE);
+	}
+	
+	
+	
+	/**
 	 * The message shown when a IOException occurs while trying to save the rules.
 	 *
 	 * @param rulesViewComponent

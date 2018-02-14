@@ -15,44 +15,68 @@ import javax.naming.directory.InvalidAttributesException;
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBTable;
 import pt.unl.fct.di.novalincs.nohr.model.DatabaseType;
+import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.Predicate;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.HybridPredicate;
 
 public class MappingGenerator {
 
 	private final String apostrophe;
+	private final String predicate;
+	private final String nPredicate;
 	private final String db;
 	private final String sql;
+	private final String odbc;
 	private final List<DBTable> table;
 	private final int arrity;
 	private final String[] colTables;
 	private final String[] columns;
 	private final boolean[] colFloats;
 
-	public MappingGenerator(DBMapping mapping) throws InvalidAttributesException {
-		
+	public MappingGenerator(DBMapping mapping, FormatVisitor formatVisitor) throws InvalidAttributesException {
+
 		if (mapping.getTables() != null)
 			this.table = mapping.getTables();
 		else
 			this.table = null;
-		if (mapping.getColumns() != null){
+		if (mapping.getColumns() != null) {
 			this.colTables = new String[mapping.getColumns().size()];
 			this.columns = new String[mapping.getColumns().size()];
 			this.colFloats = new boolean[mapping.getColumns().size()];
 
 			for (int i = 0; i < mapping.getColumns().size(); i++) {
-				this.colTables[i] = mapping.getColumns().get(i)[0];
-				this.columns[i] = mapping.getColumns().get(i)[1];
-				this.colFloats[i] = mapping.getColumns().get(i)[2].matches("true");
+				this.colTables[i] = mapping.getColumns().get(i)[1];
+				this.columns[i] = mapping.getColumns().get(i)[2];
+				this.colFloats[i] = mapping.getColumns().get(i)[3].matches("true");
 			}
-		}
-		else{
+		} else {
 			this.colTables = null;
-			this.columns =  null;
-			this.colFloats =  null;
-			
+			this.columns = null;
+			this.colFloats = null;
+
+		}
+		if (formatVisitor != null) {
+			final boolean isDL;
+
+	        if (mapping.getOriginalPredicate() instanceof HybridPredicate) {
+	            final HybridPredicate hybridHeadFunctor = (HybridPredicate) mapping.getOriginalPredicate();
+	            isDL = hybridHeadFunctor.isConcept() || hybridHeadFunctor.isRole();
+	        } else {
+	            isDL = false;
+	        }
+			this.predicate = mapping.getPredicate().accept(formatVisitor);
+			if (!isDL || mapping.getNPredicate() == null) {
+				this.nPredicate = null;
+			} else {
+				this.nPredicate = mapping.getNPredicate().accept(formatVisitor);
+			}
+		} else {
+			this.predicate = null;
+			this.nPredicate = null;
 		}
 		this.arrity = mapping.getArity();
 		this.sql = mapping.getSQL();
-		
+		this.odbc = mapping.getODBC().getConectionName();
 
 		this.db = mapping.getODBC().getDatabaseName();
 		this.apostrophe = DatabaseType.getQuotation(mapping.getODBC());
@@ -65,17 +89,19 @@ public class MappingGenerator {
 		return list;
 	}
 
-	public List<String> createMappingBody() {
+	public List<String> createMappingRule() {
 		if (sql == null)
 			return createBasicMapping();
 		else
 			return createSQLMapping();
 	}
 
-	public String createSQL(){
-		return "SELECT " + selectColumns(colTables,columns) + " FROM " + table(table);
+	public String createSQL() {
+		if(sql!=null && sql.length()!=0)
+			return sql;
+		return "SELECT " + selectColumns(colTables, columns) + " FROM " + table(table);
 	}
-	
+
 	public List<String> createBasicMapping() {
 		List<Set<String>> nonvarsSet = new ArrayList<Set<String>>();
 		List<Set<String>> varsSet = new ArrayList<Set<String>>();
@@ -89,8 +115,9 @@ public class MappingGenerator {
 			List<String> vars = asSortedList(varsSet.get(i));
 
 			// writing the first part of the mapping
-			currRule += "(" + varList(arrity) + ")" + " :- " + vars(vars) + nonvars(nonvars) + "findall_odbc_sql("
-					+ nonvars + ",'SELECT " + selectColumns(colTables,columns) + " FROM " + table(table);
+			currRule += predicate + "(" + varList(arrity) + ")" + " :- " + vars(vars) + nonvars(nonvars)
+					+ "findall_odbc_sql('"+odbc+"'," + nonvars + ",'SELECT " + selectColumns(colTables, columns) + " FROM "
+					+ table(table);
 			// writing where clause of the sql, if there are some constants
 			if (nonvars.size() > 0) {
 				String where = "";
@@ -109,8 +136,13 @@ public class MappingGenerator {
 			// add float columns casting to integer
 			currRule += setCast(colFloats);
 
-			// ending of the rule (if neccessary can add \n for a new line)
-			String ending = ".";
+			// ending of the rule (adding N predicate in case of doubled
+			// predicate)
+			String ending = "";
+			if (nPredicate != null) {
+				ending += ",tnot(" + nPredicate + "(" + varList(arrity) + "))";
+			}
+			ending += ".";
 
 			// adding original rule
 			mappingBody.add(currRule + ending);
@@ -124,9 +156,13 @@ public class MappingGenerator {
 
 		String currRule = "";
 		// writing the first part of the mapping
-		currRule += "(" + varList(arrity) + ")";
-		currRule += " :- " + "findall_odbc_sql([],'" + sql + "', [" + returnVar(new boolean[arrity])
-				+ "]).";
+		currRule += predicate + "(" + varList(arrity) + ")";
+		currRule += " :- " + "findall_odbc_sql('"+odbc+"',[],'" + sql + "', [" + returnVar(new boolean[arrity]) + "])";
+		if (nPredicate != null) {
+			currRule += ",tnot(" + nPredicate + "(" + varList(arrity) + "))";
+		} else {
+			currRule += ".";
+		}
 		// adding the rule
 		mappingBody.add(currRule);
 		return mappingBody;
@@ -148,7 +184,7 @@ public class MappingGenerator {
 		for (int i = 0; i < floats.length; i++) {
 			if (floats[i]) {
 				returnVar += getVar(floats.length, i) + "c" + ",";
-			} else{
+			} else {
 				returnVar += getVar(floats.length, i) + ",";
 			}
 		}
@@ -157,14 +193,17 @@ public class MappingGenerator {
 	}
 
 	public String table(List<DBTable> table) {
-		String tables = apostrophe + db + apostrophe + "." + apostrophe + table.get(0).getNewTableName() + apostrophe;
-		for(int i=1; i < table.size(); i++){
-			tables += " JOIN "+ apostrophe + db + apostrophe + "." + apostrophe + table.get(i).getNewTableName() + apostrophe + " ON ";
-			
-			for(int j=0; j < table.get(i).getNewTableCol().size(); j++){
-				tables += apostrophe + table.get(i).getNewTableName() + apostrophe + "." + apostrophe + table.get(i).getNewTableCol().get(j) + apostrophe +
-						"=" + apostrophe + table.get(i).getOldTableName() + apostrophe + "." + apostrophe + table.get(i).getOldTableCol().get(j) + apostrophe;
-				if(j < table.get(i).getNewTableCol().size() - 1)
+		String tables = apostrophe + db + apostrophe + "." + apostrophe + table.get(0).getNewTableName() + apostrophe + " " + apostrophe + table.get(0).getNewTableAlias() + apostrophe;
+		for (int i = 1; i < table.size(); i++) {
+			tables += " JOIN " + apostrophe + db + apostrophe + "." + apostrophe + table.get(i).getNewTableName()
+					+ apostrophe + " " + apostrophe + table.get(i).getNewTableAlias() + apostrophe + " ON ";
+
+			for (int j = 0; j < table.get(i).getNewTableCol().size(); j++) {
+				tables += apostrophe + table.get(i).getNewTableAlias() + apostrophe + "." + apostrophe
+						+ table.get(i).getNewTableCol().get(j) + apostrophe + "=" + apostrophe
+						+ table.get(i).getOldTableAlias() + apostrophe + "." + apostrophe
+						+ table.get(i).getOldTableCol().get(j) + apostrophe;
+				if (j < table.get(i).getNewTableCol().size() - 1)
 					tables += " AND ";
 			}
 		}

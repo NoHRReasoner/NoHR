@@ -6,6 +6,7 @@ package pt.unl.fct.di.novalincs.nohr.plugin.dbmapping;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -14,11 +15,9 @@ import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.list.MListSectionHeader;
 import org.protege.editor.owl.OWLEditorKit;
 
-import com.igormaznitsa.prologparser.exceptions.PrologParserException;
-
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
-import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
+import pt.unl.fct.di.novalincs.nohr.model.HashSetDBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.plugin.DBMappingSetPersistenceManager;
 
 /**
@@ -122,9 +121,11 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 
 
 	public void load(File file) throws IOException {
+		HashSetDBMappingSet tempMappings = new HashSetDBMappingSet(Collections.<DBMapping>emptySet());
+		dbMappingSetPersistenceManager.load(file, tempMappings);
 		final int size = dbMappingSet.size();
 		dbMappingSet.clear();
-		dbMappingSetPersistenceManager.load(file, dbMappingSet);
+		dbMappingSet.addAll(tempMappings.getDBMppings());
 		dbMappingItems.clear();
 		dbMappingItems.add(HEADER);
 

@@ -15,6 +15,7 @@ package pt.unl.fct.di.novalincs.nohr.plugin.rules;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -26,6 +27,7 @@ import org.protege.editor.owl.OWLEditorKit;
 
 import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
+import pt.unl.fct.di.novalincs.nohr.model.HashSetProgram;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
@@ -127,9 +129,11 @@ public class RuleListModel extends AbstractListModel<Object> {
     }
 
     public void load(File file) throws IOException, PrologParserException, ParseException {
+    	HashSetProgram tempProgram = new HashSetProgram(Collections.<Rule>emptySet());
+        programPersistenceManager.load(file, tempProgram);
         final int size = program.size();
         program.clear();
-        programPersistenceManager.load(file, program);
+        program.addAll(tempProgram.getRules());
         ruleItems.clear();
         ruleItems.add(HEADER);
 

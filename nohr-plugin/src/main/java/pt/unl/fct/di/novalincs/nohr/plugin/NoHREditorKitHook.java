@@ -1,5 +1,7 @@
 package pt.unl.fct.di.novalincs.nohr.plugin;
 
+import javax.swing.JOptionPane;
+
 /*
  * #%L
  * nohr-plugin
@@ -59,16 +61,19 @@ public class NoHREditorKitHook extends OWLEditorKitHook implements OWLModelManag
 	}
 
 	@Override
-	public void handleChange(OWLModelManagerChangeEvent ev) {
-		if (ev.getType() == EventType.ACTIVE_ONTOLOGY_CHANGED) {
+	public void handleChange(OWLModelManagerChangeEvent event) {
+		 if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)
+	                || event.isType(EventType.ONTOLOGY_LOADED)
+	                || event.isType(EventType.ONTOLOGY_RELOADED)) {
+			
 			final RuleListModel ruleListModel = getRuleListModel();
 			final DBMappingListModel dbMappingListModel = getDBMappingListModel();
 
 			if ((ruleListModel != null) || (dbMappingListModel != null)) {
-				if (ruleListModel != null)
-					ruleListModel.clear();
-				if (dbMappingListModel != null)
-					dbMappingListModel.clear();
+//				if (ruleListModel != null)
+//					ruleListModel.clear();
+//				if (dbMappingListModel != null)
+//					dbMappingListModel.clear();
 				reset();
 			}
 		}

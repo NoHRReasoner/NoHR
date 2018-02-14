@@ -7,14 +7,18 @@ public class DBTable {
 
 	private String newTableName;
 	private String oldTableName;
+	private String newTableAlias;
+	private String oldTableAlias;
 	private boolean isFirst;
 	private List<String> newTableCol;
 	private List<String> oldTableCol;
 
-	public DBTable(String newTableName, String oldTableName, List<String> newTableCol, List<String> oldTableCol) {
+	public DBTable(String newTableName, String oldTableName, String newTableAlias, String oldTableAlias, List<String> newTableCol, List<String> oldTableCol) {
 		super();
 		this.newTableName = newTableName;
 		this.oldTableName = oldTableName;
+		this.newTableAlias = newTableAlias;
+		this.oldTableAlias = oldTableAlias;
 		this.newTableCol = new ArrayList<String>();
 		this.oldTableCol = new ArrayList<String>();
 
@@ -25,10 +29,12 @@ public class DBTable {
 		this.isFirst=false;
 	}
 	
-	public DBTable(String newTableName, String oldTableName, List<String> newTableCol, List<String> oldTableCol, boolean isFirst) {
+	public DBTable(String newTableName, String oldTableName, String newTableAlias, String oldTableAlias, List<String> newTableCol, List<String> oldTableCol, boolean isFirst) {
 		super();
 		this.newTableName = newTableName;
 		this.oldTableName = oldTableName;
+		this.newTableAlias = newTableAlias;
+		this.oldTableAlias = oldTableAlias;
 		this.newTableCol = new ArrayList<String>();
 		this.oldTableCol = new ArrayList<String>();
 
@@ -69,6 +75,23 @@ public class DBTable {
 
 	public void setOldTableCol(List<String> oldTableCol) {
 		this.oldTableCol = oldTableCol;
+	}
+	
+
+	public String getNewTableAlias() {
+		return newTableAlias;
+	}
+
+	public void setNewTableAlias(String newTableAlias) {
+		this.newTableAlias = newTableAlias;
+	}
+
+	public String getOldTableAlias() {
+		return oldTableAlias;
+	}
+
+	public void setOldTableAlias(String oldTableAlias) {
+		this.oldTableAlias = oldTableAlias;
 	}
 
 	public boolean isFirst() {

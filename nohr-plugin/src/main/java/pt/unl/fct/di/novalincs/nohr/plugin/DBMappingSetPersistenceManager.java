@@ -30,7 +30,7 @@ import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
  *
  * @author Vedran Kasalica
  * 
- * I don't think we are using it so far.
+ *
  */
 public class DBMappingSetPersistenceManager {
 
@@ -74,7 +74,7 @@ public class DBMappingSetPersistenceManager {
     	FileReader in = new FileReader(file);
         BufferedReader input = new BufferedReader(in);
         String mapping;
-        int line=1;
+        int line = 1;
         while ((mapping = input.readLine()) != null) {
         	dbMappingSet.add(new DBMappingImpl(mapping, ODBCPreferences.getDrivers(),line));
         	line++;
@@ -82,70 +82,20 @@ public class DBMappingSetPersistenceManager {
         
     }
 
-//    private Rule nextRule(PrologCharDataSource src) throws IOException, PrologParserException {
-//        final AbstractPrologTerm term = parser.nextSentence(src);
-//        if (term == null) {
-//            return null;
-//        }
-//        return rule(term);
-//    }
-    /**
-     * Reads a {@link Program program} from a given file.
-     *
-     * @param file the file from where to read the program.
-     * @return the read program.
-     * @throws IOException
-     * @throws PrologParserException if the file have syntax errors.
-     * @throws pt.unl.fct.di.novalincs.nohr.parsing.ParseException
-     */
-    public DBMappingSet read(File file) throws IOException, PrologParserException, ParseException {
-        final DBMappingSet dbMappingSet = Model.dbMappingSet();
-        load(file, dbMappingSet);
-        return dbMappingSet;
-    }
-
-//    private DBMapping dbMappingSet(AbstractPrologTerm term) throws IOException, PrologParserException {
-//        // Main case for any rule but a fact of arity 0
-//        if (term.getType() == PrologTermType.STRUCT) {
-//            final PrologStructure structure = (PrologStructure) term;
-//            // Case for a fact of arity > 0
-//            if (!structure.getFunctor().getText().equals(":-")) {
-//                return Model.rule((Atom) literal(structure));
-//            }
-//            // Otherwise there exist distinct head and body elements
-//            final Atom head = (Atom) literal(structure.getElement(0));
-//            final List<Literal> body = new LinkedList<Literal>();
-//            final AbstractPrologTerm bodyTerm = structure.getElement(1);
-//            if (bodyTerm != null) // Main case for any body but a single atom of arity 0
-//            {
-//                if (bodyTerm.getType() == PrologTermType.STRUCT) {
-//                    literalsList((PrologStructure) bodyTerm, body);
-//                } // Alternative case for a body containing only a single atom of arity 0
-//                else if (bodyTerm.getType() == PrologTermType.ATOM) {
-//                    body.add(atom(bodyTerm));
-//                } else {
-//                    throw new IllegalArgumentException("This is not a rule body in the correct format.");
-//                }
-//            }
-//
-//            return Model.rule(head, body);
-//            // Alternative case for a fact of arity 0
-//        } else if (term.getType() == PrologTermType.ATOM) {
-//            return Model.rule(atom(term));
-//        } else {
-//            throw new IllegalArgumentException("This is not a rule in the correct format.");
-//        }
+//    /**
+//     * Reads a {@link Program program} from a given file.
+//     *
+//     * @param file the file from where to read the program.
+//     * @return the read program.
+//     * @throws IOException
+//     * @throws PrologParserException if the file have syntax errors.
+//     * @throws pt.unl.fct.di.novalincs.nohr.parsing.ParseException
+//     */
+//    public DBMappingSet read(File file) throws IOException, PrologParserException, ParseException {
+//        final DBMappingSet dbMappingSet = Model.dbMappingSet();
+//        load(file, dbMappingSet);
+//        return dbMappingSet;
 //    }
 
-
-    private String unquote(String symbol) {
-        // As the parser removes any outer "'", either also remove the " introduced when writing the file or
-        // add the outer "'" again as they were originally part of the symbol name
-        if (symbol.startsWith("\"") && symbol.endsWith("\"")) {
-            return symbol.substring(1, symbol.length() - 1);
-        } else {
-            return "'" + symbol + "'";
-        }
-    }
 
 }

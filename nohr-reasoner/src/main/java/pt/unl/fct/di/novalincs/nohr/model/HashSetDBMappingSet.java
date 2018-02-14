@@ -18,7 +18,7 @@ public class HashSetDBMappingSet implements DBMappingSet {
 
 	private final Set<DBMapping> dBMappings;
 
-	protected HashSetDBMappingSet(Set<DBMapping> dbMappings) {
+	public HashSetDBMappingSet(Set<DBMapping> dbMappings) {
 		if (dbMappings != null)
 			this.dBMappings = new HashSet<DBMapping>(dbMappings);
 		else
@@ -154,6 +154,10 @@ public class HashSetDBMappingSet implements DBMappingSet {
 		for (final DBMappingsSetChangeListener listener : listeners)
 			listener.updated(oldDBMapping, newDBMapping);
 		return true;
+	}
+
+	public Collection<? extends DBMapping> getDBMppings() {
+		return dBMappings;
 	}
 
 }

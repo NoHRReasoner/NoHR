@@ -21,6 +21,8 @@ public interface DBMapping   {
 
 	public Predicate getPredicate(); 
 	
+	public Predicate getOriginalPredicate();
+	
 	public Predicate getNPredicate();
 	
 	public ODBCDriver getODBC(); 
@@ -28,8 +30,10 @@ public interface DBMapping   {
 	public Integer getArity(); 
 	
 	public boolean isSQL(); 
-
-//	String getColumnsString();
+	
+	public void setAliasNumber(int n);
+	
+	public Integer getAliasNumber();
 	
 	public String getFileSyntax();
 	

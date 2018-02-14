@@ -42,6 +42,7 @@ import pt.unl.fct.di.novalincs.nohr.model.Term;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.parsing.NoHRScanner;
 import pt.unl.fct.di.novalincs.nohr.parsing.TokenType;
+import pt.unl.fct.di.novalincs.nohr.plugin.IconLoader;
 import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
 import pt.unl.fct.di.novalincs.nohr.utils.CreatingMappings;
 import javax.swing.JSpinner;
@@ -51,6 +52,12 @@ import javax.swing.SwingConstants;
 import java.awt.Dimension;
 import java.awt.Cursor;
 import javax.swing.JSeparator;
+import javax.swing.border.LineBorder;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+
+import javax.swing.DebugGraphics;
+import java.awt.Point;
 
 public class DBMappingEditForm extends JPanel {
 	/**
@@ -81,6 +88,7 @@ public class DBMappingEditForm extends JPanel {
 
 	private final List<DBTable> tables;
 	private final DefaultTableModel tablesModel;
+	private int tableNumber;
 
 	private final List<String[]> columns;
 	private final DefaultTableModel columnsModel;
@@ -100,6 +108,14 @@ public class DBMappingEditForm extends JPanel {
 	 * Create the frame.
 	 */
 	public DBMappingEditForm(Vocabulary vocabulary) {
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int maxHeight= (int) screenSize.getHeight();
+		int maxWidth = (int) screenSize.getWidth();
+		int height = 500;
+		int width = 690;
+		setPreferredSize(new Dimension(width, height));
+		setLocation(new Point(((maxWidth-width)/3),(maxHeight-height)/3));
+		setAutoscrolls(true);
 		this.vocabulary = vocabulary;
 		tables = new ArrayList<DBTable>();
 		columns = new ArrayList<String[]>();
@@ -132,11 +148,14 @@ public class DBMappingEditForm extends JPanel {
 		firstTable = true;
 		isSQL = false;
 
+		
+		
 		load();
 	}
 
 	private void load() {
 
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -194,7 +213,7 @@ public class DBMappingEditForm extends JPanel {
 		gbc_lblColumns.gridy = 5;
 		add(lblColumns, gbc_lblColumns);
 
-		JTable tbColons = new JTable(columnsModel);
+		final JTable tbColons = new JTable(columnsModel);
 		tbColons.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		JScrollPane scrollPaneCol = new JScrollPane(tbColons);
 		scrollPaneCol.setPreferredSize(new Dimension(380, 83));
@@ -211,6 +230,7 @@ public class DBMappingEditForm extends JPanel {
 
 		btnAddCol = new JButton("");
 		btnAddCol.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\add.png"));
+//		btnAddCol.setIcon(IconLoader.getImageIcon("images/pen.png"));
 		btnAddCol.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				addColumn();
@@ -267,6 +287,7 @@ public class DBMappingEditForm extends JPanel {
 		tbTables = new JTable(tablesModel);
 		tbTables.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		scrollPane = new JScrollPane(tbTables);
+		scrollPane.setLocation(new Point(50, 30));
 		scrollPane.setPreferredSize(new Dimension(380, 83));
 		scrollPane.setMinimumSize(new Dimension(23, 83));
 		scrollPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -398,17 +419,21 @@ public class DBMappingEditForm extends JPanel {
 		});
 
 		fieldSQL = new JTextArea();
-		fieldSQL.setRows(3);
+		fieldSQL.setRows(4);
 		fieldSQL.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		fieldSQL.setWrapStyleWord(true);
 		fieldSQL.setLineWrap(true);
+		
+		JScrollPane scrollV = new JScrollPane (fieldSQL);
+		scrollV.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
 		GridBagConstraints gbc_fieldSQL = new GridBagConstraints();
 		gbc_fieldSQL.gridwidth = 3;
 		gbc_fieldSQL.insets = new Insets(0, 0, 5, 5);
 		gbc_fieldSQL.fill = GridBagConstraints.BOTH;
 		gbc_fieldSQL.gridx = 2;
 		gbc_fieldSQL.gridy = 12;
-		add(fieldSQL, gbc_fieldSQL);
+		add(scrollV, gbc_fieldSQL);
 		btnEditSQL.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\pen.png"));
 		GridBagConstraints gbc_btnEditSQL = new GridBagConstraints();
 		gbc_btnEditSQL.anchor = GridBagConstraints.NORTHWEST;
@@ -418,7 +443,7 @@ public class DBMappingEditForm extends JPanel {
 		gbc_btnEditSQL.gridy = 12;
 		add(btnEditSQL, gbc_btnEditSQL);
 
-		setSize(650, 600);
+		setSize(676, 624);
 	}
 
 	private void editSQL() {
@@ -434,10 +459,9 @@ public class DBMappingEditForm extends JPanel {
 	}
 
 	private void addTable() {
-		tablePopup.setTables(tables,-1);
+		tablePopup.setTables(tables, -1, "t" + tableNumber);
 		tablePopup.clear();
 		tablePopup.first(firstTable);
-		firstTable = false;
 		final int ret = JOptionPaneEx.showConfirmDialog(this, "Add a new table", tablePopup, JOptionPane.PLAIN_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION, null);
 
@@ -445,6 +469,8 @@ public class DBMappingEditForm extends JPanel {
 			tables.add(tablePopup.getTableModel());
 			tablesModel.addRow(tablePopup.getTable());
 			updateSQL();
+			firstTable = false;
+			tableNumber++;
 		}
 
 	}
@@ -452,7 +478,7 @@ public class DBMappingEditForm extends JPanel {
 	private void editTable(int edit) {
 		if (edit == -1)
 			return;
-		tablePopup.setTables(tables,edit);
+		tablePopup.setTables(tables, edit, "");
 		tablePopup.edit(tables.get(edit));
 		tablePopup.first(firstTable || edit == 0);
 		final int ret = JOptionPaneEx.showConfirmDialog(this, "Edit table", tablePopup, JOptionPane.PLAIN_MESSAGE,
@@ -464,7 +490,7 @@ public class DBMappingEditForm extends JPanel {
 			tablesModel.insertRow(edit, tablePopup.getTable());
 			updateSQL();
 		}
-		
+
 	}
 
 	private void removeTable(int arr) {
@@ -477,28 +503,32 @@ public class DBMappingEditForm extends JPanel {
 		}
 		tablesModel.removeRow(arr);
 		tables.remove(arr);
-		if (tables.isEmpty())
+		if (tables.isEmpty()){
 			firstTable = true;
+			tableNumber=1;
+		}
 		updateSQL();
 	}
 
 	private boolean invalidTableDel(int arr) {
 		for (DBTable curr : tables) {
-			if (curr.getOldTableName()!= null && tables.get(arr).getNewTableName().matches(curr.getOldTableName()))
+			if (curr.getOldTableName() != null && tables.get(arr).getNewTableName().matches(curr.getOldTableName()))
 				return true;
 		}
 		return false;
 	}
 
 	private void addColumn() {
+		columnPopup.setTables(tables);
 		columnPopup.clear();
+		
 		final int ret = JOptionPaneEx.showConfirmDialog(this, "Add a new column", columnPopup,
 				JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null);
 
 		if (ret == JOptionPane.OK_OPTION) {
 			String[] colName = columnPopup.getColDef();
 			columns.add(colName);
-			columnsModel.addRow(new Object[] { colName[0], colName[1] });
+			columnsModel.addRow(new Object[] { colName[1], colName[2] });
 			spArity.getModel().setValue((int) spArity.getModel().getValue() + 1);
 		}
 		updateSQL();
@@ -507,6 +537,7 @@ public class DBMappingEditForm extends JPanel {
 	private void editColumn(int edit) {
 		if (edit == -1)
 			return;
+		columnPopup.setTables(tables);
 		columnPopup.edit(columns.get(edit));
 		final int ret = JOptionPaneEx.showConfirmDialog(this, "Edit column", columnPopup, JOptionPane.PLAIN_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION, null);
@@ -515,7 +546,7 @@ public class DBMappingEditForm extends JPanel {
 			String[] colName = columnPopup.getColDef();
 			columns.set(edit, colName);
 			columnsModel.removeRow(edit);
-			columnsModel.insertRow(edit, new Object[] { colName[0], colName[1] });
+			columnsModel.insertRow(edit, new Object[] { colName[1], colName[2] });
 		}
 		updateSQL();
 
@@ -567,9 +598,9 @@ public class DBMappingEditForm extends JPanel {
 			tablesModel.setRowCount(0);
 			for (DBTable tmp : list) {
 				String[] tmpCopy = new String[4];
-				tmpCopy[0] = tmp.getNewTableName();
-				tmpCopy[1] = tmp.getOldTableName();
-				tmpCopy[2] = tmp.getNewCols();
+				tmpCopy[0] = tmp.getNewTableName() + " as " + tmp.getNewTableAlias();
+				tmpCopy[1] = tmp.getNewCols();
+				tmpCopy[2] = tmp.getOldTableAlias();
 				tmpCopy[3] = tmp.getOldCols();
 
 				tablesModel.addRow(tmpCopy);
@@ -598,7 +629,7 @@ public class DBMappingEditForm extends JPanel {
 				columns.add(s);
 			columnsModel.setRowCount(0);
 			for (String[] s : col)
-				columnsModel.addRow(new Object[] { s[0], s[1] });
+				columnsModel.addRow(new Object[] { s[1], s[2] });
 		}
 	}
 
@@ -633,6 +664,7 @@ public class DBMappingEditForm extends JPanel {
 	}
 
 	public void setMapping(DBMapping dbMapping) {
+		tableNumber=1;
 		refreshComboBox();
 
 		if (dbMapping == null) {
@@ -652,6 +684,7 @@ public class DBMappingEditForm extends JPanel {
 			setPredicateText(dbMapping.getPredicate().toString());
 			setArity(dbMapping.getArity());
 			isSQL(dbMapping.isSQL());
+			tableNumber=dbMapping.getAliasNumber();
 
 		}
 		updateSQL();
@@ -703,7 +736,7 @@ public class DBMappingEditForm extends JPanel {
 			if (getODBCDriver() == null || tables.isEmpty() || columns.isEmpty()) {
 				return null;
 			}
-			DBMapping tmp = new DBMappingImpl(getODBCDriver(), tables, columns, getPredicate());
+			DBMapping tmp = new DBMappingImpl(getODBCDriver(), tables, columns, getPredicate(), tableNumber);
 			return tmp;
 		}
 	}
@@ -720,6 +753,8 @@ public class DBMappingEditForm extends JPanel {
 	private Predicate getPredicate() {
 		final List<Term> kbTerms = new LinkedList<>();
 		int size = columns.size();
+		if (isSQL)
+			size = getArity();
 		if (size == 0) {
 			System.out.println("No columns added");
 			// for test
@@ -739,10 +774,13 @@ public class DBMappingEditForm extends JPanel {
 	}
 
 	private void updateSQL() {
-		if (getDBMapping() == null)
+		if(isSQL)
+			return;
+		DBMapping tmpMap = getDBMapping();
+		if (tmpMap == null)
 			return;
 		try {
-			MappingGenerator map = new MappingGenerator(getDBMapping());
+			MappingGenerator map = new MappingGenerator(tmpMap, null);
 			setSQL(map.createSQL());
 		} catch (InvalidAttributesException e) {
 			e.printStackTrace();

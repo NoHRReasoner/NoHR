@@ -49,6 +49,7 @@ import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.NegativeLiteral;
+import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
@@ -131,15 +132,19 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	private class DBMappingSetImpl implements DatabaseDBMappings {
 
 		private final Set<DBMapping> dbMappings;
+		
+		private final Set<ODBCDriver> dbDrivers;
 
 		private DBMappingSetImpl() {
 			dbMappings = new HashSet<DBMapping>();
+			dbDrivers = new HashSet<ODBCDriver>();
 		}
 
 		@Override
 		public void add(DBMapping dbMapping) {
 			if (dbMappings.add(dbMapping))
 				hasChanges = true;
+			dbDrivers.add(dbMapping.getODBC());
 
 		}
 
@@ -147,19 +152,21 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		public void addAll(Collection<DBMapping> dbMappings) {
 			for (final DBMapping dbMapping : dbMappings) {
 				add(dbMapping);
+				
 			}
-
 		}
 
 		@Override
 		public void clear() {
 			hasChanges = true;
 			dbMappings.clear();
+			dbDrivers.clear();
 		}
 
 		@Override
 		protected void finalize() {
 			dbMappings.clear();
+			dbDrivers.clear();
 			dbMappingSets.remove(this);
 		}
 
@@ -172,7 +179,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		public void remove(DBMapping dbMapping) {
 			if (dbMappings.remove(dbMapping))
 				hasChanges = true;
-
+			dbDrivers.remove(dbMapping.getODBC());
 		}
 
 		@Override
@@ -181,6 +188,22 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 				remove(dbMapping);
 			}
 
+		}
+		
+		public Set<ODBCDriver> getDrivers(){
+			Set<ODBCDriver> diffDrivers = new HashSet<ODBCDriver>();
+			for(ODBCDriver driver : dbDrivers){
+				boolean newDriver = true;
+				for(ODBCDriver diffDriver : diffDrivers){
+					if(driver.getConectionName().matches(diffDriver.getConectionName())){
+						newDriver = false;
+						break;	
+					}
+				}
+				if(newDriver)
+					diffDrivers.add(driver);
+			}
+			return diffDrivers;
 		}
 
 	}
@@ -778,9 +801,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 				}
 			}
 			
-			writer.write(":- import odbc_open/3 from odbc_call.\n" + ":- import findall_odbc_sql/3 from odbc_call.\n" +
-							":- import odbc_close/0 from odbc_call.\n" + ":- import odbc_data_sources/2 from odbc_call.\n"+
-							 "?-odbc_open('test','root','root').\n");
+			writer.write(":- import odbc_open/4 from odbc_call.\n" + ":- import findall_odbc_sql/4 from odbc_call.\n" +
+							":- import odbc_close/0 from odbc_call.\n" + ":- import odbc_data_sources/2 from odbc_call.\n");
 			
 //			writer.write(":- import odbc_open/3 from odbc_call.\n"+
 //			":- import odbc_sql/3 from odbc_call.\n"+
@@ -810,11 +832,16 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 //			"aq3m(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime3000 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
 //			"aq6m(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crimesindex where crimesID = ? and Case_Number = ?', [X,Y]).\n");
 			for (final DBMappingSetImpl mappingSet : dbMappingSets) {
+				for(final ODBCDriver driver : mappingSet.getDrivers()) {
+					writer.write("?-odbc_open('"+ driver.getConectionName() + "','" + driver.getUsername() + "','" + driver.getPassword() + "','" + driver.getConectionName() + "').");
+					writer.newLine();
+				}
+				
 				for (final DBMapping mapping : mappingSet.dbMappings) {
-					MappingGenerator generator = new MappingGenerator(mapping);
-					List<String> mappingBodies = generator.createMappingBody();
-					for(String mappingBody : mappingBodies){
-						writer.write(mapping.getPredicate().accept(formatVisitor) + mappingBody);
+					MappingGenerator generator = new MappingGenerator(mapping,formatVisitor);
+					List<String> mappingRules = generator.createMappingRule();
+					for(String mappingRule : mappingRules){
+						writer.write(mappingRule);
 						writer.newLine();
 					}
 				}

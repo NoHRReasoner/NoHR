@@ -48,6 +48,7 @@ public class DBMappingAddTableJoin extends JPanel {
 	private boolean firstTable;
 	private JComboBox comboOldTable;
 	private List<String> tables;
+	private String tableAlias;
 
 	/**
 	 * Create the frame.
@@ -154,10 +155,14 @@ public class DBMappingAddTableJoin extends JPanel {
 
 	public String[] getTable() {
 		String[] tableJoin = new String[4];
-		tableJoin[0] = feildNewtable.getText();
+		tableJoin[0] = feildNewtable.getText() + " as" + tableAlias;
 
 		tableJoin[1] = feildNewCol.getText();
-		tableJoin[2] = (String) comboOldTable.getSelectedItem();
+		if (firstTable) {
+			tableJoin[2] = "";
+		} else {
+			tableJoin[2] = ((String) comboOldTable.getSelectedItem()).split(" as ")[1];
+		}
 		tableJoin[3] = feildOldCol.getText();
 
 		// List<String> items = Arrays.asList(str.split("\\s*,\\s*"));
@@ -169,11 +174,14 @@ public class DBMappingAddTableJoin extends JPanel {
 
 		List<String> newCol = Arrays.asList(feildNewCol.getText().split("\\s*,\\s*"));
 		List<String> oldCol = Arrays.asList(feildOldCol.getText().split("\\s*,\\s*"));
-		System.out.println("newCol: " + newCol);
-		System.out.println("oldCol: " + oldCol);
-		DBTable tableJoin = new DBTable(feildNewtable.getText(), (String) comboOldTable.getSelectedItem(), newCol,
-				oldCol, firstTable);
-
+		DBTable tableJoin;
+		if (firstTable) {
+			tableJoin = new DBTable(feildNewtable.getText(), "", tableAlias,"", newCol, oldCol, firstTable);
+		} else {
+			String[] oldTable = ((String) comboOldTable.getSelectedItem()).split(" as ");
+			tableJoin = new DBTable(feildNewtable.getText(), oldTable[0], tableAlias, oldTable[1], newCol, oldCol,
+					firstTable);
+		}
 		// List<String> items = Arrays.asList(str.split("\\s*,\\s*"));
 
 		return tableJoin;
@@ -193,7 +201,7 @@ public class DBMappingAddTableJoin extends JPanel {
 	public void edit(DBTable table) {
 		feildNewtable.setText(table.getNewTableName());
 		feildNewCol.setText(table.getNewCols());
-		comboOldTable.setSelectedIndex(getTableIndex(table.getOldTableName()));
+		comboOldTable.setSelectedIndex(getTableIndex(table.getOldTableName() + " as " + table.getOldTableAlias()));
 		feildOldCol.setText(table.getOldCols());
 
 	}
@@ -219,11 +227,14 @@ public class DBMappingAddTableJoin extends JPanel {
 
 	}
 
-	public void setTables(List<DBTable> list, int curr) {
+	public void setTables(List<DBTable> list, int curr, String tableAlias) {
 		tables.clear();
+		this.tableAlias = tableAlias;
 		for (int i = 0; i < list.size(); i++) {
 			if (i != curr) {
-				tables.add(list.get(i).getNewTableName());
+				tables.add(list.get(i).getNewTableName() + " as " + list.get(i).getNewTableAlias());
+			} else {
+				this.tableAlias = list.get(i).getNewTableAlias();
 			}
 		}
 		refreshComboBox();

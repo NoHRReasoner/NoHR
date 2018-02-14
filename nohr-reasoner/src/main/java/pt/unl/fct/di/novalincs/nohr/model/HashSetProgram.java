@@ -29,7 +29,7 @@ public class HashSetProgram implements Program {
 
 	private final Set<Rule> rules;
 
-	protected HashSetProgram(Set<Rule> rules) {
+	public HashSetProgram(Set<Rule> rules) {
 		if (rules != null)
 			this.rules = new HashSet<Rule>(rules);
 		else
@@ -133,6 +133,10 @@ public class HashSetProgram implements Program {
 		listeners.remove(listener);
 	}
 
+	public Set<Rule> getRules(){
+		return this.rules;
+	}
+	
 	/**
 	 * Not supported.
 	 */

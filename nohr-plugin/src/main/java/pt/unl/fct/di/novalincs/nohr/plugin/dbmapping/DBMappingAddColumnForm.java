@@ -3,6 +3,7 @@ package pt.unl.fct.di.novalincs.nohr.plugin.dbmapping;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -11,6 +12,7 @@ import javax.swing.JTextField;
 
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
+import pt.unl.fct.di.novalincs.nohr.model.DBTable;
 import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
 import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
 
@@ -41,13 +43,17 @@ public class DBMappingAddColumnForm extends JPanel {
 	private JLabel lblNewLabel_1;
 	private JLabel lblJoin;
 	private JCheckBox checkIsFloat;
-	private JTextField fieldTblName;
 	private JLabel lblTableName;
+	private JComboBox comboTable;
+	private List<String> tables;
 
 	/**
 	 * Create the frame.
 	 */
 	public DBMappingAddColumnForm() {
+		
+		tables = new ArrayList<String>();
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
@@ -68,23 +74,22 @@ public class DBMappingAddColumnForm extends JPanel {
 		gbc_lblNewLabel_1.gridy = 1;
 		add(lblNewLabel_1, gbc_lblNewLabel_1);
 		
-		lblTableName = new JLabel("Table name:");
+		lblTableName = new JLabel("Table:");
 		GridBagConstraints gbc_lblTableName = new GridBagConstraints();
+		gbc_lblTableName.anchor = GridBagConstraints.EAST;
 		gbc_lblTableName.insets = new Insets(0, 0, 5, 5);
 		gbc_lblTableName.gridx = 1;
 		gbc_lblTableName.gridy = 3;
 		add(lblTableName, gbc_lblTableName);
 		
-		fieldTblName = new JTextField();
-		lblTableName.setLabelFor(fieldTblName);
-		GridBagConstraints gbc_fieldTblName = new GridBagConstraints();
-		gbc_fieldTblName.gridwidth = 5;
-		gbc_fieldTblName.insets = new Insets(0, 0, 5, 5);
-		gbc_fieldTblName.fill = GridBagConstraints.HORIZONTAL;
-		gbc_fieldTblName.gridx = 3;
-		gbc_fieldTblName.gridy = 3;
-		add(fieldTblName, gbc_fieldTblName);
-		fieldTblName.setColumns(10);
+		comboTable = new JComboBox();
+		GridBagConstraints gbc_comboTable = new GridBagConstraints();
+		gbc_comboTable.gridwidth = 5;
+		gbc_comboTable.insets = new Insets(0, 0, 5, 5);
+		gbc_comboTable.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboTable.gridx = 3;
+		gbc_comboTable.gridy = 3;
+		add(comboTable, gbc_comboTable);
 
 		lblNewLabel = new JLabel("Column name:");
 		lblNewLabel.setToolTipText("Name of the column");
@@ -128,16 +133,6 @@ public class DBMappingAddColumnForm extends JPanel {
 		add(checkIsFloat, gbc_checkIsFloat);
 
 	}
-
-	public String getColTable() {
-
-		return fieldTblName.getText();
-	}
-
-	public void setColTable(String table) {
-
-		fieldTblName.setText(table);
-	}
 	
 	
 	public String getColumn() {
@@ -159,28 +154,60 @@ public class DBMappingAddColumnForm extends JPanel {
 	}
 
 	public void clear() {
-		fieldTblName.setText("");
+		if (tables.size() > 0)
+			comboTable.setSelectedIndex(0);
+		else
+			comboTable.setSelectedIndex(-1);
 		fieldColName.setText("");
 		checkIsFloat.setSelected(false);
 
 	}
 	
 	public String[] getColDef(){
-		String [] colDef = new String[3];
-		colDef[0]=fieldTblName.getText();
-		colDef[1]=fieldColName.getText();
+		String [] colDef = new String[4];
+		colDef[0]=(String) comboTable.getSelectedItem();
+		colDef[1]=((String) comboTable.getSelectedItem()).split(" as ")[1];
+		colDef[2]=fieldColName.getText();
 		if(checkIsFloat.isSelected())
-			colDef[2]="true";
+			colDef[3]="true";
 		else
-			colDef[2]="false";
+			colDef[3]="false";
 		return colDef;
 	}
 
 	public void edit(String[] col) {
-		fieldTblName.setText(col[0]);
-		fieldColName.setText(col[1]);
-		checkIsFloat.setSelected(col[2].matches("true"));
+		comboTable.setSelectedIndex(getTableIndex(col[0]));
+		fieldColName.setText(col[2]);
+		checkIsFloat.setSelected(col[3].matches("true"));
 
 	}
+	
+	private int getTableIndex(String table) {
+		if (table != null) {
+			for (int i = 0; i < tables.size(); i++) {
+				if (tables.get(i).matches(table))
+					return i;
+			}
+		}
+		System.out.println("Table no longer exists.");
+		return -1;
+	}
+	
+	public void setTables(List<DBTable> list) {
+		tables.clear();
+		for (int i = 0; i < list.size(); i++) {
+				tables.add(list.get(i).getNewTableName() +" as "+list.get(i).getNewTableAlias());
+		}
+		refreshComboBox();
+	}
+
+	private void refreshComboBox() {
+		comboTable.removeAllItems();
+		for (String item : tables) {
+			comboTable.addItem(item);
+		}
+
+	}
+	
 
 }
