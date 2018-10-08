@@ -5,14 +5,41 @@ import java.util.List;
 
 public class DBTable {
 
+	/**
+	 * Table that was introduced
+	 */
 	private String newTableName;
+	/**
+	 * Existing table that that was used in JOIN.
+	 */
 	private String oldTableName;
+	/**
+	 * Alias of the table {@link DBTable#newTableName}
+	 */
 	private String newTableAlias;
+	/**
+	 * Alias of the table {@link DBTable#oldTableName}
+	 */
 	private String oldTableAlias;
 	private boolean isFirst;
+	/**
+	 * List of new columns (from {@link DBTable#newTableName} that JOIN was based on.
+	 */
 	private List<String> newTableCol;
+	/**
+	 * List of existing columns (from {@link DBTable#oldTableName} that JOIN was based on.
+	 */
 	private List<String> oldTableCol;
 
+	/**
+	 * Generating a new DBTable. 
+	 * @param newTableName - Table that was introduced
+	 * @param oldTableName - Existing table that that was used in JOIN.
+	 * @param newTableAlias - Alias of the table {@link DBTable#newTableName}
+	 * @param oldTableAlias - Alias of the table {@link DBTable#oldTableName}
+	 * @param newTableCol - List of new columns (from {@link DBTable#newTableName}) that JOIN was based on.
+	 * @param oldTableCol - List of existing columns (from {@link DBTable#oldTableName}) that JOIN was based on.
+	 */
 	public DBTable(String newTableName, String oldTableName, String newTableAlias, String oldTableAlias, List<String> newTableCol, List<String> oldTableCol) {
 		super();
 		this.newTableName = newTableName;
@@ -29,6 +56,16 @@ public class DBTable {
 		this.isFirst=false;
 	}
 	
+	/**
+	 * Generating a new DBTable. 
+	 * @param newTableName - Table that was introduced
+	 * @param oldTableName - Existing table that that was used in JOIN.
+	 * @param newTableAlias - Alias of the table {@link DBTable#newTableName}
+	 * @param oldTableAlias - Alias of the table {@link DBTable#oldTableName}
+	 * @param newTableCol - List of new columns (from {@link DBTable#newTableName}) that JOIN was based on.
+	 * @param oldTableCol - List of existing columns (from {@link DBTable#oldTableName}) that JOIN was based on.
+	 * @param isFirst - {@code true} if it is a first table in the mapping, {@code false} otherwise
+	 */
 	public DBTable(String newTableName, String oldTableName, String newTableAlias, String oldTableAlias, List<String> newTableCol, List<String> oldTableCol, boolean isFirst) {
 		super();
 		this.newTableName = newTableName;

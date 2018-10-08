@@ -155,7 +155,7 @@ public class DBMappingAddTableJoin extends JPanel {
 
 	public String[] getTable() {
 		String[] tableJoin = new String[4];
-		tableJoin[0] = feildNewtable.getText() + " as" + tableAlias;
+		tableJoin[0] = feildNewtable.getText() + " as " + tableAlias;
 
 		tableJoin[1] = feildNewCol.getText();
 		if (firstTable) {
@@ -227,6 +227,12 @@ public class DBMappingAddTableJoin extends JPanel {
 
 	}
 
+	/**
+	 * Setting up the table pop-up.
+	 * @param list - list of tables
+	 * @param curr - table to be loaded (-1 if empty)
+	 * @param tableAlias
+	 */
 	public void setTables(List<DBTable> list, int curr, String tableAlias) {
 		tables.clear();
 		this.tableAlias = tableAlias;

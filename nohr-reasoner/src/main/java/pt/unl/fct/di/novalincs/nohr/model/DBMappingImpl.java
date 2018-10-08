@@ -3,9 +3,12 @@ package pt.unl.fct.di.novalincs.nohr.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
+import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.utils.CreatingMappings;
 
 /**
  * Implementation of {@link DBMapping}.
@@ -20,34 +23,38 @@ public class DBMappingImpl implements DBMapping {
 	/** Tables that are being mapped */
 	private final List<DBTable> tables;
 
-	/** Variable is used to represent if the mapping is given using SQL query  */
+	/** Variable is used to represent if the mapping is given using SQL query */
 	private final boolean isSQL;
-	
-	/** Variable is used to represent the arity of a predicate if using SQL query  */
+
+	/**
+	 * Variable is used to represent the arity of a predicate if using SQL query
+	 */
 	private final Integer arity;
-	
+
 	/** SQL representation of the mapping */
 	private final String sql;
 
-	/** Columns[4] from the table, [table name with alias, table alias, column name, float] */
+	/**
+	 * Columns[4] from the table, [table name with alias, table alias, column
+	 * name, float]
+	 */
 	private final List<String[]> columns;
 
 	/** Predicate that the query is being mapped to */
 	private final Predicate predicate;
-	
+
 	/** Predicate that the query is being mapped to */
 	private final Predicate originalPredicate;
-	
-	/** Classically negated predicate - used only with doubled predicate*/
-	private final Predicate nPredicate;
-	
-	/** Number used to create aliases for new tables*/
-	private int tableAliasNumber;
-	
 
-//	 constructor for GUI - mapping
-	public DBMappingImpl(ODBCDriver driver, List<DBTable> tables, List<String[]> columns,
-			Predicate predicate, int aliasNumber) {
+	/** Classically negated predicate - used only with doubled predicate */
+	private final Predicate nPredicate;
+
+	/** Number used to create aliases for new tables */
+	private int tableAliasNumber;
+
+	// constructor for GUI - mapping
+	public DBMappingImpl(ODBCDriver driver, List<DBTable> tables, List<String[]> columns, Predicate predicate,
+			int aliasNumber) {
 		super();
 		this.odbcDriver = driver;
 		this.tables = new ArrayList<DBTable>();
@@ -65,8 +72,13 @@ public class DBMappingImpl implements DBMapping {
 		this.tableAliasNumber = aliasNumber;
 	}
 
-	// create original or doubled mapping according to the encoder
-	public DBMappingImpl(DBMapping dbMapping, ModelVisitor encoder,  ModelVisitor encoderTnot) {
+	/**
+	 *  Used to create original or doubled mapping according to the encoder. Used during the reasoning process in {@link pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB NoHRHybridKB}.
+	 * @param dbMapping
+	 * @param encoder
+	 * @param encoderTnot
+	 */
+	public DBMappingImpl(DBMapping dbMapping, ModelVisitor encoder, ModelVisitor encoderTnot) {
 		super();
 		this.odbcDriver = dbMapping.getODBC();
 		this.tables = new ArrayList<DBTable>();
@@ -77,131 +89,178 @@ public class DBMappingImpl implements DBMapping {
 			this.columns.add(col);
 		this.predicate = dbMapping.getPredicate().accept(encoder);
 		this.originalPredicate = dbMapping.getPredicate();
-		if(encoderTnot==null){
+		if (encoderTnot == null) {
 			this.nPredicate = null;
-		}else{
+		} else {
 			this.nPredicate = dbMapping.getPredicate().accept(encoderTnot);
 		}
 		this.isSQL = dbMapping.isSQL();
 		this.arity = dbMapping.getArity();
 		this.sql = dbMapping.getSQL();
-		this.tableAliasNumber=dbMapping.getAliasNumber();
+		this.tableAliasNumber = dbMapping.getAliasNumber();
 	}
 
-	private void validate(String[] input, int size, int line) throws IOException{
+	private void validate(String[] input, int size, int line) throws IOException {
+		/**
+		 * <mapping> odbcDriver <mapping> sql <mapping>
+		 * <table>
+		 * <mapping> <column> <mapping> - <mapping>
+		 */
 		if (input == null || input.length != size) {
 			throw new IOException("Line: " + line + ". The file is corrupted.");
 		} else {
-			if (!input[0].matches("") || !input[ input.length-1].matches("")) {
-				System.out.println("|" + input[0] + "|");
-				System.out.println("|" + input[size-1] + "|");
+			if (!input[0].matches("") || !input[input.length -1].matches("")) {
 				throw new IOException("Line: " + line + ". The file is corrupted. Mappings are not defined properly.");
 			}
 		}
-		
+
 	}
-	
-//	 creating mapping from a string/file
-	public DBMappingImpl(String stringFromFile, List<ODBCDriver> drivers, int line) throws IOException {
-		String[] mapping = stringFromFile.split("<mapping>");
 
-		validate(mapping,7,line);
-		
-/**
- * 		odbc driver scanning
- */
+	// creating mapping from a string/file
+	public DBMappingImpl(String stringFromFile, List<ODBCDriver> drivers, int line, Vocabulary vocabulary) throws IOException {
+		String[] mapping = stringFromFile.split("<mapping>",-1);
+
+		validate(mapping, 7, line);
+
+		/**
+		 * odbc driver scanning
+		 */
 		String odbc = mapping[1];
-		int odbcIndex = drivers.indexOf(odbc);
-
-		if (odbcIndex == -1)
-			throw new IOException("Line: " + line + ". ODBC: " + odbc + ", doesn not exist");
-
-		this.odbcDriver = drivers.get(odbcIndex);
-
+		int odbcIndex = -1;
 		
-/**
- * 		table scanning
- */
-		this.tables = new ArrayList<DBTable>();
-		String[] tables = mapping[2].split("<table>");
-
-		if (tables == null || mapping.length != 7) {
-			throw new IOException("Line: " + line + ". The file is corrupted. No tables were defined.");
-		} else {
-			if (!tables[0].matches("") || !tables[ tables.length - 1].matches("")) {
-				throw new IOException("Line: " + line + ". The file is corrupted. Tables are not defined properly.");
+		for(int i =0; i<drivers.size();i++){
+			if(drivers.get(i).getConectionName().matches(odbc)){
+				odbcIndex = i;
+				break;
 			}
 		}
 
+		if (odbcIndex == -1){
+			throw new IOException("Line: " + line + ". ODBC: " + odbc + ", doesn not exist");
+		}
+		this.odbcDriver = drivers.get(odbcIndex);
 		
-		for (int i = 0; i < tables.length; i++) {
-			String[] tmpTablesJoins = tables[i].split("<tableJoin>");
-			if (tmpTablesJoins.length != 5)
-				throw new IOException("Line: " + line + ". The table " + i + ". is not well defined.");
-			
-			String [] tableJoinOn = tmpTablesJoins[4].split("<tableJoinOn>");
-			if (tableJoinOn.length < 1)
-				throw new IOException("Line: " + line + ". The table " + i + ". join is not well defined.");
-			
-			List<String> newTableCol= new ArrayList<>();
-			List<String> oldTableCol= new ArrayList<>();
-			for(int j=0;i<tableJoinOn.length;i++){
-				String[] tableJoinOnPair = tableJoinOn[j].split("<tableJoinOnPair>");
-				if (tableJoinOnPair.length != 2)
-					throw new IOException("Line: " + line + ". The table " + i + ". join is not well defined.");
-				newTableCol.add(tableJoinOnPair[0]);
-				oldTableCol.add(tableJoinOnPair[1]);
+		this.sql = mapping[2];
+		if (this.sql == null || this.sql.isEmpty()) {
+			this.isSQL = false;
+		} else {
+			this.isSQL = true;
+		}
+		/**
+		 * Parsing
+		 * <table>
+		 * section
+		 * 
+		 * 
+		 * <table>
+		 * <tableInfo> newTableName <tableInfo> oldTableName <tableInfo>
+		 * newTableAlias <tableInfo> oldTableAlias <tableInfo>
+		 * <tableJoinOnPairs> <col> newTableName.col11 <col> newTableName.col12
+		 * <col> ... <col> <tableJoinOnPairs> <col> oldTableName.col21 <col>
+		 * oldTableName.col22 <col> ... <col> <tableJoinOnPairs> <tableInfo>
+		 * <table>
+		 * 
+		 * ...
+		 * 
+		 * <table>
+		 */
+		this.tables = new ArrayList<DBTable>();
+		String[] tables = mapping[3].split("<table>", -1);
+
+		if (tables == null) {
+			throw new IOException("Line: " + line + ". The file is corrupted. No tables were defined.");
+		} else if (!tables[0].matches("") || !tables[tables.length-1].matches("")) {
+			throw new IOException("Line: " + line + ". The file is corrupted. Tables are not defined properly.");
+		}
+		for (int i = 1; i < tables.length -1; i++) {
+			String[] tmpTablesJoins = tables[i].split("<tableInfo>",-1);
+			if (!tmpTablesJoins[0].matches("") || tmpTablesJoins.length != 7) {
+				throw new IOException("Line: " + line + ". The table no. " + i + ". is not well defined.");
 			}
-			
-			DBTable tmptable = new DBTable(tmpTablesJoins[0], tmpTablesJoins[1],tmpTablesJoins[2],tmpTablesJoins[3], newTableCol, oldTableCol);
+
+			String[] tableJoinOn = tmpTablesJoins[5].split("<tableJoinOnPairs>",-1);
+			if (!tableJoinOn[0].matches("") || tableJoinOn.length != 4) {
+				throw new IOException("Line: " + line + ". The table no. " + i + ". join is not well defined.");
+			}
+
+			List<String> newTableCol = new ArrayList<>();
+			List<String> oldTableCol = new ArrayList<>();
+			String[] tmpNewCols = tableJoinOn[1].split("<col>",-1);
+			String[] tmpOldCols = tableJoinOn[2].split("<col>",-1);
+			if (!tmpNewCols[0].matches("") || !tmpOldCols[0].matches("") || tmpNewCols.length != tmpOldCols.length) {
+				throw new IOException("Line: " + line + ". The table no. " + i + ". join columns are not well defined.");
+			}
+			for (int j = 1; j < tmpNewCols.length -1; j++) {
+				newTableCol.add(tmpNewCols[j]);
+				oldTableCol.add(tmpOldCols[j]);
+			}
+			DBTable tmptable = new DBTable(tmpTablesJoins[1], tmpTablesJoins[2], tmpTablesJoins[3], tmpTablesJoins[4],
+					newTableCol, oldTableCol);
 			this.tables.add(tmptable);
 		}
-		
 		/**
-		 * 		columns scanning
+		 * Parsing <column> section
+		 * 
+		 * 
+		 * <column> <colInfo> table name with alias <colInfo> table alias
+		 * <colInfo> column Name <colInfo> is Column Float <colInfo> <column>
+		 * 
+		 * ...
+		 * 
+		 * <column>
 		 */
-		this.columns = new ArrayList<String[]>();
-		
-		String[] tmpColumns = mapping[3].split("<column>");
 
-		if (tmpColumns == null || tmpColumns.length < 1) {
+		this.columns = new ArrayList<String[]>();
+
+		String[] tmpColumns = mapping[4].split("<column>", -1);
+		
+		if (tmpColumns == null || tmpColumns.length < 2) {
 			throw new IOException("Line: " + line + ". The file is corrupted. No columns were defined.");
 		} else {
-			if (!tables[0].matches("") || !tables[ tables.length - 1].matches("")) {
+			if (!tmpColumns[0].matches("")) {
 				throw new IOException("Line: " + line + ". The file is corrupted. Columns are not defined properly.");
 			}
 		}
-		
-		for (int i = 0; i < tmpColumns.length; i++) {
-			String [] colInfo = tmpColumns[i].split("<colInfo>");
-			if (colInfo.length != 3)
-				throw new IOException("Line: " + line + ". The columns " + i + ". join is not well defined.");
-			
+		for (int i = 1; i < tmpColumns.length -1; i++) {
+			String[] tmpColInfo = tmpColumns[i].split("<colInfo>", -1);
+			if (tmpColInfo.length ==0 || !tmpColInfo[0].matches("") || tmpColInfo.length != 6){
+				throw new IOException("Line: " + line + ". The column no. " + i + " is not well defined.");
+			}
+			String[] colInfo = new String[4];
+			for (int j = 0; j < colInfo.length; j++) {
+				colInfo[j] = tmpColInfo[j+1];
+			}
 			this.columns.add(colInfo);
 		}
-		
-		
+
 		/**
-		 * 		predicate scanning
+		 * Parsing <predicate> section <mapping> <predicate> predicate name
+		 * <predicate> predicate arity <predicate> <mapping>
 		 */
+		String[] tmpPredicate = mapping[5].split("<predicate>", -1);
+
+		if (tmpPredicate == null || !tmpPredicate[0].matches("") || tmpPredicate.length != 4) {
+			throw new IOException("Line: " + line + ". The predicate is not well defined.");
+		}
+		try {
+			this.arity = Integer.parseUnsignedInt(tmpPredicate[2]);
+		} catch (NumberFormatException nfe) {
+			throw new IOException("Line: " + line + ". The arrity of the predicate is not well defined.");
+		}
+		this.tableAliasNumber = this.tables.size() + 1;
 		
-		this.isSQL = false;
-		this.arity = null;
-		
-		this.predicate = null;
-		this.originalPredicate = null;
+		this.predicate = getPredicateFromName(tmpPredicate[1], vocabulary);
+		this.originalPredicate = predicate;
 		this.nPredicate = null;
-		
-		this.sql = null;
-		this.tableAliasNumber = 0;
 	}
 
-//	 constructor for an arbitrary SQL - mapping
+	// constructor for an arbitrary SQL - mapping
 	public DBMappingImpl(ODBCDriver odbcDriver, String sql, int arity, Predicate predicate) {
 		super();
 		this.odbcDriver = odbcDriver;
 		this.tables = new ArrayList<DBTable>();
-		this.columns = new ArrayList<String[]>();;
+		this.columns = new ArrayList<String[]>();
+		;
 		this.predicate = predicate;
 		this.originalPredicate = predicate;
 		this.nPredicate = null;
@@ -210,6 +269,30 @@ public class DBMappingImpl implements DBMapping {
 		this.sql = sql;
 		this.tableAliasNumber = 0;
 	}
+	
+	private Predicate getPredicateFromName(String predicateName, Vocabulary vocabulary) {
+		final List<Term> kbTerms = new LinkedList<>();
+		int size = this.columns.size();
+		if (isSQL){
+			size = getArity();
+		}
+		if (size == 0) {
+			System.out.println("No columns added");
+			// for test
+			size = 1;
+		}
+		for (int i = 0; i < size; i++) {
+			Term kbTerm = Model.var(CreatingMappings.getVar(size, i));
+			kbTerms.add(kbTerm);
+		}
+
+		Rule tmp = Model.rule(Model.atom(vocabulary, predicateName, kbTerms));
+		Predicate predicate = tmp.getHead().getFunctor();
+		// x.getHead().getFunctor().accept(formatVisitor);
+
+		return predicate;
+
+	}
 
 	@Override
 	public List<String[]> getColumns() {
@@ -217,7 +300,6 @@ public class DBMappingImpl implements DBMapping {
 			return Collections.<String[]>emptyList();
 		return columns;
 	}
-
 
 	@Override
 	public List<DBTable> getTables() {
@@ -228,12 +310,12 @@ public class DBMappingImpl implements DBMapping {
 	public Predicate getPredicate() {
 		return predicate;
 	}
-	
+
 	@Override
 	public Predicate getOriginalPredicate() {
 		return originalPredicate;
 	}
-	
+
 	@Override
 	public Predicate getNPredicate() {
 		return nPredicate;
@@ -243,17 +325,16 @@ public class DBMappingImpl implements DBMapping {
 	public ODBCDriver getODBC() {
 		return odbcDriver;
 	}
-	
+
 	@Override
-	public void setAliasNumber(int n){
+	public void setAliasNumber(int n) {
 		tableAliasNumber = n;
 	}
-	
+
 	@Override
-	public Integer getAliasNumber(){
+	public Integer getAliasNumber() {
 		return tableAliasNumber;
 	}
-
 
 	@Override
 	public int hashCode() {
@@ -266,8 +347,7 @@ public class DBMappingImpl implements DBMapping {
 		return result;
 	}
 
-	
-//	TODO redo, group by table
+	// TODO redo, group by table
 	@Override
 	public String toString() {
 		if (sql != null) {
@@ -276,9 +356,9 @@ public class DBMappingImpl implements DBMapping {
 		String tmpCols = new String("");
 		for (int i = 0; i < columns.size(); i++) {
 			tmpCols += columns.get(i)[1];
-		
+
 			if (i < columns.size() - 1) {
-			tmpCols += ",";
+				tmpCols += ",";
 			}
 		}
 		return predicate + "  <-  " + getTablesNames() + "(" + tmpCols + ")";
@@ -297,59 +377,44 @@ public class DBMappingImpl implements DBMapping {
 	@Override
 	public String getFileSyntax() {
 		/**
-		 * 	<mapping>
-		 * 		odbcDriver
-		 * 	<mapping>
-		 *		sql
-		 * 	<mapping>
-		 * 		<table>
-		 * 	<mapping>
-		 * 		<column>
-		 * 	<mapping>
-		 * 		predicate
-		 * 	<mapping>
+		 * <mapping> odbcDriver <mapping> sql <mapping>
+		 * <table>
+		 * <mapping> <column> <mapping> <predicate> <mapping>
 		 */
-		
-		
-		/**		defining odbcDriver section */
-		
-		String tmp = new String("<mapping>");
-		if (odbcDriver == null)
-			return null;
-		tmp = tmp.concat(odbcDriver.getConectionName() + "<mapping>");
-		
-		/**		defining sql section */
-		
-		if (sql == null)
-			tmp = tmp.concat("<mapping>");
-		else
-			tmp = tmp.concat(sql + "<mapping>");
-		
 
-		/** defining <table> section
+		/** defining odbcDriver section */
+
+		String tmp = new String("<mapping>");
+		if (odbcDriver == null) {
+			return null;
+		}
+		tmp = tmp.concat(odbcDriver.getConectionName() + "<mapping>");
+
+		/** defining sql section */
+
+		if (sql == null) {
+			tmp = tmp.concat("<mapping>");
+		} else {
+			tmp = tmp.concat(sql + "<mapping>");
+		}
+
+		/**
+		 * defining
+		 * <table>
+		 * section
 		 * 
 		 * 
-		 *  <table> 
-		 *  	<tableInfo>
-		 *  		newTableName 
-		 *  	<tableInfo> 
-		 *  		oldTableName
-		 *  	<tableInfo>
-		 *  		newTableAlias
-		 *  	<tableInfo>
-		 *  		oldTableAlias
-		 *  	<tableInfo>
-		 *  		<tableJoinOnPairs>
-		 *  			<col> newTableName.col11 <col> newTableName.col12 <col> ... <col>
-		 *  		<tableJoinOnPairs> 
-		 *  			<col> oldTableName.col21 <col> oldTableName.col22 <col> ... <col> 
-		 *  		<tableJoinOnPairs>
-		 *		<tableInfo>  		
-		 *  <table>
-		 *  
-		 *  ...
-		 *  
-		 *  <table>
+		 * <table>
+		 * <tableInfo> newTableName <tableInfo> oldTableName <tableInfo>
+		 * newTableAlias <tableInfo> oldTableAlias <tableInfo>
+		 * <tableJoinOnPairs> <col> newTableName.col11 <col> newTableName.col12
+		 * <col> ... <col> <tableJoinOnPairs> <col> oldTableName.col21 <col>
+		 * oldTableName.col22 <col> ... <col> <tableJoinOnPairs> <tableInfo>
+		 * <table>
+		 * 
+		 * ...
+		 * 
+		 * <table>
 		 */
 		tmp = tmp.concat("<table>");
 		for (int j = 0; j < tables.size(); j++) {
@@ -363,10 +428,10 @@ public class DBMappingImpl implements DBMapping {
 			tmp = tmp.concat("<tableInfo>");
 			tmp = tmp.concat(tbl.getOldTableAlias());
 			tmp = tmp.concat("<tableInfo>");
-			
-			List<String> newCols =  tbl.getNewTableCol();
-			List<String> oldCols =  tbl.getOldTableCol();
-			String newC="<col>",oldC="<col>";
+
+			List<String> newCols = tbl.getNewTableCol();
+			List<String> oldCols = tbl.getOldTableCol();
+			String newC = "<col>", oldC = "<col>";
 			for (int i = 0; i < newCols.size(); i++) {
 				newC += newCols.get(i) + "<col>";
 				oldC += oldCols.get(i) + "<col>";
@@ -376,31 +441,23 @@ public class DBMappingImpl implements DBMapping {
 			tmp = tmp.concat("<tableJoinOnPairs>");
 			tmp = tmp.concat(oldC);
 			tmp = tmp.concat("<tableJoinOnPairs>");
-			
+
 			tmp = tmp.concat("<tableInfo>");
 			tmp = tmp.concat("<table>");
 			if (j == tables.size() - 1) {
 				tmp = tmp.concat("<mapping>");
 			}
 		}
-		/** defining <column> section
+		/**
+		 * defining <column> section
 		 * 
 		 * 
-		 *  <column>
-		 *  	<colInfo>
-		 *  		table name with alias
-		 *  	<colInfo> 
-		 *  		table alias
-		 *  	<colInfo> 
-		 *  		column Name 
-		 *  	<colInfo>
-		 * 			is Column Float 
-		 * 		<colInfo>
-		 *  <column>
-		 *  
-		 *  ...
-		 *  
-		 *  <column>
+		 * <column> <colInfo> table name with alias <colInfo> table alias
+		 * <colInfo> column Name <colInfo> is Column Float <colInfo> <column>
+		 * 
+		 * ...
+		 * 
+		 * <column>
 		 */
 		tmp = tmp.concat("<column>");
 		for (int i = 0; i < columns.size(); i++) {
@@ -414,15 +471,22 @@ public class DBMappingImpl implements DBMapping {
 			tmp = tmp.concat(columns.get(i)[3]);
 			tmp = tmp.concat("<colInfo>");
 			tmp = tmp.concat("<column>");
-			
+
 			if (i == columns.size() - 1) {
 				tmp = tmp.concat("<mapping>");
 			}
 		}
 
-		/** defining <column> section */
-		
+		/**
+		 * defining <predicate> section <mapping> <predicate> predicate name
+		 * <predicate> predicate arity <predicate> <mapping>
+		 */
+
+		tmp = tmp.concat("<predicate>");
 		tmp = tmp.concat(predicate.toString());
+		tmp = tmp.concat("<predicate>");
+		tmp = tmp.concat(predicate.getArity() + "");
+		tmp = tmp.concat("<predicate>");
 		tmp = tmp.concat("<mapping>");
 		return tmp;
 	}
@@ -441,5 +505,30 @@ public class DBMappingImpl implements DBMapping {
 	public boolean isSQL() {
 		return isSQL;
 	}
+	
+//	public void print(){
+//		System.out.println("1");
+//		System.out.println(odbcDriver);
+//		if(tables != null){
+//			for(DBTable t : tables){
+//				System.out.println(t);
+//			}
+//		}
+//		System.out.println("2");
+//		if(columns != null){
+//			for(String[] t1 : columns){
+//				for(String t : t1){
+//					System.out.println(t);
+//				}
+//			}
+//		}
+//		System.out.println("3");
+//		System.out.println(predicate.getSignature());
+//		System.out.println(isSQL);
+//		System.out.println(arity);
+//		System.out.println(sql);
+//		System.out.println(tableAliasNumber);
+//		System.out.println("4");
+//	}
 
 }

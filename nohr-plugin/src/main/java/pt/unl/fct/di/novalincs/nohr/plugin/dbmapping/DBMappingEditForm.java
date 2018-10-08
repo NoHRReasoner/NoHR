@@ -1,10 +1,14 @@
 package pt.unl.fct.di.novalincs.nohr.plugin.dbmapping;
 
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -22,13 +26,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSpinner;
+import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 
 import org.protege.editor.core.ui.util.JOptionPaneEx;
-import org.protege.editor.owl.OWLEditorKit;
 
 import pt.unl.fct.di.novalincs.nohr.deductivedb.MappingGenerator;
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
@@ -45,19 +52,8 @@ import pt.unl.fct.di.novalincs.nohr.parsing.TokenType;
 import pt.unl.fct.di.novalincs.nohr.plugin.IconLoader;
 import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
 import pt.unl.fct.di.novalincs.nohr.utils.CreatingMappings;
-import javax.swing.JSpinner;
-import javax.swing.JSpinner.DefaultEditor;
-import javax.swing.SpinnerNumberModel;
+import java.awt.Component;
 import javax.swing.SwingConstants;
-import java.awt.Dimension;
-import java.awt.Cursor;
-import javax.swing.JSeparator;
-import javax.swing.border.LineBorder;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-
-import javax.swing.DebugGraphics;
-import java.awt.Point;
 
 public class DBMappingEditForm extends JPanel {
 	/**
@@ -228,9 +224,10 @@ public class DBMappingEditForm extends JPanel {
 		gbc_scrollPaneCol.gridy = 5;
 		add(scrollPaneCol, gbc_scrollPaneCol);
 
-		btnAddCol = new JButton("");
-		btnAddCol.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\add.png"));
-//		btnAddCol.setIcon(IconLoader.getImageIcon("images/pen.png"));
+		btnAddCol = new JButton("+");
+		btnAddCol.setPreferredSize(new Dimension(35, 23));
+		btnAddCol.setToolTipText("Add column");
+		btnAddCol.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnAddCol.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				addColumn();
@@ -238,13 +235,17 @@ public class DBMappingEditForm extends JPanel {
 		});
 		GridBagConstraints gbc_btnAddCol = new GridBagConstraints();
 		gbc_btnAddCol.anchor = GridBagConstraints.NORTH;
+		gbc_btnAddCol.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnAddCol.insets = new Insets(0, 0, 5, 5);
 		gbc_btnAddCol.gridx = 5;
 		gbc_btnAddCol.gridy = 5;
 		add(btnAddCol, gbc_btnAddCol);
 
-		btnEditColumn = new JButton("");
-		btnEditColumn.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\pen.png"));
+		btnEditColumn = new JButton("Edit");
+		btnEditColumn.setToolTipText("Edit column");
+		btnEditColumn.setPreferredSize(new Dimension(35, 23));
+		btnEditColumn.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		btnEditColumn.setSize(20, 20);
 		btnEditColumn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				editColumn(tbColons.getSelectedRow());
@@ -254,13 +255,16 @@ public class DBMappingEditForm extends JPanel {
 
 		GridBagConstraints gbc_btnEditColumn = new GridBagConstraints();
 		gbc_btnEditColumn.anchor = GridBagConstraints.NORTH;
+		gbc_btnEditColumn.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnEditColumn.insets = new Insets(0, 0, 5, 5);
 		gbc_btnEditColumn.gridx = 6;
 		gbc_btnEditColumn.gridy = 5;
 		add(btnEditColumn, gbc_btnEditColumn);
 
-		btnRemCol = new JButton("");
-		btnRemCol.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\remove.png"));
+		btnRemCol = new JButton("-");
+		btnRemCol.setPreferredSize(new Dimension(35, 23));
+		btnRemCol.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnRemCol.setToolTipText("Remove column");
 		btnRemCol.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removeColumn(tbColons.getSelectedRow());
@@ -269,7 +273,8 @@ public class DBMappingEditForm extends JPanel {
 		});
 
 		GridBagConstraints gbc_btnRemCol = new GridBagConstraints();
-		gbc_btnRemCol.anchor = GridBagConstraints.NORTHWEST;
+		gbc_btnRemCol.anchor = GridBagConstraints.NORTH;
+		gbc_btnRemCol.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnRemCol.insets = new Insets(0, 0, 5, 0);
 		gbc_btnRemCol.gridx = 7;
 		gbc_btnRemCol.gridy = 5;
@@ -304,8 +309,10 @@ public class DBMappingEditForm extends JPanel {
 		// scrollPane.setBounds(scrollPane.getX(), scrollPane.getY(),
 		// scrollPane.getWidth(), 50);
 
-		btnAddTable = new JButton("");
-		btnAddTable.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\add.png"));
+		btnAddTable = new JButton("+");
+		btnAddTable.setPreferredSize(new Dimension(35, 23));
+		btnAddTable.setToolTipText("Add table");
+		btnAddTable.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnAddTable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				addTable();
@@ -313,13 +320,16 @@ public class DBMappingEditForm extends JPanel {
 		});
 		GridBagConstraints gbc_btnAddTable = new GridBagConstraints();
 		gbc_btnAddTable.anchor = GridBagConstraints.NORTH;
+		gbc_btnAddTable.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnAddTable.insets = new Insets(0, 0, 5, 5);
 		gbc_btnAddTable.gridx = 5;
 		gbc_btnAddTable.gridy = 7;
 		add(btnAddTable, gbc_btnAddTable);
 
-		btnEditTable = new JButton("");
-		btnEditTable.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\pen.png"));
+		btnEditTable = new JButton("Edit");
+		btnEditTable.setToolTipText("Edit table");
+		btnEditTable.setPreferredSize(new Dimension(35, 23));
+		btnEditTable.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		btnEditTable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				editTable(tbTables.getSelectedRow());
@@ -327,13 +337,16 @@ public class DBMappingEditForm extends JPanel {
 		});
 		GridBagConstraints gbc_btnEditTable = new GridBagConstraints();
 		gbc_btnEditTable.anchor = GridBagConstraints.NORTH;
+		gbc_btnEditTable.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnEditTable.insets = new Insets(0, 0, 5, 5);
 		gbc_btnEditTable.gridx = 6;
 		gbc_btnEditTable.gridy = 7;
 		add(btnEditTable, gbc_btnEditTable);
 
-		btnRemTable = new JButton("");
-		btnRemTable.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\remove.png"));
+		btnRemTable = new JButton("-");
+		btnRemTable.setPreferredSize(new Dimension(35, 23));
+		btnRemTable.setToolTipText("Remove table");
+		btnRemTable.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnRemTable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removeTable(tbTables.getSelectedRow());
@@ -341,7 +354,8 @@ public class DBMappingEditForm extends JPanel {
 		});
 
 		GridBagConstraints gbc_btnRemTable = new GridBagConstraints();
-		gbc_btnRemTable.anchor = GridBagConstraints.NORTHWEST;
+		gbc_btnRemTable.anchor = GridBagConstraints.NORTH;
+		gbc_btnRemTable.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnRemTable.insets = new Insets(0, 0, 5, 0);
 		gbc_btnRemTable.gridx = 7;
 		gbc_btnRemTable.gridy = 7;
@@ -434,9 +448,10 @@ public class DBMappingEditForm extends JPanel {
 		gbc_fieldSQL.gridx = 2;
 		gbc_fieldSQL.gridy = 12;
 		add(scrollV, gbc_fieldSQL);
-		btnEditSQL.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\icons\\pen.png"));
+		btnEditSQL.setIcon(IconLoader.getImageIcon("pen.png"));
 		GridBagConstraints gbc_btnEditSQL = new GridBagConstraints();
-		gbc_btnEditSQL.anchor = GridBagConstraints.NORTHWEST;
+		gbc_btnEditSQL.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnEditSQL.anchor = GridBagConstraints.NORTH;
 		gbc_btnEditSQL.gridwidth = 3;
 		gbc_btnEditSQL.insets = new Insets(0, 0, 5, 0);
 		gbc_btnEditSQL.gridx = 5;
@@ -475,9 +490,14 @@ public class DBMappingEditForm extends JPanel {
 
 	}
 
+	/**
+	 * Edit the selected table. 
+	 * @param edit - ordering number of the selected table (-1 if no table was selected)
+	 */
 	private void editTable(int edit) {
-		if (edit == -1)
+		if (edit == -1){
 			return;
+		}
 		tablePopup.setTables(tables, edit, "");
 		tablePopup.edit(tables.get(edit));
 		tablePopup.first(firstTable || edit == 0);
@@ -625,8 +645,11 @@ public class DBMappingEditForm extends JPanel {
 			return;
 		} else {
 			columns.clear();
-			for (String[] s : col)
+			for (String[] s : col){
 				columns.add(s);
+				for(String x:s)
+					System.out.println("S_"+x);
+			}
 			columnsModel.setRowCount(0);
 			for (String[] s : col)
 				columnsModel.addRow(new Object[] { s[1], s[2] });
@@ -787,54 +810,4 @@ public class DBMappingEditForm extends JPanel {
 		}
 
 	}
-
-	// final JButton okay = new JButton("Ok");
-	// okay.addActionListener(new ActionListener() {
-	// @Override
-	// public void actionPerformed(ActionEvent e) {
-	// JOptionPane pane = getOptionPane((JComponent)e.getSource());
-	// pane.setValue(okay);
-	// }
-	// });
-	// okay.setEnabled(false);
-	// final JButton cancel = new JButton("Cancel");
-	// cancel.addActionListener(new ActionListener() {
-	// @Override
-	// public void actionPerformed(ActionEvent e) {
-	// JOptionPane pane = getOptionPane((JComponent)e.getSource());
-	// pane.setValue(cancel);
-	// }
-	// });
-	//
-	// final JTextField field = new JTextField();
-	// field.getDocument().addDocumentListener(new DocumentListener() {
-	// protected void update() {
-	// okay.setEnabled(field.getText().length() > 0);
-	// }
-	//
-	// @Override
-	// public void insertUpdate(DocumentEvent e) {
-	// update();
-	// }
-	//
-	// @Override
-	// public void removeUpdate(DocumentEvent e) {
-	// update();
-	// }
-	//
-	// @Override
-	// public void changedUpdate(DocumentEvent e) {
-	// update();
-	// }
-	// });
-	//
-	// protected JOptionPane getOptionPane(JComponent parent) {
-	// JOptionPane pane = null;
-	// if (!(parent instanceof JOptionPane)) {
-	// pane = getOptionPane((JComponent)parent.getParent());
-	// } else {
-	// pane = (JOptionPane) parent;
-	// }
-	// return pane;
-	// }
 }

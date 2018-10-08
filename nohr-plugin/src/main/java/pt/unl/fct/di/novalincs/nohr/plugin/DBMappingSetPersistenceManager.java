@@ -67,16 +67,17 @@ public class DBMappingSetPersistenceManager {
      * Loads the mappings of a given file.
      *
      * @param file the file from where to read the mappings.
+     * @param vocabulary 
      * @param DBMappingSet the DBMappingSet where the mappings will be loaded.
      * @throws IOException
      */
-    public void load(File file, DBMappingSet dbMappingSet) throws IOException{
+    public void load(File file, DBMappingSet dbMappingSet, Vocabulary vocabulary) throws IOException{
     	FileReader in = new FileReader(file);
         BufferedReader input = new BufferedReader(in);
         String mapping;
         int line = 1;
         while ((mapping = input.readLine()) != null) {
-        	dbMappingSet.add(new DBMappingImpl(mapping, ODBCPreferences.getDrivers(),line));
+        	dbMappingSet.add(new DBMappingImpl(mapping, ODBCPreferences.getDrivers(), line, vocabulary));
         	line++;
         }
         

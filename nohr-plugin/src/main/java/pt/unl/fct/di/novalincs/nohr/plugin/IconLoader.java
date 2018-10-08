@@ -1,6 +1,7 @@
 package pt.unl.fct.di.novalincs.nohr.plugin;
 
 import javax.swing.ImageIcon;
+import javax.swing.plaf.synth.SynthSpinnerUI;
 
 public class IconLoader {
 	
