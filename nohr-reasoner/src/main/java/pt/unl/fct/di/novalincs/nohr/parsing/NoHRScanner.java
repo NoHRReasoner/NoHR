@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 /**
  * A basic {@link
- * <a href="https://en.wikipedia.org/wiki/Lexical_analysis#Scanner">Scanner</a>}
+ * <a href="https://en.wikipedia.org/wiki/Lexical_analysis#Scanner">Scanner</a>
  * implemented on top of {@link Scanner}. The recognized tokens are those that
  * are specified by {@link TokenType}.
  *

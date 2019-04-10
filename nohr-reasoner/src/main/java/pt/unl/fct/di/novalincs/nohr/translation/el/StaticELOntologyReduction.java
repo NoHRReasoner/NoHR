@@ -77,12 +77,12 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 public class StaticELOntologyReduction implements ELOntologyReduction {
 
     /**
-     * Given an concept subsumption <i>C&sqsube;D</i>, adds <i>C&sqsube;A'</i>
-     * and <i>A'&sqsube;D</i>, where <i>A'</i> is a new atomic concept, if
+     * Given an concept subsumption <i>C \u2291D</i>, adds <i>C \u2291A'</i>
+     * and <i>A' \u2291D</i>, where <i>A'</i> is a new atomic concept, if
      * <i>C</i> isn't atomic and <i>D</i> has occurrences of existential; adds
      * nothing otherwise (corresponds to the first normalization presented in
-     * the section <b>2.1</b> of {@link <a>A Correct EL Oracle for NoHR
-     * (Technical Report)</a>}).
+     * the section <b>2.1</b> of <a>A Correct EL Oracle for NoHR
+     * (Technical Report)</a>).
      *
      * @author Nuno Costa
      */
@@ -107,8 +107,8 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * Given an concept assertion <i>C(a)</i>, adds <i>A<sub>1</sub>(a), ...,
      * A<sub>n</sub>(a)</i> if <i>D = A<sub>1</sub>&sqcap; ... &sqcap; A
      * <sub>n</sub></i>; adds notthing otherwise (see the simplifications
-     * presentend above the <b>Definition 12.</b> of {@link <a>A Correct EL
-     * Oracle for NoHR (Technical Report)</a>}).
+     * presentend above the <b>Definition 12.</b> of <a>A Correct EL
+     * Oracle for NoHR (Technical Report)</a>).
      *
      * @author Nuno Costa
      */
@@ -131,8 +131,8 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     }
 
     /**
-     * Given a concept subsumption <i>C&sqsube;D</i>, indicates whether <i>C</i>
-     * is the bottom concept <i>&bot;</i>, in which case <i>C&sqsube;D</i>
+     * Given a concept subsumption <i>C \u2291D</i>, indicates whether <i>C</i>
+     * is the bottom concept <i>\u22A5</i>, in which case <i>C \u2291D</i>
      * can be removed.
      *
      * @author Nuno Costa
@@ -147,18 +147,18 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     }
 
     /**
-     * Given an concept subsumption <i>C&sqsube;D</i>, adds
-     * <i>C<sub>1</sub>&sqsube;A'<sub>1</sub>, ...,
-     * C<sub>n</sub>&sqsube;A'<sub>n</sub></i>, and
+     * Given an concept subsumption <i>C \u2291D</i>, adds
+     * <i>C<sub>1</sub> \u2291A'<sub>1</sub>, ...,
+     * C<sub>n</sub> \u2291A'<sub>n</sub></i>, and
      * <i>A<sub>1</sub>&sqcap; ... &sqcap;A<sub>m</sub> &sqcap;
-     * A'<sub>1</sub>&sqcap; ... &sqcap;A'<sub>n</sub>&sqsube;D</i>, where each
+     * A'<sub>1</sub>&sqcap; ... &sqcap;A'<sub>n</sub> \u2291D</i>, where each
      * <i>A'
      * <sub>i</sub></i> is a new atomic concept, if <i>C = A<sub>1</sub>&sqcap;
      * ... &sqcap;A<sub>m</sub> &sqcap; &exist;R<sub>1</sub>.C<sub>1</sub>
      * &sqcap; ... &sqcap;&exist;R <sub>n</sub>.C<sub>n</sub></i>, with
      * <i>m&geq;0</i> and <i>n&geq;1</i>; and nothing otherwise (corresponds to
      * the second normalization presented in the section <b>2.1</b> of {@link
-     * <a>A Correct EL Oracle for NoHR (Technical Report)</a>}).
+     * <a>A Correct EL Oracle for NoHR (Technical Report)</a>).
      *
      * @author Nuno Costa
      */
@@ -191,19 +191,19 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     }
 
     /**
-     * Given an concept subsumption <i>C&sqsube;D</i>, adds
-     * <i>C<sub>1</sub>&sqsube;A'<sub>1</sub>, ...,
-     * C<sub>n</sub>&sqsube;A'<sub>n</sub></i> and
+     * Given an concept subsumption <i>C \u2291D</i>, adds
+     * <i>C<sub>1</sub> \u2291A'<sub>1</sub>, ...,
+     * C<sub>n</sub> \u2291A'<sub>n</sub></i> and
      * <i>&exist;R.(A<sub>1</sub>&sqcap; ...
      * &sqcap;A<sub>m</sub>&sqcap;A'<sub>1</sub>&sqcap; ...
-     * &sqcap;A'<sub>n</sub>)&sqsube;D </i>, if <i> C =
+     * &sqcap;A'<sub>n</sub>) \u2291D </i>, if <i> C =
      * &exist;R.(A<sub>1</sub>&sqcap; ...
      * &sqcap;A<sub>m</sub>&sqcap;&exist;S<sub>1</sub>.C<sub>1</sub>&sqcap;&exist;S<sub>n</sub>.C
      * <sub>n</sub>
      * )</i>, with <i>m&geq;0</i> and <i>n&geq;1</i>; and nothing otherwise
      * (corresponds to the third normalization presented in the section
-     * <b>2.1</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
-     * Report)</a>}).
+     * <b>2.1</b> of <a>A Correct EL Oracle for NoHR (Technical
+     * Report)</a>).
      *
      * @author Nuno Costa
      */
@@ -263,12 +263,12 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     }
 
     /**
-     * Given a concept subsumption <i>C&sqsube;D</i> adds
-     * <i>C&sqsube;D<sub>1</sub>, ..., C&sqsube;D<sub>n</sub></i>, if <i>D =
-     * D<sub>1</sub>&sqsube; ... &sqsube;D<sub>n</sub></i>, and nothing
+     * Given a concept subsumption <i>C \u2291D</i> adds
+     * <i>C \u2291D<sub>1</sub>, ..., C \u2291D<sub>n</sub></i>, if <i>D =
+     * D<sub>1</sub> \u2291 ...  \u2291D<sub>n</sub></i>, and nothing
      * otherwise (see the simplifications presentend above the <b>Definition
-     * 12.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
-     * Report)</a>}).
+     * 12.</b> of <a>A Correct EL Oracle for NoHR (Technical
+     * Report)</a>).
      *
      * @author Nuno Costa
      */
@@ -292,8 +292,8 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     private static final Logger log = Logger.getLogger(StaticELOntologyReduction.class);
 
     /**
-     * The set of role chain subsumptions <i>R<sub>1</sub>&SmallCircle; ...
-     * &SmallCircle;S<sub>n</sub> &sqsube; A</i> in this
+     * The set of role chain subsumptions <i>R<sub>1</sub> \u2218 ...
+     *  \u2218S<sub>n</sub>  \u2291 A</i> in this
      * {@link ELOntologyReduction reduction}.
      */
     private final Set<OWLSubPropertyChainOfAxiom> chainSubsumptions;
@@ -304,16 +304,16 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * {@link Normalizer normalizations} specified in this class to the ontology
      * referred by this {@link ELOntologyReduction reduction}, under the
      * inference rules applied by ELK, referred in the <b>Theorem 5.</b> of {@link
-     * <a>A Correct EL Oracle for NoHR (Technical Report)</a>}). That closure
+     * <a>A Correct EL Oracle for NoHR (Technical Report)</a>). That closure
      * has (by <b>Theorem 5.</b> and <b>Lemma 7.</b>) the following properties,
      * where <i>O</i> denotes the ontology that this
      * {@link ELOntologyReduction reduction} refer and <b>Closure</b> the
      * closure itself: <br>
-     * 1. <i>O &vDash; C&sqsube;&bot;</i> iff <i>C&sqsube;&bot; &in;
+     * 1. <i>O  \u22A2  C \u2291\u22A5</i> iff <i>C \u2291\u22A5 &in;
      * </i><b>Closure</b>; <br>
-     * 2. <i>O &vDash; C&sqsube;A</i> iff <i>C&sqsube;&bot;
-     * &in;</i><b>Closure</b> or <i>C&sqsube;A &in; </i><b>Closure</b>;<br>
-     * 3. <i>O &vDash; A(a)</i> iff <i> A(a) &in;</i><b>Closure</i>.
+     * 2. <i>O  \u22A2  C \u2291A</i> iff <i>C \u2291\u22A5
+     * &in;</i><b>Closure</b> or <i>C \u2291A &in; </i><b>Closure</b>;<br>
+     * 3. <i>O  \u22A2  A(a)</i> iff <i> A(a) &in;</i><b>Closure</i>.
      */
     private final OWLOntology closure;
 
@@ -328,7 +328,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     private final OWLOntology ontology;
 
     /**
-     * The set of role subsumptions <i>R &sqsube; S</i> in this
+     * The set of role subsumptions <i>R  \u2291 S</i> in this
      * {@link ELOntologyReduction reduction}.
      */
     private final Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions;
@@ -340,6 +340,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * ontology.
      *
      * @param ontology an ontology.
+     * @param vocabulary a vocabulary.
      * @throws UnsupportedAxiomsException if {@code ontology} has some concept
      * that can't be reduced.
      */
@@ -375,9 +376,9 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     }
 
     /**
-     * Returns the bottom concept <i>&bot;</i>.
+     * Returns the bottom concept <i>\u22A5</i>.
      *
-     * @return <i>&bot;</i>.
+     * @return <i>\u22A5</i>.
      */
     private OWLClass bottom() {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLNothing();
@@ -389,18 +390,18 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     }
 
     /**
-     * Obtains the <i>EL<sub>&bot;</sub><sup>+</sup> role chain subsumptions
+     * Obtains the <i>EL<sub>\u22A5</sub><sup>+</sup> role chain subsumptions
      * entailed by a given EL ontology.
      *
      * @param ontology an ontology <i>O</i>.
-     * @return <i>{ R<sub>1</sub>&SmallCircle; ...
-     * &SmallCircle;R<sub>n</sub>&sqsube;S | R<sub>1</sub>&SmallCircle; ...
-     * &SmallCircle;R<sub>n</sub>
-     * &sqsube;S &in; O} &cup; {R&SmallCircle;R &sqsube; R |
+     * @return <i>{ R<sub>1</sub> \u2218 ...
+     *  \u2218R<sub>n</sub> \u2291S | R<sub>1</sub> \u2218 ...
+     *  \u2218R<sub>n</sub>
+     *  \u2291S &in; O} &cup; {R \u2218R  \u2291 R |
      * </i><b>transitive</b></i>(R) &in; O} </i>.
      */
     private Set<OWLSubPropertyChainOfAxiom> chainSubsumptions(OWLOntology ontology) {
-        final Set<OWLSubPropertyChainOfAxiom> result = new HashSet<OWLSubPropertyChainOfAxiom>(
+        final Set<OWLSubPropertyChainOfAxiom> result = new HashSet<>(
                 ontology.getAxioms(AxiomType.SUB_PROPERTY_CHAIN_OF));
         for (final OWLTransitiveObjectPropertyAxiom axiom : ontology.getAxioms(AxiomType.TRANSITIVE_OBJECT_PROPERTY)) {
             result.add(norm(axiom));
@@ -437,16 +438,16 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * all the {@link Normalizer normalizations} specified in this class to
      * three given sets of concept assertions, concept subsumptions and role
      * subsumptions, respectively, under the inference rules applied by ELK,
-     * referred in the <b>Theorem 5.</b> of {@link <a>A Correct EL Oracle for
-     * NoHR (Technical Report)</a>}). That closure has (by <b>Theorem 5.</b>
+     * referred in the <b>Theorem 5.</b> of <a>A Correct EL Oracle for
+     * NoHR (Technical Report)</a>). That closure has (by <b>Theorem 5.</b>
      * and <b>Lemma 7.</b>) the following properties, where <i>O</i> denotes the
      * ontology that this {@link ELOntologyReduction reduction} refer and
      * <b>Closure</b> the closure itself: <br>
-     * 1. <i>O &vDash; C&sqsube;&bot;</i> iff <i>C&sqsube;&bot; &in;
+     * 1. <i>O  \u22A2  C \u2291\u22A5</i> iff <i>C \u2291\u22A5 &in;
      * </i><b>Closure</b>; <br>
-     * 2. <i>O &vDash; C&sqsube;A</i> iff <i>C&sqsube;&bot;
-     * &in;</i><b>Closure</b> or <i>C&sqsube;A &in; </i><b>Closure</b>;<br>
-     * 3. <i>O &vDash; A(a)</i> iff <i> A(a) &in;</i><b>Closure</b></i>.
+     * 2. <i>O  \u22A2  C \u2291A</i> iff <i>C \u2291\u22A5
+     * &in;</i><b>Closure</b> or <i>C \u2291A &in; </i><b>Closure</b>;<br>
+     * 3. <i>O  \u22A2  A(a)</i> iff <i> A(a) &in;</i><b>Closure</b></i>.
      *
      * @param conceptAssertions a set of EL concept assertions.
      * @param conceptSubsumptions a set of EL concept subsumptions.
@@ -473,14 +474,14 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     }
 
     /**
-     * Obtains the <i>EL<sub>&bot;</sub><sup>+</sup></i> concept subsumptions
+     * Obtains the <i>EL<sub>\u22A5</sub><sup>+</sup></i> concept subsumptions
      * entailed by a given EL ontology.
      *
      * @param ontology an ontology <i>O</i>
-     * @return <i> { C&sqsube;D | C&sqsube;D &in; O } &cup; <br>
-     * { C&sqsube;D, D&sqsube;C | C&equiv;D &in; O } &cup; <br>
-     * { C&sqcap;D&sqsube;&bot; | C&sqsube;&not;D &in; O} &cup; <br>
-     * { &exist;R.&top;&sqsube;D | </i><b>domain</b></i>(R, D)}</i>.
+     * @return <i> { C \u2291D | C \u2291D &in; O } &cup; <br>
+     * { C \u2291D, D \u2291C | C&equiv;D &in; O } &cup; <br>
+     * { C&sqcap;D \u2291\u22A5 | C \u2291&not;D &in; O} &cup; <br>
+     * { &exist;R.\u22A4 \u2291D | </i><b>domain</b></i>(R, D)}</i>.
      */
     private Set<OWLSubClassOfAxiom> conceptSubsumptions(OWLOntology ontology) {
         final Set<OWLSubClassOfAxiom> conceptSubsumptions = new HashSet<OWLSubClassOfAxiom>(
@@ -543,7 +544,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * exhaustively applied).
      * @return true iff {@code normalizedOntology} has disjunctions, i.e. if
      * {@code normalizedOntology} has some axiom <i>C<sub>1</sub>&sqcap; ...
-     * &sqcap;C<sub>n</sub> &sqsube;&bot;</i>, with <i>n&geq;1</i>.
+     * &sqcap;C<sub>n</sub>  \u2291\u22A5</i>, with <i>n&geq;1</i>.
      */
     private boolean hasDisjunctions(OWLOntology normalizedOntology) {
         for (final OWLSubClassOfAxiom axiom : normalizedOntology.getAxioms(AxiomType.SUBCLASS_OF)) {
@@ -579,7 +580,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * Normalize a given domain axiom.
      *
      * @param axiom a domain axiom <b>domain</b><i>(R, C)</i>.
-     * @return <i>&exist;R.&top;&sqsube;C</i>.
+     * @return <i>&exist;R.\u22A4 \u2291C</i>.
      */
     private OWLSubClassOfAxiom norm(OWLObjectPropertyDomainAxiom axiom) {
         final OWLObjectPropertyExpression ope = axiom.getProperty();
@@ -599,7 +600,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      * Normalize a given transitive axiom.
      *
      * @param axiom an transitive axiom <b>transitive</b><i>(R)</i>.
-     * @return <i>R&SmallCircle;R&sqsube;R</i>.
+     * @return <i>R \u2218R \u2291R</i>.
      */
     private OWLSubPropertyChainOfAxiom norm(OWLTransitiveObjectPropertyAxiom axiom) {
         final OWLObjectPropertyExpression ope = axiom.getProperty();
@@ -710,12 +711,12 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
     }
 
     /**
-     * Obtains all the <i>EL<sub>&bot;</sub><sup>+</sup></i> role subsumptions
+     * Obtains all the <i>EL<sub>\u22A5</sub><sup>+</sup></i> role subsumptions
      * entailed by a given EL ontology.
      *
      * @param ontology an EL ontology <i>O</i>.
-     * @return <i> {R&sqsube;S | R&sqsube;S &in; O} &cup; {R&sqsube;S,
-     * S&sqsube;R | R&equiv;S &in; O}</i>.
+     * @return <i> {R \u2291S | R \u2291S &in; O} &cup; {R \u2291S,
+     * S \u2291R | R&equiv;S &in; O}</i>.
      */
     private Set<OWLSubObjectPropertyOfAxiom> roleSubsumptions(OWLOntology ontology) {
         final Set<OWLSubObjectPropertyOfAxiom> result = new HashSet<OWLSubObjectPropertyOfAxiom>(
@@ -748,8 +749,8 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      *
      * @param chain a list of roles <i>[R<sub>1</sub>, ..., R<sub>n</sub>]</i>
      * @param superRole ] the subsuming role <i>S</i>
-     * @return <i>R<sub>1</sub>&SmallCircle; ...
-     * &SmallCircle;R<sub>n</sub>&sqsube;S</i>
+     * @return <i>R<sub>1</sub> \u2218 ...
+     *  \u2218R<sub>n</sub> \u2291S</i>
      */
     private OWLSubPropertyChainOfAxiom subsumption(List<OWLObjectPropertyExpression> chain,
             OWLObjectPropertyExpression superRole) {
@@ -762,7 +763,7 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
      *
      * @param c the subsumed concept <i>C</i>.
      * @param d the subsuming concept <i>D</i>.
-     * @return <i>C&sqsube;D</i>.
+     * @return <i>C \u2291D</i>.
      */
     private OWLSubClassOfAxiom subsumption(OWLClassExpression c, OWLClassExpression d) {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLSubClassOfAxiom(c, d);
@@ -770,9 +771,9 @@ public class StaticELOntologyReduction implements ELOntologyReduction {
 
     /**
      * *
-     * Returns the top concept <i>&top;</i>.
+     * Returns the top concept <i>\u22A4</i>.
      *
-     * @return <i>&top;</i>
+     * @return <i>\u22A4</i>
      */
     private OWLClass top() {
         return ontology.getOWLOntologyManager().getOWLDataFactory().getOWLThing();

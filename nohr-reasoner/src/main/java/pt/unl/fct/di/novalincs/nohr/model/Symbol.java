@@ -25,7 +25,7 @@ public interface Symbol extends ModelElement<Symbol> {
      * satisfied, where {@code s} and {@code r} are two
      * {@link Symbol symbols}: {@code s.asString().equals(r.asString())} iff
      * {@code s.equals(r)}.
-     * @return 
+     * @return the string representation.
      */
     String asString();
 

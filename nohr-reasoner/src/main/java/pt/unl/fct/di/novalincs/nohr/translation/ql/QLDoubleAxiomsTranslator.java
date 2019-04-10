@@ -41,8 +41,8 @@ import pt.unl.fct.di.novalincs.nohr.translation.AssertionsTranslation;
  * (i.e. the rules with double meta-predicates and those whose heads have a
  * negative meta-predicate functor) of the DL-Lite<sub>R</sub> axioms
  * translations (see
- * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
- * Step for NoHR: OWL 2 QL</a>}). ).
+ * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+ * Step for NoHR: OWL 2 QL</a>). ).
  *
  * @author Nuno Costa
  */
@@ -55,8 +55,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a concept assertion to a set of original rules according to
      * <b>(a1)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}.
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>.
      *
      * @param assertion an assertion <i>A(a)</i>.
      * @return <i>A<sup>d</sup>(a)&larr;<b>not </b> NA(a)</i>.
@@ -71,8 +71,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a role assertion to a set of double rules according to
      * <b>(a2)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}.
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>.
      *
      * @param assertion a DL-Lite<sub>R</sub> role assertion <i>P(a, b)</i>.
      * @return <i>P<sup>d</sup>(a,b)&larr;<b>not</b> NP(a,b)</i>
@@ -85,8 +85,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a DL-Lite<sub>R</sub> negative concept subsumption axiom to a
      * set of double rules according to <b>(n1)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param b1 a DL-Lite<sub>R</sub> basic concept operand,
      * <i>B<sub>1</sub></i>.
@@ -113,8 +113,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a DL-Lite<sub>R</sub> negative role subsumption axiom to a set
      * of double rules according to <b>(n2)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param q1 a DL-Lite<sub>R</sub> basic role operand, <i>Q<sub>1</sub></i>.
      * @param q2 a DL-Lite<sub>R</sub> basic role operand, <i>Q<sub>2</sub></i>.
@@ -142,7 +142,7 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
      * set of original rules according to <b>(s2)</b> of <b>Definition 9.</b>
      * of {@link
      * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param q1 a DL-Lite<sub>R</sub> basic role <i>Q<sub>1</sub></i>.
      * @param q2 a DL-Lite<sub>R</sub> basic role <i>Q<sub>2</sub></i>.
@@ -157,8 +157,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate the meaning of a domain meta-predicate to a set of double rules
      * according to <b>(e)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param p a role <i>P</i>.
      * @return <i>DP<sup>d</sup>(x)&larr;P<sup>d</sup>(x,_)</i>.
@@ -171,8 +171,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate the existential quantification of a given DL-Lite<sub>R</sub>
      * role to a double atom (see <b>Definition 5.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}).
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>).
      *
      * @param q a DL-Lite<sub>R</sub> concept <i>Q</i>.
      * @param x a variable <i>x</i>.
@@ -196,8 +196,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate the range subsumption entailed by a given role subsumption to
      * set of double rules according to <b>(s2)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param q1 a DL-Lite<sub>R</sub> basic role <i>Q<sub>1</sub></i>.
      * @param q2 a DL-Lite<sub>R</sub> basic role <i>Q<sub>2</sub></i>.
@@ -212,8 +212,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate the meaning of a range meta-predicate to a set of double rules
      * according to <b>(e)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param p a role <i>P</i>.
      * @return <i>RP<sup>d</sup>(x)&larr;P<sup>d</sup>(_,x)</i>.
@@ -226,15 +226,15 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a DL-Lite<sub>R</sub> concept subsumption axiom to a set of
      * double rules according to <b>(s1)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param b1 the subsumed DL-Lite<sub>R</sub> basic concept
      * <i>B<sub>1</sub></i>.
      * @param b2 the subsuming DL-Lite<sub>R</sub> basic concept
      * <i>B<sub>2</sub></i>.
      * @return <i>tr<sup>d</sup>(B<sub>2</sub>, x)&larr;</i> if
-     * <i>B<sub>1</sub></i> is the top concept <i>&top;</i><br>
+     * <i>B<sub>1</sub></i> is the top concept <i>\u22A4</i><br>
      * {tr<sup>d</sup>(B<sub>2</sub>, x)&larr;tr<sup>d</sup>(B<sub>1</sub>,
      * x)}</i>.
      * @throws IllegalArgumentException if <i>B<sub>1</sub></i> or
@@ -251,8 +251,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a DL-Lite<sub>R</sub> role subsumption axiom to a set of rules
      * according to <b>(s2)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param q1 the subsumed basic role <i>Q<sub>1</sub></i>.
      * @param q2 the subsuming basic role <i>Q<sub>2</sub></i>.
@@ -279,8 +279,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a given DL-Lite<sub>R</sub> concept to a double atom (see
      * <b>Definition 5.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}).
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>).
      *
      * @param b a DL-Lite<sub>R</sub> concept <i>B</i>.
      * @param x a variable <i>x</i>.
@@ -300,8 +300,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a given DL-Lite<sub>R</sub> role to a double atom (see
      * <b>Definition 5.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}).
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>).
      *
      * @param r a DL-Lite<sub>R</sub> role <i>R</i>.
      * @param x a variable <i>x</i>.
@@ -318,8 +318,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a DL-Lite<sub>R</sub> role unreflexivity according to
      * <b>(ir)</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param p the irreflexive role <i>P</i>.
      * @return <i>NP(x, x)</i>.
@@ -331,8 +331,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a DL-Lite<sub>R</sub> concept unsatisfiability to a set of
      * rules according to <b>(i1)</b> of <b>Definition 9.</b> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param a the unsatisfiable concept <i>A</i>.
      * @return <i>NA(x)</i>.
@@ -344,8 +344,8 @@ class QLDoubleAxiomsTranslator extends QLAxiomsTranslator {
     /**
      * Translate a DL-Lite<sub>R</sub> role unsatisfiability according to
      * <b>(i2)</i> of
-	 * {@link <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} .
+	 * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> .
      *
      * @param p the unsatisfiable role <i>P</i>.
      * @return <i>NP(x, y)</i>.

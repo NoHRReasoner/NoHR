@@ -30,8 +30,8 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 /**
  * Implementation of {@link OntologyTranslator} for the
- * {@link Profile#OWL2_EL EL} profile, according to {@link <a>A Correct EL
- * Oracle for NoHR (Technical Report)</a>}.
+ * {@link Profile#OWL2_EL EL} profile, according to <a>A Correct EL Oracle for
+ * NoHR (Technical Report)</a>.
  *
  * @author Nuno Costa
  */
@@ -78,10 +78,10 @@ public class ELOntologyTranslator extends OntologyTranslatorImpl {
      * Constructs an {@link OntologyTranslator} of a given OWL 2 EL ontology.
      *
      * @param ontology an OWL 2 EL ontology.
-     * @param v
-     * @param dedutiveDatabase
-     * @param ignoreAllUnsupportedAxioms
-     * @param ignoredUnsupportedAxioms
+     * @param v a vocabulary.
+     * @param dedutiveDatabase a deductive database.
+     * @param ignoreAllUnsupportedAxioms ignores all unsupported axioms.
+     * @param ignoredUnsupportedAxioms a set of unsupported axioms to ignore.
      * @throws UnsupportedAxiomsException if {@code ontology} contains some
      * axioms of unsupported types.
      */

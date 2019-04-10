@@ -19,8 +19,8 @@ import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 /**
  * Encode special predicates that can distinguish different views, in a KB translation, of the same {@link Predicate}. These predicates can, among
  * other things, represent some (Description Logic) constructors that otherwise can not be expressed with rules, like classic negation and right-hand
- * side existential (see {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf"> <i>Next Step for NoHR: OWL 2
- * QL</i></a>, <b>Definition 5.</b>}). Each meta-predicate refers to a (non-meta) predicate and has a specific {@link PredicateType}, associated with
+ * side existential (see <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf"> <i>Next Step for NoHR: OWL 2
+ * QL</i></a>, <b>Definition 5.</b>). Each meta-predicate refers to a (non-meta) predicate and has a specific {@link PredicateType}, associated with
  * a specific propose in a KB translation.
  *
  * @author Nuno Costa

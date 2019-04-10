@@ -126,16 +126,16 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 
     /**
      * The set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom
-     * <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
-     * <i>&top;&sqsube;&not;B</i> or </i> B&sqsube;&not;B</i>
+     * <i>B \u2291\u22A5</i>,<i>B \u2291&not;\u22A4</i>,
+     * <i>\u22A4 \u2291&not;B</i> or </i> B \u2291&not;B</i>
      * {@link QLOntologyNormalization}.
      */
     private final Set<OWLClassExpression> unsatisfiableConcepts;
 
     /**
      * The set of DL-Lite<sub>R</sub> roles <i>Q</i> that occur in some axiom
-     * <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
-     * <i>&top;&sqsube;&not;Q</i> or </i>Q&sqsube;&not;Q</i>
+     * <i>Q \u2291\u22A5</i>,<i>Q \u2291&not;\u22A4</i>,
+     * <i>\u22A4 \u2291&not;Q</i> or </i>Q \u2291&not;Q</i>
      * {@link QLOntologyNormalization}.
      */
     private final Set<OWLPropertyExpression> unsatisfiableRoles;
@@ -145,12 +145,13 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
     /**
      * Constructs a {@link QLOntologyNormalization} from a given OWL 2 QL
      * ontology according to <b>Appendix D</b> of
-	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}.
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>.
      *
      * @param ontology an OWL 2 QL ontology.
+     * @param vocabulary a vocabulary.
      * @throws UnsupportedAxiomsException if {@code ontology} has some axiom of
-     * an unsupported type (i.e. that aren't in {@link #SUPPORTED_AXIOM_TYPES}).
+     * an unsupported type.
      */
     public StaticQLOntologyNormalization(OWLOntology ontology, Vocabulary vocabulary)
             throws UnsupportedAxiomsException {
@@ -265,9 +266,9 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 
     /**
      * Normalize a given asymmetry axiom according to <b>Appendix D</b> of
-	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}. Given an asymmetry axiom
-     * <b>asymmetric</b><i>(P)</i> adds <i>P&sqsube;&not;P<sup>-</sup></i> to
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>. Given an asymmetry axiom
+     * <b>asymmetric</b><i>(P)</i> adds <i>P \u2291&not;P<sup>-</sup></i> to
      * {@link #roleDisjunctions}.
      *
      * @param axiom the asymmetry axiom <b>asymmetric</b><i>(P)</i>.
@@ -279,9 +280,9 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 
     /**
      * Normalize a given range axiom according to <b>Appendix D</b> of
-	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}. Given a range axiom <b>range</b><i>(Q,
-     * B)</i> adds <i>&exist;P<sup>-</sup>&sqsube;B</i> to
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>. Given a range axiom <b>range</b><i>(Q,
+     * B)</i> adds <i>&exist;P<sup>-</sup> \u2291B</i> to
      * {@link #conceptSubsumptions}.
      *
      * @param axiom the range axiom <b>range</b><i>(Q, B)</i>.
@@ -294,8 +295,8 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
 
     /**
      * Normalize a given OWL 2 QL ontology according to <b>Appendix D</b> of
-	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}, adding the obtained axioms to the
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>, adding the obtained axioms to the
      * appropriate fields.
      *
      * @param ontology a OWL 2 QL ontology.
@@ -360,8 +361,8 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
     /**
      * Normalize a given concept subsumption axiom according to <b>Appendix
      * D</b> of
-	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}, adding the obtained axioms to the
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>, adding the obtained axioms to the
      * appropriate fields.
      *
      * @param axiom a OWL 2 QL concept subsumption.
@@ -422,8 +423,8 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
     /**
      * Normalize a given role subsumption axiom according to <b>Appendix D</b>
      * of
-	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}, adding the obtained axioms to the
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>, adding the obtained axioms to the
      * appropriate fields.
      *
      * @param alpha a OWL 2 QL role subsumption.
@@ -450,8 +451,8 @@ public class StaticQLOntologyNormalization implements QLOntologyNormalization {
     /**
      * Normalize a given role disjunction axiom according to <b>Appendix D</b>
      * of
-	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}, adding the obtained axioms to the
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>, adding the obtained axioms to the
      * appropriate fields.
      *
      * @param alpha a OWL 2 QL role disjunction.

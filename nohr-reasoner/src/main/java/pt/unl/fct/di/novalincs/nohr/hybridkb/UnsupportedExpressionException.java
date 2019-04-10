@@ -12,7 +12,6 @@ package pt.unl.fct.di.novalincs.nohr.hybridkb;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * #L%
  */
-
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
 /**
@@ -20,22 +19,24 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
  */
 public class UnsupportedExpressionException extends RuntimeException {
 
-	private static final long serialVersionUID = 4306711165888446473L;
+    private static final long serialVersionUID = 4306711165888446473L;
 
-	private final OWLClassExpression expression;
+    private final OWLClassExpression expression;
 
-	/**
-	 *
-	 */
-	public UnsupportedExpressionException(OWLClassExpression expression) {
-		this.expression = expression;
-	}
+    /**
+     * Default constructor.
+     *
+     * @param expression that triggered the exception.
+     */
+    public UnsupportedExpressionException(OWLClassExpression expression) {
+        this.expression = expression;
+    }
 
-	/**
-	 * @return the expression
-	 */
-	public OWLClassExpression getExpression() {
-		return expression;
-	}
+    /**
+     * @return the expression triggered the exception.
+     */
+    public OWLClassExpression getExpression() {
+        return expression;
+    }
 
 }

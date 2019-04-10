@@ -25,10 +25,10 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
  * <i>A</i> denotes an atomic concept and the corresponding predicate,
  * <i>P</i> an atomic role and the corresponding predicate, <i>a</i> and
  * <i>b</i> individuals and the corresponding constants:<br>
- * -<i>T&vDash;A(a) iff O&vDash;A(a)</i>;<br>
- * -<i>T&vDash;A<sup>d</sup>(a) iff O&vDash;A(a)</i>;<br>
- * -<i>T&vDash;P(a, b) iff O&vDash;P(a, b)</i>;<br>
- * -<i>T&vDash;P<sup>d</sup>(a, b) iff O&vDash;P(a, b)</i>.
+ * -<i>T \u22A2 A(a) iff O \u22A2 A(a)</i>;<br>
+ * -<i>T \u22A2 A<sup>d</sup>(a) iff O \u22A2 A(a)</i>;<br>
+ * -<i>T \u22A2 P(a, b) iff O \u22A2 P(a, b)</i>;<br>
+ * -<i>T \u22A2 P<sup>d</sup>(a, b) iff O \u22A2 P(a, b)</i>.
  *
  * @author Nuno Costa
  */

@@ -42,9 +42,9 @@ import pt.unl.fct.di.novalincs.nohr.model.Predicate;
  * associated with the concrete representation with which it was obtained. What
  * those concrete representations represent can change over time. Consider the
  * following example. At some moment the ontology can contain a label annotation
- * (see {@link
+ * (see
  * <a href="http://www.w3.org/TR/owl2-syntax/#Annotation_Properties">Annotation
- * Properties</a>}) for a given concept, so that all
+ * Properties</a>) for a given concept, so that all
  * {@link HybridPredicate predicates} associated with the value of the
  * annotation represent that concept. If the annotation is removed from the
  * ontology, those {@link HybridPredicate predicates} will represent a new rule
@@ -61,6 +61,9 @@ public interface Vocabulary {
 
     /**
      * Adds a {@link VocabularyChangeListener}
+     *
+     * @param listener a listener that will be notified of changes in the
+     * vocabulary.
      */
     void addListener(VocabularyChangeListener listener);
 
@@ -191,7 +194,7 @@ public interface Vocabulary {
     /**
      * Obtains a negative meta-predicate from a specified concept.
      *
-     * @param concept a concept <i>A<i>.
+     * @param concept a concept <i>A</i>.
      * @return a negative meta-predicate <i>NA</i>.
      */
     Predicate negPred(OWLClass concept);
@@ -399,7 +402,7 @@ public interface Vocabulary {
     Predicate prologPred(String symbol, int arity);
 
     Predicate prologOpPred(String symbol);
-    
+
     /**
      * Obtains a range meta-predicate from a specified {@code role}.
      *
@@ -412,6 +415,8 @@ public interface Vocabulary {
 
     /**
      * Removes a {@link VocabularyChangeListener}
+     *
+     * @param listener the listener to be removed from the notification list.
      */
     void removeListener(VocabularyChangeListener listener);
 

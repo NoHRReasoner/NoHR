@@ -19,8 +19,8 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLPropertyExpression;
 
 /**
- * Represents the <i>digraph</i> <i>&Gscr;<sub>T</sub></i> of a certain QL ontology's TBox <i>T</i> (see <b>Definition 6.</b> of
- * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}).
+ * Represents the <i>digraph</i> <i>\u210A<sub>T</sub></i> of a certain QL ontology's TBox <i>T</i> (see <b>Definition 6.</b> of
+ * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>).
  *
  * @author Nuno Costa
  */
@@ -46,8 +46,8 @@ public interface TBoxDigraph {
 
 	/**
 	 * Computes a the set of irreflexive roles <i>&Psi;(T)</i> of the the TBox, <i>T</i>, of which this {@link TBoxDigraph} is <i>digraph</i> (see
-	 * <b>Definition 7.</b> of {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2
-	 * QL</a>}).
+	 * <b>Definition 7.</b> of <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2
+	 * QL</a>).
 	 *
 	 * @return <i>&Psi;(T)</i>.
 	 */
@@ -73,8 +73,8 @@ public interface TBoxDigraph {
 
 	/**
 	 * Computes a the set of irreflexive roles <i>&Omega;(T)</i> of the the TBox, <i>T</i>, of which this {@link TBoxDigraph} is <i>digraph</i> (see
-	 * <b>Definition 8.</b> of {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2
-	 * QL</a>}).
+	 * <b>Definition 8.</b> of <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2
+	 * QL</a>).
 	 *
 	 * @return <i>&Omega;(T)</i>.
 	 */

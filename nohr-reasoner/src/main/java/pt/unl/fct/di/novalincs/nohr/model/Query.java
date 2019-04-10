@@ -15,8 +15,8 @@ import java.util.Map;
 
 /**
  * Represents a query <i>q(x<sub>1</sub>, ..., x<sub>k</sub>) &larr; A <sub>1</sub>, ..., A<sub>m</sub>, <b>not</b> B<sub>1</sub>, ..., <b>not</b> B
- * <sub>n</sub></i>, where <i>A<sub>i</sub></i> and </i><i>B <sub>i</sub></i> are atoms, and <i>x<sub>i</sub></i> are variables that occur in some
- * atom <sub>i</sub></i> or <i>B<sub>i</sub></i>. <i>x<sub>1</sub>, ..., x <sub>k</sub></i> are called free variables.
+ * <sub>n</sub></i>, where <i>A<sub>i</sub></i> and <i>B <sub>i</sub></i> are atoms, and <i>x<sub>i</sub></i> are variables that occur in some
+ * atom <sub>i</sub> or <i>B<sub>i</sub></i>. <i>x<sub>1</sub>, ..., x <sub>k</sub></i> are called free variables.
  *
  * @author Nuno Costa
  */

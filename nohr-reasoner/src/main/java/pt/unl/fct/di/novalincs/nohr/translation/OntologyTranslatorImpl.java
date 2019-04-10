@@ -28,8 +28,8 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.UnsupportedAxiomsException;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
- * The implementation of the {@link OntologyTranslator} <i>abstraction</i> (see {@link
- * <a href="http://www.oodesign.com/bridge-pattern.html">Bridge Pattern</a>},
+ * The implementation of the {@link OntologyTranslator} <i>abstraction</i> (see 
+ * <a href="http://www.oodesign.com/bridge-pattern.html">Bridge Pattern</a>,
  * and note that here {@link OntologyTranslator} is simultaneously the
  * <i>abstraction</i> interface and the <i>implementor</i>
  * interface). The <i>concrete implementor</i> is chosen according to the
@@ -65,13 +65,9 @@ public abstract class OntologyTranslatorImpl implements OntologyTranslator {
      * {@link OWLOntology ontology}.
      *
      * @param ontology the ontology that will be translated.
-     * @param vocabulary
+     * @param vocabulary a vocabulary.
      * @param deductiveDatabase the {@link DeductiveDatabase} where the
      * translation will be maintained.
-     * @param profile the {@link Profile profile} that this
-     * {@link OntologyTranslator} will handle. If none is specified (i.e. if it
-     * is {@code null} ), the preferred ontology's profile will be chosen.
-     * @param ontologyTranlatorConfiguration
      * @throws OWLProfilesViolationsException if {@code profile!=null} and the
      * ontology isn't in {@code profile}, or {@code profile==null} and the
      * ontology isn't in any supported profile.

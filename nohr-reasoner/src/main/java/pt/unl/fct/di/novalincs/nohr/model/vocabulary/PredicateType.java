@@ -14,9 +14,9 @@ package pt.unl.fct.di.novalincs.nohr.model.vocabulary;
  * of <i>P<sup>d</sup></i>; classical negation, of <i>NP</i>; original domain,
  * of <i>DP</i>; original range, of <i>RP</i>; double domain, of <i>DP
  * <sup>d</sup></i>; and double range, of <i>RP<sup>d</sup></i> (see
- * {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
- * <i>Next Step for NoHR: OWL 2 QL</i></a>,
- * <b>Definition 5.</b>}). Each type has a marker char to prefix the symbols of
+ * <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
+ * Next Step for NoHR: OWL 2 QL</a>,
+ * <b>Definition 5.</b>). Each type has a marker char to prefix the symbols of
  * meta-predicates of that type: {@code 'a', 'd', 'n', 'e', 'f', 'g'}, and
  * {@code 'h'}, respectively. Note that the meta-predicates of the types that
  * represent existential (original domain, original range, double domain and
@@ -36,8 +36,7 @@ public enum PredicateType {
      * {@code 'd'}.
      */
     DOUBLE('d', true), /**
-     * The type of a meta-predicate, <i>NP
-     * </p>
+     * The type of a meta-predicate, <i>NP</i>
      * , representing a classic negation. Has the marker {@code 'n'}.
      */
     NEGATIVE('n'), /**
@@ -93,6 +92,7 @@ public enum PredicateType {
 
     /**
      * Returns true iff this type represents a double type.
+     * @return true iff this type represents a double type.
      */
     public boolean isDouble() {
         return isDouble;
@@ -101,6 +101,7 @@ public enum PredicateType {
     /**
      * Returns true iff this type represents an quantification, in which case
      * the arity of the correspondent meta-predicate is {@literal 1}.
+     * @return true iff this type represents an quantification
      */
     public boolean isQuantification() {
         return isQuantification;

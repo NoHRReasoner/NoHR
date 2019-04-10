@@ -17,7 +17,7 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.ModelVisitor;
 
 /**
  * A model element, i.e a symbol (terminal or non terminal) of the abstract syntax of the Hybrid Knowledge Bases. Can accept an {@link FormatVisitor}
- * or a {@link ModelVisitor} (see {@link <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>}).
+ * or a {@link ModelVisitor} (see <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>).
  *
  * @see FormatVisitor
  * @see ModelVisitor

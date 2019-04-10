@@ -69,7 +69,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
         private final Set<Rule> rules;
 
         private ProgramImpl() {
-            rules = new HashSet<Rule>();
+            rules = new HashSet<>();
         }
 
         @Override
@@ -240,6 +240,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
      * used as underlying Prolog engine is located.
      * @param prologModule the name of the Prolog module that defines the
      * predicates specified by {@link Goals}.
+     * @param formatVisitor the format visitor that defines the final dialect.
+     * @param vocabulary the vocabulary for the prolog engine.
      * @throws PrologEngineCreationException if the creation of the underlying
      * Prolog engine timed out. That could mean that the Prolog system located
      * at {@code binDirectory} isn't an operational Prolog system. @
@@ -260,12 +262,12 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-        programs = new HashSet<ProgramImpl>();
-        arities = new HashMultiset<Integer>();
-        factFunctors = new HashMultiset<Predicate>();
-        headFunctors = new HashMultiset<Predicate>();
-        positiveBodyFunctors = new HashMultiset<Predicate>();
-        negativeBodyFunctors = new HashMultiset<Predicate>();
+        programs = new HashSet<>();
+        arities = new HashMultiset<>();
+        factFunctors = new HashMultiset<>();
+        headFunctors = new HashMultiset<>();
+        positiveBodyFunctors = new HashMultiset<>();
+        negativeBodyFunctors = new HashMultiset<>();
         termModelConverter = new TermModelConverter(vocabulary);
         try {
             startPrologEngine();
@@ -334,7 +336,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
     private Answer ans(Query query, TermModel valuesList) {
         final TermModel[] termsList = valuesList.flatList();
         final TruthValue truth = termModelConverter.truthValue(termsList[0]);
-        final List<Term> vals = new ArrayList<Term>(termsList.length);
+        final List<Term> vals = new ArrayList<>(termsList.length);
         for (int i = 1; i <= query.getVariables().size(); i++) {
             vals.add(termModelConverter.term(termsList[i]));
         }
@@ -451,8 +453,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
      * Commits all the loaded {@link DatabaseProgram programs} to the underlying
      * {@link PrologEngine}.
      *
-     * @throws PrologEngineCreationException
      */
+    @Override
     public void commit() {
         if (!hasChanges) {
             return;
@@ -480,6 +482,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
     /**
      * Create the concrete underlying {@link PrologEngine Prolog engine}.
+     * @return the created {@link PrologEngine}.
      */
     protected abstract PrologEngine createPrologEngine();
 
@@ -610,6 +613,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
      * throwing an {@link PrologEngineCreationException} after the time
      * specified by {@code CREATION_TIMEOUT} runs out.
      *
+     * @return the created {@link PrologEngine}.
      * @throws IPException if some exception was thrown by the Interprolog API.
      * @throws PrologEngineCreationException if the creation of the underlying
      * Prolog engine timed out. That could mean that the Prolog system located
@@ -652,7 +656,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
      * {@link DatabaseProgram programs} in {@link #file}, and the corresponding
      * table directives and fail rules. @
      *
-     * @throws java.io.IOException
+     * @throws java.io.IOException throws exception if unable to write file.
      */
     protected void write() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {

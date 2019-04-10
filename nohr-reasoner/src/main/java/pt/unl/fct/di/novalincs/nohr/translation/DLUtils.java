@@ -42,7 +42,7 @@ public class DLUtils {
      * Gets the atomic role of a given basic DL-Lite<sub>R</sub>basic
      * DL-Lite<sub>R</sub> role expression.
      *
-     * @param role a role expression <i>P</i> or <i>P<sup>-</i>.
+     * @param role a role expression <i>P</i> or <i>P<sup>-</sup></i>.
      * @return <i>P</i>.
      */
     public static OWLProperty atomic(OWLPropertyExpression role) {
