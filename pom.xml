@@ -152,6 +152,7 @@
         <module>nohr-reasoner</module>
         <module>nohr-plugin</module>
         <module>nohr-benchmark</module>
+        <module>nohr-benchmark-lightweight</module>
     </modules>
     <scm>
         <connection>scm:git:https://github.com/NoHRReasoner/NoHR</connection>
