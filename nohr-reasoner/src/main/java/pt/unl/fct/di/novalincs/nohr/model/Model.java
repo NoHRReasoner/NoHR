@@ -96,7 +96,7 @@ public class Model {
      * given a {@code VocabularyMapping}, as functor and anonymous variables as
      * arguments.
      *
-     * @param v
+     * @param v a {@link Vocabulary}.
      * @param functorSymbol the functor predicate, <i>P</i>.
      * @return an atom <i>P(_,..., _)</i> where {@code _} represents an
      * anonymous variable.
@@ -125,7 +125,7 @@ public class Model {
      * Create an atom with the predicate corresponding to a specified symbol as
      * functor and specified terms as arguments.
      *
-     * @param v
+     * @param v a {@link Vocabulary}.
      * @param arguments an array of terms arguments.
      * @param predicate the functor predicate's symbol
      * @return an atom with a predicate with symbol {@code functorSymbol} as
@@ -153,7 +153,7 @@ public class Model {
      * Concatenates the string representations, given a specified
      * {@link FormatVisitor} , of model elements from a specified array.
      *
-     * @param <E>
+     * @param <E> the type of the list elements.
      * @param elements the array of elements whose representation is to
      * concatenate.
      * @param format the {@link FormatVisitor} used to obtain the string
@@ -179,7 +179,7 @@ public class Model {
      * Concatenates the string representations, given a specified
      * {@link FormatVisitor} , of model elements from a specified list.
      *
-     * @param <E>
+     * @param <E> the type of the list elements.
      * @param elements the list of elements whose representation is to
      * concatenate.
      * @param format the {@link FormatVisitor} used to obtain the string
@@ -226,7 +226,7 @@ public class Model {
      * Create a negative literal from a specified atom.
      *
      * @param atom the atom, <i>P(t<sub>1</sub>, ..., t<sub>n</sub>)</i>
-     * @param existentially
+     * @param existentially indication that the negative literal is existential.
      * @return the negative literal <i><b>not</b> P(t<sub>1</sub>, ..., t
      * <sub>n</sub>)</i>
      */

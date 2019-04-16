@@ -26,10 +26,10 @@ import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
- * Represents an <i> MKNF Hybrid Knowledge Base </i> (see {@link
+ * Represents an <i> MKNF Hybrid Knowledge Base </i> (see
  * <a href="http://knoesis.wright.edu/pascal/resources/publications/mknftheo.pdf">Local
  * Closed World Reasoning with Description Logics under the Well-Founded
- * Semantics</a>}) that can be queried.
+ * Semantics</a>) that can be queried.
  *
  * @author Nuno Costa
  */
@@ -102,6 +102,9 @@ public interface HybridKB {
      * Checks if there is some answer to a given query.
      *
      * @param query the query.
+     * @param trueAnswer consider true answers.
+     * @param undefinedAnswers consider undefined answers.
+     * @param inconsistentAnswers consider inconsistent answers.
      * @return true iff there is at least one answer to {@code query}.
      * @throws OWLProfilesViolationsException if the <i>ontology</i> component
      * isn't in any supported profile.
@@ -118,6 +121,10 @@ public interface HybridKB {
      *
      * @param query the query.
      * @return one answer to {@code query}.
+     * @throws org.semanticweb.owlapi.model.OWLOntologyCreationException if
+     * unable to create ontology.
+     * @throws org.semanticweb.owlapi.model.OWLOntologyStorageException if
+     * unable to store ontology.
      * @throws OWLProfilesViolationsException if the <i>ontology</i> component
      * isn't in any supported profile.
      * @throws UnsupportedAxiomsException if the <i>ontology</i> has some axiom

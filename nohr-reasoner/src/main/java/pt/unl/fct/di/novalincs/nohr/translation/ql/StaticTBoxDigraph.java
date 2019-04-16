@@ -87,8 +87,8 @@ public class StaticTBoxDigraph implements TBoxDigraph {
      * The set of irreflexive roles <i>&Psi;(T)</i> of the the TBox, <i>T</i>,
      * of which this {@link TBoxDigraph} is <i>digraph</i> (see <b>Definition
      * 7.</b> of {@link
-     * <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}). May be empty if <i>&Pse;(T)</i> wasn't yet
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>). May be empty if <i>&Pse;(T)</i> wasn't yet
      * been computed.
      */
     private Set<OWLObjectProperty> irreflexiveRoles;
@@ -117,8 +117,8 @@ public class StaticTBoxDigraph implements TBoxDigraph {
      * Computes a the set of irreflexive roles <i>&Omega;(T)</i> of the the
      * TBox, <i>T</i>, of which this {@link TBoxDigraph} is <i>digraph</i> (see
      * <b>Definition 8.</b> of {@link
-     * <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}). May be empty, if <i>&Omega;(T)</i> wasn't
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>). May be empty, if <i>&Omega;(T)</i> wasn't
      * yet been computed.
      */
     private final Set<OWLEntity> unsatisfiableEntities;

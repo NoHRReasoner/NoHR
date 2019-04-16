@@ -41,8 +41,8 @@ import pt.unl.fct.di.novalincs.nohr.translation.AssertionsTranslation;
 
 /**
  * Implementing class of {@link ELAxiomsTranslator} to handle the double part (i.e. the rules with double meta-predicates and those whose heads have a
- * negative meta-predicate functor) of the EL <sub>&perp;</sub> <sup>+</sup> axioms translations (see {@link <a>A Correct EL Oracle for NoHR
- * (Technical Report)</a>}).
+ * negative meta-predicate functor) of the EL <sub>&perp;</sub> <sup>+</sup> axioms translations (see <a>A Correct EL Oracle for NoHR
+ * (Technical Report)</a>).
  *
  * @author Nuno Costa
  */
@@ -97,8 +97,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	}
 
 	/**
-	 * Translate a role chain subsumption axiom to a set of double rules according to <b>(r2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL
-	 * Oracle for NoHR (Technical Report)</a>} .
+	 * Translate a role chain subsumption axiom to a set of double rules according to <b>(r2)</b> of <b>Definition 13.</b> of <a>A Correct EL
+	 * Oracle for NoHR (Technical Report)</a> .
 	 *
 	 * @param chain
 	 *            a role chain <i>R<sub>1</sub>&#x26AA; ... &#x26AA;R<sub>k</i>.
@@ -126,7 +126,7 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 
 	/**
 	 * Translate a concept subsumption axiom to a set of double rules according to <b>(t1)</b>, <b>(c1)</b> and <b>(i1)</b> and <b>(i2)</b> of
-	 * <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>} .
+	 * <b>Definition 13.</b> of <a>A Correct EL Oracle for NoHR (Technical Report)</a> .
 	 *
 	 * @param c
 	 *            the subsumed concept expression <i>C</i>.
@@ -170,8 +170,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	}
 
 	/**
-	 * Translate a role subsumption axiom to a set of double rules according to <b>(r1)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle
-	 * for NoHR (Technical Report)</a>} .
+	 * Translate a role subsumption axiom to a set of double rules according to <b>(r1)</b> of <b>Definition 13.</b> of <a>A Correct EL Oracle
+	 * for NoHR (Technical Report)</a> .
 	 *
 	 * @param r
 	 *            the subsumed role <i>R</i>.
@@ -187,8 +187,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	}
 
 	/**
-	 * Translate an role composition to a list of atoms according to <b> Definition 12.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
-	 * Report)</a>}. Corresponds to <i>tr(R<sub>1k</sub>, x, x<sub>k</sub>)</i>.
+	 * Translate an role composition to a list of atoms according to <b> Definition 12.</b> of <a>A Correct EL Oracle for NoHR (Technical
+	 * Report)</a>. Corresponds to <i>tr(R<sub>1k</sub>, x, x<sub>k</sub>)</i>.
 	 *
 	 * @param chain
 	 *            a role composition R<sub>1</sub>&#x26AA; ...&#x26AA;R<sub>k</sub>.
@@ -203,8 +203,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	}
 
 	/**
-	 * Translate an atomic concept to an atom according according to <b> Definition 12.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
-	 * Report)</a>}. Corresponds to <i>tr(A, x)<sup>d</sup>.
+	 * Translate an atomic concept to an atom according according to <b> Definition 12.</b> of <a>A Correct EL Oracle for NoHR (Technical
+	 * Report)</a>. Corresponds to <i>tr(A, x)<sup>d</sup>.
 	 *
 	 * @param c
 	 *            an atomic concept <i>A</i>.
@@ -217,8 +217,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	}
 
 	/**
-	 * Translate a concept to a list of atoms according according to <b> Definition 12.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical
-	 * Report)</a>}. Corresponds to <i>tr(C, x)<sup>d</sup>.
+	 * Translate a concept to a list of atoms according according to <b> Definition 12.</b> of <a>A Correct EL Oracle for NoHR (Technical
+	 * Report)</a>. Corresponds to <i>tr(C, x)<sup>d</sup>.
 	 *
 	 * @param ce
 	 *            an concept <i>C</i>.
@@ -236,7 +236,7 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	}
 
 	/**
-	 * Translate an atomic role to an atom according to <b> Definition 12.</b> of {@link <a>A Correct EL Oracle for NoHR (Technical Report)</a>}.
+	 * Translate an atomic role to an atom according to <b> Definition 12.</b> of <a>A Correct EL Oracle for NoHR (Technical Report)</a>.
 	 * Corresponds to <i>tr(R, x, x<sub>1</sub>)<sup>d</sup></i>.
 	 *
 	 * @param r
@@ -252,8 +252,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	}
 
 	/**
-	 * Translate a concept assertion to a set of double rules according to <b>(a1)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for
-	 * NoHR (Technical Report)</a>}.
+	 * Translate a concept assertion to a set of double rules according to <b>(a1)</b> of <b>Definition 13.</b> of <a>A Correct EL Oracle for
+	 * NoHR (Technical Report)</a>.
 	 *
 	 * @param assertion
 	 *            an assertion <i>A(a)</i>
@@ -265,8 +265,8 @@ class ELDoubleAxiomsTranslator extends ELAxiomsTranslator {
 	}
 
 	/**
-	 * Translate a role assertion to a set of double rules according to <b>(a2)</b> of <b>Definition 13.</b> of {@link <a>A Correct EL Oracle for NoHR
-	 * (Technical Report)</a>}.
+	 * Translate a role assertion to a set of double rules according to <b>(a2)</b> of <b>Definition 13.</b> of <a>A Correct EL Oracle for NoHR
+	 * (Technical Report)</a>.
 	 *
 	 * @param assertion
 	 *            an assertion <i>R(a, b)</i>.

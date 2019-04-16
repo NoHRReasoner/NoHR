@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 import pt.unl.fct.di.novalincs.nohr.utils.PrologSyntax;
 
 /**
- * The types of the {@link
- * <a href="https://en.wikipedia.org/wiki/Lexical_analysis#Token">tokens</a>}
+ * The types of the
+ * <a href="https://en.wikipedia.org/wiki/Lexical_analysis#Token">tokens</a>
  * recognized by {@link NoHRScanner}.
  *
  * @author Nuno Costa

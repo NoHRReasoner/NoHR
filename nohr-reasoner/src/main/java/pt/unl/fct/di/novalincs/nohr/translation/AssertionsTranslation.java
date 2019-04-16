@@ -42,14 +42,13 @@ public class AssertionsTranslation {
     /**
      * Double translation of a given concept assertion.
      *
+     * @param v a vocabulary.
      * @param assertion a concept assertion
      * @return the set of double rules (i.e. those with double meta-predicates)
      * correspondent to the translation of {@code assertion} (see, e.g.,
-	 *         {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
-     * <i>Next Step for NoHR: OWL 2 QL</i></a>},
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
+     * <i>Next Step for NoHR: OWL 2 QL</i></a>,
      * <b>Definition 9.</b>, <b>(a1)</b>).
-     * @throws IllegalAccessException if {@code assertion} has a non atomic
-     * concept.
      */
     public static Set<Rule> translateDouble(Vocabulary v, OWLClassAssertionAxiom assertion) {
         final OWLClassExpression c = assertion.getClassExpression();
@@ -65,11 +64,12 @@ public class AssertionsTranslation {
     /**
      * Double translation of a given role assertion.
      *
+     * @param v a vocabulary.
      * @param assertion a role assertion.
      * @return the set of double rules (i.e. those with double meta-predicates)
      * correspondent to the translation of {@code assertion} (see e.g.
-	 *         {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
-     * <i>Next Step for NoHR: OWL 2 QL</i></a>},
+     * <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
+     * <i>Next Step for NoHR: OWL 2 QL</i></a>,
      * <b>Definition 9.</b>, <b>(a1)</b>).
      */
     public static Set<Rule> translateDouble(Vocabulary v, OWLPropertyAssertionAxiom<?, ?> assertion) {
@@ -84,12 +84,13 @@ public class AssertionsTranslation {
     /**
      * Original translation of a given concept assertion.
      *
+     * @param v a vocabulary.
      * @param assertion a concept assertion.
      * @return the set of double rules (i.e. those with original
      * meta-predicates) correspondent to the translation of {@code assertion}
      * (see e.g.
-	 *         {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
-     * <i>Next Step for NoHR: OWL 2 QL</i></a>},
+     * <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
+     * <i>Next Step for NoHR: OWL 2 QL</i></a>,
      * <b>Definition 9.</b>, <b>(a1)</b>).
      * @throws IllegalArgumentException if {@code assertion} has a non atomic
      * concept.
@@ -113,12 +114,13 @@ public class AssertionsTranslation {
     /**
      * Original translation of a given role assertion.
      *
+     * @param v a vocabulary
      * @param assertion a role assertion.
      * @return the set of double rules (i.e. those with original
      * meta-predicates) correspondent to the translation of {@code assertion}
      * (see e.g.
-	 *         {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
-     * <i>Next Step for NoHR: OWL 2 QL</i></a>},
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">
+     * <i>Next Step for NoHR: OWL 2 QL</i></a>,
      * <b>Definition 9.</b>, <b>(a2)</b>).
      */
     public static Set<Rule> translateOriginal(Vocabulary v, OWLPropertyAssertionAxiom<?, ?> assertion) {

@@ -25,7 +25,7 @@ public class StringUtils {
      *
      * @param sep the separator.
      * @param objs the list of objects.
-     * @return
+     * @return the concatenated string representation.
      */
     public static String concat(String sep, List<?> objs) {
         final StringBuffer sb = new StringBuffer();
@@ -47,7 +47,7 @@ public class StringUtils {
      *
      * @param sep the separator.
      * @param objs the array of objects.
-     * @return
+     * @return the concatenated string representation.
      */
     public static String concat(String sep, Object[] objs) {
         final StringBuffer sb = new StringBuffer();

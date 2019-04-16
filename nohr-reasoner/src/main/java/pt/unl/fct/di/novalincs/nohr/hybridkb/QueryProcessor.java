@@ -30,8 +30,8 @@ import pt.unl.fct.di.novalincs.nohr.model.TruthValue;
  * corresponding original and double - or original only, if the KB hasn't
  * disjunctions - queries on the underlying {@link DeductiveDatabase} and
  * combines their results to obtain the query's answers according to
- * {@link <a href="http://tocl.acm.org/accepted/464knorr.pdf"><i>Query-driven
- * Procedures for Hybrid MKNF Knowledge Bases</i></a>}.
+ * <a href="http://tocl.acm.org/accepted/464knorr.pdf">Query-driven
+ * Procedures for Hybrid MKNF Knowledge Bases</a>.
  *
  * @author Nuno Costa
  */

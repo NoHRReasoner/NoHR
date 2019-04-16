@@ -17,8 +17,8 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.MetaPredicate;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicate;
 
 /**
- * A model visitor (see {@link
- * <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>}
+ * A model visitor (see
+ * <a href="https://en.wikipedia.org/wiki/Visitor_pattern">Visitor Pattern</a>
  * ) to support different model formats, i.e. string representation of the model
  * elements. Implement this interface if you want to support a new model
  * formant, returning the desired string representation of each model element,
@@ -30,13 +30,13 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PrologPredicate;
 public interface FormatVisitor {
 
     /**
-     * @param answer
+     * @param answer an {@link Answer}.
      * @return the string representation of the answer {@code answer}.
      */
     public String visit(Answer answer);
 
     /**
-     * @param atom
+     * @param atom an {@link Atom}.
      * @return the string representation of the atom {@code atom}.
      */
     public String visit(Atom atom);
@@ -52,14 +52,14 @@ public interface FormatVisitor {
     public String visit(HybridConstant constant);
 
     /**
-     * @param metaPredicate
+     * @param metaPredicate a {@link MetaPredicate}
      * @return the string representation of the meta-predicate
      * {@code metaPredicate}.
      */
     public String visit(MetaPredicate metaPredicate);
 
     /**
-     * @param negativeLiteral
+     * @param negativeLiteral a {@link NegativeLiteral}
      * @return the string representation of the negative literal
      * {@code negativeLiteral}.
      */
@@ -70,13 +70,13 @@ public interface FormatVisitor {
     public String visit(PrologPredicate predicate);
 
     /**
-     * @param query
+     * @param query a {@link Query}.
      * @return the string representation of the query {@code query}.
      */
     public String visit(Query query);
 
     /**
-     * @param rule
+     * @param rule a {@link Rule}.
      * @return the string representation of the rule {@code rule}.
      */
     public String visit(Rule rule);
@@ -84,7 +84,7 @@ public interface FormatVisitor {
     public String visit(Symbol symbolic);
 
     /**
-     * @param variable
+     * @param variable a {@link Variable}.
      * @return the string representation of the variable {@code variable}.
      */
     public String visit(Variable variable);

@@ -50,8 +50,8 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 /**
  * Implementation of {@link OntologyTranslator} for the
  * {@link Profile#OWL2_QL QL} profile, according to
- * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
- * Step for NoHR: OWL 2 QL</a>}.
+ * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+ * Step for NoHR: OWL 2 QL</a>.
  *
  * @author Nuno Costa
  */
@@ -107,8 +107,8 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
      * Constructs an {@link OntologyTranslator} of a given OWL 2 QL ontology.
      *
      * @param ontology an OWL 2 QL ontology.
-     * @param v
-     * @param dedutiveDatabase
+     * @param v a vocabulary.
+     * @param dedutiveDatabase a deductive database.
      * @throws UnsupportedAxiomsException if {@code ontology} contains some
      * axioms of unsupported types.
      */
@@ -121,10 +121,10 @@ public class QLOntologyTranslator extends OntologyTranslatorImpl {
      * Constructs an {@link OntologyTranslator} of a given OWL 2 QL ontology.
      *
      * @param ontology an OWL 2 QL ontology.
-     * @param v
-     * @param dedutiveDatabase
-     * @param ignoreAllUnsupportedAxioms
-     * @param ignoredUnsupportedAxioms
+     * @param v a vocabulary.
+     * @param dedutiveDatabase a deductive database.
+     * @param ignoreAllUnsupportedAxioms ignores all unsupported axioms.
+     * @param ignoredUnsupportedAxioms a set of unsupported axioms to ignore.
      * @throws UnsupportedAxiomsException if {@code ontology} contains some
      * axioms of unsupported types.
      */

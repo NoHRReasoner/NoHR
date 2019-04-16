@@ -23,8 +23,8 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 /**
  * A parser that constructs {@link Rule rules} and {@link Query queries} from
  * expressions in the following language (in
- * {@link <a href="https://en.wikipedia.org/wiki/Wirth_syntax_notation"> Wirth
- * syntax notation</a>}), where the symbols {@code symbol} and {@code id} are
+ * <a href="https://en.wikipedia.org/wiki/Wirth_syntax_notation"> Wirth
+ * syntax notation</a>), where the symbols {@code symbol} and {@code id} are
  * {@link TokenType tokens}: <br>
  * <br>
  * <code>
@@ -51,7 +51,7 @@ public interface NoHRParser {
      * @param file the file to be parsed.
      * @return the {@link Program program} that {@code file} represents.
      * @throws ParseException {@code file} violates the queries syntax.
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException thrown when file not found.
      */
     public Program parseProgram(File file) throws ParseException, FileNotFoundException;
 

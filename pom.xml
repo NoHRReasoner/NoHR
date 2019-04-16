@@ -152,6 +152,7 @@
         <module>nohr-reasoner</module>
         <module>nohr-plugin</module>
         <module>nohr-benchmark</module>
+        <module>nohr-benchmark-lightweight</module>
     </modules>
     <scm>
         <connection>scm:git:https://github.com/NoHRReasoner/NoHR</connection>
@@ -170,6 +171,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.0</version>
                         <configuration>
                             <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
@@ -177,7 +179,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-site-plugin</artifactId>
-                        <version>3.3</version>
+                        <version>3.7.1</version>
                         <configuration>
                             <reportPlugins>
                                 <plugin>

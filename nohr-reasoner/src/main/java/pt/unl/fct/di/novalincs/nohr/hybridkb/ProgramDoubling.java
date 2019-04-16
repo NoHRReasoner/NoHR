@@ -27,8 +27,8 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.PredicateTypeVisitor;
 /**
  * Provides an auxiliary method that double a given rule according to
  * <b>Definition 3.1</b> of
- * {@link <a href="http://tocl.acm.org/accepted/464knorr.pdf"><i>Query-driven
- * Procedures for Hybrid MKNF Knowledge Bases</i></a>}.
+ * <a href="http://tocl.acm.org/accepted/464knorr.pdf"><i>Query-driven
+ * Procedures for Hybrid MKNF Knowledge Bases</i></a>.
  *
  * @author Nuno Costa
  */
@@ -37,7 +37,7 @@ class ProgramDoubling {
     /**
      * Double a given rule according to <b>Definition 3.1</b> of {@link
      * <a href="http://tocl.acm.org/accepted/464knorr.pdf"><i> Query-driven
-     * Procedures for Hybrid MKNF Knowledge Bases</i></a>}.
+     * Procedures for Hybrid MKNF Knowledge Bases</i></a>.
      *
      * @param rule a rule.
      * @return the pair of rules corresponding to the doubling of {@code rule}.

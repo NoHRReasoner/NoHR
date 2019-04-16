@@ -29,7 +29,7 @@ import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 /**
  * Represents an OWL 2 QL ontology normalized in order to fit in DL-Lite<sub>R</sub>, i.e. a DL-Lite<sub>R</sub> ontology that entails exactly the
  * same axioms that a certain QL ontology (see <b>Appendix D</b> of
- * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>}).
+ * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next Step for NoHR: OWL 2 QL</a>).
  *
  * @author Nuno Costa
  */
@@ -99,20 +99,20 @@ public interface QLOntologyNormalization {
 	public Set<OWLProperty> getSubRoles();
 
 	/**
-	 * Returns the set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
-	 * <i>&top;&sqsube;&not;B</i> or </i> B&sqsube;&not;B</i> {@link QLOntologyNormalization}.
+	 * Returns the set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B \u2291\u22A5</i>,<i>B \u2291&not;\u22A4</i>,
+	 * <i>\u22A4 \u2291&not;B</i> or <i> B \u2291&not;B</i> {@link QLOntologyNormalization}.
 	 *
-	 * @return the set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B&sqsube;&bot;</i>,<i>B&sqsube;&not;&top;</i>,
-	 *         <i>&top;&sqsube;&not;B</i> or </i> B&sqsube;&not;B</i> {@link QLOntologyNormalization}.
+	 * @return the set of DL-Lite<sub>R</sub> concepts <i>B</i> that occur in some axiom <i>B \u2291\u22A5</i>,<i>B \u2291&not;\u22A4</i>,
+	 *         <i>\u22A4 \u2291&not;B</i> or <i> B \u2291&not;B</i> {@link QLOntologyNormalization}.
 	 */
 	public Set<OWLClassExpression> getUnsatisfiableConcepts();
 
 	/**
-	 * Returns the set of DL-Lite<sub>R</sub> roles <i>Q</i> that occur in some axiom <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
-	 * <i>&top;&sqsube;&not;Q</i> or </i>Q&sqsube;&not;Q</i> {@link QLOntologyNormalization}.
+	 * Returns the set of DL-Lite<sub>R</sub> roles <i>Q</i> that occur in some axiom <i>Q \u2291\u22A5</i>,<i>Q \u2291&not;\u22A4</i>,
+	 * <i>\u22A4 \u2291&not;Q</i> or <i>Q \u2291&not;Q</i> {@link QLOntologyNormalization}.
 	 *
-	 * @return the set of DL-Lite<sub>R</sub> concepts <i>Q</i> that occur in some axiom <i>Q&sqsube;&bot;</i>,<i>Q&sqsube;&not;&top;</i>,
-	 *         <i>&top;&sqsube;&not;Q</i> or </i> Q&sqsube;&not;Q</i> {@link QLOntologyNormalization}.
+	 * @return the set of DL-Lite<sub>R</sub> concepts <i>Q</i> that occur in some axiom <i>Q \u2291\u22A5</i>,<i>Q \u2291&not;\u22A4</i>,
+	 *         <i>\u22A4 \u2291&not;Q</i> or <i> Q \u2291&not;Q</i> {@link QLOntologyNormalization}.
 	 */
 	public Set<OWLPropertyExpression> getUnsatisfiableRoles();
 

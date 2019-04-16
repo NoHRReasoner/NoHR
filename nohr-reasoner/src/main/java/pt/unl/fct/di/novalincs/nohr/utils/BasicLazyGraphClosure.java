@@ -17,8 +17,8 @@ import java.util.Set;
 
 /**
  * Implementation of {@link GraphClosure} with the algorithm <b>Closure</b> presented in the <b>Section 3.1</b> of
- * {@link <a href="http://www.madgik.di.uoa.gr/sites/default/files/acm_tods_v18.3.pp512-576.pdf">Transitive Closure Algorithms Based on Graph
- * Traversal</a>}. This implementation is lazy in the sense that the ancestors will be computed as they are requested.
+ * <a href="http://www.madgik.di.uoa.gr/sites/default/files/acm_tods_v18.3.pp512-576.pdf">Transitive Closure Algorithms Based on Graph
+ * Traversal</a>. This implementation is lazy in the sense that the ancestors will be computed as they are requested.
  *
  * @author Nuno Costa
  * @param <T>

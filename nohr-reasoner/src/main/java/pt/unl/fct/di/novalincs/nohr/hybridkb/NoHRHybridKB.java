@@ -50,10 +50,10 @@ import pt.unl.fct.di.novalincs.nohr.translation.Profile;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 /**
- * Implementation of {@link HybridKB} according to {@link <a>A Correct EL Oracle
- * for NoHR (Technical Report)</a>} and
- * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
- * Step for NoHR: OWL 2 QL</a>}.
+ * Implementation of {@link HybridKB} according to <a>A Correct EL Oracle for
+ * NoHR (Technical Report)</a> and
+ * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+ * Step for NoHR: OWL 2 QL</a>.
  *
  * @author Nuno Costa
  */
@@ -142,16 +142,13 @@ public class NoHRHybridKB implements HybridKB {
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
      *
-     * @param configuration
-     * @param binDirectory the directory where the Prolog system to use as
-     * underlying Prolog engine is located.
+     * @param configuration the configuration for the instanced NoHR Hybrid KB.
      * @param ontology the <i>ontology</i> component of this {@link HybridKB}.
      * @param profile the {@link Profile OWL profile} that will be considered
      * during the ontology translation. That will determine which the
-     * translation - {@link <a>A Correct EL Oracle for NoHR (Technical
-     * Report)</a>} or
-	 *            {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} will be applied. If none is specified the
+     * translation - <a>A Correct EL Oracle for NoHR (Technical Report)</a> or
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> will be applied. If none is specified the
      * preferred one will be applied. Whenever the ontology isn't in the
      * specified profile, if some is specified, an
      * {@link OWLProfilesViolationsException} will be thrown.
@@ -178,9 +175,7 @@ public class NoHRHybridKB implements HybridKB {
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
      *
-     * @param configuration
-     * @param binDirectory the directory where the Prolog system to use as
-     * underlying Prolog engine is located.
+     * @param configuration the configuration for the instanced NoHR Hybrid KB.
      * @param ontology the <i>ontology</i> component of this {@link HybridKB}.
      * @param program the <i>program</i> component of this {@link HybridKB}.
      * @throws OWLProfilesViolationsException if {@code profile != null} and
@@ -206,17 +201,14 @@ public class NoHRHybridKB implements HybridKB {
      * Constructs a {@link NoHRHybridKB} from a given
      * {@link OWLOntology ontology} and {@link Program program}.
      *
-     * @param configuration
-     * @param binDirectory the directory where the Prolog system to use as
-     * underlying Prolog engine is located.
+     * @param configuration the configuration for the instanced NoHR Hybrid KB.
      * @param ontology the <i>ontology</i> component of this {@link HybridKB}.
      * @param program the <i>program</i> component of this {@link HybridKB}.
      * @param profile the {@link Profile OWL profile} that will be considered
      * during the ontology translation. That will determine which the
-     * translation - {@link <a>A Correct EL Oracle for NoHR (Technical
-     * Report)</a>} or
-	 *            {@link <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>} will be applied. If none is specified the
+     * translation - <a>A Correct EL Oracle for NoHR (Technical Report)</a> or
+     * <a href= "http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a> will be applied. If none is specified the
      * preferred one will be applied. Whenever the ontology isn't in the
      * specified profile, if some is specified, an
      * {@link OWLProfilesViolationsException} will be thrown.
@@ -337,7 +329,7 @@ public class NoHRHybridKB implements HybridKB {
 
         RuntimesLogger.stop("query", "queries");
 
-        final List<Answer> result = new LinkedList<Answer>();
+        final List<Answer> result = new LinkedList<>();
 
         for (final Answer ans : answers) {
             result.add(ans);
@@ -418,15 +410,15 @@ public class NoHRHybridKB implements HybridKB {
     }
 
     /**
-     * Preprocesses this {@link HybridKB} according to {@link <a>A Correct EL
-     * Oracle for NoHR (Technical Report)</a>} and
-	 * {@link <a href=" http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
-     * Step for NoHR: OWL 2 QL</a>}, depending on the current ontolgy profile,
-     * so that it can be queried. The translation {@link DatabaseProgram}s,
-     * loaded in {@link #deductiveDatabase} are updated, if the ontology has
-     * changed since the last call; {@link #doubledProgram} is updated, if they
-     * were introduced disjunctions in the ontology, or if the program has
-     * changed, since the last call.
+     * Preprocesses this {@link HybridKB} according to <a>A Correct EL Oracle
+     * for NoHR (Technical Report)</a> and
+     * <a href="http://centria.di.fct.unl.pt/~mknorr/ISWC15/resources/ISWC15WithProofs.pdf">Next
+     * Step for NoHR: OWL 2 QL</a>, depending on the current ontolgy profile, so
+     * that it can be queried. The translation {@link DatabaseProgram}s, loaded
+     * in {@link #deductiveDatabase} are updated, if the ontology has changed
+     * since the last call; {@link #doubledProgram} is updated, if they were
+     * introduced disjunctions in the ontology, or if the program has changed,
+     * since the last call.
      *
      * @throws UnsupportedAxiomsException if the current version of the ontology
      * has some axioms of an unsupported type.
