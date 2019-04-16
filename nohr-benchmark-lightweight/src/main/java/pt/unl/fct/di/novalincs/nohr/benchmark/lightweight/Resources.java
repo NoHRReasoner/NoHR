@@ -27,7 +27,7 @@ public class Resources {
 
     private OWLOntology ontology;
     private Program program;
-    private List<Query> queries;
+    private List<EvaluationQuery> queries;
     private Vocabulary vocabulary;
 
     public OWLOntology getOntology() {
@@ -38,7 +38,7 @@ public class Resources {
         return program;
     }
 
-    public List<Query> getQueries() {
+    public List<EvaluationQuery> getQueries() {
         return queries;
     }
     
@@ -109,14 +109,14 @@ public class Resources {
         return program;
     }
 
-    public List<Query> loadQuery(List<File> dir, String filter) throws IOException {
+    public List<EvaluationQuery> loadQuery(List<File> dir, String filter) throws IOException {
         queries = new LinkedList<>();
 
         for (File i : dir) {
             try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
                 for (Path j : stream) {
                     for (String k : Files.readAllLines(j)) {
-                        queries.add(new Query(k));
+                        queries.add(new EvaluationQuery(k));
                     }
                 }
             } catch (IOException ex) {

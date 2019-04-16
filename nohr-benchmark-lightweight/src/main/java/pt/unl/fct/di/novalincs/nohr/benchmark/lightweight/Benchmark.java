@@ -13,6 +13,10 @@ import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
+/**
+ * Base class for running benchmarks. This class provides the ability 
+ * @author Carlos Lopes
+ */
 public abstract class Benchmark {
 
     private final NoHRHybridKBConfiguration nohrConfig;
@@ -23,37 +27,23 @@ public abstract class Benchmark {
     private final File outputDirectory;
 
     private final String name;
-
-    public NoHRHybridKBConfiguration getNoHRConfig() {
-        return nohrConfig;
-    }
-
-    public Metrics getMetrics() {
-        return metrics;
-    }
-
-    public Resources getResources() {
-        return resources;
-    }
-
-    public String getName() {
-        return name;
-    }
-
+    
     public Benchmark(String[] args) throws IOException, OWLOntologyCreationException, ParseException {
         this(args, "benchmark");
     }
-
+ 
     public Benchmark(String[] args, String name) throws IOException, OWLOntologyCreationException, ParseException {
         final Map<String, String> env = System.getenv();
 
         final String NOHR_XSB_DIRECTORY = env.get("NOHR_XSB_DIRECTORY");
         final String NOHR_KONCLUDE_BINARY = env.get("NOHR_KONCLUDE_BINARY");
-
-        resources = new Resources();
-
+        
         inputDirectory = new File(args[0]);
+        resources = new Resources();
+        resources.loadAll(inputDirectory);
+
         outputDirectory = new File(args[1]);
+        
         int repeat = Integer.parseInt(args[2]);
         metrics = new Metrics(repeat);
 
@@ -70,10 +60,25 @@ public abstract class Benchmark {
                 dl,
                 dLInferenceEngine
         );
-
-        resources.loadAll(inputDirectory);
-
+        
+        
         this.name = name;
+    }
+
+    public NoHRHybridKBConfiguration getNoHRConfig() {
+        return nohrConfig;
+    }
+
+    public Metrics getMetrics() {
+        return metrics;
+    }
+
+    public Resources getResources() {
+        return resources;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public abstract void prepare() throws Exception;

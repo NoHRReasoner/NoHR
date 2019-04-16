@@ -1,6 +1,6 @@
 package pt.unl.fct.di.novalincs.nohr.benchmark.lightweight;
 
-public class Query {
+public class EvaluationQuery {
 
     private String name;
     private String query;
@@ -21,7 +21,7 @@ public class Query {
         this.query = query;
     }
 
-    public Query(String q) {
+    public EvaluationQuery(String q) {
         name = q.substring(0, q.indexOf(" "));
         query = q.substring(q.indexOf(" ") + 1);
     }
