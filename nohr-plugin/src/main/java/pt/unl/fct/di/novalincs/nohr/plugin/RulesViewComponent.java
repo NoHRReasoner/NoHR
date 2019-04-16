@@ -80,7 +80,7 @@ public class RulesViewComponent extends AbstractNoHRViewComponent {
         final RuleListModel ruleListModel = getRuleListModel();
 //        reset();
         ruleList = new RulesList(ruleEditor, ruleListModel);
-        ruleList.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 14));
+        //ruleList.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 14));
         final JScrollPane jScrollPane = new JScrollPane(ruleList);
         add(jScrollPane, BorderLayout.CENTER);
         //final JPanel buttonHolder = new JPanel(new FlowLayout(FlowLayout.LEFT));

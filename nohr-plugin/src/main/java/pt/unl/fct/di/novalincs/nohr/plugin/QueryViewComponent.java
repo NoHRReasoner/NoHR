@@ -182,8 +182,9 @@ public class QueryViewComponent extends AbstractNoHRViewComponent implements OWL
                 BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "Query answers"),
                 BorderFactory.createEmptyBorder(3, 3, 3, 3)));
         answersTable = new AnswersTable(getOWLEditorKit());
-        answersTable.setFont(new Font(this.getFont().getFontName(), this.getFont().getStyle(), 14));
+        //answersTable.setFont(new Font(this.getFont().getFontName(), this.getFont().getStyle(), 14));
         answersTable.setAutoCreateColumnsFromModel(true);
+        answersTable.setRowHeight(this.getFont().getSize());
         final JScrollPane answersScrollPane = new JScrollPane(answersTable);
         answersTable.setFillsViewportHeight(true);
         answersPanel.add(answersScrollPane);
