@@ -4,7 +4,9 @@ NoHR Lightweight Benchmark allows the realization of pinpoint benchmarks on spec
 
 ## Requirements
 
-Requires a java environment (1.8^), XSB and Konclude. The environment variables `NOHR_XSB_DIRECTORY` and `NOHR_KONCLUDE_BINARY` must be set and point to the XSB installation directory and to the Konclude binary respectivelty.
+Requires a java environment (1.8^), XSB and Konclude. 
+
+The environment variables `NOHR_XSB_DIRECTORY` and `NOHR_KONCLUDE_BINARY` must be set and point to the XSB installation directory and to the Konclude binary respectively.
 
 ## Running a benchmark
 
@@ -13,16 +15,6 @@ To run a benchmark you must call `java` with the correct parameters. The overall
 ```
 java <benchmark-class> <input-directory> <output-directory> <repetition> <force-dl> <reasoner>
 ```
-
-If building with Maven, running the benchmark from the `target` directory can be achieved using the sample command:
-
-```
-java -Xms4g -Xmx4g -cp "./lib/*:./nohr-benchmark-lightweight-3.0.0.jar" pt.unl.fct.di.novalincs.nohr.benchmark.lightweight.BenchmarkQueries ~/input ~/output 10 false HERMIT
-```
-
-*Note: in windows, classpath is separated with `;` instead of `:`.*
-
-*Note: set java memory requirements to your needs.*
 
 The parameters are mandatory and can have the following values.
 
@@ -57,3 +49,15 @@ Indicates whether to force the use of the DL reasoner instead of the OWL 2 Profi
 ### `<reasoner>`
 
 Selects the DL reasoner to use in the benchmark. Can be set to `HERMIT` or `KONCLUDE`.
+
+## Example
+
+If building with Maven, running the benchmark from the `target` directory can be achieved using the sample command:
+
+```
+java -Xms4g -Xmx4g -cp "./lib/*:./nohr-benchmark-lightweight-3.0.0.jar" pt.unl.fct.di.novalincs.nohr.benchmark.lightweight.BenchmarkQueries ~/input ~/output 10 false HERMIT
+```
+
+*Note: in windows, classpath is separated with `;` instead of `:`.*
+
+*Note: set java memory requirements to your needs.*
