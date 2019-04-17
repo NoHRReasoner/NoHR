@@ -111,7 +111,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	public void vedran() {
 
-		File dest = new File("C:\\Users\\VedranPC\\Desktop\\rules.txt");
+		File dest = new File("/home/vedran/Desktop/rules.p");
 		try {
 			FileUtils.copyFile(file, dest);
 		} catch (IOException e) {

@@ -165,7 +165,6 @@ public class DBMappingEditForm extends JPanel {
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNewLabel_1.setToolTipText("Define the mapping");
 		lblNewLabel_1.setBackground(Color.WHITE);
-		lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\plus.png"));
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 		gbc_lblNewLabel_1.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel_1.gridwidth = 3;
@@ -448,7 +447,6 @@ public class DBMappingEditForm extends JPanel {
 		gbc_fieldSQL.gridx = 2;
 		gbc_fieldSQL.gridy = 12;
 		add(scrollV, gbc_fieldSQL);
-		btnEditSQL.setIcon(IconLoader.getImageIcon("pen.png"));
 		GridBagConstraints gbc_btnEditSQL = new GridBagConstraints();
 		gbc_btnEditSQL.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnEditSQL.anchor = GridBagConstraints.NORTH;
@@ -700,6 +698,7 @@ public class DBMappingEditForm extends JPanel {
 			setArity(0);
 
 		} else {
+			System.out.println("Mapping: " +dbMapping.toString());
 			setSQL(dbMapping.getSQL());
 			setODBCDriver(dbMapping.getODBC());
 			setTables(dbMapping.getTables());

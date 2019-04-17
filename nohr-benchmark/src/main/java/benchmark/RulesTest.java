@@ -50,32 +50,40 @@ import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 public class RulesTest {
 
+	/**
+	 * Procedure used to test loading and querying knowledge base into the API version of NoHR.
+	 * @param args - expected arguments: <ontology> <programs directory> <mappings directory> <queries file> <runs>
+	 */
     public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException,
             OWLProfilesViolationsException, IOException, CloneNotSupportedException, UnsupportedAxiomsException,
             IPException, PrologEngineCreationException, ParseException, Exception {
-        if (args.length != 4) {
-            System.out.println("expected arguments: <ontology> <programs directory> <queries file> <runs>");
+        if (args.length != 5) {
+            System.out.println("expected arguments: <ontology> <programs directory> <mappings file> <queries file> <runs>");
             System.exit(1);
         }
 
         final QueryConfigParser queriesParser = new QueryConfigParser();
-        final Path queriesFile = FileSystems.getDefault().getPath(args[2]).toAbsolutePath();
+        final Path queriesFile = FileSystems.getDefault().getPath(args[3]).toAbsolutePath();
         Vector<?> queries = null;
         try {
             queries = queriesParser.createQueryList(queriesFile.toString());
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        final int runs = Integer.valueOf(args[3]);
+        final int runs = Integer.valueOf(args[4]);
         RuntimesLogger.open("loading", "queries");
         for (int run = 1; run <= runs; run++) {
             RuntimesLogger.setRun(run);
             final OWLOntologyManager om = OWLManager.createOWLOntologyManager();
             final Path ontologyFile = FileSystems.getDefault().getPath(args[0]).toAbsolutePath();
             final Path progsDir = FileSystems.getDefault().getPath(args[1]).toAbsolutePath();
+            final Path mappingsDir = FileSystems.getDefault().getPath(args[2]).toAbsolutePath();
 
-            final String name = ontologyFile.getFileName().toString().replaceFirst(".owl", "");
-            RuntimesLogger.setDataset(name);
+            /*
+             * loading ontology into the reasoner
+             */
+            final String ontologyName = ontologyFile.getFileName().toString().replaceFirst(".owl", "");
+            RuntimesLogger.setDataset(ontologyName);
             RuntimesLogger.start("ontology loading");
             OWLOntology ontology = null;
             try {
@@ -87,7 +95,6 @@ public class RulesTest {
 
             NoHRHybridKBConfiguration configuration = new NoHRHybridKBConfiguration();
 
-//          TODO define properly the mappings
             final HybridKB nohr = new NoHRHybridKB(configuration, ontology, Model.program(), Model.dbMappingSet());
             final NoHRParser parser = new NoHRRecursiveDescentParser(nohr.getVocabulary());
             final ProgramPersistenceManager programPersistenceManager = new ProgramPersistenceManager(
@@ -104,6 +111,9 @@ public class RulesTest {
                     e.printStackTrace();
                 }
             }
+            /*
+             * loading rules into the reasoner
+             */
             final List<Path> files = new ArrayList<Path>();
             final DirectoryStream<Path> progsStream = Files.newDirectoryStream(progsDir);
             for (final Path p : progsStream) {
@@ -123,7 +133,7 @@ public class RulesTest {
                 }
             });
             for (final Path progFile : files) {
-                RuntimesLogger.setDataset(name + "+" + progFile.getFileName().toString().replaceFirst(".p", ""));
+                RuntimesLogger.setDataset(ontologyName + "+" + progFile.getFileName().toString().replaceFirst(".p", ""));
                 try {
                     RuntimesLogger.start("rules parsing");
                     final Program program = programPersistenceManager.read(progFile.toFile());

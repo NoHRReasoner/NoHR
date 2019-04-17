@@ -6,21 +6,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
-
-import com.igormaznitsa.prologparser.exceptions.PrologParserException;
 
 import pt.unl.fct.di.novalincs.nohr.deductivedb.NoHRFormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
-import pt.unl.fct.di.novalincs.nohr.model.Model;
-import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
-import pt.unl.fct.di.novalincs.nohr.model.Predicate;
-import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
-import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
 
 /**
@@ -77,7 +69,8 @@ public class DBMappingSetPersistenceManager {
         String mapping;
         int line = 1;
         while ((mapping = input.readLine()) != null) {
-        	dbMappingSet.add(new DBMappingImpl(mapping, ODBCPreferences.getDrivers(), line, vocabulary));
+        	DBMapping tmpMapping = new DBMappingImpl(mapping, ODBCPreferences.getDrivers(), line, vocabulary);
+        	dbMappingSet.add(tmpMapping);
         	line++;
         }
         

@@ -137,6 +137,10 @@ public class LubmRepository {
         
         DBMappingSet dbMappings = Model.dbMappingSet();
         
+        if (profiles == Profile.OWL2_QL) {
+        	parser.parseDBMappingSet(new File(System.getenv("NOHR_MAPPINGS")),dbMappings);
+        }
+        
         hybridKB = new NoHRHybridKB(configuration, ontology, program, dbMappings, vocabulary, profiles);
 
         System.gc();

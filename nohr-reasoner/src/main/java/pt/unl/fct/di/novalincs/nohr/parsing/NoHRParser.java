@@ -39,6 +39,8 @@ import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
  * term = variable | symbol. <br>
  * variable = "?" id. <br>
  * </code>
+ * 
+ * In addition, parser can parse NoHR mappings, according to our own XML specification.
  *
  * @author Nuno Costa
  */
@@ -80,14 +82,13 @@ public interface NoHRParser {
     public Rule parseRule(String str) throws ParseException;
 
     /**
-     * Parses a given string and returns the corresponding {@link Query query},
+     * Parses a given string and returns the corresponding {@link DBMapping dbMapping},
      * if represents some DBMapping.
      *
      * @param str the string to be parsed.
-     * @return the {@link Query query} that {@code str} represents.
+     * @return the {@link DBMapping dbMapping} that {@code str} represents.
      * @throws ParseException if {@code str} violates the DBMapping syntax.
      */
-    
     public DBMapping parseDBMapping(String str) throws ParseException;
     
     public void parseDBMappingSet(File file, DBMappingSet dbMappingSet);

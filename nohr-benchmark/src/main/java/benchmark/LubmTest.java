@@ -87,6 +87,11 @@ public class LubmTest {
 
     }
 
+    /**
+     * Method used to perform reasoning over LUMB ontologies. It is used by benchmark.sh script.
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         Test test;
         try {

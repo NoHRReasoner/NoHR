@@ -116,7 +116,14 @@ public class DBMappingImpl implements DBMapping {
 
 	}
 
-	// creating mapping from a string/file
+	/**
+	 * Creating mapping from a string/file
+	 * @param stringFromFile
+	 * @param drivers
+	 * @param line
+	 * @param vocabulary
+	 * @throws IOException
+	 */
 	public DBMappingImpl(String stringFromFile, List<ODBCDriver> drivers, int line, Vocabulary vocabulary) throws IOException {
 		String[] mapping = stringFromFile.split("<mapping>",-1);
 
@@ -140,11 +147,13 @@ public class DBMappingImpl implements DBMapping {
 		}
 		this.odbcDriver = drivers.get(odbcIndex);
 		
-		this.sql = mapping[2];
-		if (this.sql == null || this.sql.isEmpty()) {
+		String tmpSQL = mapping[2];
+		if (tmpSQL == null || tmpSQL.isEmpty()) {
 			this.isSQL = false;
+			this.sql = null;
 		} else {
 			this.isSQL = true;
+			this.sql = tmpSQL;
 		}
 		/**
 		 * Parsing
@@ -254,7 +263,13 @@ public class DBMappingImpl implements DBMapping {
 		this.nPredicate = null;
 	}
 
-	// constructor for an arbitrary SQL - mapping
+	/**
+	 * Constructor for an arbitrary SQL - mapping
+	 * @param odbcDriver
+	 * @param sql
+	 * @param arity
+	 * @param predicate
+	 */
 	public DBMappingImpl(ODBCDriver odbcDriver, String sql, int arity, Predicate predicate) {
 		super();
 		this.odbcDriver = odbcDriver;
