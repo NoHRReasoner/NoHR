@@ -42,7 +42,6 @@ public class BenchmarkQueries extends Benchmark {
         for (EvaluationQuery i : this.getResources().getQueries()) {
             getMetrics().add(i.getName());
         }
-
         kb = new NoHRHybridKB(configuration, ontology, program, mappings, vocabulary, null);
         parser = new NoHRRecursiveDescentParser(vocabulary);
     }

@@ -1,6 +1,8 @@
 package pt.unl.fct.di.novalincs.nohr.benchmark.lightweight;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -17,7 +19,10 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
+import pt.unl.fct.di.novalincs.nohr.model.DatabaseType;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
+import pt.unl.fct.di.novalincs.nohr.model.ODBCDriverImpl;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
@@ -32,6 +37,7 @@ public class Resources {
     private DBMappingSet mappings;
     private List<EvaluationQuery> queries;
     private Vocabulary vocabulary;
+    private String odbcDriversFile;
 
     public OWLOntology getOntology() {
         return ontology;
@@ -53,8 +59,9 @@ public class Resources {
         return vocabulary;
     }
 
-    public Resources() {
+    public Resources(String odbcDriversFile) {
         queries = new LinkedList<>();
+        this.odbcDriversFile = odbcDriversFile;
     }
 
     public void loadAll(File... dirs) throws IOException, OWLOntologyCreationException, ParseException {
@@ -123,11 +130,11 @@ public class Resources {
         NoHRParser parser = new NoHRRecursiveDescentParser(vocabulary);
 
         mappings = Model.dbMappingSet();
-
+        List<ODBCDriver> odbcDrivers = loadDrivers(odbcDriversFile);
         for (File i : dir) {
             try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
                 for (Path j : stream) {
-                    parser.parseDBMappingSet(j.toFile(), mappings);
+                    parser.parseDBMappingSet(j.toFile(), mappings,odbcDrivers);
                 }
             } catch (IOException | ParseException ex) {
                 throw ex;
@@ -136,6 +143,63 @@ public class Resources {
 
         return program;
     }
+    
+    public static List<ODBCDriver> loadDrivers(String file) {
+		BufferedReader reader;
+		String currLine;
+		String id = null, dbName = null, dbType = null, user = null, pass = null;
+		boolean supported = false;
+		List<ODBCDriver> drivers = new ArrayList<>();
+		try {
+			reader = new BufferedReader(new FileReader(file));
+
+			currLine = reader.readLine();
+			while (!currLine.startsWith("[") && (currLine != null)) {
+				currLine = reader.readLine();
+			}
+			if (currLine != null) {
+				id = currLine.substring(1, currLine.length() - 1);
+			}
+			
+			while (currLine != null && (currLine = reader.readLine()) != null) {
+				currLine = currLine.trim();
+				if (currLine.startsWith("[")) {
+					if (supported) {
+						ODBCDriver tmp = new ODBCDriverImpl(id, id, user, pass, dbName, new DatabaseType(dbType));
+			    		drivers.add(tmp);
+					}
+					supported = false;
+					id = currLine.substring(1, currLine.length() - 2);
+				} else {
+					String sign = currLine.split("=")[0].trim().toLowerCase();
+					String value = currLine.split("=")[1].trim();
+
+					if (sign.matches("driver")) {
+						if (value.toLowerCase().matches("mysql") || value.matches("oracle")) {
+							supported = true;
+							dbType = value;
+						}
+					} else if (sign.matches("database")) {
+						dbName = value;
+					} else if (sign.matches("user") || sign.matches("username")) {
+						user = value;
+					} else if (sign.matches("password")) {
+						pass = value;
+					}
+				}
+			}
+			if (supported) {
+				ODBCDriver tmp = new ODBCDriverImpl(id, id, user, pass, dbName, new DatabaseType(dbType));
+	    		drivers.add(tmp);
+			}
+			
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return drivers;
+	}
 
     public List<EvaluationQuery> loadQuery(List<File> dir, String filter) throws IOException {
         queries = new LinkedList<>();

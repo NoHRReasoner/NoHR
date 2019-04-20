@@ -13,6 +13,9 @@ import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.FormatVisitor;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.NoHRRecursiveDescentParser;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
 
 /**
@@ -26,7 +29,12 @@ import pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferences;
  */
 public class DBMappingSetPersistenceManager {
 
-
+	private final NoHRParser parser;
+	/**
+     * The vocabulary used to recognize the predicates and constants of the
+     * readed program.
+     */
+    private Vocabulary vocabul;
     /**
      * Constructs a new {@link ProgramPersistenceManager} with a given
      * {@link Vocabulary vocabulary}.
@@ -34,7 +42,11 @@ public class DBMappingSetPersistenceManager {
      * @param vocabulary the vocabulary used to recognize the predicates and
      * constants of the readed program.
      */
-    public DBMappingSetPersistenceManager() {
+	
+    public DBMappingSetPersistenceManager(Vocabulary vocabulary) {
+        vocabul = vocabulary;
+        //parser = new PrologParser(null);
+        parser = new NoHRRecursiveDescentParser(vocabul);
     }
 
 
@@ -62,17 +74,20 @@ public class DBMappingSetPersistenceManager {
      * @param vocabulary 
      * @param DBMappingSet the DBMappingSet where the mappings will be loaded.
      * @throws IOException
+     * @throws ParseException 
      */
-    public void load(File file, DBMappingSet dbMappingSet, Vocabulary vocabulary) throws IOException{
-    	FileReader in = new FileReader(file);
-        BufferedReader input = new BufferedReader(in);
-        String mapping;
-        int line = 1;
-        while ((mapping = input.readLine()) != null) {
-        	DBMapping tmpMapping = new DBMappingImpl(mapping, ODBCPreferences.getDrivers(), line, vocabulary);
-        	dbMappingSet.add(tmpMapping);
-        	line++;
-        }
+    public void load(File file, DBMappingSet dbMappingSet) throws IOException, ParseException{
+        parser.parseDBMappingSet(file, dbMappingSet, ODBCPreferences.getDrivers());
+
+//    	FileReader in = new FileReader(file);
+//        BufferedReader input = new BufferedReader(in);
+//        String mapping;
+//        int line = 1;
+//        while ((mapping = input.readLine()) != null) {
+//        	DBMapping tmpMapping = new DBMappingImpl(mapping, ODBCPreferences.getDrivers(), line, vocabul);
+//        	dbMappingSet.add(tmpMapping);
+//        	line++;
+//        }
         
     }
 

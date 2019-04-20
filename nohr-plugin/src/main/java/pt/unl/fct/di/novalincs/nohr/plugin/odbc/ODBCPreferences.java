@@ -1,21 +1,16 @@
 package pt.unl.fct.di.novalincs.nohr.plugin.odbc;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
 import org.semanticweb.owlapi.model.AxiomType;
-import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
+
 import pt.unl.fct.di.novalincs.nohr.model.DatabaseType;
 import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
 import pt.unl.fct.di.novalincs.nohr.model.ODBCDriverImpl;
-import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
 /**
  * Represents the ODBC drivers preferences. 

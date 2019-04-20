@@ -95,7 +95,7 @@ public class DBMappingViewComponent extends AbstractNoHRViewComponent {
                     try {
                         final File file = fc.getSelectedFile();
                         DBMappingViewComponent.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        dbMappingListModel.load(file, getVocabulary());
+                        dbMappingListModel.load(file);
                     } catch (final Exception e) {
                         Messages.invalidmappingFile(DBMappingViewComponent.this, e);
                     } finally {

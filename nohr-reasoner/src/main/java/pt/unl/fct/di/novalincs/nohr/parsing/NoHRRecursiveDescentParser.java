@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.Literal;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
@@ -378,17 +380,18 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
 	}
 	
 	@Override
-	public void parseDBMappingSet(File file, DBMappingSet dbMappingSet) {
-//		FileReader in = new FileReader(file);
-//        BufferedReader input = new BufferedReader(in);
-//        String mapping;
-//        int line = 1;
-//        while ((mapping = input.readLine()) != null) {
-//        	DBMapping tmpMapping = new DBMappingImpl(mapping, ODBCPreferences.getDrivers(), line, vocabulary);
-//        	dbMappingSet.add(tmpMapping);
-//        	line++;
-//        }
-		
+	public void parseDBMappingSet(File file, DBMappingSet dbMappingSet, List<ODBCDriver> odbcDriversList) throws IOException {
+
+		FileReader in = new FileReader(file);
+        BufferedReader input = new BufferedReader(in);
+        String mapping;
+        int line = 1;
+        while ((mapping = input.readLine()) != null) {
+        	DBMapping tmpMapping = new DBMappingImpl(mapping, odbcDriversList, line, vocabulary);
+        	dbMappingSet.add(tmpMapping);
+        	line++;
+        }
+        
 	}
 
     

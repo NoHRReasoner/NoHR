@@ -35,11 +35,16 @@ public abstract class Benchmark {
     public Benchmark(String[] args, String name) throws IOException, OWLOntologyCreationException, ParseException {
         final Map<String, String> env = System.getenv();
 
-        final String NOHR_XSB_DIRECTORY = "C:\\Users\\VedranPC\\Desktop\\Programs\\XSB\\bin";
-        final String NOHR_KONCLUDE_BINARY = "C:\\Users\\VedranPC\\Desktop\\Programs\\Konclude\\Binaries\\Konclude.exe";
+        final String NOHR_XSB_DIRECTORY = "/home/vedran/Documents/XSB/bin";
+        final String NOHR_KONCLUDE_BINARY = "/usr/bin/Konclude";
+        final String NOHR_ODBC_DRIVERS = "/etc/odbc.ini";
+        
+//        final String NOHR_XSB_DIRECTORY = "C:\\Users\\VedranPC\\Desktop\\Programs\\XSB\\bin";
+//        final String NOHR_KONCLUDE_BINARY = "C:\\Users\\VedranPC\\Desktop\\Programs\\Konclude\\Binaries\\Konclude.exe";
+//        final String NOHR_ODBC_DRIVERS = "C:\\Users\\VedranPC\\surfdrive\\PhD\\Master thesis\\odbc.ini";
         
         inputDirectory = new File(args[0]);
-        resources = new Resources();
+        resources = new Resources(NOHR_ODBC_DRIVERS);
         resources.loadAll(inputDirectory);
 
         outputDirectory = new File(args[1]);

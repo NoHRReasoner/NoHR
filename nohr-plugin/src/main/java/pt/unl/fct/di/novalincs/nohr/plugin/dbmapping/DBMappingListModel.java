@@ -19,6 +19,7 @@ import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
 import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.HashSetDBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
+import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.plugin.DBMappingSetPersistenceManager;
 
 /**
@@ -121,9 +122,9 @@ public class DBMappingListModel extends AbstractListModel<Object> {
 	}
 
 
-	public void load(File file, Vocabulary vocabulary) throws IOException {
+	public void load(File file) throws IOException, ParseException {
 		HashSetDBMappingSet tempMappings = new HashSetDBMappingSet(Collections.<DBMapping>emptySet());
-		dbMappingSetPersistenceManager.load(file, tempMappings, vocabulary);
+		dbMappingSetPersistenceManager.load(file, tempMappings);
 		final int size = dbMappingSet.size();
 		dbMappingSet.clear();
 		dbMappingSet.addAll(tempMappings.getDBMppings());
