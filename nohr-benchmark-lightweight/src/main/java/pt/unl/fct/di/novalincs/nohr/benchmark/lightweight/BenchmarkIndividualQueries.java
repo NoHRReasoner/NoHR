@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKB;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
 import pt.unl.fct.di.novalincs.nohr.model.Answer;
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.Query;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
@@ -21,6 +22,7 @@ public class BenchmarkIndividualQueries extends Benchmark {
     private NoHRHybridKBConfiguration configuration;
     private OWLOntology ontology;
     private Program program;
+    private DBMappingSet mappings;
     private Vocabulary vocabulary;
 
     public BenchmarkIndividualQueries(String[] args) throws IOException, OWLOntologyCreationException, ParseException {
@@ -32,6 +34,7 @@ public class BenchmarkIndividualQueries extends Benchmark {
         configuration = this.getNoHRConfig();
         ontology = this.getResources().getOntology();
         program = this.getResources().getProgram();
+        mappings = this.getResources().getDBMappings();
         vocabulary = this.getResources().getVocabulary();
 
         for (EvaluationQuery i : this.getResources().getQueries()) {
@@ -45,7 +48,7 @@ public class BenchmarkIndividualQueries extends Benchmark {
             final List<Answer> answers;
 
             System.gc();
-            NoHRHybridKB kb = new NoHRHybridKB(configuration, ontology, program, vocabulary, null);
+            NoHRHybridKB kb = new NoHRHybridKB(configuration, ontology, program, mappings, vocabulary, null);
             NoHRParser parser = new NoHRRecursiveDescentParser(vocabulary);
 
             final Query query = parser.parseQuery(i.getQuery());

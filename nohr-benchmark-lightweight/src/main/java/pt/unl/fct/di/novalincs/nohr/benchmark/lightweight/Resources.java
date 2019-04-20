@@ -15,6 +15,8 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
+
+import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
 import pt.unl.fct.di.novalincs.nohr.model.Model;
 import pt.unl.fct.di.novalincs.nohr.model.Program;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.DefaultVocabulary;
@@ -27,6 +29,7 @@ public class Resources {
 
     private OWLOntology ontology;
     private Program program;
+    private DBMappingSet mappings;
     private List<EvaluationQuery> queries;
     private Vocabulary vocabulary;
 
@@ -36,6 +39,10 @@ public class Resources {
 
     public Program getProgram() {
         return program;
+    }
+    
+    public DBMappingSet getDBMappings() {
+        return mappings;
     }
 
     public List<EvaluationQuery> getQueries() {
@@ -62,6 +69,9 @@ public class Resources {
             System.out.println("Loading programs...");
             loadProgram(d, "*.nohr");
             System.out.println("Loading programs...done.");
+            System.out.println("Loading database mappings...");
+            loadDBMappings(d, "*.map");
+            System.out.println("Loading database mappings...done.");
             System.out.println("Loading queries...");
             loadQuery(d, "*.q");
             System.out.println("Loading queries...done.");
@@ -100,6 +110,24 @@ public class Resources {
             try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
                 for (Path j : stream) {
                     parser.parseProgram(j.toFile(), program);
+                }
+            } catch (IOException | ParseException ex) {
+                throw ex;
+            }
+        }
+
+        return program;
+    }
+    
+    public Program loadDBMappings(List<File> dir, String filter) throws IOException, ParseException {
+        NoHRParser parser = new NoHRRecursiveDescentParser(vocabulary);
+
+        mappings = Model.dbMappingSet();
+
+        for (File i : dir) {
+            try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
+                for (Path j : stream) {
+                    parser.parseDBMappingSet(j.toFile(), mappings);
                 }
             } catch (IOException | ParseException ex) {
                 throw ex;

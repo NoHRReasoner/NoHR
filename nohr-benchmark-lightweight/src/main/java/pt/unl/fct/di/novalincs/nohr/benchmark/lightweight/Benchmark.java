@@ -35,8 +35,8 @@ public abstract class Benchmark {
     public Benchmark(String[] args, String name) throws IOException, OWLOntologyCreationException, ParseException {
         final Map<String, String> env = System.getenv();
 
-        final String NOHR_XSB_DIRECTORY = "/home/vedran/Documents/XSB/bin";
-        final String NOHR_KONCLUDE_BINARY = "/usr/bin/Konclude";
+        final String NOHR_XSB_DIRECTORY = "C:\\Users\\VedranPC\\Desktop\\Programs\\XSB\\bin";
+        final String NOHR_KONCLUDE_BINARY = "C:\\Users\\VedranPC\\Desktop\\Programs\\Konclude\\Binaries\\Konclude.exe";
         
         inputDirectory = new File(args[0]);
         resources = new Resources();

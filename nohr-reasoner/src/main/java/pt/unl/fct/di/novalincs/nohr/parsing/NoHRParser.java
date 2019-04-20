@@ -91,7 +91,7 @@ public interface NoHRParser {
      */
     public DBMapping parseDBMapping(String str) throws ParseException;
     
-    public void parseDBMappingSet(File file, DBMappingSet dbMappingSet);
+    public void parseDBMappingSet(File file, DBMappingSet dbMappingSet) throws ParseException;
     
     public void setVocabulary(Vocabulary vocabulary);
 
