@@ -3,5 +3,7 @@ XMX=2g
 
 export XSB_BIN_DIRECTORY='C:/Users/VedranPC/Desktop/Programs/XSB/bin'
 export KONCLUDE_BIN='/opt/konclude/0.6.2/Binaries/Konclude'
+export NOHR_ODBC_DRIVERS='/etc/odbc.ini'
 export NOHR_BENCHMARK_ONTOLOGY='univ-benchQL.owl'
 export NOHR_BENCHMARK_RULES='univ-benchQL.nohr'
+export NOHR_BENCHMARK_MAPPINGS='univ-benchQL.nohr'
