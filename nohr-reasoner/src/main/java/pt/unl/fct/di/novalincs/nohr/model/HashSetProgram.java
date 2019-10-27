@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.LinkedHashSet;
 
 /**
  * Implementation of {@link Program}.
@@ -31,9 +32,9 @@ public class HashSetProgram implements Program {
 
 	public HashSetProgram(Set<Rule> rules) {
 		if (rules != null)
-			this.rules = new HashSet<Rule>(rules);
+			this.rules = new LinkedHashSet<Rule>(rules);
 		else
-			this.rules = new HashSet<Rule>();
+			this.rules = new LinkedHashSet<Rule>();
 		listeners = new HashSet<ProgramChangeListener>();
 	}
 
