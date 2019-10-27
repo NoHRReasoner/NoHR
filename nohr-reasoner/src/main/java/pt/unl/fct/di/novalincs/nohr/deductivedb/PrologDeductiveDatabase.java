@@ -774,7 +774,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	protected void write() throws IOException {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			writer.newLine();
-			System.out.println("0");
 			for (final Predicate predicate : headFunctors) {
 				if (positiveBodyFunctors.contains(predicate)) {
 					writer.write(tableDirective(predicate));
@@ -786,7 +785,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 				writer.write(tableDirective(predicate));
 				writer.newLine();
 			}
-
+			
 			for (final Predicate pred : negativeBodyFunctors) {
 				if (!factFunctors.contains(pred) && !headFunctors.contains(pred)) {
 					writer.write(failRule(pred));
@@ -800,45 +799,29 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 					writer.newLine();
 				}
 			}
-			
 			writer.write(":- import odbc_open/4 from odbc_call.\n" + ":- import findall_odbc_sql/4 from odbc_call.\n" +
 							":- import odbc_close/0 from odbc_call.\n" + ":- import odbc_data_sources/2 from odbc_call.\n");
-			
-//			writer.write(":- import odbc_open/3 from odbc_call.\n"+
-//			":- import odbc_sql/3 from odbc_call.\n"+
-//			":- import odbc_import/2 from odbc_call.\n"+
-//			":- import odbc_close/0 from odbc_call.\n"+
-//			":- import odbc_data_sources/2 from odbc_call.\n"+
-//			"?- odbc_open(test,root,root).\n"+
-//			
-//			"?- odbc_import(crime1('crimeID', 'Case_Number'), ap1).\n"+
-//			"?- odbc_import(crime10('crimeID', 'Case_Number'), ap10).\n"+
-//			"?- odbc_import(crime50('crimeID', 'Case_Number'), ap50).\n"+
-//			"?- odbc_import(crime('crimeID', 'Case_Number'), ap100).\n"+
-//			"?- odbc_import(crime200('crimesID', 'Case_Number'), ap200).\n"+
-//            "?- odbc_import(crime500('crimesID', 'Case_Number'), ap500).\n"+
-//            "?- odbc_import(crime1000('crimesID', 'Case_Number'), ap1m).\n"+
-//            "?- odbc_import(crime3000('crimesID', 'Case_Number'), ap3m).\n"+
-//            "?- odbc_import(crimesindex('crimesID', 'Case_Number'), ap6m).\n"+
-//
-//            
-//			"aq1(X,Y) :- odbc_sql([X,Y],'SELECT crimeID, Case_Number FROM test.crime1 where crimeID = ? and Case_Number = ?', [X,Y]).\n"+
-//			"aq10(X,Y) :- odbc_sql([X,Y],'SELECT crimeID, Case_Number FROM test.crime10 where crimeID = ? and Case_Number = ?', [X,Y]).\n"+
-//			"aq50(X,Y) :- odbc_sql([X,Y],'SELECT crimeID, Case_Number FROM test.crime50 where crimeID = ? and Case_Number = ?', [X,Y]).\n"+
-//			"aq100(X,Y) :- odbc_sql([X,Y],'SELECT crimeID, Case_Number FROM test.crime where crimeID = ? and Case_Number = ?', [X,Y]).\n"+ 
-//			"aq200(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime200 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
-//			"aq500(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime500 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
-//			"aq1m(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime1000 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
-//			"aq3m(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crime3000 where crimesID = ? and Case_Number = ?', [X,Y]).\n"+
-//			"aq6m(X,Y) :- odbc_sql([X,Y],'SELECT crimesID, Case_Number FROM test.crimesindex where crimesID = ? and Case_Number = ?', [X,Y]).\n");
+//					":- table 'n<http://NUS.I2R.lipidontology.biochem.nus.edu.sg/lipidversion3.owl#LC_N-acy-4-hydroxysphinganine_par_phytoceramide_par_>'/1 as subsumptive.\n");
 			for (final DBMappingSetImpl mappingSet : dbMappingSets) {
 				for(final ODBCDriver driver : mappingSet.getDrivers()) {
 					writer.write("?-odbc_open('"+ driver.getConectionName() + "','" + driver.getUsername() + "','" + driver.getPassword() + "','" + driver.getConectionName() + "').");
 					writer.newLine();
 				}
-				
+				/** Adding tabling **/
 				for (final DBMapping mapping : mappingSet.dbMappings) {
+					
 					MappingGenerator generator = new MappingGenerator(mapping,formatVisitor);
+					String tabledPred = generator.getNPredicate();
+					if(tabledPred!=null && !tabledPred.matches("")) {
+						writer.write(":- table " + tabledPred + "/1 as subsumptive.");
+						writer.newLine();
+					}
+//					Predicate tabledPred = generator.getNPredicateOriginal();
+//					if(tabledPred!=null) {
+//						writer.write(tableDirective(tabledPred));
+//						writer.newLine();
+//					}
+					
 					List<String> mappingRules = generator.createMappingRule();
 					for(String mappingRule : mappingRules){
 						writer.write(mappingRule);

@@ -87,22 +87,6 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	protected void load() {
 
 		vedran();
-		// final List<Term> kbTerms = new LinkedList<>();
-		//
-		// if (new NoHRScanner("crime(?V0)").next(TokenType.FUNCTOR)) {
-		// System.out.println("Dobar format");
-		// }else{
-		// System.out.println("nije dobar format");
-		// }
-		//
-		// final Term kbTerm = Model.var("V0");
-		// kbTerms.add(kbTerm);
-		// Rule x = Model.rule(Model.atom(vocabulary, "crime", kbTerms));
-		// Model.var("V0");
-		// x.getHead().getFunctor().accept(formatVisitor);
-		// System.out.println("Pravilo: "+
-		// x.getHead().getFunctor().accept(formatVisitor));
-		// System.out.println("Pravilo: "+formatVisitor.visit(x));
 //		 giannis();
 
 		if (!prologEngine.load_dynAbsolute(file.getAbsoluteFile()))
@@ -111,7 +95,9 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	public void vedran() {
 
-		File dest = new File("/home/vedran/Desktop/rules.p");
+		File dest = new File("/home/vedran/Desktop/rules.P");
+//		File dest = new File("C:\\Users\\VedranPC\\Desktop\\rules.P");
+		
 		try {
 			FileUtils.copyFile(file, dest);
 		} catch (IOException e) {

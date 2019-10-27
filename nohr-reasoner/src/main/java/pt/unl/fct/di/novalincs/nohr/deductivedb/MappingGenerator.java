@@ -24,6 +24,7 @@ public class MappingGenerator {
 	private final String apostrophe;
 	private final String predicate;
 	private final String nPredicate;
+	private final Predicate nPredicateOriginal;
 	private final String db;
 	private final String sql;
 	private final String odbc;
@@ -67,12 +68,15 @@ public class MappingGenerator {
 			this.predicate = mapping.getPredicate().accept(formatVisitor);
 			if (!isDL || mapping.getNPredicate() == null) {
 				this.nPredicate = null;
+				this.nPredicateOriginal = null;
 			} else {
 				this.nPredicate = mapping.getNPredicate().accept(formatVisitor);
+				this.nPredicateOriginal = mapping.getNPredicate();
 			}
 		} else {
 			this.predicate = null;
 			this.nPredicate = null;
+			this.nPredicateOriginal = null;
 		}
 		this.arrity = mapping.getArity();
 		this.sql = mapping.getSQL();
@@ -81,6 +85,14 @@ public class MappingGenerator {
 		this.db = mapping.getODBC().getDatabaseName();
 		this.apostrophe = DatabaseType.getQuotation(mapping.getODBC());
 
+	}
+	
+	public String getNPredicate() {
+		return nPredicate;
+	}
+	
+	public Predicate getNPredicateOriginal() {
+		return nPredicateOriginal;
 	}
 
 	public List<String> asSortedList(Collection<String> c) {

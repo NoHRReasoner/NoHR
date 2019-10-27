@@ -33,10 +33,13 @@ public class Metrics {
 
         for (String i : metrics.keySet()) {
             result += i;
-
+            long sum=0, no=0;
             for (Long j : metrics.get(i)) {
-                result += "," + j.toString();
+            	no++;
+            	sum += j;
+                result += "," + ((Double)((1.0 *(int)(j/1000000))/1000)).toString();
             }
+            result += "," + ((Double)((1.0 *(int)((sum/no)/1000000))/1000)).toString();
 
             result += "\n";
         }

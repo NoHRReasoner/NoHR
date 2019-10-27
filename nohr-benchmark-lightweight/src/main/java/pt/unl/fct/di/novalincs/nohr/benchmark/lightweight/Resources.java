@@ -32,119 +32,130 @@ import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 
 public class Resources {
 
-    private OWLOntology ontology;
-    private Program program;
-    private DBMappingSet mappings;
-    private List<EvaluationQuery> queries;
-    private Vocabulary vocabulary;
-    private String odbcDriversFile;
+	private OWLOntology ontology;
+	private Program program;
+	private DBMappingSet mappings;
+	private List<EvaluationQuery> queries;
+	private Vocabulary vocabulary;
+	private String odbcDriversFile;
 
-    public OWLOntology getOntology() {
-        return ontology;
-    }
+	public OWLOntology getOntology() {
+		return ontology;
+	}
 
-    public Program getProgram() {
-        return program;
-    }
-    
-    public DBMappingSet getDBMappings() {
-        return mappings;
-    }
+	public Program getProgram() {
+		return program;
+	}
 
-    public List<EvaluationQuery> getQueries() {
-        return queries;
-    }
-    
-    public Vocabulary getVocabulary() {
-        return vocabulary;
-    }
+	public DBMappingSet getDBMappings() {
+		return mappings;
+	}
 
-    public Resources(String odbcDriversFile) {
-        queries = new LinkedList<>();
-        this.odbcDriversFile = odbcDriversFile;
-    }
+	public List<EvaluationQuery> getQueries() {
+		return queries;
+	}
 
-    public void loadAll(File... dirs) throws IOException, OWLOntologyCreationException, ParseException {
-        List<File> d = new ArrayList<>(dirs.length);
+	public Vocabulary getVocabulary() {
+		return vocabulary;
+	}
 
-        d.addAll(Arrays.asList(dirs));
+	public Resources(String odbcDriversFile) {
+		queries = new LinkedList<>();
+		this.odbcDriversFile = odbcDriversFile;
+	}
 
-        try {
-            System.out.println("Loading ontologies...");
-            loadOntology(d, "*.owl");
-            System.out.println("Loading ontologies...done.");
-            System.out.println("Loading programs...");
-            loadProgram(d, "*.nohr");
-            System.out.println("Loading programs...done.");
-            System.out.println("Loading database mappings...");
-            loadDBMappings(d, "*.map");
-            System.out.println("Loading database mappings...done.");
-            System.out.println("Loading queries...");
-            loadQuery(d, "*.q");
-            System.out.println("Loading queries...done.");
-        } catch (IOException | OWLOntologyCreationException | ParseException ex) {
-            System.out.println("Failure loading benchmark resources!");
-            throw ex;
-        }
-    }
+	public void loadAll(String owlStructure, File... dirs)
+			throws IOException, OWLOntologyCreationException, ParseException {
+		List<File> d = new ArrayList<>(dirs.length);
 
-    public OWLOntology loadOntology(List<File> dirs, String filter) throws IOException, OWLOntologyCreationException {
-        final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+		d.addAll(Arrays.asList(dirs));
 
-        for (File i : dirs) {
-            try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
-                for (Path j : stream) {
-                    manager.loadOntologyFromOntologyDocument(j.toFile());
-                }
-            } catch (IOException | OWLOntologyCreationException ex) {
-                throw ex;
-            }
-        }
+		try {
+			System.out.println("Loading ontologies...");
+			loadOntology(owlStructure, d, "*.owl");
+			System.out.println("Loading ontologies...done.");
+			System.out.println("Loading programs...");
+			loadProgram(d, "*.nohr");
+			System.out.println("Loading programs...done.");
+			System.out.println("Loading database mappings...");
+			loadDBMappings(d, "*.map");
+			System.out.println("Loading database mappings...done.");
+			System.out.println("Loading queries...");
+			loadQuery(d, "*.q");
+			System.out.println("Loading queries...done.");
+		} catch (IOException | OWLOntologyCreationException | ParseException ex) {
+			System.out.println("Failure loading benchmark resources!");
+			throw ex;
+		}
+	}
 
-        OWLOntologyMerger merger = new OWLOntologyMerger(manager);
-        ontology = merger.createMergedOntology(manager, IRI.generateDocumentIRI());
-        vocabulary = new DefaultVocabulary(ontology);
+	public OWLOntology loadOntology(String owlStructure, List<File> dirs, String filter)
+			throws IOException, OWLOntologyCreationException {
+		final OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+		if (owlStructure != null) {
+			File mainOnto = new File(owlStructure);
+			try (final DirectoryStream<Path> stream = Files.newDirectoryStream(mainOnto.toPath(), filter)) {
+				for (Path j : stream) {
+					manager.loadOntologyFromOntologyDocument(j.toFile());
+				}
+			} catch (IOException | OWLOntologyCreationException ex) {
+				throw ex;
+			}
+		}
+		for (File i : dirs) {
+			try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
+				for (Path j : stream) {
+					manager.loadOntologyFromOntologyDocument(j.toFile());
+				}
+			} catch (IOException | OWLOntologyCreationException ex) {
+				throw ex;
+			}
+		}
 
-        return ontology;
-    }
+		OWLOntologyMerger merger = new OWLOntologyMerger(manager);
+		ontology = merger.createMergedOntology(manager, IRI.generateDocumentIRI());
+		vocabulary = new DefaultVocabulary(ontology);
 
-    public Program loadProgram(List<File> dir, String filter) throws IOException, ParseException {
-        NoHRParser parser = new NoHRRecursiveDescentParser(vocabulary);
+		return ontology;
+	}
 
-        program = Model.program();
+	public Program loadProgram(List<File> dir, String filter) throws IOException, ParseException {
+		NoHRParser parser = new NoHRRecursiveDescentParser(vocabulary);
 
-        for (File i : dir) {
-            try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
-                for (Path j : stream) {
-                    parser.parseProgram(j.toFile(), program);
-                }
-            } catch (IOException | ParseException ex) {
-                throw ex;
-            }
-        }
+		program = Model.program();
 
-        return program;
-    }
-    
-    public Program loadDBMappings(List<File> dir, String filter) throws IOException, ParseException {
-        NoHRParser parser = new NoHRRecursiveDescentParser(vocabulary);
+		for (File i : dir) {
+			try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
+				for (Path j : stream) {
+					parser.parseProgram(j.toFile(), program);
+				}
+			} catch (IOException | ParseException ex) {
+				throw ex;
+			}
+		}
 
-        mappings = Model.dbMappingSet();
-        List<ODBCDriver> odbcDrivers = loadDrivers(odbcDriversFile);
-        for (File i : dir) {
-            try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
-                for (Path j : stream) {
-                    parser.parseDBMappingSet(j.toFile(), mappings,odbcDrivers);
-                }
-            } catch (IOException | ParseException ex) {
-                throw ex;
-            }
-        }
+		return program;
+	}
 
-        return program;
-    }
-    
-    public static List<ODBCDriver> loadDrivers(String file) {
+	public Program loadDBMappings(List<File> dir, String filter) throws IOException, ParseException {
+		NoHRParser parser = new NoHRRecursiveDescentParser(vocabulary);
+
+		mappings = Model.dbMappingSet();
+		List<ODBCDriver> odbcDrivers = loadDrivers(odbcDriversFile);
+		for (File i : dir) {
+			try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
+				for (Path j : stream) {
+					parser.parseDBMappingSet(j.toFile(), mappings, odbcDrivers);
+				}
+			} catch (IOException | ParseException ex) {
+				throw ex;
+			}
+		}
+
+		return program;
+	}
+
+	public static List<ODBCDriver> loadDrivers(String file) {
 		BufferedReader reader;
 		String currLine;
 		String id = null, dbName = null, dbType = null, user = null, pass = null;
@@ -160,17 +171,16 @@ public class Resources {
 			if (currLine != null) {
 				id = currLine.substring(1, currLine.length() - 1);
 			}
-			
 			while (currLine != null && (currLine = reader.readLine()) != null) {
 				currLine = currLine.trim();
 				if (currLine.startsWith("[")) {
 					if (supported) {
 						ODBCDriver tmp = new ODBCDriverImpl(id, id, user, pass, dbName, new DatabaseType(dbType));
-			    		drivers.add(tmp);
+						drivers.add(tmp);
 					}
 					supported = false;
-					id = currLine.substring(1, currLine.length() - 2);
-				} else {
+					id = currLine.substring(1, currLine.length() - 1);
+				} else if (!currLine.matches("")) {
 					String sign = currLine.split("=")[0].trim().toLowerCase();
 					String value = currLine.split("=")[1].trim();
 
@@ -190,9 +200,9 @@ public class Resources {
 			}
 			if (supported) {
 				ODBCDriver tmp = new ODBCDriverImpl(id, id, user, pass, dbName, new DatabaseType(dbType));
-	    		drivers.add(tmp);
+				drivers.add(tmp);
 			}
-			
+
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -201,21 +211,21 @@ public class Resources {
 		return drivers;
 	}
 
-    public List<EvaluationQuery> loadQuery(List<File> dir, String filter) throws IOException {
-        queries = new LinkedList<>();
+	public List<EvaluationQuery> loadQuery(List<File> dir, String filter) throws IOException {
+		queries = new LinkedList<>();
 
-        for (File i : dir) {
-            try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
-                for (Path j : stream) {
-                    for (String k : Files.readAllLines(j)) {
-                        queries.add(new EvaluationQuery(k));
-                    }
-                }
-            } catch (IOException ex) {
-                throw ex;
-            }
-        }
+		for (File i : dir) {
+			try (final DirectoryStream<Path> stream = Files.newDirectoryStream(i.toPath(), filter)) {
+				for (Path j : stream) {
+					for (String k : Files.readAllLines(j)) {
+						queries.add(new EvaluationQuery(k));
+					}
+				}
+			} catch (IOException ex) {
+				throw ex;
+			}
+		}
 
-        return queries;
-    }
+		return queries;
+	}
 }
