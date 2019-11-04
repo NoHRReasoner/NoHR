@@ -774,24 +774,34 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	protected void write() throws IOException {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			writer.newLine();
-			for (final Predicate predicate : headFunctors) {
-				if (positiveBodyFunctors.contains(predicate)) {
-					writer.write(tableDirective(predicate));
-					writer.newLine();
-				}
-			}
+			// fix for unsupported redefinition of tables in XSB 3.8
+            final Set<Predicate> tables = new HashSet<>();
 
-			for (final Predicate predicate : negativeBodyFunctors) {
-				writer.write(tableDirective(predicate));
-				writer.newLine();
-			}
-			
-			for (final Predicate pred : negativeBodyFunctors) {
-				if (!factFunctors.contains(pred) && !headFunctors.contains(pred)) {
-					writer.write(failRule(pred));
-					writer.newLine();
-				}
-			}
+            for (final Predicate predicate : positiveBodyFunctors) {
+                if (!tables.contains(predicate)) {
+                    tables.add(predicate);
+                    writer.write(tableDirective(predicate));
+                    writer.newLine();
+                }
+
+                if (!factFunctors.contains(predicate) && !headFunctors.contains(predicate)) {
+                    writer.write(failRule(predicate));
+                    writer.newLine();
+                }
+            }
+
+            for (final Predicate predicate : negativeBodyFunctors) {
+                if (!tables.contains(predicate)) {
+                    tables.add(predicate);
+                    writer.write(tableDirective(predicate));
+                    writer.newLine();
+                }
+
+                if (!factFunctors.contains(predicate) && !headFunctors.contains(predicate)) {
+                    writer.write(failRule(predicate));
+                    writer.newLine();
+                }
+            }
 
 			for (final ProgramImpl program : programs) {
 				for (final Rule rule : program.rules) {
@@ -816,11 +826,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 						writer.write(":- table " + tabledPred + "/1 as subsumptive.");
 						writer.newLine();
 					}
-//					Predicate tabledPred = generator.getNPredicateOriginal();
-//					if(tabledPred!=null) {
-//						writer.write(tableDirective(tabledPred));
-//						writer.newLine();
-//					}
 					
 					List<String> mappingRules = generator.createMappingRule();
 					for(String mappingRule : mappingRules){

@@ -35,14 +35,13 @@ public abstract class Benchmark {
     public Benchmark(String[] args, String testName) throws IOException, OWLOntologyCreationException, ParseException {
         final Map<String, String> env = System.getenv();
 
-        final String NOHR_XSB_DIRECTORY = "/home/vedran/Documents/XSB/bin";
-        final String NOHR_KONCLUDE_BINARY = "/usr/bin/Konclude";
-        final String NOHR_ODBC_DRIVERS = "/etc/odbc.ini";
+        final String NOHR_XSB_DIRECTORY = env.get("NOHR_XSB_DIRECTORY");
+        final String NOHR_KONCLUDE_BINARY = env.get("NOHR_KONCLUDE_BINARY");
+        final String NOHR_ODBC_DRIVERS = env.get("ODBCINI");
         
-//        final String NOHR_XSB_DIRECTORY = "C:\\Users\\VedranPC\\Desktop\\Programs\\XSB\\bin";
-//        final String NOHR_KONCLUDE_BINARY = "C:\\Users\\VedranPC\\Desktop\\Programs\\Konclude\\Binaries\\Konclude.exe";
-//        final String NOHR_ODBC_DRIVERS = "C:\\Users\\VedranPC\\surfdrive\\PhD\\Master thesis\\odbc.ini";
-        
+        if(args.length < 6) {
+        	new IOException("Parameters were not provided correctly.");
+        }
         String[] inputDirs = args[0].split(",");
         inputDirectories = new File[inputDirs.length];
         for(int i=0;i<inputDirs.length;i++) {
@@ -53,7 +52,7 @@ public abstract class Benchmark {
         if(args.length > 6  && !args[6].matches("")) {
         	owlStructure = args[6];
         }
-        resources.loadAll(owlStructure,inputDirectories);
+        resources.loadAll(owlStructure, inputDirectories);
 
         outputDirectory = new File(args[1]);
         this.name = testName + "_" +args[2];

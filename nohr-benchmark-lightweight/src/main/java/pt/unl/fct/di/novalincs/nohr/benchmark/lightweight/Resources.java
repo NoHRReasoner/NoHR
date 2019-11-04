@@ -111,7 +111,7 @@ public class Resources {
 				throw ex;
 			}
 		}
-
+		
 		OWLOntologyMerger merger = new OWLOntologyMerger(manager);
 		ontology = merger.createMergedOntology(manager, IRI.generateDocumentIRI());
 		vocabulary = new DefaultVocabulary(ontology);
