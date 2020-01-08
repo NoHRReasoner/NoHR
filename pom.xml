@@ -151,7 +151,6 @@
     <modules>
         <module>nohr-reasoner</module>
         <module>nohr-plugin</module>
-        <module>nohr-benchmark</module>
         <module>nohr-benchmark-lightweight</module>
     </modules>
     <scm>

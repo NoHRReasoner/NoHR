@@ -1,1 +1,0 @@
-subOrganizationOf(?X,?Z) :- subOrganizationOf(?X,?Y), subOrganizationOf(?Y,?Z).

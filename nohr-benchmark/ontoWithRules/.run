@@ -1,7 +1,0 @@
-#!/bin/sh
-
-RUNS=$1
-QUERYFILE=$2
- 
-sh ../.runclass "benchmark.RulesTest"  "lipid.owl lipid ${QUERYFILE} $RUNS"\
-		 2>&1 | tee log.txt

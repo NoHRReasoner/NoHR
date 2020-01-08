@@ -1,0 +1,12 @@
+Commands:
+
+build project
+
+mvn clear install -DskipTests
+
+set currpath="path to the workbench folder"
+
+java -Xms4g -Xmx4g -cp ".\lib\*;.\nohr-benchmark-lightweight-4.0.0.jar" pt.unl.fct.di.novalincs.nohr.benchmark.lightweight.BenchmarkQueries "%currpath%/inputs/LUBM_1/nohr4,%currpath%/inputs/LUBM EL" "%currpath%/outputs/LUBM/QueryingNoTabling" "maplubm1EL" 5 false HERMIT
+echo " ----- MAPPING LUBM 1 EL DONE----- "
+
+

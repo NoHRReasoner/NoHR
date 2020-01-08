@@ -1,0 +1,32 @@
+Install unixODBC following  (http://www.unixodbc.org/)
+
+
+1. copy the unixODBC-2.3.7.tar.gz file in a dir where you can have writing rights (from ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz)
+2. gunzip unixODBC*.tar.gz 
+3. tar xvf unixODBC*.tar
+
+Doing so will create a unixODBC directory with all source files inside.
+
+./configure --prefix=/usr/local/unixODBC
+make 
+make install
+
+#####################################################################################
+
+Setup the odbc.ini file in order to define odbc drivers for your database (for linux path is usually /etc/odbc.ini)
+
+https://putokaz.wordpress.com/2018/02/12/how-to-install-the-mysql-odbc-driver-on-ubuntu-16-04-or-linux-mint-18-x/
+
+Set the ODBCINI environment variable to point to the odbc.ini file.
+
+#########################################################################################
+
+SETUP XSB with support for ODBC
+
+
+cd ...XSB/built
+ ./configure --with-odbc
+./makexsb
+
+
+

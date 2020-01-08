@@ -1,0 +1,17 @@
+1.1	Run lubm Generator with arguments 
+
+		-univ 50  -seed 0 -onto "http://swat.cse.lehigh.edu/onto/univ-bench.owl"
+	
+2.1	It will generate files in data (regular owl files) and data_map (corresponding database insertions)
+2.2 	We have generated the desired data already in the folders contained in "generated data" - https://surfdrive.surf.nl/files/index.php/s/RwKEO7nFAsmFKSe
+3.	cd data_map
+5.	Open MySQL run script "SQL drop and create tables.sql"
+6.	Import "allDBInsertions.sql" into the lubm database
+	e.g.	in case of LUMB 1
+	mysql -u root -p -f -D LUBM_1 < allDatabaseInsertions.sql
+7.	Run each test set
+
+Note:
+
+	script SQL_delete_content.sql is used to clean the content of the tables in case or re-importing the database
+
