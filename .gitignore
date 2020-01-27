@@ -1,9 +1,5 @@
-nohr-benchmark/target/
 nbactions.xml
 target/
-nohr-benchmark/workbench/data/
-nohr-benchmark/workbench/lib/
-nohr-benchmark/workbench/output/
 .idea/
 *.iml
 

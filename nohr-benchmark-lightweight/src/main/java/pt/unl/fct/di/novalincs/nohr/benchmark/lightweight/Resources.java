@@ -75,7 +75,8 @@ public class Resources {
 			loadOntology(owlStructure, d, "*.owl");
 			System.out.println("Loading ontologies...done.");
 			System.out.println("Loading programs...");
-			loadProgram(d, "*.nohr");
+//			loadProgram(d, "*.nohr");
+			loadProgram(d, "*.p");
 			System.out.println("Loading programs...done.");
 			System.out.println("Loading database mappings...");
 			loadDBMappings(d, "*.map");

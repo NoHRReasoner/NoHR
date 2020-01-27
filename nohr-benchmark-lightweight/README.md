@@ -2,6 +2,8 @@
 
 NoHR Lightweight Benchmark allows the realization of pinpoint benchmarks on specific functionality for the NoHR Reasoner.
 
+The folder "workbench" contains scripts for automated benchmarking of the NoHR reasoner using the LUBM and LIPI datasets. It is used to evaluate and compare resoning using NoHR 3.0 (where all the facts are provided as owl assertions or rules) and NoHR 4.0 (that supports database integration, in order to provide facts in a more optimal way).
+
 ## Requirements
 
 Requires a java environment (1.8^), XSB and Konclude. 
@@ -59,7 +61,7 @@ Selects the DL reasoner to use in the benchmark. Can be set to `HERMIT` or `KONC
 
 This is an optional parameter and is rarely used. It represent the path to the directory that contains the schemas of the owl files. It used when we need to load the owl schema files before we load the corresponding owl files that contain the facts.  
 
-## Example
+## Example 1
 
 If building with Maven, running the benchmark from the `target` directory can be achieved using the sample command:
 
@@ -67,6 +69,19 @@ If building with Maven, running the benchmark from the `target` directory can be
 java -Xms4g -Xmx4g -cp "./lib/*:./nohr-benchmark-lightweight-4.0.0.jar" 
 pt.unl.fct.di.novalincs.nohr.benchmark.lightweight.BenchmarkLoading  "~/inputs1,~/inputs2" "~/outputs" "testBenchmark" 10 false HERMIT
 ```
+
+## Example 2
+
+To run the prederined LIPID and LUBM banchmarking scripts from the`target` directory can be achieved using the sample command:
+
+```
+../workbench/LIPID_run_scripts/benchmarkPreloading.sh
+```
+NOTE: It is neccessary to run the script from a directory that contains the `nohr-benchmark-lightweight-4.0.0.jar`.
+
+## Example 3
+
+In order to run the 
 
 *Note: in windows, classpath is separated with `;` instead of `:`.*
 
