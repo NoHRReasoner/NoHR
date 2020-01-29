@@ -61,8 +61,10 @@ import pt.unl.fct.di.novalincs.nohr.utils.Multiset;
 import pt.unl.fct.di.novalincs.runtimeslogger.RuntimesLogger;
 
 /**
- * Abstract implementation of {@link DeductiveDatabase} based on the Interprolog API. In order to ensures termination and to support the default
- * negation, each predicate, <i>P</i>, satisfying one of the following conditions is tabled: <br>
+ * Abstract implementation of {@link DeductiveDatabase} based on the Interprolog
+ * API. In order to ensures termination and to support the default negation,
+ * each predicate, <i>P</i>, satisfying one of the following conditions is
+ * tabled: <br>
  * - <i>P</i> appears in some (non fact) rule head and in some rule body; <br>
  * - <i>P</i> appears in some {@link NegativeLiteral negative literal}. <br>
  *
@@ -140,8 +142,11 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 
 		@Override
 		public void add(DBMapping dbMapping) {
-			if (dbMappings.add(dbMapping))
+			if (dbMappings.add(dbMapping)) {
+				arities.add(dbMapping.getArity());
+				headFunctors.add(dbMapping.getPredicate());
 				hasChanges = true;
+			}
 			dbDrivers.add(dbMapping.getODBC());
 
 		}
@@ -150,7 +155,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		public void addAll(Collection<DBMapping> dbMappings) {
 			for (final DBMapping dbMapping : dbMappings) {
 				add(dbMapping);
-
 			}
 		}
 
@@ -217,29 +221,34 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	private static final String FILE_PREFIX = "deductivedb";
 
 	/**
-	 * The maximum time, in seconds, in which the construction of a {@link PrologEngine} will be attempted, before giving up and throw a
+	 * The maximum time, in seconds, in which the construction of a
+	 * {@link PrologEngine} will be attempted, before giving up and throw a
 	 * {@link PrologEngineCreationException}.
 	 */
 	private static final int CREATION_TIMEOUT = 10;
 
 	/**
-	 * The {@link TermModelConverter} that converts the {@link TermModel}s, of the results of {@link PrologEngine} calls, to {@link Term terms}.
+	 * The {@link TermModelConverter} that converts the {@link TermModel}s, of the
+	 * results of {@link PrologEngine} calls, to {@link Term terms}.
 	 */
 	private final TermModelConverter termModelConverter;
 
 	/**
-	 * The file where the {@link Rule rules} of the loaded {@link DatabaseProgram programs} are written and from where they are loaded in the underlying
-	 * Prolog engine.
+	 * The file where the {@link Rule rules} of the loaded {@link DatabaseProgram
+	 * programs} are written and from where they are loaded in the underlying Prolog
+	 * engine.
 	 */
 	protected final File file;
 
 	/**
-	 * The {@link FormatVisitor} that formats the {@link Rule rules} when they are sent to the Prolog engine.
+	 * The {@link FormatVisitor} that formats the {@link Rule rules} when they are
+	 * sent to the Prolog engine.
 	 */
 	protected final FormatVisitor formatVisitor;
 
 	/**
-	 * The {@link SolutionIterator} returned by the last {@link PrologEngine#goal(String, String, Object[], String)} call.
+	 * The {@link SolutionIterator} returned by the last
+	 * {@link PrologEngine#goal(String, String, Object[], String)} call.
 	 */
 	private SolutionIterator lastSolutionsIterator;
 
@@ -254,12 +263,14 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	protected final String prologModule;
 
 	/**
-	 * The prolog engine to where the {@link DatabaseProgram programs} will be loaded and that will answer the queries.
+	 * The prolog engine to where the {@link DatabaseProgram programs} will be
+	 * loaded and that will answer the queries.
 	 */
 	protected PrologEngine prologEngine;
 
 	/**
-	 * Indicates whether the loaded {@link DatabaseProgram programs} have changed since the last call to {@link #commit()}.
+	 * Indicates whether the loaded {@link DatabaseProgram programs} have changed
+	 * since the last call to {@link #commit()}.
 	 */
 	private boolean hasChanges;
 
@@ -274,46 +285,60 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	private final Set<DBMappingSetImpl> dbMappingSets;
 
 	/**
-	 * The multiset of arities of the predicates of the loaded programs, the multiplicity represents the number of occurrences.
+	 * The multiset of arities of the predicates of the loaded programs, the
+	 * multiplicity represents the number of occurrences.
 	 */
 	private final Multiset<Integer> arities;
 
 	/**
-	 * The multiset of predicates that are functor of atoms that occur in heads of non fact (i.e. with non empty body) rules, where the multiplicity
-	 * represent the number of {@link Rule rules} of the loaded programs where that predicates occurs in such position.
+	 * The multiset of predicates that are functor of atoms that occur in heads of
+	 * non fact (i.e. with non empty body) rules, where the multiplicity represent
+	 * the number of {@link Rule rules} of the loaded programs where that predicates
+	 * occurs in such position.
 	 */
 	private final Multiset<Predicate> headFunctors;
 
 	/**
-	 * The multiset of predicates that are functor of atoms that occur in facts, where the multiplicity represents the number of {@link Rule rules} of the
-	 * loaded {@link DatabaseProgram programs} where that predicates occurs in such position.
+	 * The multiset of predicates that are functor of atoms that occur in facts,
+	 * where the multiplicity represents the number of {@link Rule rules} of the
+	 * loaded {@link DatabaseProgram programs} where that predicates occurs in such
+	 * position.
 	 */
 	private final Multiset<Predicate> factFunctors;
 
 	/**
-	 * The multiset of predicates that are functor of atoms that occur in positive bodies (see {@link Rule#getPositiveBody()}), where the multiplicity
-	 * represents the number of {@link Rule rules} of the loaded {@link DatabaseProgram programs} where that predicates occurs in such position.
+	 * The multiset of predicates that are functor of atoms that occur in positive
+	 * bodies (see {@link Rule#getPositiveBody()}), where the multiplicity
+	 * represents the number of {@link Rule rules} of the loaded
+	 * {@link DatabaseProgram programs} where that predicates occurs in such
+	 * position.
 	 */
 	private final Multiset<Predicate> positiveBodyFunctors;
 
 	/**
-	 * The multiset of predicates that are functor of atoms that occur in negative bodies (see {@link Rule#getNegativeBody()} , where the multiplicity
-	 * represents the number of {@link Rule rules} of the loaded {@link DatabaseProgram programs} where that predicates occur in such position.
+	 * The multiset of predicates that are functor of atoms that occur in negative
+	 * bodies (see {@link Rule#getNegativeBody()} , where the multiplicity
+	 * represents the number of {@link Rule rules} of the loaded
+	 * {@link DatabaseProgram programs} where that predicates occur in such
+	 * position.
 	 */
 	private final Multiset<Predicate> negativeBodyFunctors;
 
 	protected final Vocabulary vocabulary;
 
 	/**
-	 * Constructs a {@link DeductiveDatabase} with the Prolog system located in a given directory as underlying Prolog engine.
+	 * Constructs a {@link DeductiveDatabase} with the Prolog system located in a
+	 * given directory as underlying Prolog engine.
 	 *
-	 * @param binDirectory
-	 *                         the directory where the Prolog system that will be used as underlying Prolog engine is located.
-	 * @param prologModule
-	 *                         the name of the Prolog module that defines the predicates specified by {@link Goals}.
-	 * @throws PrologEngineCreationException
-	 *                                           if the creation of the underlying Prolog engine timed out. That could mean that the Prolog system located
-	 *                                           at {@code binDirectory} isn't an operational Prolog system. @
+	 * @param binDirectory the directory where the Prolog system that will be used
+	 *                     as underlying Prolog engine is located.
+	 * @param prologModule the name of the Prolog module that defines the predicates
+	 *                     specified by {@link Goals}.
+	 * @throws PrologEngineCreationException if the creation of the underlying
+	 *                                       Prolog engine timed out. That could
+	 *                                       mean that the Prolog system located at
+	 *                                       {@code binDirectory} isn't an
+	 *                                       operational Prolog system. @
 	 */
 	public PrologDeductiveDatabase(File binDirectory, String prologModule, FormatVisitor formatVisitor,
 			Vocabulary vocabulary) throws PrologEngineCreationException {
@@ -347,12 +372,12 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	/**
-	 * Add an answer to the result of an {@link #answersValuations(Query, Boolean)} call.
+	 * Add an answer to the result of an {@link #answersValuations(Query, Boolean)}
+	 * call.
 	 *
-	 * @param valuesList
-	 *                       a list of {@link TermModel}s representing the terms of the key term list in the result map.
-	 * @param answers
-	 *                       the map were the answer will be added.
+	 * @param valuesList a list of {@link TermModel}s representing the terms of the
+	 *                   key term list in the result map.
+	 * @param answers    the map were the answer will be added.
 	 */
 	private void addAnswer(TermModel valuesList, Map<List<Term>, TruthValue> answers) {
 		final TermModel[] termsList = valuesList.flatList();
@@ -368,11 +393,11 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	/**
-	 * Add the predicates of a given rule to the appropriate multisets, {@link #factFunctors}, {@link #headFunctors}, {@link #positiveBodyFunctors} and
-	 * {@link #negativeBodyFunctors}, and sets {@link #hasChanges} to true.
+	 * Add the predicates of a given rule to the appropriate multisets,
+	 * {@link #factFunctors}, {@link #headFunctors}, {@link #positiveBodyFunctors}
+	 * and {@link #negativeBodyFunctors}, and sets {@link #hasChanges} to true.
 	 *
-	 * @param rule
-	 *                 a rule.
+	 * @param rule a rule.
 	 */
 	private void addPredicates(Rule rule) {
 		final Predicate headFunctor = rule.getHead().getFunctor();
@@ -398,10 +423,9 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	/**
 	 * Create an answer to a given query from a given termList.
 	 *
-	 * @param query
-	 *                       a query.
-	 * @param valuesList
-	 *                       the terms to which the query's free variables are mapped in the answer.
+	 * @param query      a query.
+	 * @param valuesList the terms to which the query's free variables are mapped in
+	 *                   the answer.
 	 * @return the answer to {@code query} corresponding to {@code answer}.
 	 */
 	private Answer ans(Query query, TermModel valuesList) {
@@ -441,7 +465,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	@Override
 	public Iterable<Answer> answers(final Query query, Boolean trueAnswers) {
 		if (trueAnswers != null && !trueAnswers && !hasWFS()) {
-			return Collections.<Answer> emptyList();
+			return Collections.<Answer>emptyList();
 		}
 		commit();
 		if (lastSolutionsIterator != null) {
@@ -523,7 +547,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	/**
-	 * Commits all the loaded {@link DatabaseProgram programs} to the underlying {@link PrologEngine}.
+	 * Commits all the loaded {@link DatabaseProgram programs} to the underlying
+	 * {@link PrologEngine}.
 	 *
 	 * @throws PrologEngineCreationException
 	 */
@@ -578,11 +603,12 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	/**
-	 * Returns the string representation of a fail rule (i.e. the rule that ensures that all atoms with the given functor predicate have a false truth
-	 * value, what is needed for tabled predicates that doesn't occur in any rule body) of a given predicate.
+	 * Returns the string representation of a fail rule (i.e. the rule that ensures
+	 * that all atoms with the given functor predicate have a false truth value,
+	 * what is needed for tabled predicates that doesn't occur in any rule body) of
+	 * a given predicate.
 	 *
-	 * @param pred
-	 *                 the predicate.
+	 * @param pred the predicate.
 	 * @return the string representation of the fail rule for {@code pred}.
 	 */
 	protected abstract String failRule(Predicate pred);
@@ -615,7 +641,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	public abstract boolean hasWFS();
 
 	/**
-	 * Initializes the underlying Prolog engine. All the needed initializations commands must be executed here.
+	 * Initializes the underlying Prolog engine. All the needed initializations
+	 * commands must be executed here.
 	 */
 	abstract protected void initializePrologEngine();
 
@@ -625,11 +652,11 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	protected abstract void load();
 
 	/**
-	 * Removes the predicates of a given rule from the appropriate multisets, {@link #factFunctors}, {@link #headFunctors}, {@link #positiveBodyFunctors}
+	 * Removes the predicates of a given rule from the appropriate multisets,
+	 * {@link #factFunctors}, {@link #headFunctors}, {@link #positiveBodyFunctors}
 	 * and {@link #negativeBodyFunctors}, and sets {@link #hasChanges} to true.
 	 *
-	 * @param rule
-	 *                 a rule.
+	 * @param rule a rule.
 	 */
 	private void removePredicates(Rule rule) {
 		final Predicate headFunctor = rule.getHead().getFunctor();
@@ -679,21 +706,41 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	/**
 	 * Returns the table directive for a given predicate.
 	 *
-	 * @param predicate
-	 *                      the predicate.
+	 * @param predicate the predicate.
 	 * @return the table directive for {@code predicate}.
 	 */
 	abstract protected String tableDirective(Predicate predicate);
 
 	/**
-	 * Try to create a {@link PrologEngine} interrupting the creation and throwing an {@link PrologEngineCreationException} after the time specified by
+	 * Returns the odbc connection directive for a given odbc driver.
+	 *
+	 * @param driver the DOBC driver.
+	 * @return the odbc connection directive for {@code predicate}.
+	 */
+	abstract protected String odbcConnectionDirective(ODBCDriver driver);
+
+	/**
+	 * Returns the opening of odbc connections directive.
+	 *
+	 * @return the odbc connection opening directive.
+	 */
+	abstract protected String openOdbcConnDirective();
+	
+	
+	
+	
+	/**
+	 * Try to create a {@link PrologEngine} interrupting the creation and throwing
+	 * an {@link PrologEngineCreationException} after the time specified by
 	 * {@code CREATION_TIMEOUT} runs out.
 	 *
-	 * @throws IPException
-	 *                                           if some exception was thrown by the Interprolog API.
-	 * @throws PrologEngineCreationException
-	 *                                           if the creation of the underlying Prolog engine timed out. That could mean that the Prolog system located
-	 *                                           at {@code binDirectory} isn't an operational Prolog system.
+	 * @throws IPException                   if some exception was thrown by the
+	 *                                       Interprolog API.
+	 * @throws PrologEngineCreationException if the creation of the underlying
+	 *                                       Prolog engine timed out. That could
+	 *                                       mean that the Prolog system located at
+	 *                                       {@code binDirectory} isn't an
+	 *                                       operational Prolog system.
 	 */
 	protected PrologEngine tryPrologEngineCreation() throws IPException, PrologEngineCreationException {
 		PrologEngine result = null;
@@ -728,7 +775,8 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 	}
 
 	/**
-	 * Write the {@link Rule rules} of all the loaded {@link DatabaseProgram programs} in {@link #file}, and the corresponding table directives and fail
+	 * Write the {@link Rule rules} of all the loaded {@link DatabaseProgram
+	 * programs} in {@link #file}, and the corresponding table directives and fail
 	 * rules. @
 	 *
 	 * @throws java.io.IOException
@@ -771,28 +819,39 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 					writer.newLine();
 				}
 			}
-			System.out.println("Vedran!!!");
 			if (dbMappingSets != null && dbMappingSets.size() > 0) {
-				writer.write(":- import odbc_open/4 from odbc_call.\n"
-						+ ":- import findall_odbc_sql/4 from odbc_call.\n" + ":- import odbc_close/0 from odbc_call.\n"
-						+ ":- import odbc_data_sources/2 from odbc_call.\n");
+				writer.write(openOdbcConnDirective());
 			}
 			for (final DBMappingSetImpl mappingSet : dbMappingSets) {
 				for (final ODBCDriver driver : mappingSet.getDrivers()) {
-					writer.write("?-odbc_open('" + driver.getConectionName() + "','" + driver.getUsername() + "','"
-							+ driver.getPassword() + "','" + driver.getConectionName() + "').");
+					writer.write(odbcConnectionDirective(driver));
 					writer.newLine();
 				}
 				/** Adding tabling **/
 				for (final DBMapping mapping : mappingSet.dbMappings) {
-//					System.out.println(mapping.getPredicate().getSignature() + "___" + mapping.getNPredicate());
-					MappingGenerator generator = new MappingGenerator(mapping, formatVisitor);
-					String tabledPred = generator.getNPredicate();
-					if (tabledPred != null && !tabledPred.matches("")) {
-						writer.write(":- table " + tabledPred + + mapping.getArity() + " as subsumptive.");
-						writer.newLine();
+					Predicate originalPred = mapping.getPredicate();
+					if (originalPred != null) {
+						if (!tables.contains(originalPred)) {
+							tables.add(originalPred);
+							writer.write(tableDirective(originalPred));
+							writer.newLine();
+						}
 					}
+					
+					Predicate negatedPred = mapping.getNPredicate();
+					if (negatedPred != null) {
+						if (!tables.contains(negatedPred)) {
+							tables.add(negatedPred);
+							writer.write(tableDirective(negatedPred));
+							writer.newLine();
+						}
 
+						if (!factFunctors.contains(negatedPred) && !headFunctors.contains(negatedPred)) {
+							writer.write(failRule(negatedPred));
+							writer.newLine();
+						}
+					}
+					MappingGenerator generator = new MappingGenerator(mapping, formatVisitor);
 					List<String> mappingRules = generator.createMappingRule();
 					for (String mappingRule : mappingRules) {
 						writer.write(mappingRule);
@@ -800,7 +859,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 					}
 				}
 			}
-
 			writer.newLine();
 			writer.flush();
 		} catch (InvalidAttributesException e) {

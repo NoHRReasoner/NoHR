@@ -26,6 +26,7 @@ import com.declarativa.interprolog.XSBSubprocessEngine;
 import com.declarativa.interprolog.util.IPException;
 
 import pt.unl.fct.di.novalincs.nohr.model.Model;
+import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
 import pt.unl.fct.di.novalincs.nohr.model.Predicate;
 import pt.unl.fct.di.novalincs.nohr.model.Rule;
 import pt.unl.fct.di.novalincs.nohr.model.Term;
@@ -103,6 +104,20 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	@Override
 	protected String tableDirective(Predicate pred) {
 		return ":- table " + pred.accept(formatVisitor) + "/" + pred.getArity() + " as subsumptive.";
+	}
+
+	@Override
+	protected String odbcConnectionDirective(ODBCDriver driver) {
+		return "?-odbc_open('" + driver.getConectionName() + "','" + driver.getUsername() + "','"
+				+ driver.getPassword() + "','" + driver.getConectionName() + "').";
+	}
+
+	@Override
+	protected String openOdbcConnDirective() {
+		return ":- import odbc_open/4 from odbc_call.\n"
+				+ ":- import findall_odbc_sql/4 from odbc_call.\n" 
+				+ ":- import odbc_close/0 from odbc_call.\n"
+				+ ":- import odbc_data_sources/2 from odbc_call.\n";
 	}
 
 }
