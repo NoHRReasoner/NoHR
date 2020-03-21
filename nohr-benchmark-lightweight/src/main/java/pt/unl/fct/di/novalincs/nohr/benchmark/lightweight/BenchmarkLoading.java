@@ -43,7 +43,6 @@ public class BenchmarkLoading extends Benchmark {
             final long time = System.nanoTime();
             final NoHRHybridKB kb = new NoHRHybridKB(configuration, ontology, program, mappings, vocabulary, null);
             final long endtime = System.nanoTime();
-
             getMetrics().add("load", endtime - time);
             kb.dispose();
         } catch (UnsupportedAxiomsException | PrologEngineCreationException ex) {
