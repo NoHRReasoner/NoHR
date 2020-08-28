@@ -72,7 +72,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -172,7 +172,7 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>3.0.0</version>
                         <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <doclint>none</doclint>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -180,15 +180,15 @@
                         <artifactId>maven-site-plugin</artifactId>
                         <version>3.7.1</version>
                         <configuration>
-                            <reportPlugins>
+                            <reporting>
                                 <plugin>
                                     <groupId>org.apache.maven.plugins</groupId>
                                     <artifactId>maven-javadoc-plugin</artifactId>
                                     <configuration>
-                                        <additionalparam>-Xdoclint:none</additionalparam>
+                                        <doclint>none</doclint>
                                     </configuration>
                                 </plugin>
-                            </reportPlugins>
+                            </reporting>
                         </configuration>
                     </plugin>
                 </plugins>

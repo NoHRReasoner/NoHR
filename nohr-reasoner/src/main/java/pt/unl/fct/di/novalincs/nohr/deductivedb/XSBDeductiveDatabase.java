@@ -92,7 +92,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 
 	public void vedran() {
 
-		File dest = new File("/home/vedran/Desktop/rules.P");
+		File dest = new File("home/vedran/Desktop/rules.P");
 		
 		try {
 			FileUtils.copyFile(file, dest);

@@ -33,7 +33,8 @@ public abstract class Benchmark {
     }
  
     public Benchmark(String[] args, String testName) throws IOException, OWLOntologyCreationException, ParseException {
-    	final Map<String, String> env = System.getenv();
+        final Map<String, String> env = System.getenv();
+
         final String NOHR_XSB_DIRECTORY = env.get("NOHR_XSB_DIRECTORY");
         final String NOHR_KONCLUDE_BINARY = env.get("NOHR_KONCLUDE_BINARY");
         final String NOHR_ODBC_DRIVERS = env.get("ODBCINI");

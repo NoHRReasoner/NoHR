@@ -65,6 +65,7 @@ public class DBMappingAddColumnForm extends JPanel {
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNewLabel_1.setToolTipText("Define the mapping");
 		lblNewLabel_1.setBackground(Color.WHITE);
+		lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\VedranPC\\Desktop\\plus.png"));
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 		gbc_lblNewLabel_1.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel_1.gridwidth = 3;

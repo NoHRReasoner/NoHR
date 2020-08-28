@@ -102,11 +102,10 @@ public class MappingGenerator {
 	}
 
 	public List<String> createMappingRule() {
-		if (sql == null) {
+		if (sql == null)
 			return createBasicMapping();
-		} else {
+		else
 			return createSQLMapping();
-		}
 	}
 
 	public String createSQL() {

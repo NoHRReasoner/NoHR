@@ -8,18 +8,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import pt.unl.fct.di.novalincs.nohr.model.Atom;
-import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
-import pt.unl.fct.di.novalincs.nohr.model.DBMappingImpl;
-import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
-import pt.unl.fct.di.novalincs.nohr.model.Literal;
-import pt.unl.fct.di.novalincs.nohr.model.Model;
-import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
-import pt.unl.fct.di.novalincs.nohr.model.Program;
-import pt.unl.fct.di.novalincs.nohr.model.Query;
-import pt.unl.fct.di.novalincs.nohr.model.Rule;
-import pt.unl.fct.di.novalincs.nohr.model.Term;
-import pt.unl.fct.di.novalincs.nohr.model.LiteralTerm;
+
+import pt.unl.fct.di.novalincs.nohr.model.*;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 import pt.unl.fct.di.novalincs.nohr.utils.PrologSyntax;
 
@@ -394,8 +384,22 @@ public class NoHRRecursiveDescentParser implements NoHRParser {
         
 	}
 
-    
-    
+    @Override
+    public void parseRDFMappingSet(File file, RDFMappingSet rdfMappingSet, List<ODBCDriver> list) throws IOException {
+
+        //TODO finish
+        FileReader in = new FileReader(file);
+        BufferedReader input = new BufferedReader(in);
+        String mapping;
+        int line = 1;
+        while ((mapping = input.readLine()) != null) {
+            RDFMapping tmpMapping = new RDFMappingImpl(mapping, list, line, vocabulary);
+            rdfMappingSet.add(tmpMapping);
+            line++;
+        }
+    }
+
+
     @Override
     public void setVocabulary(Vocabulary vocabulary) {
         this.vocabulary = vocabulary;

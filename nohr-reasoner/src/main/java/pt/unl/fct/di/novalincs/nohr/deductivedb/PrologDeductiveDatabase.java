@@ -786,6 +786,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 			writer.newLine();
 			// fix for unsupported redefinition of tables in XSB 3.8
 			final Set<Predicate> tables = new HashSet<>();
+
 			for (final Predicate predicate : positiveBodyFunctors) {
 				if (!tables.contains(predicate)) {
 					tables.add(predicate);
@@ -818,7 +819,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 					writer.newLine();
 				}
 			}
-			if (dbMappingSets != null && dbMappingSets.size() > 0 && dbMappingSets.iterator().next().dbMappings.size() > 0) {
+			if (dbMappingSets != null && dbMappingSets.size() > 0) {
 				writer.write(openOdbcConnDirective());
 			}
 			for (final DBMappingSetImpl mappingSet : dbMappingSets) {
@@ -833,11 +834,6 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 						if (!tables.contains(originalPred)) {
 							tables.add(originalPred);
 							writer.write(tableDirective(originalPred));
-							writer.newLine();
-						}
-						
-						if (!factFunctors.contains(originalPred) && !headFunctors.contains(originalPred)) {
-							writer.write(failRule(originalPred));
 							writer.newLine();
 						}
 					}

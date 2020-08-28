@@ -17,12 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-import pt.unl.fct.di.novalincs.nohr.model.DBMapping;
-import pt.unl.fct.di.novalincs.nohr.model.DBMappingSet;
-import pt.unl.fct.di.novalincs.nohr.model.ODBCDriver;
-import pt.unl.fct.di.novalincs.nohr.model.Program;
-import pt.unl.fct.di.novalincs.nohr.model.Query;
-import pt.unl.fct.di.novalincs.nohr.model.Rule;
+import pt.unl.fct.di.novalincs.nohr.model.*;
 import pt.unl.fct.di.novalincs.nohr.model.vocabulary.Vocabulary;
 
 /**
@@ -95,7 +90,9 @@ public interface NoHRParser {
     public DBMapping parseDBMapping(String str) throws ParseException;
     
     public void parseDBMappingSet(File file, DBMappingSet dbMappingSet, List<ODBCDriver> list) throws ParseException, IOException;
-    
+
+    void parseRDFMappingSet(File file, RDFMappingSet rdfMappingSet, List<ODBCDriver> list) throws  IOException;
+
     public void setVocabulary(Vocabulary vocabulary);
 
 	

@@ -60,6 +60,7 @@ public class NoHREditorKitHook extends OWLEditorKitHook implements OWLModelManag
 		return disposableDBMappingListModel.getObject();
 	}
 
+	//TODO create getRDFMappingListModel()
 	@Override
 	public void handleChange(OWLModelManagerChangeEvent event) {
 		 if (event.isType(EventType.ACTIVE_ONTOLOGY_CHANGED)

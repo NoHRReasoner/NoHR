@@ -14,7 +14,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
+                <version>5.1.1</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -26,6 +26,7 @@
                         </Export-Package>
                         <Import-Package>
                             org.apache.log4j.*;version="[1.2,2)",
+                            !org.apache.jena.rdf.model,
                             org.protege.editor.owl.*;version="5.0.0", <!-- equivalent to [5.0.0-beta-17,infinity) -->
                             !junit.*,
                             !org.junit.*,
@@ -35,21 +36,30 @@
                             groupId=org.semanticweb.elk;scope=compile|runtime,
                             groupId=com.interprolog;artifactId=interprolog,
                             groupId=com.igormaznitsa;artifactId=prologparser,
-                            groupId=pt.unl.fct.novalincs;artifactId=nohr-reasoner
+                            groupId=pt.unl.fct.novalincs;artifactId=nohr-reasoner,
+                            groupId=org.apache.jena;artifactId=apache-jena-libs
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
+                        <executions>
+                            <execution>
+                                <id>bundle-manifest</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>manifest</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </instructions>
-                    <executions>
-                        <execution>
-                            <id>bundle-manifest</id>
-                            <phase>install</phase>
-                            <goals>
-                                <goal>manifest</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </configuration>
-            </plugin>	
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <packaging>bundle</packaging>
@@ -72,6 +82,13 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>nohr-reasoner</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.jena/apache-jena-libs -->
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>apache-jena-libs</artifactId>
+            <version>3.16.0</version>
+            <type>pom</type>
         </dependency>
     </dependencies>
 </project>
