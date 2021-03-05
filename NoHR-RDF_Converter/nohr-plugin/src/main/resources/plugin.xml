@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<!--
+#%L
+nohr-plugin
+%%
+Copyright (C) 2014 - 2015 NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)
+%%
+This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#L%
+-->
+
+
+<plugin> 	
+    <extension id="NoHREditorKitHook" point="org.protege.editor.core.application.EditorKitHook">
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.NoHREditorKitHook"></class>
+        <editorKitId value="OWLEditorKit"></editorKitId>
+    </extension>
+    <extension id="nohrpreferences" point="org.protege.editor.core.application.preferencespanel">
+        <label value="NoHR"></label>
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.NoHRPreferencesPanel"></class>
+    </extension>
+    <extension id="odbcpreferences" point="org.protege.editor.core.application.preferencespanel">
+        <label value="ODBC drivers"></label>
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.odbc.ODBCPreferencesPanel"></class>
+    </extension>
+    <extension id="rdfconverterpreferences" point="org.protege.editor.core.application.preferencespanel">
+        <label value="RDF Converter"></label>
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.rdf_converter.RDFConverterPreferencesPanel"></class>
+    </extension>
+    <extension id="QueryViewComponent" point="org.protege.editor.core.application.ViewComponent">
+        <label value="NoHR Query"></label>
+        <headerColor value="@org.protege.classcolor"/>
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.QueryViewComponent"></class>
+        <category value="@org.protege.querycategory"></category>
+    </extension>
+    <extension id="RulesViewComponent" point="org.protege.editor.core.application.ViewComponent">
+        <label value="NoHR Rules"></label>
+        <headerColor value="@org.protege.classcolor"/>
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.RulesViewComponent"></class>
+        <category value="@org.protege.querycategory"></category>
+    </extension> 
+     <extension id="DBMappingViewComponent" point="org.protege.editor.core.application.ViewComponent">
+        <label value="NoHR Database Mapping"></label>
+        <headerColor value="@org.protege.classcolor"/>
+        <class value="pt.unl.fct.di.novalincs.nohr.plugin.DBMappingViewComponent"></class>
+        <category value="@org.protege.querycategory"></category>
+    </extension>
+    <extension id="QueryTab" point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="NoHR Query"></label>
+        <headerColor value="@org.protege.classcolor"/>
+        <class value="org.protege.editor.owl.ui.OWLWorkspaceViewsTab"></class>
+        <index value="Y"></index>
+        <editorKitId value="OWLEditorKit"></editorKitId>
+        <defaultViewConfigFileName value="viewconfig-querytab.xml"></defaultViewConfigFileName>
+    </extension>
+    <extension id="RulesTab" point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="NoHR Rules"></label>
+        <headerColor value="@org.protege.classcolor"/>
+        <class value="org.protege.editor.owl.ui.OWLWorkspaceViewsTab"></class>
+        <index value="X"></index>
+        <editorKitId value="OWLEditorKit"></editorKitId>
+        <defaultViewConfigFileName value="viewconfig-rulestab.xml"></defaultViewConfigFileName>
+    </extension>
+    <extension id="DBMappingTab" point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="NoHR Database Mapping"></label>
+        <headerColor value="@org.protege.classcolor"/>
+        <class value="org.protege.editor.owl.ui.OWLWorkspaceViewsTab"></class>
+        <index value="Z"></index>
+        <editorKitId value="OWLEditorKit"></editorKitId>
+        <defaultViewConfigFileName value="viewconfig-dbmappingtab.xml"></defaultViewConfigFileName>
+    </extension>
+   
+</plugin>

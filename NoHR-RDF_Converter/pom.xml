@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pt.unl.fct.novalincs</groupId>
+    <artifactId>nohr</artifactId>
+    <version>4.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>Nova Hybrid Reasoner (NoHR)</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.semanticweb.elk</groupId>
+            <artifactId>elk-owlapi</artifactId>
+            <version>0.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.interprolog</groupId>
+            <artifactId>interprolog</artifactId>
+            <version>95ff1c9</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>org.semanticweb.hermit</artifactId>
+            <version>1.3.8.413</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <!-- Use resource filtering to replace references to the artifactId in 
+                the plugin.xml file -->
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <!--            <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-gpg-plugin</artifactId>
+                            <version>1.5</version>
+                            <executions>
+                                <execution>
+                                    <id>sign-artifacts</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>sign</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.8</version>
+                <configuration>
+                    <licenseName>mpl_v2</licenseName>
+                    <licenseResolver>${project.baseUri}/src/license</licenseResolver>
+                    <inceptionYear>2014</inceptionYear>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <pde>true</pde>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <!-- To use the report goals in your POM or parent POM -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.8</version>
+            </plugin>
+        </plugins>
+    </reporting>
+    <repositories>
+        <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/repo</url>
+        </repository>
+    </repositories>
+    <developers>
+        <developer>
+            <name>Nuno Costa</name>
+            <email>91nunocosta@gmail.com</email>
+            <organization>NOVA LINCS</organization>
+            <organizationUrl>https://github.com/91nunocosta</organizationUrl>
+        </developer>
+    </developers>
+    <organization>
+        <name>NOVA Laboratory of Computer Science and Informatics (NOVA LINCS)</name>
+        <url>http://nova-lincs.di.fct.unl.pt/</url>
+    </organization>
+    <url>http://centria.di.fct.unl.pt/nohr</url>
+    <licenses>
+        <license>
+            <name>Mozilla Public License Version 2.0</name>
+            <url>https://www.mozilla.org/en-US/MPL/2.0/</url>
+        </license>
+    </licenses>
+    <modules>
+        <module>nohr-reasoner</module>
+        <module>nohr-plugin</module>
+        <module>nohr-benchmark-lightweight</module>
+    </modules>
+    <scm>
+        <connection>scm:git:https://github.com/NoHRReasoner/NoHR</connection>
+        <developerConnection>scm:git:https://github.com/NoHRReasoner/NoHR</developerConnection>
+        <url>https://github.com/NoHRReasoner/NoHR</url>
+    </scm>
+    <description>NoHR (Nova Hybrid Reasoner) is a plug-in for the ontology editor Protégé that allows its users to query knowledge bases composed of both an Ontology in OWL 2 EL or QL and a set of Reasoning Rules. Using a top-down reasoning approach, which means that only the part of the ontology and rules that is relevant for the query is actually evaluated, NoHR respectively combines the capabilities of ELK for OWL 2 EL and a dedicated direct translation for OWL 2 QL with the rule engine XSB Prolog to deliver very fast interactive response times. NoHR is the first hybrid reasoner of its kind for Protégé. NoHR is also distributed as an API.</description>
+    <profiles>
+        <profile>
+            <id>doclint-java8-disable</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>3.7.1</version>
+                        <configuration>
+                            <reportPlugins>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-javadoc-plugin</artifactId>
+                                    <configuration>
+                                        <doclint>none</doclint>
+                                    </configuration>
+                                </plugin>
+                            </reportPlugins>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
