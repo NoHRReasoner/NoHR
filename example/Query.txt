@@ -1,0 +1,12 @@
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX dbp: <http://dbpedia.org/property/>
+PREFIX dbr: <http://dbpedia.org/resource/>
+
+select ?books
+ where {
+    {?books dbp:author dbr:Tim_Berners-Lee }
+                    Union
+    {?books dbo:author dbr:Tim_Berners-Lee}
+                    Union
+    {<https://dblp.org/pid/b/TimBernersLee> <https://dblp.org/rdf/schema-2020-07-01#authorOf> ?books}
+ }
