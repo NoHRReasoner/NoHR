@@ -774,6 +774,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 		return result;
 	}
 
+	//TODO: rever aqui este metodo!!
 	/**
 	 * Write the {@link Rule rules} of all the loaded {@link DatabaseProgram
 	 * programs} in {@link #file}, and the corresponding table directives and fail
@@ -786,6 +787,53 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 			writer.newLine();
 			// fix for unsupported redefinition of tables in XSB 3.8
 			final Set<Predicate> tables = new HashSet<>();
+
+			if (dbMappingSets != null && dbMappingSets.size() > 0 && dbMappingSets.iterator().next().dbMappings.size() > 0) {
+				writer.write(openOdbcConnDirective());
+			}
+			for (final DBMappingSetImpl mappingSet : dbMappingSets) {
+				for (final ODBCDriver driver : mappingSet.getDrivers()) {
+					writer.write(odbcConnectionDirective(driver));
+					writer.newLine();
+				}
+				/** Adding tabling **/
+				for (final DBMapping mapping : mappingSet.dbMappings) {
+					Predicate originalPred = mapping.getPredicate();
+					if (originalPred != null) {
+						if (!tables.contains(originalPred)) {
+							tables.add(originalPred);
+							writer.write(tableDirective(originalPred));
+							writer.newLine();
+						}
+
+						if (!factFunctors.contains(originalPred) && !headFunctors.contains(originalPred)) {
+							writer.write(failRule(originalPred));
+							writer.newLine();
+						}
+					}
+
+					Predicate negatedPred = mapping.getNPredicate();
+					if (negatedPred != null) {
+						if (!tables.contains(negatedPred)) {
+							tables.add(negatedPred);
+							writer.write(tableDirective(negatedPred));
+							writer.newLine();
+						}
+
+						if (!factFunctors.contains(negatedPred) && !headFunctors.contains(negatedPred)) {
+							writer.write(failRule(negatedPred));
+							writer.newLine();
+						}
+					}
+					MappingGenerator generator = new MappingGenerator(mapping, formatVisitor);
+					List<String> mappingRules = generator.createMappingRule();
+					for (String mappingRule : mappingRules) {
+						writer.write(mappingRule);
+						writer.newLine();
+					}
+				}
+			}
+
 			for (final Predicate predicate : positiveBodyFunctors) {
 				if (!tables.contains(predicate)) {
 					tables.add(predicate);
@@ -818,51 +866,7 @@ public abstract class PrologDeductiveDatabase implements DeductiveDatabase {
 					writer.newLine();
 				}
 			}
-			if (dbMappingSets != null && dbMappingSets.size() > 0 && dbMappingSets.iterator().next().dbMappings.size() > 0) {
-				writer.write(openOdbcConnDirective());
-			}
-			for (final DBMappingSetImpl mappingSet : dbMappingSets) {
-				for (final ODBCDriver driver : mappingSet.getDrivers()) {
-					writer.write(odbcConnectionDirective(driver));
-					writer.newLine();
-				}
-				/** Adding tabling **/
-				for (final DBMapping mapping : mappingSet.dbMappings) {
-					Predicate originalPred = mapping.getPredicate();
-					if (originalPred != null) {
-						if (!tables.contains(originalPred)) {
-							tables.add(originalPred);
-							writer.write(tableDirective(originalPred));
-							writer.newLine();
-						}
-						
-						if (!factFunctors.contains(originalPred) && !headFunctors.contains(originalPred)) {
-							writer.write(failRule(originalPred));
-							writer.newLine();
-						}
-					}
-					
-					Predicate negatedPred = mapping.getNPredicate();
-					if (negatedPred != null) {
-						if (!tables.contains(negatedPred)) {
-							tables.add(negatedPred);
-							writer.write(tableDirective(negatedPred));
-							writer.newLine();
-						}
 
-						if (!factFunctors.contains(negatedPred) && !headFunctors.contains(negatedPred)) {
-							writer.write(failRule(negatedPred));
-							writer.newLine();
-						}
-					}
-					MappingGenerator generator = new MappingGenerator(mapping, formatVisitor);
-					List<String> mappingRules = generator.createMappingRule();
-					for (String mappingRule : mappingRules) {
-						writer.write(mappingRule);
-						writer.newLine();
-					}
-				}
-			}
 			writer.newLine();
 			writer.flush();
 		} catch (InvalidAttributesException e) {

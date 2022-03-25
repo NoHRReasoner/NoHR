@@ -59,6 +59,10 @@ public class BenchmarkIndividualQueries extends Benchmark {
 
             getMetrics().add(i.getName(), endtime - time);
             kb.dispose();
+
+            //TODO: rever aqui que na Query 2 da 0 answer mas funciona para o BenchmarkQueries
+            setAnswers(answers, i.getName());
+            printAnswersToFile();
         }
     }
 

@@ -84,13 +84,13 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 	@Override
 	protected void load() {
 
-		vedran();
+		//vedran();
 
 		if (!prologEngine.load_dynAbsolute(file.getAbsoluteFile()))
 			throw new IPException("file not loaded");
 	}
 
-	public void vedran() {
+	/*public void vedran() {
 
 		File dest = new File("/home/vedran/Desktop/rules.P");
 		
@@ -98,7 +98,7 @@ public class XSBDeductiveDatabase extends PrologDeductiveDatabase {
 			FileUtils.copyFile(file, dest);
 		} catch (IOException e) {
 		}
-	}
+	}*/
 
 
 	@Override

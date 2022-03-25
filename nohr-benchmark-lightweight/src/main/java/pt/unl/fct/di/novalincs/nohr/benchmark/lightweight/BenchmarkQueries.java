@@ -55,9 +55,13 @@ public class BenchmarkQueries extends Benchmark {
 
             final long time = System.nanoTime();
             answers = kb.allAnswers(query);
+
             final long endtime = System.nanoTime();
 
             getMetrics().add(i.getName(), endtime - time);
+
+            setAnswers(answers, i.getName());
+            printAnswersToFile();
         }
     }
 

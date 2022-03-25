@@ -5,11 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import pt.unl.fct.di.novalincs.nohr.hybridkb.NoHRHybridKBConfiguration;
+import pt.unl.fct.di.novalincs.nohr.model.Answer;
 import pt.unl.fct.di.novalincs.nohr.parsing.ParseException;
 import pt.unl.fct.di.novalincs.nohr.translation.dl.DLInferenceEngine;
 
@@ -22,6 +25,8 @@ public abstract class Benchmark {
     private final NoHRHybridKBConfiguration nohrConfig;
     private final Metrics metrics;
     private final Resources resources;
+    private List<Answer> answers;
+    private String queryName;
 
     private final File[] inputDirectories;
     private final File outputDirectory;
@@ -37,7 +42,7 @@ public abstract class Benchmark {
         final String NOHR_XSB_DIRECTORY = env.get("NOHR_XSB_DIRECTORY");
         final String NOHR_KONCLUDE_BINARY = env.get("NOHR_KONCLUDE_BINARY");
         final String NOHR_ODBC_DRIVERS = env.get("ODBCINI");
-        
+
         if(args.length < 6) {
         	new IOException("Parameters were not provided correctly.");
         }
@@ -58,6 +63,8 @@ public abstract class Benchmark {
         
         int repeat = Integer.parseInt(args[3]);
         metrics = new Metrics(repeat);
+        answers = new LinkedList<>();
+        this.queryName = "";
 
         boolean dl = Boolean.parseBoolean(args[4]);
         
@@ -84,6 +91,11 @@ public abstract class Benchmark {
         return metrics;
     }
 
+    public void setAnswers(List<Answer> answers, String queryName){
+        this.answers = answers;
+        this.queryName = queryName;
+    }
+
     public Resources getResources() {
         return resources;
     }
@@ -101,6 +113,18 @@ public abstract class Benchmark {
     public void printMetrics() throws FileNotFoundException {
         try (PrintWriter writer = new PrintWriter(new File(outputDirectory, name + "-metrics.csv"))) {
             writer.write(metrics.toString());
+            writer.flush();
+        }
+    }
+
+    public void printAnswersToFile() throws FileNotFoundException {
+        try (PrintWriter writer = new PrintWriter(new File(outputDirectory, queryName+"Results.csv"))) {
+            if(answers.size() != 0){
+                int idx = answers.get(0).toString().indexOf('(');
+                for (Answer a: answers) {
+                    writer.write(a.toString().substring(idx)+"\n");
+                }
+            }
             writer.flush();
         }
     }
